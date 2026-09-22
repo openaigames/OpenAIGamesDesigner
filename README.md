@@ -1,3 +1,5 @@
+![OpenAIGamesDesigner：从游戏构思、设计与制作到试玩](.github/assets/openaigamesdesigner-banner.png)
+
 # OpenAIGamesDesigner
 
 面向独立开发者和小团队的 AI 游戏开发工具包。由用户掌握创作方向，AI 根据专业方法协同完成项目管理、游戏策划、美术、技术与验证，围绕同一个可持续编辑的游戏工程推进工作。
