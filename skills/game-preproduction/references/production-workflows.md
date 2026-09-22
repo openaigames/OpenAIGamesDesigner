@@ -42,7 +42,7 @@
 
 在工具包根运行：`python tools/game_workflow.py document --project "MyGame" --kind feature-spec --id F001 --title "新增交互"`。文档生成不依赖引擎初始化、不安装工具、不创建游戏工程。init 用于 Godot 或已有 Unity/Unreal 工具配置；仅建立管理文件时可直接按模板填写，不必调用 init。已有项目格式或位置不同就原位维护，不为 CLI 默认位置迁移文件。原型和切片共用里程碑目录，使用不同 id；现有目标文件始终拒绝覆盖。
 
-当前自带 Godot 4 专用命令，以及 Unity/Unreal 工程检查和可配置命令适配器。具体能力和配置见已定位工具包的 `adapters/README.md`；未配置的动作明确阻塞，UE/GAS/Lyra 资产编辑并未因此自动实现。执行工具不是游戏生成器；代码助手根据设计和任务修改真实工程，再调用工具记录证据。
+当前自带 Godot 4 专用命令、Unity/Unreal 工程检查和可配置命令，以及 Three.js（3D）/Phaser（2D）网页初始化、依赖安装、Vite 服务和构建导出。网页路线确定后读取技术 Skill 的 `references/web-execution.md` 及工具包的 `adapters/engines/web.md`；同样先保存六个入口和本轮实施交接。具体能力和配置见已定位工具包的 `adapters/README.md`；未配置的动作明确阻塞，UE/GAS/Lyra 资产编辑并未因此自动实现。执行工具不是游戏生成器；代码助手根据设计和任务修改真实工程，再调用工具记录证据。
 
 资产生成/处理使用工具包 `adapters/assets/README.md` 和 `tools/asset_workflow.py`；仅本地配置命令和 Blender 处理，不预设云服务。任务保存输入快照、日志和产物，生成成功、登记、导入和质量验收分开。`tools/validate_records.py --project <实际路径> --markdown` 检查四类记录及本地引用；它不核实专业结论。分项真实验证顺序见工具包 `tests/README.md`。
 

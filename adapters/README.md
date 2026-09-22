@@ -4,6 +4,8 @@
 
 ## 引擎命令
 
+网页游戏使用 Three.js（3D）或 Phaser（2D），支持空工程初始化、依赖安装、本地 Vite 服务与构建导出；接入、测试和持续进程说明见 [网页游戏](engines/web.md)。网页浏览器验证需要真实项目命令或实际试玩，构建不会自动批准体验。
+
 Godot 保留专用命令实现。Unity/Unreal 通过 `.openaigame/project.json` 的 commands 接入项目实际脚本。例如已初始化的 Unity 项目可以补充：
 
 ```json

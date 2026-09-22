@@ -17,7 +17,7 @@ import uuid
 
 TOOLKIT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOLKIT))
-from adapters.engines import godot, unity, unreal
+from adapters.engines import godot, unity, unreal, web
 from validate_records import contract, PROJECT_ENTRIES
 
 CONFIG = ".openaigame/project.json"
@@ -177,8 +177,8 @@ def init_project(args):
         raise ValueError("Project already configured; existing files were not replaced.")
     engine = local(root, args.engine_root)
     selected = args.engine
-    if args.create_engine and selected != "godot":
-        raise ValueError("Blank project creation currently supports Godot only; use an existing Unity/Unreal project")
+    if args.create_engine and selected not in {"godot", "threejs", "phaser"}:
+        raise ValueError("Blank project creation supports Godot, Three.js and Phaser; use an existing Unity/Unreal project")
     if args.create_engine and engine.exists() and any(engine.iterdir()):
         raise ValueError("Cannot create a blank engine project in a nonempty directory.")
     if selected == "godot" and not args.create_engine and not (engine / "project.godot").is_file():
@@ -186,7 +186,14 @@ def init_project(args):
     config = {"schema_version": 1, "engine": selected, "engine_root": args.engine_root,
               "godot_executable": str(args.godot.resolve()) if args.godot else "",
               "expected_version": args.expected_version or ""}
-    if selected != "godot":
+    if selected in web.FRAMEWORKS:
+        config.pop("godot_executable")
+        config["node_executable"] = str(args.node.resolve()) if args.node else ""
+        config["package_manager_cli"] = str(args.package_manager_cli.resolve()) if args.package_manager_cli else ""
+        web.executable(config)
+        if not args.create_engine:
+            web.inspect(config, engine)
+    elif selected != "godot":
         config.pop("godot_executable")
         config["editor_executable"] = str(args.editor.resolve()) if args.editor else ""
         if args.project_file: config["project_file"] = args.project_file
@@ -196,7 +203,10 @@ def init_project(args):
     # Check managed destinations before changing an existing project.
     for folder in ("runs", "builds"):
         local(root, folder)
-    if args.create_engine:
+    if args.create_engine and selected in web.FRAMEWORKS:
+        for relative, content in web.starter(selected).items():
+            write_new(local(engine, relative), content)
+    elif args.create_engine:
         write_new(engine / "project.godot", '[application]\nconfig/name="New Game Project"\nrun/main_scene="res://main.tscn"\n\n[rendering]\nrenderer/rendering_method="gl_compatibility"\n')
         write_new(engine / "main.tscn", '[gd_scene format=3]\n\n[node name="Main" type="Node2D"]\n')
     atomic_json(config_path, config)
@@ -285,7 +295,7 @@ def inputs(root, paths, run):
 def run_project_engine(args, config):
     root = args.project.resolve()
     engine = local(root, config["engine_root"])
-    adapter = {"unity": unity, "unreal": unreal}[config["engine"]]
+    adapter = {"unity": unity, "unreal": unreal, "threejs": web, "phaser": web}[config["engine"]]
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
     run = local(root, "runs/" + run_id)
     run.mkdir(parents=True)
@@ -337,6 +347,8 @@ def run_project_engine(args, config):
                     manifest["notes"].append("test requires test-results.json with actual tests>0, failed=0, errors=0")
                 else: manifest["test_report"] = {**data, "path": "test-results.json", "sha256": sha(report)}
             if args.action == "export" and manifest["status"] == "passed":
+                if config["engine"] in web.FRAMEWORKS and (not (output / "index.html").is_file() or not (output / "index.html").stat().st_size):
+                    raise ValueError("Web export requires a nonempty index.html in the requested output directory")
                 files = [p for p in output.rglob("*") if p.is_file()]
                 if not files or not any(p.stat().st_size > 0 for p in files):
                     manifest["status"] = "failed"; manifest["notes"].append("No nonempty exported files in requested output directory")
@@ -475,7 +487,9 @@ def main(argv=None):
     init = sub.add_parser("init")
     init.add_argument("--project", type=Path, required=True)
     init.add_argument("--engine-root", default="game")
-    init.add_argument("--engine", choices=("godot", "unity", "unreal"), default="godot")
+    init.add_argument("--engine", choices=("godot", "unity", "unreal", "threejs", "phaser"), default="godot")
+    init.add_argument("--node", type=Path)
+    init.add_argument("--package-manager-cli", type=Path)
     init.add_argument("--editor", type=Path)
     init.add_argument("--project-file")
     init.add_argument("--godot", type=Path)

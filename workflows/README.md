@@ -16,7 +16,7 @@
 | schemas | project、run、asset-job、artifact 四类记录格式 | 不是独立的任务管理数据库 |
 | tests | 工具、协议、文件保护与模拟适配器检查 | 不代替真实引擎联调或游戏验收 |
 
-`adapters/engines/` 包含 Godot、Unity、Unreal；`adapters/assets/` 包含 Hunyuan3D、图像和音频；`adapters/processing/` 包含 Blender。公共协议辅助文件也保存在所属目录。
+`adapters/engines/` 包含 Godot、Unity、Unreal 及 Three.js/Phaser 共用的 web 适配器；`adapters/assets/` 包含 Hunyuan3D、图像和音频；`adapters/processing/` 包含 Blender。公共协议辅助文件也保存在所属目录。
 
 ## 实际游戏项目
 

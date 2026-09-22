@@ -15,7 +15,9 @@
       "enum": [
         "godot",
         "unity",
-        "unreal"
+        "unreal",
+        "threejs",
+        "phaser"
       ]
     },
     "engine_root": {
@@ -26,6 +28,12 @@
       "type": "string"
     },
     "editor_executable": {
+      "type": "string"
+    },
+    "node_executable": {
+      "type": "string"
+    },
+    "package_manager_cli": {
       "type": "string"
     },
     "expected_version": {

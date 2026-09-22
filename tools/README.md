@@ -41,7 +41,7 @@ python tools/game_workflow.py init --project "MyGame" --engine unity --engine-ro
 python tools/game_workflow.py init --project "MyGame" --engine unreal --engine-root game --editor "C:/UE/Engine/Binaries/Win64/UnrealEditor.exe" --project-file MyGame.uproject
 ```
 
-两条命令是不同项目的替代示例。init 不覆盖既有 `.openaigame/project.json`；Unity/UE 必须已有原生工程。`--create-engine` 仅支持 Godot。现有配置要调整时直接编辑并保留项目自己的命令。
+两条命令是不同项目的替代示例。init 不覆盖既有 `.openaigame/project.json`；Unity/UE 必须已有原生工程。`--create-engine` 支持 Godot、Three.js 和 Phaser；网页初始化及构建见 [网页游戏](../adapters/engines/web.md)。现有配置要调整时直接编辑并保留项目自己的命令。
 
 ```sh
 python tools/game_workflow.py run --project "MyGame" --action doctor

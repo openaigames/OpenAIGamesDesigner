@@ -163,7 +163,7 @@ def layout_errors(project, production=False):
     # Stop at engine roots and generated caches; do not enumerate every game asset.
     for directory, dirs, files in os.walk(project, followlinks=False):
         current = Path(directory)
-        dirs[:] = [d for d in dirs if d not in {".git", ".godot", ".openaigame", "runs", "builds", "Library", "Temp", "Saved", "Intermediate", "Binaries", "DerivedDataCache", "DDC", "__pycache__"}
+        dirs[:] = [d for d in dirs if d not in {".git", ".godot", ".openaigame", "runs", "builds", "node_modules", "Library", "Temp", "Saved", "Intermediate", "Binaries", "DerivedDataCache", "DDC", "__pycache__"}
                    and not (current / d).is_symlink()]
         if "project.godot" in files or any(n.endswith(".uproject") for n in files) or ("ProjectSettings" in dirs and "Assets" in dirs):
             if not current.is_relative_to(project / "game"):
