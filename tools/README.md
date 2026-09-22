@@ -66,6 +66,45 @@ python tools/validate_records.py --project "MyGame" --markdown
 
 完整试用顺序和每步完成依据见 [分项验证计划](../tests/README.md)。
 
+## 数值表往返
+
+自然语言即可进入，例如“把武器参数整理成我能编辑的表”“把重击伤害改成 60，比较影响”“我改好了这个 Excel，把差异应用到工程并验证”。助手按任务读取策划/技术参考，完成对应操作；以下 CLI 是可重复执行的文件工具，不要求用户手动调用。
+
+`numeric_workflow.py` 支持已存在、已明确绑定的 JSON 记录数组，导出 CSV 工作副本，读取 CSV 或 XLSX 的纯数值页，生成差异后更新已有记录的指定字段。没有引擎工程时由助手先生成候选表与规格；此工具不会从玩法描述自动生成合理数值，也不会自动建立引擎加载器。已有 UE/Unity/Godot 原生数据和项目导入器优先，不为本工具强制改成 JSON。
+
+绑定保存于游戏项目，例如 `design/numerics/combat-binding.json`：
+
+```json
+{
+  "version": 1,
+  "target": "game/data/combat.json",
+  "records_key": "attacks",
+  "id_field": "id",
+  "fields": {
+    "damage": { "type": "integer", "unit": "HP/hit", "min": 0, "max": 1000 },
+    "cooldown": { "type": "number", "unit": "seconds", "min": 0.01, "max": 10 }
+  }
+}
+```
+
+这里的字段和范围仅为格式示例，需从实际工程与规格确定。目标形如 `{"attacks":[{"id":"LIGHT","damage":30,"cooldown":0.5,"animation":"LightAttack"}]}`；目标为根数组时省略 records_key。支持顶层数组键，不支持任意 JSONPath。ID 必须为稳定字符串，可编辑字段为数字；不修改 animation 等未绑定字段。
+
+```sh
+python tools/numeric_workflow.py --project "MyGame" export --binding design/numerics/combat-binding.json --session design/numerics/exchange-01
+python tools/numeric_workflow.py --project "MyGame" plan --session design/numerics/exchange-01 --table design/numerics/exchange-01/parameters.csv --out design/numerics/exchange-01/plan.json
+python tools/numeric_workflow.py --project "MyGame" apply --plan design/numerics/exchange-01/plan.json
+```
+
+export 创建 parameters.csv 和 baseline.json，不覆盖已有会话。用户或助手修改 CSV 后运行 plan，输出 ID、字段、旧值、新值、单位，不写工程。检查差异与项目规则后，在用户已授权应用的范围执行 apply；plan 不是新增人工审批要求。表格再次编辑时用新的 --out 生成计划。
+
+读取用户回传的 Excel，将 --table 指向项目内 `.xlsx`，并使用 `--sheet Parameters` 或实际页名。该页第一行为与 CSV 一致的字段名，只包含 ID 和绑定字段，不含标题装饰、说明列或汇总行；其他页可以保留公式、曲线和说明。XLSX 读取可选依赖 openpyxl，不需要该依赖即可使用 CSV。工具不制作 XLSX；由助手使用宿主可用的表格能力制作。外部文件先以新文件名复制到游戏项目保留原件，不导入聊天里转述的值。
+
+工具拒绝空数值、非法数字、重复/未知 ID、漏行、越界值、字段变化、公式/错误单元格，以及导出后被改动的绑定/配置。不会以 0 填补空白，也不删除或添加记录。用户换行顺序不影响 ID 匹配。公式结果要在可信计算工具中重算并检查后导出纯数值页或 CSV，不能读取旧缓存后直接应用。项目特有的跨字段约束和引用检查需另行执行。
+
+apply 重新比对表格、基线与计划，保存原文件备份和 `.openaigame/numeric-imports/<id>/receipt.json`，再原子替换目标。执行期间暂停竞争写同一文件的其他任务/编辑器导出。检测到工程变化时先重新导出并合并用户修改；工具没有自动三方合并、文件监视或并发锁。状态 configuration_written 仅表示文件已写入，engine_validation 仍是 not_run；之后使用真实工程的导入/重载、配置检查和玩法测试，单独记录证据。
+
+中断时检查 receipt 的 prepared/failed 状态、目标与前后哈希，确认是否已写入。恢复前确认目标没有后续改动，再从 before.json 恢复并另存恢复记录；有后续变更时合并，不能整份覆盖。详细方法在技术 Skill 的数值交换参考。数值导入回执是专项记录，不冒充四类通用执行记录；通过运行工具执行引擎验证时再生成正式 run。
+
 
 ## 实施后的记录回写
 

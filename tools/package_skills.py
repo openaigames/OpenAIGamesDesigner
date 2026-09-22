@@ -18,7 +18,7 @@ def package(destination):
     for folder in ("templates", "workflows", "adapters", "schemas"):
         shutil.copytree(source / folder, runtime / folder, ignore=ignore)
     (runtime / "tools").mkdir()
-    for name in ("game_workflow.py", "asset_workflow.py", "validate_records.py"):
+    for name in ("game_workflow.py", "asset_workflow.py", "numeric_workflow.py", "validate_records.py"):
         shutil.copy2(source / "tools" / name, runtime / "tools" / name)
     shutil.copy2(source / "tools/README.md", runtime / "tools/README.md")
     (runtime / "tests").mkdir()

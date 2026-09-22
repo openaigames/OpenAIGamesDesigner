@@ -46,6 +46,8 @@
 
 资产生成/处理使用工具包 `adapters/assets/README.md` 和 `tools/asset_workflow.py`；仅本地配置命令和 Blender 处理，不预设云服务。任务保存输入快照、日志和产物，生成成功、登记、导入和质量验收分开。`tools/validate_records.py --project <实际路径> --markdown` 检查四类记录及本地引用；它不核实专业结论。分项真实验证顺序见工具包 `tests/README.md`。
 
+数值表雏形、用户调参或表格回传从 game-design 的 `references/numeric-authoring.md` 进入，工程写回使用 game-technical-design 的 `references/numeric-exchange.md`。工具包的 `tools/numeric_workflow.py` 提供绑定 JSON 的 CSV 导出、CSV/XLSX 纯数值读取、差异检查与可恢复写回，命令见 `tools/README.md`；原生引擎数据继续使用项目导入器。具体字段与表格在游戏项目保存，不放进 Skill 或通用执行 schema。该能力按需嵌入原型、切片或功能修改，不新增一条数值专属顶层 workflow。
+
 主流程：目标/阶段 → 相关专业输入 → 可执行任务 → 工程实现 → 实际运行/观察 → 回写结果与下一步。用户要可运行原型时，不能仅填文档结束；关键规则未定时先完成独立准备，澄清真正阻塞实验的问题。新作调用 init 或直接开始引擎专用制作前，先解析具体引擎或有效选型委托；“Unity / Unreal 工程”仍需细问，本机可用项与 CLI 默认参数不能代替选择。具体规则见技术 Skill 的 `references/engine-execution.md`。工具缺失或运行失败时保留日志和未验证状态。
 
 代码/资源哈希不是可恢复版本；沿用实际版本控制或备份。命令通过不是玩法、美术或里程碑通过。已有授权不重复请求，评审记录不能伪造用户决定。

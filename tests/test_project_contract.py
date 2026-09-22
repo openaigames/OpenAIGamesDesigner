@@ -49,7 +49,7 @@ class ProjectContractTests(unittest.TestCase):
         self.assertEqual(missing, [], "Active references must resolve; historical dist is excluded.")
 
     def test_execution_structure_has_callable_entries(self):
-        expected = ["tools/game_workflow.py", "tools/asset_workflow.py", "tools/validate_records.py",
+        expected = ["tools/game_workflow.py", "tools/asset_workflow.py", "tools/numeric_workflow.py", "tools/validate_records.py",
                     "tools/package_skills.py", "adapters/engines/godot.py", "adapters/engines/unity.py",
                     "adapters/engines/unreal.py", "adapters/assets/hunyuan3d.py",
                     "adapters/assets/image_provider.py", "adapters/assets/audio_provider.py",

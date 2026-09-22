@@ -14,6 +14,8 @@
 
 工具自动检查入口：
 
+数值协作需要另外完成一次真实往返：从已有配置导出 → 用户编辑 CSV/Excel → 比较/校验 → 应用 → 引擎重载 → 确认实际生效。自动检查覆盖文件冲突、范围/类型、未绑定字段保护、备份、失败和可选 XLSX 读取；不代表 UE DataTable/GAS 或其他原生资源已联调。自然语言测试场景保存在源码的 `tests/production-method-scenarios.md`“数值表协作与回传”一节，分发包不含完整场景集。
+
 ```sh
 python -m unittest discover -s tests -p "test_*.py" -v
 python tools/package_skills.py --output dist/新的验证包目录
