@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Concept 项目概览"
+  short_description: "澄清项目身份与核心体验，创建概览并评估已有项目变更对定位和设计支柱的影响"
+  default_prompt: "使用 $game-concept 根据当前资料澄清游戏定位，或评估本轮变更是否需要修订概览与设计支柱。"

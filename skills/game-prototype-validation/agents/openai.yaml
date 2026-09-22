@@ -1,0 +1,4 @@
+interface:
+  display_name: "游戏风险与验证"
+  short_description: "围绕原型、功能及资产变更规划试玩和回归，以真实证据评估风险与里程碑交付"
+  default_prompt: "使用 $game-prototype-validation 围绕本轮游戏变更或假设开展适当验证，区分计划、实际结果和需要回写的结论。"

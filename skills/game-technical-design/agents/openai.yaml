@@ -1,0 +1,4 @@
+interface:
+  display_name: "游戏技术方案"
+  short_description: "核查已有游戏工程，为功能新增、修改和资产接入设计接口、兼容与实施验证方案"
+  default_prompt: "使用 $game-technical-design 检查当前工程和需求，完成相关技术设计或授权内实施，报告兼容影响与真实验证结果。"

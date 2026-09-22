@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "artifact",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "path",
+    "sha256",
+    "bytes",
+    "source",
+    "quality_validation"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{64}$"
+    },
+    "bytes": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "job_id",
+        "provider"
+      ],
+      "properties": {
+        "job_id": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "provider_job_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "quality_validation": {
+      "enum": [
+        "not_checked"
+      ]
+    }
+  }
+}

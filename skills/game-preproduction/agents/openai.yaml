@@ -1,0 +1,4 @@
+interface:
+  display_name: "游戏项目管理"
+  short_description: "以项目管理文件协调新作与已有游戏，关联策划、美术、引擎技术、任务和验证"
+  default_prompt: "使用 $game-preproduction，帮我推进这个游戏项目。"

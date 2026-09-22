@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Design Document 策划设计"
+  short_description: "设计游戏循环与玩法规则，为已有项目新增或修改系统提供详细规格和专业交接"
+  default_prompt: "使用 $game-design 根据当前游戏资料与需求，完成相关玩法设计或规则变更，说明接口、反馈与验收要求。"

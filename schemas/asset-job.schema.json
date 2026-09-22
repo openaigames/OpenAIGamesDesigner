@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-job",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "job_id",
+    "provider",
+    "status",
+    "request",
+    "attempts",
+    "artifacts",
+    "settings",
+    "notes"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "job_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+    },
+    "provider": {
+      "enum": [
+        "hunyuan3d",
+        "image",
+        "audio",
+        "blender"
+      ]
+    },
+    "status": {
+      "enum": [
+        "queued",
+        "running",
+        "succeeded",
+        "registered",
+        "failed",
+        "blocked",
+        "cancelled",
+        "interrupted"
+      ]
+    },
+    "provider_job_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "request": {
+      "type": "object",
+      "required": [
+        "parameters",
+        "inputs"
+      ],
+      "properties": {
+        "parameters": {
+          "type": "object"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "snapshot",
+              "sha256"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "snapshot": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-fA-F]{64}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "attempts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "started_at"
+        ],
+        "properties": {
+          "started_at": {
+            "type": "string"
+          },
+          "finished_at": {
+            "type": "string"
+          },
+          "argv": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "log": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "exit_code": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "stop": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "result_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$"
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "artifact.schema.json"
+      }
+    },
+    "retry_of": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "settings": {
+      "type": "object"
+    }
+  }
+}

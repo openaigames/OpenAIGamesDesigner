@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "run",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "action",
+    "status",
+    "command_status",
+    "commands",
+    "gameplay_validation",
+    "visual_validation"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "action": {
+      "enum": [
+        "doctor",
+        "prepare",
+        "smoke",
+        "test",
+        "play",
+        "export",
+        "build"
+      ]
+    },
+    "status": {
+      "enum": [
+        "preparing",
+        "running",
+        "passed",
+        "failed",
+        "blocked",
+        "timeout",
+        "cancelled",
+        "needs_review"
+      ]
+    },
+    "command_status": {
+      "enum": [
+        "not_run",
+        "passed",
+        "failed",
+        "timeout",
+        "cancelled"
+      ]
+    },
+    "gameplay_validation": {
+      "enum": [
+        "not_run"
+      ]
+    },
+    "visual_validation": {
+      "enum": [
+        "not_run"
+      ]
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "argv",
+          "exit_code",
+          "log"
+        ],
+        "properties": {
+          "argv": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exit_code": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "log": {
+            "type": "string"
+          },
+          "stop": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256",
+          "snapshot"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$"
+          },
+          "snapshot": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "config": {
+      "$ref": "project.schema.json"
+    },
+    "test_report": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "tests",
+        "failed",
+        "errors"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{64}$"
+        },
+        "tests": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "failed": {
+          "const": 0
+        },
+        "errors": {
+          "const": 0
+        }
+      }
+    }
+  }
+}

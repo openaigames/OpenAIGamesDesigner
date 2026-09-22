@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "project",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "engine",
+    "engine_root"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "engine": {
+      "enum": [
+        "godot",
+        "unity",
+        "unreal"
+      ]
+    },
+    "engine_root": {
+      "type": "string",
+      "minLength": 1
+    },
+    "godot_executable": {
+      "type": "string"
+    },
+    "editor_executable": {
+      "type": "string"
+    },
+    "expected_version": {
+      "type": "string"
+    },
+    "project_file": {
+      "type": "string"
+    },
+    "commands": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
