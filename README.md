@@ -77,7 +77,7 @@
 <summary>手动获取、打包与安装</summary>
 
 ```sh
-git clone https://github.com/PeterTXPan/OpenAIGamesDesigner.git
+git clone https://github.com/openaigames/OpenAIGamesDesigner.git
 cd OpenAIGamesDesigner
 python tools/package_skills.py --output dist/skills-bundle
 ```
