@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="340" viewBox="0 0 1000 340" role="img" aria-labelledby="title desc">
+  <title id="title">围绕同一个游戏工程，持续设计、制作与验证</title>
+  <desc id="desc">确定创作方向、验证核心机制、打磨垂直切片、持续制作与交付。上方箭头从02返回01、03返回02、04返回03；下方回路从04返回01。依据试玩和反馈反复迭代。</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1950e8"/></marker><marker id="back-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ef7525"/></marker></defs>
+  <rect width="1000" height="340" rx="16" fill="#fff8ed"/>
+  <g font-family="Microsoft YaHei, PingFang SC, sans-serif">
+    <rect x="30" y="26" width="6" height="22" rx="3" fill="#ff812a"/>
+    <text x="48" y="44" font-size="18" font-weight="700" fill="#14234b">同一个工程，持续向前</text>
+    <text x="968" y="43" text-anchor="end" font-size="13" fill="#64708a">从新想法开始 · 也能接着已有项目继续</text>
+    <g fill="#fff" stroke="#dfdfdf"><rect x="30" y="104" width="212" height="108" rx="10"/><rect x="272" y="104" width="212" height="108" rx="10"/><rect x="514" y="104" width="212" height="108" rx="10"/><rect x="756" y="104" width="212" height="108" rx="10"/></g>
+    <g font-size="13" font-weight="700" fill="#ef7525"><text x="49" y="129">01 / DIRECTION</text><text x="291" y="129">02 / PROTOTYPE</text><text x="533" y="129">03 / VERTICAL SLICE</text><text x="775" y="129">04 / PRODUCTION</text></g>
+    <g font-size="21" font-weight="700" fill="#172553"><text x="49" y="161">确定创作方向</text><text x="291" y="161">验证核心机制</text><text x="533" y="161">打磨垂直切片</text><text x="775" y="161">持续制作与交付</text></g>
+    <g font-size="14" fill="#626d83"><text x="49" y="188">体验 · 规则 · 美术 · 技术</text><text x="291" y="188">最小实现 · 运行 · 试玩</text><text x="533" y="188">系统集成 · 资产 · 品质</text><text x="775" y="188">内容迭代 · 构建 · 反馈</text></g>
+    <g stroke="#1950e8" stroke-width="2" fill="none" marker-end="url(#arrow)"><path d="M 246 158 H 266"/><path d="M 488 158 H 508"/><path d="M 730 158 H 750"/></g>
+    <g stroke="#ef7525" stroke-width="2" fill="none" marker-end="url(#back-arrow)"><path d="M 338 100 V 74 H 176 V 100"/><path d="M 580 100 V 74 H 418 V 100"/><path d="M 822 100 V 74 H 660 V 100"/></g>
+    <path d="M 862 220 V 250 H 136 V 220" stroke="#1950e8" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+    <rect x="370" y="238" width="260" height="24" rx="12" fill="#fff8ed"/>
+    <text x="500" y="255" text-anchor="middle" fill="#1950e8" font-size="14" font-weight="700">依据试玩和反馈反复迭代</text>
+    <rect x="30" y="286" width="938" height="35" rx="7" fill="#eaf0ff"/>
+    <text x="499" y="309" text-anchor="middle" font-size="14" fill="#244284">项目管理串联全程　·　概览　/　策划　/　美术　/　技术　/　验证</text>
+  </g>
+</svg>
