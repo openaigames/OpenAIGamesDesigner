@@ -1,5 +1,8 @@
 """Record and link checks do not execute commands or infer quality."""
 from pathlib import Path
+import contextlib
+import io
+import json
 import sys
 import tempfile
 import unittest
@@ -9,6 +12,25 @@ import validate_records as records
 
 
 class RecordTests(unittest.TestCase):
+    def test_nonempty_summaries_do_not_claim_document_content_validation(self):
+        # Structurally valid links and summaries cannot establish adequate design facts.
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp).resolve()
+            for name in records.PROJECT_ENTRIES:
+                (root / name).write_text("# 摘要\n已完成。\n", encoding="utf-8")
+            management = root / records.PROJECT_ENTRIES[0]
+            management.write_text("\n".join(
+                f"[{name}](<{name}>)" for name in records.PROJECT_ENTRIES[1:]
+            ), encoding="utf-8")
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                result = records.main(["--project", str(root), "--layout", "--markdown"])
+            report = json.loads(output.getvalue())
+            self.assertEqual(result, 0)
+            self.assertEqual(report["errors"], [])
+            self.assertEqual(report["document_content_validation"], "not_performed")
+            self.assertEqual(report["quality_validation"], "not_performed")
+
     def test_schema_rejects_bad_types_missing_fields_and_unknown_keywords(self):
         self.assertTrue(records.contract("project", {"schema_version": True, "engine": "godot", "engine_root": "."}))
         self.assertTrue(records.contract("project", {"schema_version": 1, "engine": "unknown", "engine_root": "."}))

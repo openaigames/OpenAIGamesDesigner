@@ -24,6 +24,7 @@
     "provider": {
       "enum": [
         "hunyuan3d",
+        "tripo",
         "image",
         "audio",
         "blender"

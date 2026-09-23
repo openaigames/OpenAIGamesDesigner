@@ -7,7 +7,7 @@
 面向独立开发者与小团队，围绕同一个可持续编辑的游戏工程，
 从新想法走向原型、垂直切片与持续迭代。
 
-[快速开始](#快速开始) · [开发流程](#开发流程) · [引擎与工具](#引擎与工具) · [项目文件](#项目文件)
+[快速开始](#快速开始) · [开发流程](#开发流程) · [免费游戏素材库](#免费游戏素材库) · [引擎与工具](#引擎与工具) · [项目文件](#项目文件)
 
 </div>
 
@@ -40,7 +40,7 @@
 
 ![开发流程：确定方向、机制原型、打磨垂直切片、持续制作与交付；相邻阶段均可退回前一步修改](.github/assets/workflow-overview.svg)
 
-可以从新想法开始，也可以直接进入已有项目的一次修改。项目管理串联**概览、策划、美术、技术与验证**，按本轮任务调用专业方法。
+可以从新想法开始，也可以直接进入已有项目的一次修改。项目管理串联**概览、策划、美术、技术与验证**，按当前任务调用专业方法。
 
 重要创作取舍由你决定，AI 在已确定的范围内推进。设计、工程改动和实际验证分别记录，后续对话可以沿着项目文件继续工作。
 
@@ -62,7 +62,7 @@
 
 ## 快速开始
 
-当前安装与使用说明面向 **Codex**。准备 Python 3.10+ 运行工具；实际制作时，再接入项目需要的引擎和资产工具。Claude Code 等其他 Agent 的安装与验证留待后续补充。
+本指南提供 **Codex** 的安装与使用方法。准备 Python 3.10+ 运行工具；实际制作时，再接入项目需要的引擎和资产工具。
 
 先查 [按功能配置环境](adapters/environment-setup.md)：列出需要安装什么、在电脑 / 引擎 / AI 助手的哪里配置，以及怎样确认可用。只讨论和维护设计文档时无需先安装引擎。
 
@@ -111,9 +111,35 @@ Codex 个人安装：将生成包中的六个完整 Skill 目录放入 `~/.agent
 先讨论规则和对现有系统的影响，再推进实现。
 ```
 
-不必指定内部文档流程或逐个调用 Skill。助手根据资料澄清关键未知，在相关文件中保存决定，并按你的目标继续工作。
+直接描述目标即可。助手根据资料澄清关键未知，选择适用的 Skill，在项目文件中保存决定并继续工作。
 
 [完整使用说明 →](tools/README.md)
+
+## 免费游戏素材库
+
+**按类型查找素材，按下载条件选择来源。** 素材库覆盖 2D、3D、动作、VFX、音频、字体与引擎模块，提供作者来源、免费范围、许可依据、账号要求及文件下载入口，帮助助手选材、获取并登记到游戏项目。Moodboard 参考图另按图板规则筛选。
+
+| 模型可直接下载 · 无需登录 | 需要登录或额外操作 |
+| --- | --- |
+| [Kenney](https://kenney.nl/assets) — 2D、3D、UI、材质、VFX、音频<br>[Poly Haven](https://polyhaven.com/) — 3D、材质、HDRI | [Quaternius](https://quaternius.com/) — 按条目判断登录；有额外流程<br>[itch.io free game assets](https://itch.io/game-assets/free) — 按条目判断登录；有额外流程 |
+| [ambientCG](https://ambientcg.com/) — 3D、材质、HDRI<br>[OpenGameArt](https://opengameart.org/) — 2D、3D、UI、材质、VFX、动画、音频、字体 | [Mixamo](https://www.mixamo.com/) — 需登录<br>[Fab](https://www.fab.com/) — 按条目判断登录；有额外流程 |
+| [Godot Asset Library](https://godotengine.org/asset-library/asset) — 模块、VFX、UI<br>[KayKit](https://kaylousberg.com/game-assets) — 3D、动画 | [Unity Asset Store](https://assetstore.unity.com/) — 需登录<br>[Freesound](https://freesound.org/) — 需登录 |
+| [Game-icons.net](https://game-icons.net/) — 2D、UI<br>[Google Fonts](https://fonts.google.com/) — 字体 | [CraftPix Freebies](https://craftpix.net/freebies/) — 需登录<br>[Blendkit（原 BlenderKit）](https://www.blendkit.com/) — 按条目判断登录；有额外流程 |
+| [Lucide](https://lucide.dev/icons/) — UI<br>[Effekseer Sample Effects](https://effekseer.github.io/en/contribute.html) — VFX | — |
+| [TextureCan](https://www.texturecan.com/) — 材质、3D<br>[Incompetech](https://incompetech.com/music/royalty-free/music.html) — 音频 | — |
+
+下载方式按具体素材和文件格式区分。例如 Fab 部分免费文件可匿名下载，但需要接受 EULA 并选择格式；加入个人库则需要登录。免登录栏提供可直接获取的文件示例，使用其他素材或版本时仍需核对其下载条件、许可和引擎兼容性。
+
+[查看完整合集、文件下载地址与登录步骤 →](adapters/assets/asset-sources.md) · [机器可读素材目录](adapters/assets/sources.json)
+
+```sh
+# 查找可免登录下载的特效来源
+python tools/asset_library.py sources --kind vfx --access direct --query "magic impact"
+# 查看确实需要账号的动画来源
+python tools/asset_library.py sources --kind animation --login required
+```
+
+目录查询只准备检索路线；选定素材后，助手继续核实当前文件和许可，再使用统一下载与登记工具保存到游戏项目。合集不限制从其他来源找素材，也不限制自制、修改或已授权生成。
 
 ## 引擎与工具
 
@@ -127,7 +153,7 @@ Codex 个人安装：将生成包中的六个完整 Skill 目录放入 `~/.agent
 | **Unity** | [adapters/engines/unity/README.md](adapters/engines/unity/README.md) |
 | **Unreal Engine** | [adapters/engines/unreal/README.md](adapters/engines/unreal/README.md) |
 
-资产制作可配置图像、3D、音频与 Blender 的本地命令；数值协作支持已绑定 JSON 配置与 CSV / Excel 数值页之间的交换。
+资产制作支持 [Tripo / Hunyuan3D API](adapters/assets/generation-api.md)（[本机密钥设置页](adapters/assets/local-settings.md)）、[免费素材检索与登记](adapters/assets/asset-sources.md)，以及图像、音频与 Blender 的本地命令；数值协作支持已绑定 JSON 配置与 CSV / Excel 数值页之间的交换。
 
 Unity 与 Unreal 分别提供工程创建、场景与组件编辑、资源导入、角色动画配置及自动操作入口，通过会话记录关联检查点和中断恢复。编辑器操作也可使用宿主已有的 MCP，具体支持范围与依赖见各引擎说明。
 
@@ -156,7 +182,7 @@ OpenAIGamesDesigner/
 │   │   ├── unreal/                 # UE 运行、制作驱动与 Python 辅助工具
 │   │   ├── threejs/                # 网页 3D
 │   │   └── phaser/                 # 网页 2D
-│   ├── assets/                     # 图像、3D 与音频的可配置本地命令
+│   ├── assets/                     # 生成 API、素材检索下载与本地处理
 │   └── processing/                 # Blender 等资产处理接入
 ├── schemas/                        # 项目、运行、引擎会话、资产任务与产物记录约定
 ├── tests/                          # 自动检查、行为场景与联调样例
@@ -185,7 +211,7 @@ MyGame/
 └── builds/                     # 构建产物
 ```
 
-初次立项保存已知信息，未确定的记录为待讨论。后续只修改本轮受影响的专业内容，关联变更汇总到项目管理；定位发生变化时再更新概览。
+初次立项保存已知信息，未确定的记录为待讨论。后续只修改当前任务涉及的专业内容，关联变更汇总到项目管理；定位发生变化时再更新概览。
 
 具体资产、来源、许可与交付进度由美术记录或现有资产清单统一维护，概览只保留影响定位的制作策略摘要。
 

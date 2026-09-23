@@ -1,0 +1,779 @@
+{
+  "version": 2,
+  "checked_at": "2026-09-23",
+  "sources": [
+    {
+      "id": "kenney",
+      "name": "Kenney",
+      "url": "https://kenney.nl/assets",
+      "domain": "kenney.nl",
+      "kinds": [
+        "2d",
+        "3d",
+        "ui",
+        "texture",
+        "vfx",
+        "audio"
+      ],
+      "access": "browser_or_direct_link",
+      "free_scope": "单独资源包与付费合集分别核实",
+      "license_hint": "查看具体包的许可文件",
+      "notes": "适合统一风格的原型素材；VFX 分类也可能是光照贴图而非粒子系统。",
+      "download": {
+        "mode": "direct",
+        "login": "none",
+        "method": "页面的 Continue without donating 链接提供 ZIP。",
+        "user_step": "无需账号；宿主需允许公共 HTTPS 下载。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "sample_download_passed",
+        "sample_page": "https://kenney.nl/assets/particle-pack",
+        "sample_title": "Particle Pack",
+        "formats": "PNG / ZIP",
+        "files": [
+          {
+            "name": "kenney-particles.zip",
+            "url": "https://kenney.nl/media/pages/assets/particle-pack/f8fe0f8cb8-1677578741/kenney_particle-pack.zip",
+            "bytes": 15001764,
+            "sha256": "b631d4b07f7002549fdcf155f01141ad482f79f3440e4e301eed49ce5f1d8958"
+          }
+        ],
+        "scope": "匿名完整 GET 样例并检查文件结构；仅代表列出文件的获取能力，未验证引擎导入、播放或全站资源。"
+      },
+      "evidence_urls": [
+        "https://kenney.nl/assets/particle-pack",
+        "https://kenney.nl/support"
+      ]
+    },
+    {
+      "id": "polyhaven",
+      "name": "Poly Haven",
+      "url": "https://polyhaven.com/",
+      "domain": "polyhaven.com",
+      "kinds": [
+        "3d",
+        "texture",
+        "hdri"
+      ],
+      "access": "api_or_browser",
+      "free_scope": "公开 CC0 资产与公共 API 免费；使用 API 时按官方要求标明 Poly Haven 来源",
+      "license_hint": "公开资产 CC0，保留资源页面和许可依据",
+      "notes": "写实模型、PBR 和环境光；API 无需账号或密钥，合理缓存和限流，使用前复核当前 API 条款。",
+      "download": {
+        "mode": "direct",
+        "login": "none",
+        "method": "公开 API 返回文件变体与依赖；示例为单张 Diffuse 通道图，完整材质需按用途获取其他通道。",
+        "user_step": "无需账号；宿主需允许公共 HTTPS 下载。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "sample_download_passed",
+        "sample_page": "https://polyhaven.com/a/aerial_rocks_02",
+        "sample_title": "aerial_rocks_02 / Diffuse 1K",
+        "formats": "JPG",
+        "files": [
+          {
+            "name": "rocks.jpg",
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_rocks_02/aerial_rocks_02_diff_1k.jpg",
+            "bytes": 785923,
+            "sha256": "708373b2af7fd07ac8de1500556006aaf904c41a99985a849cacc78874f38eac"
+          }
+        ],
+        "scope": "匿名完整 GET 样例并检查文件结构；仅代表列出文件的获取能力，未验证引擎导入、播放或全站资源。"
+      },
+      "evidence_urls": [
+        "https://polyhaven.com/a/aerial_rocks_02",
+        "https://polyhaven.com/license",
+        "https://polyhaven.com/our-api"
+      ]
+    },
+    {
+      "id": "ambientcg",
+      "name": "ambientCG",
+      "url": "https://ambientcg.com/",
+      "domain": "ambientcg.com",
+      "kinds": [
+        "3d",
+        "texture",
+        "hdri"
+      ],
+      "access": "browser_or_direct_link",
+      "free_scope": "公开资产免费，支持者权益另列",
+      "license_hint": "公开资产 CC0，查看 https://docs.ambientcg.com/license/",
+      "notes": "注意贴图通道与目标引擎材质的对应。",
+      "download": {
+        "mode": "direct",
+        "login": "none",
+        "method": "素材页公开 get?file= 下载入口，按分辨率和通道取包。",
+        "user_step": "无需账号；宿主需允许公共 HTTPS 下载。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "sample_download_passed",
+        "sample_page": "https://ambientcg.com/view?id=Wood051",
+        "sample_title": "Wood051 / 1K-JPG",
+        "formats": "PBR JPG/PNG / ZIP",
+        "files": [
+          {
+            "name": "ambient-wood.zip",
+            "url": "https://ambientcg.com/get?file=Wood051_1K-JPG.zip",
+            "bytes": 6712631,
+            "sha256": "debf3d60f69a09c30613dc95a94da49c8116160ab8a29f77ac8e32cc33f1a1c3"
+          }
+        ],
+        "scope": "匿名完整 GET 样例并检查文件结构；仅代表列出文件的获取能力，未验证引擎导入、播放或全站资源。"
+      },
+      "evidence_urls": [
+        "https://ambientcg.com/view?id=Wood051",
+        "https://docs.ambientcg.com/license/"
+      ]
+    },
+    {
+      "id": "quaternius",
+      "name": "Quaternius",
+      "url": "https://quaternius.com/",
+      "domain": "quaternius.com",
+      "kinds": [
+        "3d",
+        "animation"
+      ],
+      "access": "browser_or_direct_link",
+      "free_scope": "选择免费版本，合集和扩展版本分别核实",
+      "license_hint": "逐包查看下载页及随包许可",
+      "notes": "角色、环境、动画库；检查骨架与根运动，不能仅凭同为 FBX 假定兼容。",
+      "download": {
+        "mode": "user-step",
+        "login": "conditional",
+        "method": "免费包由作者页面转到 Google Drive / itch.io 等，入口随包不同。",
+        "user_step": "打开作者给出的包链接；如出现登录或领取由用户完成，再取得原始包。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "download_not_tested",
+        "sample_page": "https://quaternius.com/packs/survival.html",
+        "scope": "已查看 Survival 免费包入口，转向公开 Drive 文件夹；未完成整包下载。",
+        "files": []
+      },
+      "evidence_urls": [
+        "https://quaternius.com/packs/survival.html",
+        "https://quaternius.com/faq.html"
+      ]
+    },
+    {
+      "id": "opengameart",
+      "name": "OpenGameArt",
+      "url": "https://opengameart.org/",
+      "domain": "opengameart.org",
+      "kinds": [
+        "2d",
+        "3d",
+        "ui",
+        "texture",
+        "vfx",
+        "animation",
+        "audio",
+        "font"
+      ],
+      "access": "browser_or_direct_link",
+      "free_scope": "逐条目核实下载内容",
+      "license_hint": "许可多样，逐资产记录署名和适用条件",
+      "notes": "检索特效时区分序列帧与引擎原生效果。",
+      "download": {
+        "mode": "direct",
+        "login": "none",
+        "method": "条目 Files 提供附件直链；本样例 CC0，不代表其他条目许可。",
+        "user_step": "无需账号；宿主需允许公共 HTTPS 下载。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "sample_download_passed",
+        "sample_page": "https://opengameart.org/content/80-cc0-rpg-sfx",
+        "sample_title": "80 CC0 RPG SFX",
+        "formats": "OGG / ZIP",
+        "files": [
+          {
+            "name": "rpg-sfx.zip",
+            "url": "https://opengameart.org/sites/default/files/80-CC0-RPG-SFX_0.zip",
+            "bytes": 1845114,
+            "sha256": "1c2f06ff4e8563b5b8b745b23cf213c1474142a69bb82bd8f5e10d9b3f7a7bbd"
+          }
+        ],
+        "scope": "匿名完整 GET 样例并检查文件结构；仅代表列出文件的获取能力，未验证引擎导入、播放或全站资源。"
+      },
+      "evidence_urls": [
+        "https://opengameart.org/content/80-cc0-rpg-sfx",
+        "https://opengameart.org/content/80-cc0-rpg-sfx"
+      ]
+    },
+    {
+      "id": "itch",
+      "name": "itch.io free game assets",
+      "url": "https://itch.io/game-assets/free",
+      "domain": "itch.io",
+      "kinds": [
+        "2d",
+        "3d",
+        "ui",
+        "texture",
+        "vfx",
+        "animation",
+        "audio",
+        "font",
+        "module"
+      ],
+      "access": "browser_may_require_login",
+      "free_scope": "免费筛选或允许零价下载的版本；完整版可能收费",
+      "license_hint": "作者页面和包内条款为准",
+      "notes": "通过真实下载流程取得文件；付费、捐赠和自动安装不是下载目录的默认操作。",
+      "download": {
+        "mode": "user-step",
+        "login": "conditional",
+        "method": "免费/零价包可能需跳过捐赠、进入下载页后取得会话链接；不一律要求账号。",
+        "user_step": "按具体包完成浏览器下载；仅在条目要求账号或领取时请用户操作。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "download_not_tested",
+        "sample_page": "https://itch.io/docs/creators/pricing",
+        "scope": "核对官方零价与分文件定价说明；未实测具体包。",
+        "files": []
+      },
+      "evidence_urls": [
+        "https://itch.io/docs/creators/pricing",
+        "https://itch.io/docs/creators/pricing"
+      ]
+    },
+    {
+      "id": "mixamo",
+      "name": "Mixamo",
+      "url": "https://www.mixamo.com/",
+      "domain": "mixamo.com",
+      "kinds": [
+        "3d",
+        "animation"
+      ],
+      "access": "browser_login",
+      "free_scope": "使用 Adobe 账号，按当前服务条件获取",
+      "license_hint": "https://helpx.adobe.com/creative-cloud/faq/mixamo-faq.html",
+      "notes": "动画与自动绑定服务；下载的是动作资源，不是完整动作控制框架。 官方 FAQ 列出中国国家代码及 Enterprise/Federated ID 限制，不能承诺所有账号可用。",
+      "download": {
+        "mode": "user-step",
+        "login": "required",
+        "method": "Adobe ID 登录后选角色、动作和导出格式。",
+        "user_step": "用户登录可用的 Adobe ID；保留所选模型/骨架、动作与导出设置。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "download_not_tested",
+        "sample_page": "https://helpx.adobe.com/creative-cloud/faq/mixamo-faq.html",
+        "scope": "官方说明核验，未登录或实测下载；存在账号类型和地区限制。",
+        "files": []
+      },
+      "evidence_urls": [
+        "https://helpx.adobe.com/creative-cloud/faq/mixamo-faq.html",
+        "https://helpx.adobe.com/creative-cloud/faq/mixamo-faq.html"
+      ]
+    },
+    {
+      "id": "fab",
+      "name": "Fab",
+      "url": "https://www.fab.com/",
+      "domain": "fab.com",
+      "kinds": [
+        "2d",
+        "3d",
+        "ui",
+        "texture",
+        "vfx",
+        "animation",
+        "audio",
+        "module"
+      ],
+      "access": "browser_or_launcher_may_require_login",
+      "free_scope": "仅选择当前免费且可获取的条目；限时领取状态另记",
+      "license_hint": "记录每个条目的许可、价格与领取版本",
+      "notes": "包含 UE/Unity 内容和代码模块；下载后按引擎、版本、插件依赖评估，不能通用解包即视为导入。",
+      "download": {
+        "mode": "user-step",
+        "login": "conditional",
+        "method": "部分免费文件可匿名接受 EULA 后下载；加入库需登录，UE/UEFN 内容走 Launcher/集成。",
+        "user_step": "按所选文件完成 EULA/领取流程；需要个人库或引擎专用格式时用户登录 Epic 账号。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "download_not_tested",
+        "sample_page": "https://dev.epicgames.com/documentation/en-us/fab/purchasing-and-downloading-assets-in-fab",
+        "scope": "官方说明核验；未把支持匿名的条目当成已验证 HTTPS 直链。",
+        "files": []
+      },
+      "evidence_urls": [
+        "https://dev.epicgames.com/documentation/en-us/fab/purchasing-and-downloading-assets-in-fab",
+        "https://www.fab.com/eula"
+      ]
+    },
+    {
+      "id": "unity-store",
+      "name": "Unity Asset Store",
+      "url": "https://assetstore.unity.com/",
+      "domain": "assetstore.unity.com",
+      "kinds": [
+        "2d",
+        "3d",
+        "ui",
+        "texture",
+        "vfx",
+        "animation",
+        "audio",
+        "module"
+      ],
+      "access": "browser_or_editor_login",
+      "free_scope": "筛选免费条目",
+      "license_hint": "查看具体资源 EULA 与附加条款",
+      "notes": "核对 Unity 版本与 Built-in/URP/HDRP；动作控制器和动画文件分别登记。",
+      "download": {
+        "mode": "user-step",
+        "login": "required",
+        "method": "Unity ID 领取免费包，再由相同账号在 Package Manager 获取。",
+        "user_step": "用户登录、Add to My Assets，然后在目标 Unity 工程下载；先核对版本与管线。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "download_not_tested",
+        "sample_page": "https://docs.unity.com/en-us/asset-store/downloads/purchase-asset-packages",
+        "scope": "官方说明核验，未登录、领取或在编辑器下载。",
+        "files": []
+      },
+      "evidence_urls": [
+        "https://docs.unity.com/en-us/asset-store/downloads/purchase-asset-packages",
+        "https://assetstore.unity.com/"
+      ]
+    },
+    {
+      "id": "godot-library",
+      "name": "Godot Asset Library",
+      "url": "https://godotengine.org/asset-library/asset",
+      "domain": "godotengine.org",
+      "kinds": [
+        "module",
+        "vfx",
+        "ui"
+      ],
+      "access": "browser_or_editor",
+      "free_scope": "开源插件、工具和示例，逐条目核实",
+      "license_hint": "跟随源仓库具体版本的 LICENSE",
+      "notes": "主要用于脚本、着色器、控制模块；不是通用模型素材库，兼容性看目标 Godot 版本。",
+      "download": {
+        "mode": "direct",
+        "login": "none",
+        "method": "官方条目 API 给出源仓库和固定提交 ZIP；需核对具体 Godot 版本。",
+        "user_step": "无需账号；宿主需允许公共 HTTPS 下载。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "sample_download_passed",
+        "sample_page": "https://godotengine.org/asset-library/asset/5421",
+        "sample_title": "Basic FPS Controller for Godot 4 / 1.0.0",
+        "formats": "GDScript / TSCN / ZIP",
+        "files": [
+          {
+            "name": "godot-fps.zip",
+            "url": "https://github.com/ar-bh/basic-fps-controller-godot/archive/7f50a91a7063106047a06bd8d6c200cdda80f3b2.zip",
+            "bytes": 1112042,
+            "sha256": "829325d83c9af3768a19ad4e518cf3660dcb6cd497648bf5c43034478567835c"
+          }
+        ],
+        "scope": "匿名完整 GET 样例并检查文件结构；仅代表列出文件的获取能力，未验证引擎导入、播放或全站资源。"
+      },
+      "evidence_urls": [
+        "https://godotengine.org/asset-library/asset/5421",
+        "https://github.com/ar-bh/basic-fps-controller-godot"
+      ]
+    },
+    {
+      "id": "kaykit",
+      "name": "KayKit",
+      "url": "https://kaylousberg.com/game-assets",
+      "domain": "kaylousberg.com",
+      "kinds": [
+        "3d",
+        "animation"
+      ],
+      "access": "browser_or_direct_link",
+      "free_scope": "作者公开的免费包；付费 Extras/Source 版本不包含在内",
+      "license_hint": "样例 CC0；逐包保留 LICENSE",
+      "notes": "风格化低多边形套件；官方 GitHub 可直接取文件，角色与动画按具体包核对。",
+      "download": {
+        "mode": "direct",
+        "login": "none",
+        "method": "作者官方仓库 Raw 文件；glTF 模型需同时获取引用的 BIN 和纹理，并保持相对路径。",
+        "user_step": "无需账号；宿主需允许公共 HTTPS 下载。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "sample_download_passed",
+        "sample_page": "https://github.com/KayKit-Game-Assets/KayKit-Prototype-Bits-1.0",
+        "sample_title": "Prototype Bits / Barrel_A",
+        "formats": "glTF + BIN + PNG",
+        "files": [
+          {
+            "name": "Barrel_A.gltf",
+            "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Prototype-Bits-1.0/main/addons/kaykit_prototype_bits/Assets/gltf/Barrel_A.gltf",
+            "bytes": 2979,
+            "sha256": "7fff2cb72cc440f8b9e251878e0687daf48ddc64ee3180399a3130892d2687a2"
+          },
+          {
+            "name": "Barrel_A.bin",
+            "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Prototype-Bits-1.0/main/addons/kaykit_prototype_bits/Assets/gltf/Barrel_A.bin",
+            "bytes": 14656,
+            "sha256": "8b0ace6fac6c67269a75b6196b5f60248af4f250ec03b763ef659efee86b704b"
+          },
+          {
+            "name": "prototypebits_texture.png",
+            "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Prototype-Bits-1.0/main/addons/kaykit_prototype_bits/Assets/gltf/prototypebits_texture.png",
+            "bytes": 29696,
+            "sha256": "dec912e8cc8f8d09c29be48dda0daad90e653939c4e6fc799309ec1ae7a4cbcd"
+          }
+        ],
+        "scope": "匿名完整 GET 样例并检查文件结构；仅代表列出文件的获取能力，未验证引擎导入、播放或全站资源。"
+      },
+      "evidence_urls": [
+        "https://github.com/KayKit-Game-Assets/KayKit-Prototype-Bits-1.0",
+        "https://github.com/KayKit-Game-Assets/KayKit-Prototype-Bits-1.0/blob/main/LICENSE.txt"
+      ]
+    },
+    {
+      "id": "game-icons",
+      "name": "Game-icons.net",
+      "url": "https://game-icons.net/",
+      "domain": "game-icons.net",
+      "kinds": [
+        "2d",
+        "ui"
+      ],
+      "access": "browser_or_direct_link",
+      "free_scope": "公开 SVG/PNG 图标",
+      "license_hint": "以条目及包内许可为准，主要为 CC BY 3.0，需记录各图标作者",
+      "notes": "适合技能、物品和状态图标；统一轮廓风格，可编辑 SVG，保留署名。",
+      "download": {
+        "mode": "direct",
+        "login": "none",
+        "method": "首页 Download them all 的 SVG 压缩包；也可按图标取文件。",
+        "user_step": "无需账号；宿主需允许公共 HTTPS 下载。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "sample_download_passed",
+        "sample_page": "https://game-icons.net/",
+        "sample_title": "White on black SVG archive",
+        "formats": "SVG / ZIP",
+        "files": [
+          {
+            "name": "game-icons.zip",
+            "url": "https://game-icons.net/archives/ffffff/000000/game-icons.net.svg.zip",
+            "bytes": 4186337,
+            "sha256": "3cab684ba7eade161d288d888dbefb69087c579ec292440d191f2a908ffa2770"
+          }
+        ],
+        "scope": "匿名完整 GET 样例并检查文件结构；仅代表列出文件的获取能力，未验证引擎导入、播放或全站资源。"
+      },
+      "evidence_urls": [
+        "https://game-icons.net/",
+        "https://game-icons.net/faq.html"
+      ]
+    },
+    {
+      "id": "google-fonts",
+      "name": "Google Fonts",
+      "url": "https://fonts.google.com/",
+      "domain": "fonts.google.com",
+      "kinds": [
+        "font"
+      ],
+      "access": "browser_or_direct_link",
+      "free_scope": "官方字体仓库公开字体",
+      "license_hint": "逐字体查看 OFL/Apache 等许可；样例 Abel 为 OFL 1.1",
+      "notes": "按语言字形覆盖和引擎字体支持选择；只下载需要的字体家族及其许可，不取整个大仓库。",
+      "download": {
+        "mode": "direct",
+        "login": "none",
+        "method": "官方仓库字体文件 Raw 下载；同目录保存 OFL.txt。",
+        "user_step": "无需账号；宿主需允许公共 HTTPS 下载。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "sample_download_passed",
+        "sample_page": "https://github.com/google/fonts/tree/main/ofl/abel",
+        "sample_title": "Abel Regular",
+        "formats": "TTF",
+        "files": [
+          {
+            "name": "Abel-Regular.ttf",
+            "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/abel/Abel-Regular.ttf",
+            "bytes": 35220,
+            "sha256": "8809dcad25318225052f88333e208c5aad4adcb7b2c934c135735ec19aa410b4"
+          }
+        ],
+        "scope": "匿名完整 GET 样例并检查文件结构；仅代表列出文件的获取能力，未验证引擎导入、播放或全站资源。"
+      },
+      "evidence_urls": [
+        "https://github.com/google/fonts/tree/main/ofl/abel",
+        "https://github.com/google/fonts/blob/main/ofl/abel/OFL.txt"
+      ]
+    },
+    {
+      "id": "lucide",
+      "name": "Lucide",
+      "url": "https://lucide.dev/icons/",
+      "domain": "lucide.dev",
+      "kinds": [
+        "ui"
+      ],
+      "access": "browser_or_direct_link",
+      "free_scope": "公开 SVG 图标",
+      "license_hint": "ISC；部分源自 Feather 的图标为 MIT，保留版权及许可声明",
+      "notes": "适合菜单、设置和通用操作图标；不能当作角色或场景美术包。",
+      "download": {
+        "mode": "direct",
+        "login": "none",
+        "method": "官方 GitHub icons/ 下的 Raw SVG 或官网单图下载。",
+        "user_step": "无需账号；宿主需允许公共 HTTPS 下载。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "sample_download_passed",
+        "sample_page": "https://lucide.dev/icons/swords",
+        "sample_title": "swords",
+        "formats": "SVG",
+        "files": [
+          {
+            "name": "swords.svg",
+            "url": "https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/swords.svg",
+            "bytes": 556,
+            "sha256": "2dcf7d618baa1fbf21064bc99eb754b8b6d589f444781975a6ea0008be4e2e82"
+          }
+        ],
+        "scope": "匿名完整 GET 样例并检查文件结构；仅代表列出文件的获取能力，未验证引擎导入、播放或全站资源。"
+      },
+      "evidence_urls": [
+        "https://lucide.dev/icons/swords",
+        "https://lucide.dev/license"
+      ]
+    },
+    {
+      "id": "effekseer",
+      "name": "Effekseer Sample Effects",
+      "url": "https://effekseer.github.io/en/contribute.html",
+      "domain": "effekseer.github.io",
+      "kinds": [
+        "vfx"
+      ],
+      "access": "browser_or_direct_link",
+      "free_scope": "公开示例效果包",
+      "license_hint": "多数 CC0；旧包另有许可，按页面分区及包内说明核对",
+      "notes": "可编辑粒子效果与贴图；样例为 .efkproj，需兼容版本的 Effekseer 与目标引擎运行库或导出流程。",
+      "download": {
+        "mode": "direct",
+        "login": "none",
+        "method": "官方样例页的 ZIP 包，不是工具安装程序。",
+        "user_step": "无需账号；宿主需允许公共 HTTPS 下载。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "sample_download_passed",
+        "sample_page": "https://effekseer.github.io/en/contributes/Effekseer01/index.html",
+        "sample_title": "Effekseer01",
+        "formats": "EFKPROJ / textures / ZIP",
+        "files": [
+          {
+            "name": "effekseer-samples.zip",
+            "url": "https://effekseer.github.io/contributes/Effekseer01.zip",
+            "bytes": 397310,
+            "sha256": "1557697fcaeb3eaa89d62d7fc884e838513a9bd4e18a1aeaf16209ff6e0bd751"
+          }
+        ],
+        "scope": "匿名完整 GET 样例并检查文件结构；仅代表列出文件的获取能力，未验证引擎导入、播放或全站资源。"
+      },
+      "evidence_urls": [
+        "https://effekseer.github.io/en/contributes/Effekseer01/index.html",
+        "https://effekseer.github.io/en/contribute.html"
+      ]
+    },
+    {
+      "id": "texturecan",
+      "name": "TextureCan",
+      "url": "https://www.texturecan.com/",
+      "domain": "www.texturecan.com",
+      "kinds": [
+        "texture",
+        "3d"
+      ],
+      "access": "browser_or_direct_link",
+      "free_scope": "公开 PBR 贴图与模型",
+      "license_hint": "公开资产 CC0，保留具体页面及 Terms",
+      "notes": "PBR 通道完整；注意 Normal DirectX/OpenGL 约定及可选 SBSAR 所需工具。",
+      "download": {
+        "mode": "direct",
+        "login": "none",
+        "method": "详情页公开按分辨率列出的下载 ZIP。",
+        "user_step": "无需账号；宿主需允许公共 HTTPS 下载。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "sample_download_passed",
+        "sample_page": "https://www.texturecan.com/details/658/",
+        "sample_title": "Paper 0037 / 1K",
+        "formats": "JPG/PNG / ZIP",
+        "files": [
+          {
+            "name": "paper.zip",
+            "url": "https://www.texturecan.com/downloads/paper_0037/paper_0037_1k_kV5kti.zip",
+            "bytes": 634565,
+            "sha256": "0ac58789b3116624e15093471533a186613f61f2d4b954cd6b22c12bbd0b0c8b"
+          }
+        ],
+        "scope": "匿名完整 GET 样例并检查文件结构；仅代表列出文件的获取能力，未验证引擎导入、播放或全站资源。"
+      },
+      "evidence_urls": [
+        "https://www.texturecan.com/details/658/",
+        "https://www.texturecan.com/terms/"
+      ]
+    },
+    {
+      "id": "incompetech",
+      "name": "Incompetech",
+      "url": "https://incompetech.com/music/royalty-free/music.html",
+      "domain": "incompetech.com",
+      "kinds": [
+        "audio"
+      ],
+      "access": "browser_or_direct_link",
+      "free_scope": "单曲免费署名路线；无署名许可和整库下载可能收费",
+      "license_hint": "免费路线按曲目 CC BY 4.0 署名，保留曲名、作者和许可链接",
+      "notes": "Kevin MacLeod 的配乐；记录循环点与裁剪改动，不能假定每首无缝循环。",
+      "download": {
+        "mode": "direct",
+        "login": "none",
+        "method": "曲目页读取公开 pieces.json 后提供 MP3 Download；使用当前文件名，不猜曲名路径。",
+        "user_step": "无需账号；宿主需允许公共 HTTPS 下载。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "sample_download_passed",
+        "sample_page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100377",
+        "sample_title": "Bright Wish",
+        "formats": "MP3",
+        "files": [
+          {
+            "name": "Bright Wish.mp3",
+            "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Bright%20Wish.mp3",
+            "bytes": 1720624,
+            "sha256": "1b0fa563ffad8f1d83bc4b308fe118096a4e25a5c818f67a167e933005216dd3"
+          }
+        ],
+        "scope": "匿名完整 GET 样例并检查文件结构；仅代表列出文件的获取能力，未验证引擎导入、播放或全站资源。"
+      },
+      "evidence_urls": [
+        "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100377",
+        "https://incompetech.com/music/royalty-free/licenses/"
+      ]
+    },
+    {
+      "id": "freesound",
+      "name": "Freesound",
+      "url": "https://freesound.org/",
+      "domain": "freesound.org",
+      "kinds": [
+        "audio"
+      ],
+      "access": "browser_login",
+      "free_scope": "公开音频按单项许可获取",
+      "license_hint": "CC0 / CC BY / CC BY-NC 等；非商业限制单独核实",
+      "notes": "环境、拟音与效果音；原文件需登录，试听不能替代下载原件或许可核查。",
+      "download": {
+        "mode": "user-step",
+        "login": "required",
+        "method": "注册账号登录后在音频详情页下载原文件。",
+        "user_step": "用户登录后下载选定文件；网页试听地址不能冒充原文件下载地址。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "download_not_tested",
+        "sample_page": "https://freesound.org/help/faq/",
+        "scope": "官方 FAQ 明确原文件下载需登录；未登录下载。",
+        "files": []
+      },
+      "evidence_urls": [
+        "https://freesound.org/help/faq/",
+        "https://freesound.org/help/faq/"
+      ]
+    },
+    {
+      "id": "craftpix",
+      "name": "CraftPix Freebies",
+      "url": "https://craftpix.net/freebies/",
+      "domain": "craftpix.net",
+      "kinds": [
+        "2d",
+        "ui",
+        "vfx",
+        "animation"
+      ],
+      "access": "browser_login",
+      "free_scope": "Freebies 内的免费版本；Premium/完整版另算",
+      "license_hint": "CraftPix File License，逐包核对；不是 CC0",
+      "notes": "成套精灵、Tileset、GUI 和图标；按包确认源文件、方向数与动作帧。",
+      "download": {
+        "mode": "user-step",
+        "login": "required",
+        "method": "免费条目需要注册或登录后下载；匿名访问样例下载入口会显示登录表单。",
+        "user_step": "用户免费注册/登录后下载 Freebies 选定版本。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "login_gate_observed",
+        "sample_page": "https://craftpix.net/freebies/free-kids-math-game-ui-kit-numbers-counting/",
+        "scope": "实际匿名访问该条目 download/115653/ 得到登录 HTML；未取得素材文件。",
+        "files": []
+      },
+      "evidence_urls": [
+        "https://craftpix.net/freebies/free-kids-math-game-ui-kit-numbers-counting/",
+        "https://craftpix.net/file-licenses/"
+      ]
+    },
+    {
+      "id": "blendkit",
+      "name": "Blendkit（原 BlenderKit）",
+      "url": "https://www.blendkit.com/",
+      "domain": "www.blendkit.com",
+      "kinds": [
+        "3d",
+        "texture",
+        "hdri",
+        "module"
+      ],
+      "access": "browser_or_addon_may_require_login",
+      "free_scope": "只选 Free 内容，Full Plan 和付费插件另列",
+      "license_hint": "逐项 CC0 或 Royalty Free；不可将 Royalty Free 素材作为素材包转售",
+      "notes": "Blender 模型、材质、HDRI 与插件；程序材质需烘焙/转换，下载插件不等于取得所选模型。",
+      "download": {
+        "mode": "user-step",
+        "login": "conditional",
+        "method": "通过官方集成取资产；官方说明免费插件可免登录，其他资产的账户要求按所选条目。",
+        "user_step": "准备对应集成并筛选 Free；所选模型等若要求账户则用户登录，再获取文件。"
+      },
+      "verification": {
+        "checked_at": "2026-09-23",
+        "status": "download_not_tested",
+        "sample_page": "https://www.blendkit.com/get-blender-add-ons/",
+        "scope": "官方文档说明；素材文件的下载与集成效果不在已验证范围内。",
+        "files": []
+      },
+      "evidence_urls": [
+        "https://www.blendkit.com/get-blender-add-ons/",
+        "https://www.blendkit.com/docs/licenses/"
+      ]
+    }
+  ],
+  "verification_policy": "direct 仅表示至少一个列出的样例匿名完整下载成功；站点不保证所有文件免费、同许可、可下载或适配。其余来源需浏览器、登录或专用工具，按条目复核。"
+}

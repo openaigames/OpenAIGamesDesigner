@@ -38,7 +38,9 @@
 | Unreal 工程制作 | 匹配的 UE；C++ 工程 / 源码插件另需匹配工具链和 SDK | Epic Games Launcher 或既有引擎安装；Windows 编译组件在 Visual Studio Installer 中配置 | 工程可打开；涉及 C++ 时实际构建通过；见 [UE 配置](engines/unreal/README.md#环境配置) |
 | AI 通过 MCP 操作编辑器 | 对应 MCP 服务及其依赖；提供方要求的引擎插件 | 引擎侧安装插件（若需要）＋本机服务环境＋AI 助手连接配置 | 工具可发现、目标工程正确、读写与保存重开通过；见 [MCP 三端配置](#mcp-三端配置) |
 | UE 动作/动画接入 | 本轮选定或授权选材的资源/模块，目标版本兼容 | 工程 Content 导入动画，第三方代码按提供方安装到项目；检查骨架、控制接口和依赖 | 动画预览、工程中播放、规则时序、取消/恢复与试玩分别验证；不限定某个动作包 |
-| 图像、3D、音频生成 | 用户选定的实际生成工具 / 服务及包装脚本 | 工具自己的环境；游戏项目 `.openaigame/asset-providers.json` | 先完成一次小任务，检查真实文件和日志；见 [资产接入](assets/README.md) |
+| Tripo / Hunyuan3D API 生成 | Python、网络、服务账户与凭据 | Tripo/混元 API Key 可在[本机设置页](assets/local-settings.md)保存；TC3 使用环境变量，项目可覆盖默认配置 | doctor 检查存在，再生成一个小任务；见 [API 配置](assets/generation-api.md) |
+| 免费素材检索与下载 | Python、网络；部分来源需要浏览器登录 | [素材目录](assets/asset-sources.md)；无需本地生成模型 | 实际搜索 → 获取文件 → verify → 导入检查 |
+| 其他图像、3D、音频生成 | 用户选定的实际生成工具 / 服务及包装脚本 | 工具自己的环境；游戏项目 `.openaigame/asset-providers.json` | 先完成一次小任务，检查真实文件和日志；见 [资产接入](assets/README.md) |
 | Blender 模型处理 | Blender 与适用的输入格式 / 依赖文件 | 本机安装 Blender；资产提供方配置填写其可执行路径 | 转换后重新打开检查模型、材质和动画；见 [资产处理说明](assets/README.md) |
 | 数值 CSV 往返 | Python、真实 JSON 主源与字段绑定 | 游戏项目中的数值绑定文件；CSV 可用表格软件编辑 | 导出 → 修改 → 比较 → 应用 → 引擎重载确认 |
 | 读取数值 Excel 表 | 上述环境，另加运行工具所用 Python 的 `openpyxl` | 在同一 Python 环境执行 `python -m pip install openpyxl` | 读取指定数值页并检查差异；见 [数值往返](../tools/README.md#数值表往返) |

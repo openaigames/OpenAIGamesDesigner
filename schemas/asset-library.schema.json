@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-library",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "asset_id",
+    "title",
+    "kind",
+    "method",
+    "source_url",
+    "license",
+    "status",
+    "files",
+    "license_evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "asset_id": {
+      "type": "string",
+      "pattern": "^AS[a-f0-9]{32}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "enum": [
+        "2d",
+        "3d",
+        "ui",
+        "texture",
+        "hdri",
+        "vfx",
+        "animation",
+        "audio",
+        "font",
+        "module"
+      ]
+    },
+    "method": {
+      "enum": [
+        "external",
+        "generated"
+      ]
+    },
+    "source_url": {
+      "type": "string"
+    },
+    "license": {
+      "type": "object",
+      "required": [
+        "name"
+      ]
+    },
+    "status": {
+      "enum": [
+        "acquiring",
+        "acquired",
+        "failed"
+      ]
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256",
+          "bytes"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "license_evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256",
+          "bytes"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    }
+  }
+}

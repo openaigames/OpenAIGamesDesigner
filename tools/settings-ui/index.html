@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>服务与密钥 · OpenAIGamesDesigner</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body>
+<header><a class="brand" href="/" aria-label="OpenAIGamesDesigner"><img class="mark" src="/logos/openaigamesdesigner.png" alt="" width="48" height="48">OpenAIGamesDesigner</a><span class="local"><i></i> 本机设置</span></header>
+<main>
+  <div class="eyebrow">YOUR CREATIVE TOOLKIT</div>
+  <h1>接好工具，<span>开始创作。</span></h1>
+  <p class="intro">在这里连接你的 3D 生成服务。配置一次，游戏项目随时使用。</p>
+  <div id="notice" role="status" aria-live="polite">正在连接本机设置…</div>
+  <section id="approval" class="approval" hidden aria-label="本次生成授权">
+    <div class="eyebrow">GENERATION REVIEW</div><h2>确认这一次生成</h2>
+    <p id="approval-summary"></p><pre id="approval-details"></pre>
+    <p class="charge-note">此操作会允许工具把下方请求发送给生成服务，可能消耗账户额度。当前没有实时费用报价，也不保证费用上限。</p>
+    <label class="consent"><input id="accept-charge" type="checkbox">我已查看请求，同意提交一次并承担服务可能收取的费用。</label>
+    <button id="approve" class="primary" type="button" disabled>同意这一次生成</button>
+    <p class="hint">授权有效期一小时，仅可使用一次。保存密钥不会自动授权；修改请求或账户后需重新确认。</p>
+  </section>
+  <section class="providers" aria-label="生成服务">
+    <article class="card" data-provider="tripo">
+      <div class="card-head"><img class="provider-logo" src="/logos/tripo.png" alt="Tripo AI Logo" width="52" height="52"><span class="badge">读取中</span></div>
+      <h2>Tripo AI</h2><p class="description">从描述或参考图生成 3D 模型。</p>
+      <form autocomplete="off"><label for="tripo-key">API Key</label><input id="tripo-key" name="key" type="password" autocomplete="new-password" spellcheck="false" placeholder="粘贴 Tripo API Key" maxlength="8192" required>
+        <p class="hint">在 Tripo 控制台的 API Keys 页面创建密钥，粘贴完整 API Key。</p>
+        <div class="actions"><button class="primary" type="submit" disabled>保存密钥</button><button class="remove" type="button" disabled>删除本机密钥</button></div>
+      </form><p class="provider-note"></p><a class="external" href="https://platform.tripo3d.ai/api-keys" target="_blank" rel="noreferrer">前往 Tripo 获取密钥 ↗</a>
+    </article>
+    <article class="card" data-provider="hunyuan3d">
+      <div class="card-head"><img class="provider-logo" src="/logos/hunyuan3d.png" alt="混元 3D Logo" width="52" height="52"><span class="badge">读取中</span></div>
+      <h2>混元 3D</h2><p class="description">使用腾讯提供的混元生 3D API Key。</p>
+      <form autocomplete="off"><label for="hunyuan-key">API Key</label><input id="hunyuan-key" name="key" type="password" autocomplete="new-password" spellcheck="false" placeholder="粘贴腾讯混元 API Key" maxlength="8192" required>
+        <p class="hint">填写腾讯的 OpenAI 兼容接口密钥，不是 OpenAI 官网的 Key；无需填写 auth 或 mode。</p>
+        <div class="actions"><button class="primary" type="submit" disabled>保存密钥</button><button class="remove" type="button" disabled>删除本机密钥</button></div>
+      </form><p class="provider-note"></p><a class="external" href="https://console.cloud.tencent.com/ai3d/start" target="_blank" rel="noreferrer">查看腾讯混元密钥入口 ↗</a>
+    </article>
+  </section>
+  <section class="how" aria-label="配置步骤"><div><span class="step">01</span><h3>获取服务密钥</h3><p>点击卡片中的官方入口，登录对应平台并创建 API Key。</p></div><div><span class="step">02</span><h3>粘贴并保存</h3><p>在上方对应卡片填写完整密钥，点击“保存密钥”。显示已保存后即可使用。</p></div><div><span class="step">03</span><h3>确认后再生成</h3><p>告诉助手要做什么；查看具体请求并亲自确认后，工具才提交生成。</p></div></section>
+  <section class="prompts" aria-label="自然语言使用示例"><h2>直接这样告诉助手</h2><p>密钥只填在上方输入框，无需发到聊天里。</p><h3>下次打开设置</h3><pre>打开 OpenAIGamesDesigner 的本机服务与密钥设置页面，我要配置 Tripo AI 和混元 3D。</pre><h3>保存后检查</h3><pre>检查 Tripo AI 和混元 3D 的本机配置是否已保存，只报告配置状态，不读取或展示密钥，不提交生成任务。</pre><h3>开始制作资产</h3><pre>用混元 3D 为当前游戏项目准备一个风格化木箱的生成任务。展示提示词和输入参数，打开生成确认页，等我确认后再提交。</pre><p class="hint">需要 Tripo 时，把示例中的“混元 3D”改为“Tripo AI”。“已保存”表示本机保存成功；实际接口权限和额度需另外验证。</p></section>
+  <footer><p>保存和配置检查不会发起生成，也不验证额度或服务权限。<br>如已设置同名环境变量，工具会优先使用它；已有项目配置优先于本机默认。</p><div class="footer-actions"><button id="refresh" type="button">刷新配置状态</button><button id="close" type="button">完成并关闭服务</button></div></footer>
+</main>
+</body></html>

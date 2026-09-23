@@ -1,8 +1,16 @@
-# 本地资产工具接入
+# 资产生成与获取接入
 
 先按 [环境清单](../environment-setup.md#需要准备什么) 选择实际工具。生成服务的安装目录 / Python 环境与游戏项目中的 `asset-providers.json` 是两处配置；写入命令并不自动安装服务、模型或权重。Blender 在本机安装后登记可执行文件即可进入本页的转换路线。
 
-当前实现可配置的本地命令协议。Hunyuan3D、图像、音频通过项目提供的包装脚本运行；Blender 提供内置转换脚本。没有预选云服务、自动下载模型或凭空生成占位图冒充服务产物。后续可替换包装脚本，不改变管理文件与任务关联。
+| 需求 | 入口 |
+| --- | --- |
+| 填写、更新、删除本机 API Key | [独立设置页](local-settings.md) |
+| Tripo / Hunyuan3D 文生或单图生模型 | [生成 API 配置与恢复](generation-api.md) |
+| 免费素材搜索、下载、许可和来源登记 | [素材来源与资产库工具](asset-sources.md) |
+| 其他图像/音频/本地 Hunyuan3D 工具 | 下文的可配置本地命令协议 |
+| Blender 模型转换 | 下文 Blender 处理 |
+
+现有本地命令协议继续可用；API 接入不需要模型权重。各路线共用任务/资产记录，按需求选用。
 
 ## 配置与输入
 
@@ -50,7 +58,7 @@
 
 artifacts 路径相对 output，不能指向目录外。依赖文件必须逐个登记；成功后退出码为 0，失败用非零码并输出日志。同步包装脚本必须等真正产物完成再退出；仅拿到外部任务编号不算完成。observations 保留在原始结果里，任务记录另外保存结果文件路径与哈希。
 
-图像接受 PNG/JPEG/WebP/TGA/EXR/SVG，音频接受 WAV/FLAC/OGG/MP3/AIFF。Hunyuan3D 接受常见模型和贴图/材质依赖，至少有一个主模型。当前检查非空、路径、扩展名与哈希，不进行解码或质量验收。SVG 等输出也不会被自动打开或执行。
+本地输出格式：图像接受 PNG/JPEG/WebP/TGA/EXR/SVG，音频接受 WAV/FLAC/OGG/MP3/AIFF。Hunyuan3D 接受常见模型和贴图/材质依赖，至少有一个主模型。当前检查非空、路径、扩展名与哈希，不进行解码或质量验收。SVG 等输出也不会被自动打开或执行。
 
 ## 执行和恢复
 
@@ -65,7 +73,7 @@ python tools/asset_workflow.py --project "MyGame" cancel --job A编号
 python tools/asset_workflow.py --project "MyGame" retry --job A编号
 ```
 
-submit 只建立 queued 记录；run 前台等待本地进程，另一个终端可查询或取消。取消运行中的任务是发出信号，执行者终止进程树后写 cancelled；因此查询时可能短暂仍为 running。超时记 failed 并注明 timeout。失败保留日志和部分文件，但不当成合格产物；retry 复制原输入快照和配置形成新编号，不覆盖旧任务，不自动运行。要换参数或工具配置应重新 submit。
+以下恢复说明针对本地命令；云 API 使用上方的 resume 规则。submit 只建立 queued 记录；run 前台等待本地进程，另一个终端可查询或取消。取消运行中的任务是发出信号，执行者终止进程树后写 cancelled；因此查询时可能短暂仍为 running。超时记 failed 并注明 timeout。失败保留日志和部分文件，但不当成合格产物；retry 复制原输入快照和配置形成新编号，不覆盖旧任务，不自动运行。要换参数或工具配置应重新 submit。
 
 若系统关机等导致记录滞留 running，确认实际工作进程已停止后使用 `mark-interrupted --job A编号 --confirm-stopped`，再 retry。它是人工确认后的记录恢复，不负责检测外部服务，也不能恢复丢失工程。
 

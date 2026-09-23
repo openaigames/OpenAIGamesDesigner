@@ -1,6 +1,6 @@
-# 分项验证计划
+# 测试与验证
 
-本表将代码检查、实际工具联调和游戏验收分开。每轮只选择一个真实案例，保留输入版本、执行命令、输出、日志及观察；没有运行的项保持待验证。完成代码不自动勾选后面的真实案例。
+验证分为代码检查、实际工具联调和游戏验收。每个真实案例分别记录输入版本、执行命令、输出、日志及观察；执行状态与结论保存在对应的验证报告中。
 
 UE 能力选型与动作集成的自然语言评估位于源码 `tests/ability-system-choice-scenarios.md`：检查何时主动介绍 GAS、何时沿用自有实现，以及动画包/控制模块/完整框架的区分。该场景集不随运行包分发，列出场景不代表行为评估已通过。
 
@@ -33,4 +33,6 @@ python tools/validate_records.py --project "实际游戏项目路径" --markdown
 
 统一测试入口仅在源码维护仓库运行：`python tools/run_tests.py` 包含根 tests 和各 Skill 的 scripts/tests，分进程执行并汇总失败。`--list` 查看组，`--group core` 或 `--group game-art-direction` 只跑指定组；分组结果不等于全部测试通过。
 
-开发环境可用 `python -m pip install -r tests/requirements.txt` 安装 YAML/Excel 检查依赖。GitHub Actions 在 Windows、Python 3.10/3.12 上执行同一入口；工作流文件存在不表示云端已执行或通过，实际记录以 Actions 为准。引擎实机、外部服务和自然语言行为评估仍按上表另验。
+开发环境可用 `python -m pip install -r tests/requirements.txt` 安装 YAML/Excel 检查依赖。GitHub Actions 在 Windows、Python 3.10/3.12 上执行同一入口，运行状态与日志可在仓库的 Actions 页面查看。引擎实机、外部服务和自然语言行为评估按上表单独执行并记录结果。
+
+资产 API 自动测试使用受控响应和子进程，覆盖认证格式、任务 ID 恢复、文件/ZIP 边界、来源与许可登记，不调用收费服务。真实验证按提供器分别进行：doctor → 小任务生成 → 查询 → 下载 → 打开模型 → 中断后恢复同一 ID。免费来源另验搜索/下载；目录搜索计划不能计为网站 API 已接通。

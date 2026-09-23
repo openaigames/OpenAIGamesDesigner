@@ -10,12 +10,14 @@ import sys
 import uuid
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from adapters.assets import hunyuan3d, image_provider, audio_provider
+from adapters.assets import hunyuan3d, image_provider, audio_provider, tripo, api_common
+from adapters.assets import credential_store
+from adapters.assets import generation_approval
 from adapters.processing import blender
 from game_workflow import atomic_json, identifier, now, sha, stop_process
 from validate_records import contained, contract
 
-PROVIDERS = {"hunyuan3d": hunyuan3d, "image": image_provider, "audio": audio_provider, "blender": blender}
+PROVIDERS = {"hunyuan3d": hunyuan3d, "tripo": tripo, "image": image_provider, "audio": audio_provider, "blender": blender}
 TERMINAL = {"succeeded", "registered", "failed", "blocked", "cancelled", "interrupted"}
 
 def location(root, job_id):
@@ -34,6 +36,10 @@ def new_job(root, provider, request, settings, retry_of=None):
         raise ValueError("Provider and settings must match a supported local adapter")
     if not isinstance(request, dict) or not isinstance(request.get("parameters", {}), dict):
         raise ValueError("Request must contain object parameters and an input path list")
+    if provider == 'tripo' or settings.get('mode') == 'api':
+        if provider not in ('tripo', 'hunyuan3d'):
+            raise ValueError('API mode is available for tripo and hunyuan3d')
+        api_common.validate_request(provider, request, settings)
     paths = request.get("inputs", [])
     if not isinstance(paths, list): raise ValueError("inputs must be an array")
     sources = []
@@ -85,14 +91,31 @@ def artifacts(root, base, result, job):
              "bytes": p.stat().st_size, "source": {"job_id": job["job_id"], "provider": job["provider"],
              "provider_job_id": provider_id}, "quality_validation": "not_checked"} for p in paths]
 
-def execute_job(root, job_id, timeout):
+def execute_job(root, job_id, timeout, resume=False, remote_id=None):
     path, _ = read_job(root, job_id)
     lock = claim(path.parent)
     process = None
     try:
         _, job = read_job(root, job_id)
-        if job["status"] != "queued": raise ValueError("Only queued jobs can run; retry creates a new job")
-        attempt = path.parent / "attempt-1"
+        is_api = job['settings'].get('mode') == 'api'
+        if resume:
+            if not is_api or job['status'] not in {'failed', 'blocked', 'cancelled', 'interrupted'}:
+                raise ValueError('Resume requires a stopped API job')
+            if not job.get('provider_job_id') and job['attempts']:
+                checkpoint = path.parent / ('attempt-' + str(len(job['attempts']))) / 'remote.json'
+                if checkpoint.is_file():
+                    saved = json.loads(checkpoint.read_text(encoding='utf-8'))
+                    if saved.get('provider') == job['provider']:
+                        job['provider_job_id'] = saved.get('provider_job_id')
+            if remote_id and job.get('provider_job_id') and remote_id != job['provider_job_id']:
+                raise ValueError('Remote ID conflicts with the recorded task')
+            job['provider_job_id'] = api_common.task_id(remote_id or job.get('provider_job_id'))
+            (path.parent / 'cancel.request').unlink(missing_ok=True)
+        elif job["status"] != "queued":
+            raise ValueError("Only queued jobs can run; resume an API task or retry explicitly")
+        if is_api and not resume:
+            generation_approval.require(generation_approval.for_job(root, job))
+        attempt = path.parent / ('attempt-' + str(len(job['attempts']) + 1))
         attempt.mkdir()
         output = attempt / "output"
         output.mkdir()
@@ -100,6 +123,10 @@ def execute_job(root, job_id, timeout):
         log_path = attempt / "provider.log"
         log_path.touch()
         request = json.loads(json.dumps(job["request"]))
+        if is_api:
+            request['_approval'] = {'project': str(root), 'job_id': job_id}
+        if resume:
+            request['provider_job_id'] = job['provider_job_id']
         record = {"started_at": now(), "log": log_path.relative_to(root).as_posix()}
         job["attempts"].append(record)
         job["status"] = "running"
@@ -149,6 +176,20 @@ def execute_job(root, job_id, timeout):
             job["status"] = "failed" if process else "blocked"
             job["notes"].append(str(error))
         finally:
+            remote_path = attempt / 'remote.json'
+            if is_api and remote_path.is_file():
+                try:
+                    remote = json.loads(remote_path.read_text(encoding='utf-8'))
+                    if remote.get('provider') != job['provider']:
+                        raise ValueError('Provider mismatch')
+                    if remote.get('provider_job_id'):
+                        job['provider_job_id'] = api_common.task_id(remote['provider_job_id'])
+                    record['remote_state'] = remote_path.relative_to(root).as_posix()
+                    record['remote_status'] = remote.get('status')
+                except (OSError, ValueError, TypeError):
+                    job['notes'].append('Remote recovery state could not be read')
+            if is_api and job['status'] != 'succeeded':
+                job['notes'].append('Local stop does not cancel cloud generation. Resume the recorded ID; do not automatically submit again.')
             record["finished_at"] = now()
             atomic_json(path, job)
         return job
@@ -162,10 +203,14 @@ def main(argv=None):
     submit = sub.add_parser("submit")
     submit.add_argument("--provider", required=True, choices=tuple(PROVIDERS))
     submit.add_argument("--request", required=True)
-    for name in ("run", "status", "cancel", "retry", "register", "mark-interrupted"):
+    doctor = sub.add_parser('doctor', help='Check API configuration and credential presence without contacting the service')
+    doctor.add_argument('--provider', required=True, choices=('tripo', 'hunyuan3d'))
+    for name in ("run", "resume", "status", "cancel", "retry", "register", "mark-interrupted"):
         command = sub.add_parser(name)
         command.add_argument("--job", required=True)
-        if name == "run": command.add_argument("--timeout", type=int, default=600)
+        if name in ("run", "resume"): command.add_argument("--timeout", type=int, default=600)
+        if name == 'resume': command.add_argument('--remote-job')
+        if name == 'retry': command.add_argument('--new-generation', action='store_true', help='API only: submit a new potentially billable generation rather than resume')
         if name == "register": command.add_argument("--result", required=True)
         if name == "mark-interrupted": command.add_argument("--confirm-stopped", action="store_true")
     sub.add_parser("list")
@@ -173,23 +218,29 @@ def main(argv=None):
     root = args.project.resolve()
     try:
         if not root.is_dir(): raise ValueError("Project must exist")
-        if args.action == "submit":
+        if args.action in ("submit", "doctor"):
             config_path = contained(root, ".openaigame/asset-providers.json")
-            config = json.loads(config_path.read_text(encoding="utf-8-sig"))
+            config = json.loads(config_path.read_text(encoding="utf-8-sig")) if config_path.exists() else {}
             if not isinstance(config, dict): raise ValueError("Provider configuration must be an object")
-            settings = config.get(args.provider)
+            settings = config[args.provider] if args.provider in config else credential_store.default_settings(args.provider)
             if not isinstance(settings, dict): raise ValueError("Provider is not configured")
-            request = json.loads(contained(root, args.request).read_text(encoding="utf-8-sig"))
-            result = new_job(root, args.provider, request, settings)
+            if args.action == 'doctor':
+                result = api_common.doctor(args.provider, settings)
+            else:
+                request = json.loads(contained(root, args.request).read_text(encoding="utf-8-sig"))
+                result = new_job(root, args.provider, request, settings)
         elif args.action == "list":
             result = [{"job_id": p.parent.name, "status": read_job(root, p.parent.name)[1]["status"]}
                       for p in sorted(root.glob(".openaigame/asset-jobs/*/job.json"))]
-        elif args.action == "run":
+        elif args.action in ("run", "resume"):
             if not 1 <= args.timeout <= 86400: raise ValueError("timeout must be 1..86400 seconds")
-            result = execute_job(root, args.job, args.timeout)
+            result = execute_job(root, args.job, args.timeout, args.action == 'resume', getattr(args, 'remote_job', None))
         elif args.action == "status":
             path, result = read_job(root, args.job)
             result = {**result, "cancel_requested": (path.parent / "cancel.request").exists()}
+            checkpoint = path.parent / ('attempt-' + str(len(result['attempts']))) / 'remote.json'
+            if result['settings'].get('mode') == 'api' and checkpoint.is_file():
+                result['remote_observation'] = json.loads(checkpoint.read_text(encoding='utf-8'))
         elif args.action == "mark-interrupted":
             path, result = read_job(root, args.job)
             if not args.confirm_stopped: raise ValueError("Confirm the external worker has stopped before recovery")
@@ -218,6 +269,8 @@ def main(argv=None):
                 _, result = read_job(root, args.job)
                 if args.action == "retry":
                     if result["status"] not in TERMINAL: raise ValueError("Only terminal jobs may be retried")
+                    if result['settings'].get('mode') == 'api' and not args.new_generation:
+                        raise ValueError('Use resume for an existing cloud task; retry --new-generation explicitly creates a new generation')
                     result = new_job(root, result["provider"], result["request"], result["settings"], result["job_id"])
                 else:
                     if result["status"] != "queued": raise ValueError("Only queued jobs accept external results")
@@ -229,7 +282,7 @@ def main(argv=None):
                     atomic_json(path, result)
             finally: lock.unlink(missing_ok=True)
         print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 1 if args.action == "run" and result["status"] != "succeeded" else 0
+        return 1 if args.action in ("run", "resume") and result["status"] != "succeeded" else 0
     except (OSError, ValueError, KeyError, TypeError) as error:
         print(json.dumps({"error": str(error)}, ensure_ascii=False)); return 2
 

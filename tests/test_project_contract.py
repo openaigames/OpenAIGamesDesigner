@@ -58,7 +58,7 @@ class ProjectContractTests(unittest.TestCase):
         for name in expected:
             self.assertTrue((ROOT / name).is_file(), name)
         self.assertEqual({p.name for p in (ROOT / "schemas").glob("*.json")},
-                         {"project.schema.json", "run.schema.json", "asset-job.schema.json", "artifact.schema.json", "engine-session.schema.json"})
+                         {"project.schema.json", "run.schema.json", "asset-job.schema.json", "artifact.schema.json", "engine-session.schema.json", "asset-library.schema.json"})
 
 
 if __name__ == "__main__":

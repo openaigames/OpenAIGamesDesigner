@@ -10,7 +10,7 @@ from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMAS = ROOT / "schemas"
-KINDS = ("project", "run", "asset-job", "artifact", "engine-session")
+KINDS = ("project", "run", "asset-job", "artifact", "engine-session", "asset-library")
 PROJECT_ENTRIES = ("Project Management.md", "Game Concept.md", "Game Design Document.md",
                    "Art Direction.md", "Technical Design.md", "Risk & Assumption List.md")
 
@@ -125,6 +125,17 @@ def check_record(kind, value, project, record_path):
             for item in value["attempts"]:
                 if item.get("log"): check_file(project, item["log"])
                 if item.get("result"): check_file(project, item["result"], item.get("result_sha256"))
+        if kind == "asset-library":
+            if value['status'] == 'acquired' and not value['files']:
+                raise ValueError('Acquired asset has no files')
+            for item in value['files'] + value['license_evidence']:
+                check_file(project, item['path'], item['sha256'])
+                if contained(project, item['path']).stat().st_size != item['bytes']:
+                    raise ValueError('Asset file byte count mismatch')
+            if value.get('generation'):
+                check_file(project, value['generation']['record'])
+            if value['license'].get('status') == 'reviewed' and not value['license_evidence']:
+                raise ValueError('Reviewed license requires evidence')
         if kind == "artifact":
             check_file(project, value["path"], value["sha256"])
             if contained(project, value["path"]).stat().st_size != value["bytes"]:
@@ -304,6 +315,7 @@ def main(argv=None):
             for kind, pattern in (("project", ".openaigame/project.json"), ("run", "runs/*/manifest.json"),
                                   ("engine-session", "runs/engine-*/session.json"),
                                   ("engine-session", "runs/create-*/session.json"),
+                                  ("asset-library", ".openaigame/asset-library/*/record.json"),
                                   ("asset-job", ".openaigame/asset-jobs/*/job.json")):
                 records.extend((kind, p) for p in project.glob(pattern))
         errors = []
@@ -325,6 +337,7 @@ def main(argv=None):
         print(json.dumps({"records_checked": len(records), "errors": errors,
                           "layout_checked": args.layout, "production_handoff_checked": args.production,
                           "closeout_checked": args.closeout,
+                          "document_content_validation": "not_performed",
                           "quality_validation": "not_performed"}, ensure_ascii=False, indent=2))
         return 1 if errors else 0
     except (ValueError, OSError) as error:

@@ -8,7 +8,7 @@
 
 ## 从自然需求开始
 
-在游戏项目目录打开 AI 助手，直接描述目标，例如“我想做一个探索解谜游戏”，或“在这个 UE 工程里增加蓄力攻击”。Skill 应根据当前资料澄清关键未知、选择专业方法、维护需要的文件；已有工程从本轮目标继续，不重新立项。不需要让用户输入内部流程，也不自动生成看板。
+在游戏项目目录打开 AI 助手，直接描述目标，例如“我想做一个探索解谜游戏”，或“在这个 UE 工程里增加蓄力攻击”。助手根据当前资料澄清关键未知、选择专业方法并维护项目文件；已有工程从当前目标继续，无需重新立项或指定文档流程，也不会自动生成看板。
 
 仅需文档时可直接使用模板，或生成一个具体任务：
 
@@ -59,7 +59,7 @@ python tools/game_workflow.py status --project "MyGame"
 
 ## 资产任务与记录检查
 
-先按 [资产工具接入](../adapters/assets/README.md) 设置本地命令及请求文件：
+先按 [资产工具接入](../adapters/assets/README.md) 设置生成 API 或本地命令及请求文件：
 
 ```sh
 python tools/asset_workflow.py --project "MyGame" submit --provider image --request production/asset-request.json
@@ -130,3 +130,11 @@ apply 重新比对表格、基线与计划，保存原文件备份和 `.openaiga
 每个新分发包在 `game-preproduction/runtime/bundle-manifest.json` 保存内容版本及文件哈希。安装后运行 `python <runtime>/tools/check_installation.py --skills-root <六个Skill的父目录>`，检查缺失或修改的文件。检查只报告差异，不覆盖本地定制，也不删除用户额外文件；更新前比较、备份并合并实际差异。旧安装没有 manifest 时重新打包并同步，不把缺清单当作安装正确。
 
 维护仓库运行 `python tools/run_tests.py` 执行根测试和 Skill 内脚本测试。此入口及 CI 属于源码维护工具，不随游戏运行包分发。
+
+### 素材来源与资产登记
+
+`asset_library.py` 提供分类 sources、Poly Haven 实时 search/files、下载或本地复制 acquire、生成任务 from-job、list/verify/index。使用 [素材获取指南](../adapters/assets/asset-sources.md)；API 任务的 doctor/resume 与凭据配置见 [生成接入](../adapters/assets/generation-api.md)。
+
+### 本机密钥设置页
+
+运行 `python tools/settings_server.py` 打开独立页面，保存 Tripo / 腾讯混元兼容接口 API Key；无需游戏项目。`--status` 只查看配置是否存在，`--no-open` 供宿主自行打开返回的启动链接。详见 [本机设置](../adapters/assets/local-settings.md)。

@@ -24,9 +24,13 @@ Art Direction.md 保存已知需求、候选方案、选定或委托依据、暂
 
 如可用，读取 game-preproduction 的 `references/production-workflows.md` 定位共享工具包；开发仓库使用根目录，个人安装包使用管理 Skill 的 runtime。按需读取其中 `workflows/asset-production.md` 与 `adapters/assets/README.md`。没有共享工具时使用项目已有制作方法，并明确实际执行边界。
 
-本地命令任务入口为 `tools/asset_workflow.py`，支持 submit、run、status、cancel、retry、register。提交前将规格转为所选工具真正支持的参数和实际输入；默认不会安装模型或选定云服务。Blender 处理可作为后续任务，使用选定上游文件并保持贴图等依赖关系。修改参数重新提交，重试沿用原输入快照。
+生成/处理入口为 `tools/asset_workflow.py`。Tripo 与 Hunyuan3D 可直接使用 API，图像、音频及其他工具沿用本地命令协议。读取共享工具包的 `adapters/assets/generation-api.md` 配置；缺少密钥时运行共享工具包的 `tools/settings_server.py`，由用户在本机设置页填写；模型不读取密钥原文。也可用 `--status` 检查本机配置。项目未覆盖对应服务配置时可复用本机默认。先 doctor 检查凭据存在，再按已选服务和预算 submit/run。超时或本地取消不会取消云生成；有云任务编号时 resume 查询同一任务，不自动重新提交收费任务。修改参数才建立新任务。
 
-素材检索与下载使用宿主或项目实际可用的能力，本地资产任务入口不自动提供素材库搜索。外部获取按真实来源登记；当前工具的 register 要求已有 queued 任务且文件位于项目内，使用前核对实际接口。没有合适的任务或登记入口时先在现有资产表记录来源、版本、文件和检查结果，保留后续工具登记项，不为下载素材虚构生成任务或提供器；工具登记缺口不阻塞其他已授权的检查和处理。
+Tripo/混元的新 API 生成须先准备 queued 任务，再运行 `tools/settings_server.py --project <游戏项目> --approve-job <任务编号>`，让用户亲自查看并确认；助手不得代点授权按钮或直接写授权凭据。保存密钥不代表同意收费生成。已有有效的本次授权可直接执行，不重复索取；修改请求、账户或另建任务需要新授权。等待时可继续独立设计、素材规格与验证计划，不绕过拦截直接调用底层 SDK。查询/下载既有云任务不属于新的生成授权。
+
+免费/现成素材使用 `tools/asset_library.py` 与 `adapters/assets/asset-sources.md`：sources 返回分类目录和宿主检索计划，search/files 返回 Poly Haven 实际结果；其他来源用可用网页工具搜索，并核对原页面。acquire 下载或复制选定文件，from-job 引用生成结果，登记作者、许可依据、版本及哈希。需要账户的来源按站点下载流程获取，不猜测下载地址；工具缺失时沿用已有资产表并注明待登记。资产获取不应伪装成生成任务。
+
+完成后把选定资产 ID、用途、来源和登记索引链接写回 Art Direction.md/资产规格；必要时同步技术接入任务和管理摘要。Blender 使用选定上游文件并保持贴图等依赖，转换和引擎导入分别留证。
 
 图像任务使用 Moodboard 时先按 [生图参考交接](moodboard-and-palette.md#写入-art-direction-与后续生图) 读取实际保存的主题/资产板和色板，保存本次参考文件及配色快照，再映射到工具支持的输入。未回传的浏览器调色不能当作当前文件；不支持图片输入的提供器不能声称已使用图片参考，图板也不作为待导入引擎的正式资产。
 
