@@ -47,7 +47,10 @@ engine = root / 'game'
 engine.mkdir()
 (engine / 'Game.uproject').write_text('{"EngineAssociation":"5.8"}')
 config = {'engine': 'unreal', 'editor_executable': sys.executable, 'project_file': 'Game.uproject'}
-assert unreal.command(config, engine, 'play', root, root)[1:] == [str(engine / 'Game.uproject'), '-game', '-log']
+# The adapter resolves directory aliases (including Windows junctions).
+actual = unreal.command(config, engine, 'play', root, root)[1:]
+expected = [str((engine / 'Game.uproject').resolve()), '-game', '-log']
+assert actual == expected, f'{actual!r} != {expected!r}'
 assert '--headless' in godot.command(Path(sys.executable), engine, 'smoke')
 assert threejs.starter() == web_common.starter('threejs')
 assert phaser.starter() == web_common.starter('phaser')
