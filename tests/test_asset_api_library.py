@@ -221,8 +221,11 @@ class AssetAPITests(unittest.TestCase):
         for script, args in [('tools/asset_library.py', ['sources', '--kind', 'vfx']),
                              ('adapters/assets/api_worker.py', ['--help']),
                              ('tools/asset_workflow.py', ['--help'])]:
-            result = subprocess.run([sys.executable, '-B', str(runtime / script), *args], cwd=self.root, capture_output=True)
-            self.assertEqual(result.returncode, 0, result.stderr)
+            result = subprocess.run([sys.executable, '-B', str(runtime / script), *args], cwd=self.root,
+                env={**os.environ, 'PYTHONUTF8': '0', 'PYTHONIOENCODING': 'cp1252'}, capture_output=True)
+            self.assertEqual(result.returncode, 0, (script, result.stdout, result.stderr))
+            if script == 'tools/asset_library.py':
+                self.assertEqual(json.loads(result.stdout.decode('utf-8'))['status'], 'search_plan')
 
 
 if __name__ == '__main__':

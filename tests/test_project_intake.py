@@ -2,6 +2,7 @@
 import contextlib
 import io
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -143,8 +144,9 @@ class IntakeTests(unittest.TestCase):
         runtime_markdown = list(runtime.rglob("*.md"))
         self.assertEqual(records.markdown_errors(runtime, runtime_markdown), [])
         def cli(script, *args):
-            return subprocess.run([sys.executable, "-B", "-X", "utf8", str(runtime / "tools" / script),
-                                   *args], cwd=self.temp.name, capture_output=True, text=True, encoding="utf-8", timeout=20)
+            return subprocess.run([sys.executable, "-B", str(runtime / "tools" / script),
+                                   *args], cwd=self.temp.name, capture_output=True, text=True, encoding="utf-8", timeout=20,
+                                   env={**os.environ, 'PYTHONUTF8': '0', 'PYTHONIOENCODING': 'cp1252'})
         created = cli("game_workflow.py", "scaffold", "--project", str(self.root), "--brief", self.brief)
         self.assertEqual(created.returncode, 0, created.stderr)
         checked = cli("validate_records.py", "--project", str(self.root), "--layout", "--markdown")

@@ -251,4 +251,6 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
+    # JSON includes localized catalog text; redirected Windows stdout may use a legacy code page.
+    sys.stdout.reconfigure(encoding='utf-8')
     raise SystemExit(main())

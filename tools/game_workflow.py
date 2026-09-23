@@ -574,4 +574,6 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
+    # Project names and paths can be Unicode even when a parent process captures legacy-encoded stdout.
+    sys.stdout.reconfigure(encoding="utf-8")
     raise SystemExit(main())

@@ -2,7 +2,9 @@
 import contextlib
 import io
 import json
+import os
 from pathlib import Path
+import subprocess
 import sys
 import unittest
 from unittest.mock import Mock
@@ -13,6 +15,19 @@ import asset_library as library
 
 
 class SourceTests(unittest.TestCase):
+    def test_cli_preserves_unicode_when_parent_uses_legacy_encoding(self):
+        query = '魔法火花🎨'
+        for encoding in ('cp1252', 'ascii'):
+            with self.subTest(encoding=encoding):
+                result = subprocess.run([sys.executable, '-B', str(ROOT / 'tools/asset_library.py'),
+                    'sources', '--kind', 'vfx', '--query', query], cwd=ROOT.parent,
+                    env={**os.environ, 'PYTHONUTF8': '0', 'PYTHONIOENCODING': encoding}, capture_output=True)
+                self.assertEqual(result.returncode, 0, (result.stdout, result.stderr))
+                data = json.loads(result.stdout.decode('utf-8'))
+                self.assertEqual(data['status'], 'search_plan')
+                self.assertTrue(data['sources'])
+                self.assertTrue(all(query in row['search_query'] for row in data['sources']))
+
     def test_direct_requires_anonymous_download_evidence(self):
         rows = [
             {'id': 'legacy', 'domain': 'example.org', 'kinds': ['vfx']},
