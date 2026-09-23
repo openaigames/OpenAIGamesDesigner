@@ -10,4 +10,4 @@
 
 安装了 game-preproduction 时，从其 `references/production-workflows.md` 定位运行资源，读取工具包 `adapters/engines/mcp.md` 与已选引擎目录的 `README.md`。源码同名位置提供同一说明；只安装本技术 Skill 时，沿用本参考和宿主实际工具，不要求额外安装整包才可工作。
 
-UE 战斗另读取 [UE 工程](unreal-project.md)，需要比较技术路线时读取 [能力系统选型](ability-system-choice.md)，确定采用后读取 [GAS](gas-combat.md)；动作集成见 [动作与动画接入](action-animation-integration.md)。Actor、Blueprint 工具不自动具备能力系统、骨架重定向或动画通知专项能力；缺口应映射到项目代码、脚本或可验证的编辑器操作，而非静默删除需求。
+UE 工程接入读取 [UE 工程](unreal-project.md)；功能架构需要选择时按项目需求使用专业方法，动作资源接入见 [动作与动画接入](action-animation-integration.md)。Actor、Blueprint 工具不自动具备能力系统、骨架重定向或动画通知专项能力；缺口应映射到项目代码、脚本或可验证的编辑器操作，而非静默删除需求。

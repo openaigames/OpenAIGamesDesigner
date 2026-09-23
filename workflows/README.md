@@ -56,6 +56,6 @@ MyGame/
 
 源码是维护来源，`dist/` 是构建产物，个人 Skill 目录是安装副本，游戏目录是工作结果。打包时公共运行资源放入 `game-preproduction/runtime/`，包含 workflows、templates、tools、adapters、schemas 和可移植使用文档；六个 Skill 的专业参考各自随包分发。默认打包只包含 skills 和规定的 runtime 资源。个人开发记录、旧工具与历史分发包保存在仓库外，不参与当前流程。
 
-Unity/Unreal 分别提供工程识别、原生运行检查、测试报告解析和构建导出入口，具体依赖见 [执行配置](../adapters/engines/execution.md)；工程创建、场景/组件、资源导入、角色动画和自动操作由各引擎制作驱动实现，共享检查点与 [会话恢复](../adapters/engines/sessions.md)。具体对象和操作以各引擎 production 说明为准，GAS 等专项制作仍按实际工程代码、可用 MCP 或项目工具落实。图像、音频、Hunyuan3D 接入是本地包装协议，未绑定云 API 或下载模型。
+Unity/Unreal 分别提供工程识别、原生运行检查、测试报告解析和构建导出入口，具体依赖见 [执行配置](../adapters/engines/execution.md)；工程创建、场景/组件、资源导入、角色动画和自动操作由各引擎制作驱动实现，共享检查点与 [会话恢复](../adapters/engines/sessions.md)。具体对象和操作以各引擎 production 说明为准，项目功能按实际工程代码、可用 MCP 或项目工具实现。图像、音频、Hunyuan3D 接入是本地包装协议，未绑定云 API 或下载模型。
 
 使用见 [入门](../tools/README.md)，实际验收顺序见 [分项验证计划](../tests/README.md)。

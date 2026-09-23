@@ -24,13 +24,13 @@ description: 游戏技术设计与工程实施：支持原型/垂直切片构建
 | 原型/切片实现、引擎创建、编辑、运行与恢复入口 | [引擎实施](references/engine-execution.md)，再读所选引擎的说明 |
 | 已选网页路线 | [网页实施](references/web-execution.md)：Three.js 3D、Phaser 2D；已有框架沿用，不默认改成网页 |
 | 编辑器自动化 | [MCP 接入](references/mcp-engine-integration.md)：核实宿主工具、工程身份与能力；原生脚本不冒充 MCP |
-| 角色与动作资源绑定 | [动作与动画接入](references/action-animation-integration.md)；GAS 的后续方法从选型参考进入 |
+| 角色与动作资源绑定 | [动作与动画接入](references/action-animation-integration.md) |
 | 关卡、移动、交互与 UI 状态落实 | [玩法接口](references/gameplay-interface-contracts.md) |
 | 字段、配置覆盖、版本与持久化 | [数据配置](references/data-configuration.md) |
 | CSV/Excel 调参回传 | [数值交换](references/numeric-exchange.md)：主源、差异、可恢复写回及运行生效核对 |
 | 资源导入、替换与批次制作 | [资源管线](references/resource-pipeline.md) |
 
-只加载本轮相关方法。专业参考不代表工具已支持任意操作；先查实际能力。共享数值工具支持已绑定 JSON 的往返，原生资源使用工程已有格式与导入器；MCP 联通也不证明 GAS 或动画专项已验证。
+只加载本轮相关方法。专业参考不代表工具已支持任意操作；先查实际能力。共享数值工具支持已绑定 JSON 的往返，原生资源使用工程已有格式与导入器；MCP 联通也不证明项目功能或动画表现已验证。
 
 ## 技术记录与交付
 

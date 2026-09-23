@@ -5,7 +5,7 @@
   "unreal": {
     "smoke_map": "/Game/Maps/Prototype",
     "smoke_seconds": 3,
-    "test_filter": "MyGame.Combat",
+    "test_filter": "MyGame.Functional",
     "dotnet_executable": "D:/UE/Engine/Binaries/ThirdParty/DotNet/VERSION/win-x64/dotnet.exe",
     "platform": "Win64",
     "configuration": "Development",
@@ -21,7 +21,7 @@ test 只运行明确的 Automation 过滤范围，保存 `automation/index.json`
 
 Automation 报告与整个编辑器进程分开判定：报告通过但启动日志有错误时，仍保留整轮失败及原始报告，排查错误来源后再验收，不自动忽略错误行。
 
-默认导出是游戏客户端路线；服务器、分布式构建、特殊签名/商店发布使用工程自己的命令覆盖。默认 test / smoke 的 NullRHI 不适合 GPU 测试，需要这类测试时覆盖命令并保留实际报告。GAS 是项目技术选择，不是启动或构建的强制依赖。
+默认导出是游戏客户端路线；服务器、分布式构建、特殊签名/商店发布使用工程自己的命令覆盖。默认 test / smoke 的 NullRHI 不适合 GPU 测试，需要这类测试时覆盖命令并保留实际报告。项目功能框架由工程自行配置，不是通用启动或构建的强制依赖。
 
 
 通用命令、状态与证据约定见 [执行总览](../execution.md)。

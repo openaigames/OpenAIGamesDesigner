@@ -2,7 +2,7 @@
 
 ## 先解析引擎选择
 
-进入引擎专用工作前，读取现有目标工程和本轮有效决定。选择依据可以是用户明确指定的引擎、用户指定的已有工程，或用户明确委托助手选引擎；其余保持候选或待定。不为已有明确选择重复确认。助手刚才未经选型自行创建的工程不能反过来充当“已有工程”的依据。
+进入引擎专用工作前，读取现有目标工程和本轮有效决定。选择依据可以是用户明确指定的引擎、用户指定的已有工程，或用户明确委托助手选引擎；其余保持候选或待定。不为已有明确选择重复确认。助手未经选型自行创建的工程不能反过来充当“已有工程”的依据。
 
 | 用户回答或工程事实 | 如何继续 |
 | --- | --- |
@@ -35,7 +35,7 @@ Technical Design.md 分开保存“已确认约束、引擎候选/已选择、�
 
 原型优先保留回答机制问题所需的因果链；切片在同一工程集成代表性品质与生产规格。按实际风险建立任务、测试和可恢复基线，已有代码与人工修改保留。实现后的真实路径、接口变化和运行方法回写技术文件。
 
-仅按本轮技术栈读取：[Godot 执行说明](godot-execution.md)、[UE 工程接入](unreal-project.md)。UE 能力/属性路线未定时用 [能力系统选型](ability-system-choice.md)，已采用 GAS 时用 [GAS 实现](gas-combat.md)，角色动作集成用 [动作与动画接入](action-animation-integration.md)。这些专业方法服务于通用流程，不复制阶段；不相关任务不加载专项参考。
+仅按本轮技术栈读取：[Godot 执行说明](godot-execution.md)、[UE 工程接入](unreal-project.md)。UE 能力/属性路线未定时用 [能力系统选型](ability-system-choice.md)，角色动作集成用 [动作与动画接入](action-animation-integration.md)。这些专业方法服务于通用流程，不复制阶段；不相关任务不加载专项参考。
 
 如安装了 game-preproduction，读取其 `references/production-workflows.md` 定位共享工具；开发仓库使用根目录 `tools/`。各引擎的默认运行、测试、构建和导出入口见工具包 `adapters/engines/execution.md`，按真实工程配置场景、测试范围、目标平台与依赖。Unity 的 smoke/build/export 先明确安装随包 Editor 辅助脚本；已有同名修改不得直接覆盖。网页 smoke 需要明确选定构建、Playwright 和浏览器。已有 `commands` 保持优先。创建、场景/资产/动画制作与自动运行另从工具包 `adapters/engines/sessions.md` 选择引擎专属制作入口，调用 `tools/engine_workflow.py` 并关联任务和里程碑。其 Python/C# 操作不等于原生 MCP；GAS 专项仍以实际工程实现和验证为准。没有共享工具时采用工程已有命令，不因可选依赖缺失拒绝工作。
 

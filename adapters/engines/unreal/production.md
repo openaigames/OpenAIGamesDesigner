@@ -5,10 +5,10 @@
 [production.py](production.py) 独立维护 Unreal 的请求规则、工程描述、插件要求和启动命令。当前制作 runner 使用 Windows 的实际 Unreal Editor。
 
 ```powershell
-python tools/engine_workflow.py create --project "D:/Games/MyUEGame" --engine unreal --editor "D:/UE/Engine/Binaries/Win64/UnrealEditor.exe" --name MyUEGame --version 5.8 --brief "已确认的本轮范围"
+python tools/engine_workflow.py create --project "D:/Games/MyUEGame" --engine unreal --editor "D:/UE/Engine/Binaries/Win64/UnrealEditor.exe" --name MyUEGame --version 5.8 --brief "已确定的项目范围"
 ```
 
-新建内容工程，明确启用 PythonScriptPlugin 与 EditorScriptingUtilities，再实际加载验证。C++ Target 和模块按项目技术方案添加，不默认引入 GAS 或样例工程。edit/inspect 使用 Python commandlet；playback 使用独立编辑器的 PIE 与异步 Python 保活。
+新建内容工程，明确启用 PythonScriptPlugin 与 EditorScriptingUtilities，再实际加载验证。C++ Target 和模块按项目技术方案添加，不默认引入玩法框架或样例工程。edit/inspect 使用 Python commandlet；playback 使用独立编辑器的 PIE 与异步 Python 保活。
 
 帧序列与采样都有编辑器/截屏开销，不包含同步音频；性能测量请单独关闭 capture_interval。已安装插件不等于原生 MCP 接通，MCP 证据另行记录。
 
@@ -28,7 +28,7 @@ properties 使用实际 `set_editor_property` 名称。值可以是 JSON 标量�
 
 导入走 AssetTools / AssetImportTask，检查真实 imported_object_paths；FBX 可显式给 skeletal、animations、skeleton。具体格式与 UE 的已安装导入插件有关，导入成功不代表单位、材质、骨骼和视觉已经验收。资源重新命名和文件依赖要以真实返回路径为准。
 
-角色使用 SkeletalMeshComponent，支持同骨架 AnimSequence 的单节点循环配置，或已有 Animation Blueprint 的绑定。骨架不一致直接报错，不隐式重定向、不自动选动作。Animation Blueprint 的创作、复杂重定向、Montage/Notify、Motion Matching、GAS 技能图属于进一步的项目专项实现，不由本接口伪造。
+角色使用 SkeletalMeshComponent，支持同骨架 AnimSequence 的单节点循环配置，或已有 Animation Blueprint 的绑定。骨架不一致直接报错，不隐式重定向、不自动选动作。Animation Blueprint 的创作、复杂重定向、Montage/Notify、Motion Matching属于进一步的项目专项实现，不由本接口伪造。
 
 示例：[关卡与蓝图组件](examples/scene.json)、[PIE 自动操作](examples/playback.json)。自动操作使用实际 PIE 世界副本，不把测试位移保存回编辑场景。actions 支持 `position`，或 `{at,op:"method",target,method,arguments:[]}` 调用项目对象暴露给反射的方法；不发送 OS 键鼠，也不声称覆盖 Enhanced Input 链路。
 

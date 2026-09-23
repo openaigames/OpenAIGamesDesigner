@@ -40,7 +40,7 @@ MCP 证据目录不伪造 CLI manifest；现有 `validate_records.py` 不审核�
 
 | 引擎 | 候选 | 已知适用范围与待验证项 |
 | --- | --- | --- |
-| Unreal | [chongdashu/unreal-mcp](https://github.com/chongdashu/unreal-mcp) | 上游为实验项目，Python MCP 服务连接工程 C++ 插件；Actor / Blueprint 工具。需编译插件、验证本机 UE 版本、工程身份和持久化；未证明 GAS 专项能力 |
+| Unreal | [chongdashu/unreal-mcp](https://github.com/chongdashu/unreal-mcp) | 上游为实验项目，Python MCP 服务连接工程 C++ 插件；Actor / Blueprint 工具。需编译插件、验证本机 UE 版本、工程身份和持久化；具体编辑操作以所选版本的实际工具清单为准 |
 | Unity | [CoplayDev/unity-mcp](https://github.com/CoplayDev/unity-mcp) | 编辑器包与 MCP 服务，按实际启用工具组使用；需验证项目会话、版本和保存 / Play / 测试能力 |
 | Godot | [Coding-Solo/godot-mcp](https://github.com/Coding-Solo/godot-mcp) | 编辑器启动、工程运行、调试和场景相关工具；按实际工具清单验证，保留 Godot CLI |
 
