@@ -17,7 +17,8 @@ import uuid
 
 TOOLKIT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOLKIT))
-from adapters.engines import godot, unity, unreal, web
+from adapters.engines import godot, unity, unreal, web_common, threejs, phaser
+from adapters.engines.common import configured
 from validate_records import contract, PROJECT_ENTRIES
 
 CONFIG = ".openaigame/project.json"
@@ -186,13 +187,13 @@ def init_project(args):
     config = {"schema_version": 1, "engine": selected, "engine_root": args.engine_root,
               "godot_executable": str(args.godot.resolve()) if args.godot else "",
               "expected_version": args.expected_version or ""}
-    if selected in web.FRAMEWORKS:
+    if selected in web_common.FRAMEWORKS:
         config.pop("godot_executable")
         config["node_executable"] = str(args.node.resolve()) if args.node else ""
         config["package_manager_cli"] = str(args.package_manager_cli.resolve()) if args.package_manager_cli else ""
-        web.executable(config)
+        web_common.executable(config)
         if not args.create_engine:
-            web.inspect(config, engine)
+            web_common.inspect(config, engine)
     elif selected != "godot":
         config.pop("godot_executable")
         config["editor_executable"] = str(args.editor.resolve()) if args.editor else ""
@@ -203,8 +204,8 @@ def init_project(args):
     # Check managed destinations before changing an existing project.
     for folder in ("runs", "builds"):
         local(root, folder)
-    if args.create_engine and selected in web.FRAMEWORKS:
-        for relative, content in web.starter(selected).items():
+    if args.create_engine and selected in web_common.FRAMEWORKS:
+        for relative, content in web_common.starter(selected).items():
             write_new(local(engine, relative), content)
     elif args.create_engine:
         write_new(engine / "project.godot", '[application]\nconfig/name="New Game Project"\nrun/main_scene="res://main.tscn"\n\n[rendering]\nrenderer/rendering_method="gl_compatibility"\n')
@@ -295,7 +296,7 @@ def inputs(root, paths, run):
 def run_project_engine(args, config):
     root = args.project.resolve()
     engine = local(root, config["engine_root"])
-    adapter = {"unity": unity, "unreal": unreal, "threejs": web, "phaser": web}[config["engine"]]
+    adapter = {"unity": unity, "unreal": unreal, "threejs": threejs, "phaser": phaser}[config["engine"]]
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
     run = local(root, "runs/" + run_id)
     run.mkdir(parents=True)
@@ -337,6 +338,8 @@ def run_project_engine(args, config):
             errors = [line for line in text.splitlines() if re.search(r"(?:error CS\d+|Fatal error:|AutomationTool exiting with ExitCode=[1-9]|: Error:)", line)]
             manifest["engine_errors"] = errors
             if errors and manifest["status"] == "passed": manifest["status"] = "failed"
+            if code == 0 and not stopped and hasattr(adapter, 'finalize'):
+                manifest.update(adapter.finalize(config, engine, args.action, run, output))
             if args.action == "test" and manifest["status"] == "passed":
                 report = run / "test-results.json"
                 data = json.loads(report.read_text(encoding="utf-8-sig")) if report.is_file() else {}
@@ -346,8 +349,8 @@ def run_project_engine(args, config):
                     manifest["status"] = "failed"
                     manifest["notes"].append("test requires test-results.json with actual tests>0, failed=0, errors=0")
                 else: manifest["test_report"] = {**data, "path": "test-results.json", "sha256": sha(report)}
-            if args.action == "export" and manifest["status"] == "passed":
-                if config["engine"] in web.FRAMEWORKS and (not (output / "index.html").is_file() or not (output / "index.html").stat().st_size):
+            if (args.action == "export" or (args.action == "build" and config['engine'] in {*web_common.FRAMEWORKS, 'unity'})) and manifest["status"] == "passed":
+                if config["engine"] in web_common.FRAMEWORKS and (not (output / "index.html").is_file() or not (output / "index.html").stat().st_size):
                     raise ValueError("Web export requires a nonempty index.html in the requested output directory")
                 files = [p for p in output.rglob("*") if p.is_file()]
                 if not files or not any(p.stat().st_size > 0 for p in files):
@@ -414,20 +417,33 @@ def run_engine(args):
         else:
             script = None
             output = None
-            if args.action == "test":
+            custom = args.action in config.get('commands', {})
+            if args.action == "test" and not custom:
                 if not args.script:
                     raise ValueError("test requires --script, relative to the Godot project.")
                 script_path = local(engine, args.script)
                 if not script_path.is_file():
                     raise ValueError("Test script does not exist.")
                 script = script_path.relative_to(engine).as_posix()
-            if args.action == "export":
+            if args.action in {"export", "build"} and not custom:
                 if not args.preset or not (engine / "export_presets.cfg").is_file():
                     raise ValueError("Export needs an existing preset and matching export templates.")
-                output = local(root, f"builds/{run_id}/game.exe")
+                name = config.get('godot', {}).get('export_filename', 'game.exe')
+                if not isinstance(name, str) or not name or '/' in name or '\\' in name or ':' in name or name in {'.', '..'}:
+                    raise ValueError('godot.export_filename must be a single filename for the selected platform')
+                output = local(root, f"builds/{run_id}/{name}")
                 output.parent.mkdir(parents=True)
-            command = godot.command(binary, engine, args.action, frames=args.frames,
-                                    script=script, preset=args.preset, output=output)
+            if custom:
+                custom_output = local(root, f'builds/{run_id}')
+                if args.action in {'export', 'build'}:
+                    output = custom_output
+                    output.mkdir(parents=True)
+                command = configured(config, args.action, engine, run, custom_output)
+                manifest['executable_sha256'] = sha(Path(command[0]))
+            else:
+                command = godot.command(binary, engine, args.action, frames=args.frames,
+                                        script=script, preset=args.preset, output=output,
+                                        release=config.get('godot', {}).get('export_mode', 'debug') == 'release')
             manifest["status"] = "running"
             atomic_json(manifest_path, manifest)
             code, stopped = execute(command, engine, run / "engine.log", args.timeout)
@@ -438,16 +454,36 @@ def run_engine(args):
             manifest["command_status"] = stopped or ("passed" if code == 0 else "failed")
             manifest["status"] = stopped or ("passed" if code == 0 and not errors else "failed")
             if args.action == "test":
-                # GDScript errors can otherwise end with exit code zero. Require an explicit test assertion report.
-                passed_marker = re.search(r"^OAGD_TEST_PASS count=([1-9][0-9]*)\s*$", log, re.MULTILINE)
-                manifest["assertions"] = int(passed_marker[1]) if passed_marker else 0
-                if not passed_marker and manifest["status"] == "passed":
+                if custom:
+                    report = run / 'test-results.json'
+                    data = json.loads(report.read_text(encoding='utf-8-sig')) if report.is_file() else {}
+                    valid = (isinstance(data,dict) and type(data.get('tests')) is int and data['tests'] > 0
+                             and type(data.get('failed')) is int and data['failed'] == 0
+                             and type(data.get('errors')) is int and data['errors'] == 0)
+                    if not valid:
+                        if manifest['status'] == 'passed': manifest['status'] = 'failed'
+                        manifest['notes'].append('Custom test requires actual test-results.json with tests>0, failed=0, errors=0')
+                    else:
+                        manifest['test_report'] = {**data, 'path':'test-results.json', 'sha256':sha(report)}
+                else:
+                    # GDScript errors may exit zero; require the native assertion marker.
+                    passed_marker = re.search(r"^OAGD_TEST_PASS count=([1-9][0-9]*)\s*$", log, re.MULTILINE)
+                    manifest["assertions"] = int(passed_marker[1]) if passed_marker else 0
+                    if not passed_marker and manifest["status"] == "passed":
+                        manifest["status"] = "failed"
+                        manifest["notes"].append("Test script did not emit OAGD_TEST_PASS count=N.")
+            if output is not None and custom:
+                files = list(output.rglob('*'))
+                files = [p for p in files if p.is_file()]
+                for p in files: local(output, str(p.relative_to(output)))
+                if not files or not any(p.stat().st_size for p in files):
+                    if manifest['status'] == 'passed': manifest['status'] = 'failed'
+                    manifest['notes'].append('Custom exporter produced no nonempty output files')
+                manifest['build_files'] = {p.relative_to(root).as_posix():sha(p) for p in files}
+            elif output is not None:
+                if (not output.is_file() or not output.stat().st_size) and manifest["status"] == "passed":
                     manifest["status"] = "failed"
-                    manifest["notes"].append("Test script did not emit OAGD_TEST_PASS count=N.")
-            if output is not None:
-                if not output.is_file() and manifest["status"] == "passed":
-                    manifest["status"] = "failed"
-                    manifest["notes"].append("Exporter did not produce the expected executable.")
+                    manifest["notes"].append("Exporter did not produce the expected nonempty output file.")
                 if output.is_file():
                     manifest["build"] = {"path": str(output.relative_to(root)), "sha256": sha(output)}
                     manifest["build_files"] = {p.relative_to(root).as_posix(): sha(p)

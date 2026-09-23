@@ -1,2 +1,1 @@
-"""Engine-specific command construction for local production tools."""
-from .engines import godot  # Compatibility for existing imports.
+"""Engine, asset and processing adapters for local production tools."""

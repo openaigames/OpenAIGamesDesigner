@@ -49,16 +49,16 @@ class ProjectContractTests(unittest.TestCase):
         self.assertEqual(missing, [], "Active references must resolve; historical dist is excluded.")
 
     def test_execution_structure_has_callable_entries(self):
-        expected = ["tools/game_workflow.py", "tools/asset_workflow.py", "tools/numeric_workflow.py", "tools/validate_records.py",
-                    "tools/package_skills.py", "adapters/engines/godot.py", "adapters/engines/unity.py",
-                    "adapters/engines/unreal.py", "adapters/assets/hunyuan3d.py",
+        expected = ["tools/game_workflow.py", "tools/engine_workflow.py", "tools/asset_workflow.py", "tools/numeric_workflow.py", "tools/validate_records.py",
+                    "tools/package_skills.py", "adapters/engines/godot/cli.py", "adapters/engines/unity/cli.py",
+                    "adapters/engines/unreal/cli.py", "adapters/assets/hunyuan3d.py",
                     "adapters/assets/image_provider.py", "adapters/assets/audio_provider.py",
                     "adapters/processing/blender.py", "workflows/README.md", "tools/README.md",
-                    "adapters/engines/godot.md", "adapters/assets/README.md", "adapters/README.md"]
+                    "adapters/engines/godot/README.md", "adapters/assets/README.md", "adapters/README.md"]
         for name in expected:
             self.assertTrue((ROOT / name).is_file(), name)
         self.assertEqual({p.name for p in (ROOT / "schemas").glob("*.json")},
-                         {"project.schema.json", "run.schema.json", "asset-job.schema.json", "artifact.schema.json"})
+                         {"project.schema.json", "run.schema.json", "asset-job.schema.json", "artifact.schema.json", "engine-session.schema.json"})
 
 
 if __name__ == "__main__":

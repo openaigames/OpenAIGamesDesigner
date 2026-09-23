@@ -1,0 +1,16 @@
+{
+  "engine": "unity", "mode": "edit",
+  "operations": [
+    {"op": "scene", "path": "Assets/OAGD/Validation.unity", "create": true},
+    {"op": "object", "target": "Probe", "create": true, "primitive": "Cube",
+      "position": [0, 0, 0], "components": [{"type": "UnityEngine.Rigidbody", "properties": [
+        {"name": "m_UseGravity", "kind": "bool", "boolean": false}
+      ]}]},
+    {"op": "object", "target": "Camera", "create": true, "position": [0, 1, -6],
+      "components": [{"type": "UnityEngine.Camera"}]},
+    {"op": "object", "target": "Light", "create": true, "rotation": [45, -30, 0],
+      "components": [{"type": "UnityEngine.Light", "properties": [
+        {"name": "m_Type", "kind": "enum", "text": "Directional"}
+      ]}]}
+  ]
+}

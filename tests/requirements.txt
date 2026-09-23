@@ -1,0 +1,2 @@
+PyYAML>=6.0,<7
+openpyxl>=3.1,<4

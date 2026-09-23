@@ -1,5 +1,9 @@
 # 开始使用
 
+不确定需要安装哪些软件、在哪配置时，先看 [按功能配置环境](../adapters/environment-setup.md)。
+
+当前宿主说明以 Codex 为准，安装目录和配置范围见 [Codex 路径速查](../adapters/environment-setup.md#codex-路径速查)。下文 CLI 通过本地 Python 执行，游戏项目通过 `--project` 指定，不把安装目录当作游戏输出目录。
+
 准备 Python 3.10+。下面命令在工具包根运行；安装的 Skill 使用 `game-preproduction/runtime/` 作为工具包根。示例 `MyGame` 请替换为实际游戏项目的绝对路径。文件工具无需引擎；引擎操作需要真实可执行文件和项目配置。
 
 ## 从自然需求开始
@@ -34,7 +38,9 @@ python tools/game_workflow.py document --project "MyGame" --kind feature-spec --
 
 ## 配置引擎执行
 
-Godot 新工程及运行见 [Godot 流程](../adapters/engines/godot.md)。Unity、Unreal 接手已有工程：
+Unity / Unreal 新工程与制作操作使用 [engine_workflow.py](engine_workflow.py)：支持原生工程创建、场景/组件、导入与绑定、角色动画、定时试玩录制及会话恢复。请求格式、环境要求和证据范围见 [引擎制作入口与会话](../adapters/engines/sessions.md)。下方 `game_workflow.py init/run` 继续用于已有工程配置和运行、测试、构建。
+
+Godot 新工程及运行见 [Godot 流程](../adapters/engines/godot/README.md)。Unity、Unreal 接手已有工程：
 
 ```sh
 python tools/game_workflow.py init --project "MyGame" --engine unity --engine-root game --editor "C:/Tools/Unity/Editor/Unity.exe"
@@ -49,7 +55,7 @@ python tools/game_workflow.py run --project "MyGame" --action test --task produc
 python tools/game_workflow.py status --project "MyGame"
 ```
 
-先确认 task 的真实路径。Unity/UE doctor 只检查可执行文件路径和工程版本声明；不声称验证了编辑器二进制的版本。默认 Unity prepare 启动批处理导入，play 打开编辑器（不自动进入 Play Mode）；Unreal play 使用 `-game` 启动游戏。其余能力要配置项目命令，方法见 [扩展适配器](../adapters/README.md)。
+先确认 task 的真实路径。Unity/UE doctor 只检查可执行文件路径和工程版本声明；不声称验证了编辑器二进制的版本。Unity prepare 批处理导入，play 打开编辑器；Unreal prepare 加载并记录实际工程与版本，play 使用 `-game` 启动。原生 smoke / test / build / export 所需场景、目标、辅助脚本与依赖见 [引擎执行配置](../adapters/engines/execution.md)，已有命令可继续覆盖默认实现。
 
 ## 资产任务与记录检查
 
@@ -103,7 +109,7 @@ export 创建 parameters.csv 和 baseline.json，不覆盖已有会话。用户�
 
 apply 重新比对表格、基线与计划，保存原文件备份和 `.openaigame/numeric-imports/<id>/receipt.json`，再原子替换目标。执行期间暂停竞争写同一文件的其他任务/编辑器导出。检测到工程变化时先重新导出并合并用户修改；工具没有自动三方合并、文件监视或并发锁。状态 configuration_written 仅表示文件已写入，engine_validation 仍是 not_run；之后使用真实工程的导入/重载、配置检查和玩法测试，单独记录证据。
 
-中断时检查 receipt 的 prepared/failed 状态、目标与前后哈希，确认是否已写入。恢复前确认目标没有后续改动，再从 before.json 恢复并另存恢复记录；有后续变更时合并，不能整份覆盖。详细方法在技术 Skill 的数值交换参考。数值导入回执是专项记录，不冒充四类通用执行记录；通过运行工具执行引擎验证时再生成正式 run。
+中断时检查 receipt 的 prepared/failed 状态、目标与前后哈希，确认是否已写入。恢复前确认目标没有后续改动，再从 before.json 恢复并另存恢复记录；有后续变更时合并，不能整份覆盖。详细方法在技术 Skill 的数值交换参考。数值导入回执是专项记录，不冒充通用运行或引擎会话记录；通过运行工具执行引擎验证时再生成对应记录。当前结构约定见 [schemas](../schemas/)。
 
 
 ## 实施后的记录回写
@@ -112,4 +118,15 @@ apply 重新比对表格、基线与计划，保存原文件备份和 `.openaiga
 
 新作实施结束（包括失败或被中断）后运行 `validate_records.py --project <项目根> --layout --production --closeout --markdown`；检查报告必须读取并处理，结构不合格不能称项目管理已完成。未能修复时如实保留失败项与下一步，不为了通过修改状态成成功。已有/自定义项目不强套目录，人工核对同等内容。
 
-收尾检查验证六个入口、真实索引、初始占位状态是否残留及证据关联。管理、风险验证、本次任务和里程碑应链接 `runs/<id>/manifest.json` 或 `tests/reports/<id>.md`。直接引擎调用的报告应记录输入版本、命令、退出码、日志/产物路径和观察边界。工具只查结构与引用，不能证明文档事实已完整或模型确实遵循了交互。
+收尾检查验证六个入口、真实索引、初始占位状态是否残留及证据关联。管理、风险验证、本次任务和里程碑应链接实际的 `runs/<id>/manifest.json`、`runs/engine-*/session.json`、`runs/create-*/session.json`，或 `tests/reports/`、`production/validation/` 中的报告；自定义报告目录通过 `--report-root <项目内相对目录>` 指定。直接引擎调用的报告应记录输入版本、命令、退出码、日志/产物路径和观察边界。工具只查结构与引用，不能证明文档事实已完整或模型确实遵循了交互。
+
+## 引擎辅助脚本
+
+`python tools/engine_setup.py --project "MyGame"` 明确安装 Unity Editor 执行辅助脚本。它不会覆盖已修改的同名文件。Unity/UE 原生测试、构建，以及网页浏览器 smoke 配置见 [引擎执行配置](../adapters/engines/execution.md)。
+
+
+## 安装一致性与维护测试
+
+每个新分发包在 `game-preproduction/runtime/bundle-manifest.json` 保存内容版本及文件哈希。安装后运行 `python <runtime>/tools/check_installation.py --skills-root <六个Skill的父目录>`，检查缺失或修改的文件。检查只报告差异，不覆盖本地定制，也不删除用户额外文件；更新前比较、备份并合并实际差异。旧安装没有 manifest 时重新打包并同步，不把缺清单当作安装正确。
+
+维护仓库运行 `python tools/run_tests.py` 执行根测试和 Skill 内脚本测试。此入口及 CI 属于源码维护工具，不随游戏运行包分发。

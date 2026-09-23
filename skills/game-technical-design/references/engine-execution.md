@@ -7,7 +7,7 @@
 | 用户回答或工程事实 | 如何继续 |
 | --- | --- |
 | “Unity / Unreal 工程”“使用游戏引擎”“不要浏览器版” | 仅确定候选范围或交付方式，继续问具体引擎；不要优先采用本机已安装项 |
-| “使用 Unreal Engine” | 记录用户选择并沿用，检查 UE 环境；GAS/Lyra 等框架仍按任务影响与已有决定处理 |
+| “使用 Unreal Engine” | 记录用户选择并沿用，检查 UE 环境；GAS 等框架仍按任务影响与已有决定处理 |
 | 用户指定已有 Unity 工程及路径 | 检查其真实工程后沿用；不重问 Unity 还是 Unreal |
 | “Unity 和 Unreal 你来选”“哪个已安装就用哪个” | 在所委托的范围内比较并选择，记录具体结果、理由与用户原话；无需追加批准 |
 | “先推荐一下”“按默认战斗方案做”“这个结构可以” | 分别只授权推荐、战斗方案或结构；不能据此推定引擎已交由助手选择 |
@@ -21,6 +21,8 @@ Technical Design.md 分开保存“已确认约束、引擎候选/已选择、�
 
 ## 实现与集成
 
+编辑器操作先按 [引擎 MCP 接入](mcp-engine-integration.md) 发现宿主实际能力并核实目标工程；可用且适合的现有 MCP 优先复用。命令适配器保留构建、测试、打包和缺失能力的项目脚本路径。没有 MCP 不意味着更换引擎，也不意味着必须重复开发一套通信插件。
+
 角色、场景或动画表现实施前读取本轮美术资产方案。引擎选定不等于玩家/Boss 模型及动作包已选定；缺少方案时协调美术确认本轮占位范围或候选资源，不用引擎默认模型、程序摆动或自造几何体静默替代。用户明确委托选材或已有有效资源方案时直接继续。与资产选择无关的逻辑、接口和测试可先实施，不要求最终美术全部完成。
 
 新项目主要玩法实现开始前，读取管理入口链接的当前规则、原型目标和任务；缺失时补齐最小交接，关键体验未定则澄清，独立环境探查继续。明确授权采用默认方案时记录假设即可，不制造额外批准环节。新建原生工程在游戏项目的 `game/` 下，专业总入口留在项目根；已有工程沿用原位。
@@ -33,9 +35,9 @@ Technical Design.md 分开保存“已确认约束、引擎候选/已选择、�
 
 原型优先保留回答机制问题所需的因果链；切片在同一工程集成代表性品质与生产规格。按实际风险建立任务、测试和可恢复基线，已有代码与人工修改保留。实现后的真实路径、接口变化和运行方法回写技术文件。
 
-仅按本轮技术栈读取：[Godot 执行说明](godot-execution.md)、[UE 工程接入](unreal-project.md)、[GAS 战斗实现](gas-combat.md)、[Lyra 接入](lyra-integration.md)。引擎方法服务于通用接入、原型、切片或变更流程，不复制这些流程；非战斗任务无需读取 GAS，未采用 Lyra 的工程无需读取 Lyra。
+仅按本轮技术栈读取：[Godot 执行说明](godot-execution.md)、[UE 工程接入](unreal-project.md)。UE 能力/属性路线未定时用 [能力系统选型](ability-system-choice.md)，已采用 GAS 时用 [GAS 实现](gas-combat.md)，角色动作集成用 [动作与动画接入](action-animation-integration.md)。这些专业方法服务于通用流程，不复制阶段；不相关任务不加载专项参考。
 
-如安装了 game-preproduction，读取其 `references/production-workflows.md` 定位共享工具；开发仓库使用根目录 `tools/`。Godot 有专用命令；Unity/Unreal 有工程检查与项目配置命令，读取工具包 `adapters/README.md` 后按真实工程接入。配置命令不表示 UE 编辑器资产连接或 GAS/Lyra 自动编辑已实现。没有共享工具时采用工程已有命令，不因可选依赖缺失拒绝工作。
+如安装了 game-preproduction，读取其 `references/production-workflows.md` 定位共享工具；开发仓库使用根目录 `tools/`。各引擎的默认运行、测试、构建和导出入口见工具包 `adapters/engines/execution.md`，按真实工程配置场景、测试范围、目标平台与依赖。Unity 的 smoke/build/export 先明确安装随包 Editor 辅助脚本；已有同名修改不得直接覆盖。网页 smoke 需要明确选定构建、Playwright 和浏览器。已有 `commands` 保持优先。创建、场景/资产/动画制作与自动运行另从工具包 `adapters/engines/sessions.md` 选择引擎专属制作入口，调用 `tools/engine_workflow.py` 并关联任务和里程碑。其 Python/C# 操作不等于原生 MCP；GAS 专项仍以实际工程实现和验证为准。没有共享工具时采用工程已有命令，不因可选依赖缺失拒绝工作。
 
 资产生成与转换需要时读取工具包 `adapters/assets/README.md`，使用 `tools/asset_workflow.py` 记录选定本地工具的输入、命令和产物；Blender 处理任务与引擎导入分别留证。检查记录可调用 `tools/validate_records.py`，文件检查不替代实际引擎测试。
 

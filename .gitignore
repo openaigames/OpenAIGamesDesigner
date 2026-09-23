@@ -5,3 +5,8 @@ __pycache__/
 .godot/
 dist/
 /tests/dashboard-test-*/
+
+
+# Local visual drafts stay out of the distributed toolkit.
+/README.preview.md
+/.github/assets/*-preview.svg

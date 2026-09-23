@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Moodboard · Art Direction</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- LOCAL_SESSION -->
+  <script defer src="board-data.js"></script>
+  <script defer src="export-image.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body><main>
+  <header>
+    <div class="eyebrow">ART DIRECTION / VISUAL STUDY</div>
+    <div class="heading"><div><h1 id="title-display">Moodboard</h1><p id="intent-display"></p></div><span class="badge" id="board-meta"></span></div>
+    <div class="toolbar">
+      <label class="button">加入图片<input id="image-upload" type="file" accept="image/png,image/jpeg,image/webp" multiple></label>
+      <button id="export" class="primary">导出图片并保存到 Art Direction</button>
+      <button id="backup">备份编辑数据</button>
+      <label class="button">导入编辑数据<input id="config-upload" type="file" accept="application/json,.json"></label>
+    </div>
+    <p id="status" role="status">正在载入图板…</p>
+    <p id="warnings" class="warning" hidden></p>
+    <p id="saved-result" hidden><a id="saved-image" target="_blank" rel="noopener">查看保存的整图</a> · <a href="art-direction" target="_blank" rel="noopener">查看 Art Direction 记录</a></p>
+  </header>
+  <details class="brief"><summary>方向说明与继承关系</summary>
+    <div class="form-grid">
+      <label>图板名称<input id="title" maxlength="200"></label>
+      <label>当前选用状态<select id="selection"><option value="candidate">候选方向</option><option value="selected">已选用方向</option><option value="deferred">暂缓</option></select></label>
+      <label class="wide">本轮意图<textarea id="intent" maxlength="2000" rows="2"></textarea></label>
+      <label class="wide">选择或委托依据<textarea id="selection-basis" maxlength="2000" rows="2" placeholder="沿用实际用户决定；导出图片不会自动认可方向"></textarea></label>
+      <label>目标感受<textarea data-direction="feeling" maxlength="2000" rows="2"></textarea></label>
+      <label>视觉表达<textarea data-direction="visual" maxlength="2000" rows="2"></textarea></label>
+      <label>动态与声音（按需）<textarea data-direction="dynamic" maxlength="2000" rows="2"></textarea></label>
+      <label>应避免的表现与原因<textarea data-direction="avoid" maxlength="2000" rows="2"></textarea></label>
+      <label class="wide">镜头、交互与制作条件<textarea data-direction="constraints" maxlength="2000" rows="2"></textarea></label>
+      <label>从主题继承<textarea data-direction="inherit" maxlength="2000" rows="2"></textarea></label>
+      <label>局部差异<textarea data-direction="differ" maxlength="2000" rows="2"></textarea></label>
+    </div><p id="parent-note" class="muted"></p>
+  </details>
+  <div class="workspace">
+    <section class="reference-area" aria-labelledby="references-title">
+      <div class="section-head"><h2 id="references-title">视觉参考</h2><span id="image-count"></span></div>
+      <p class="muted">主要参考表达整体方向；补充参考说明局部结构。点图片看原图，再填写借鉴点。</p>
+      <div id="gallery" class="gallery"></div>
+      <h3 id="supporting-title" hidden>补充结构与细节</h3><div id="supporting-gallery" class="gallery supporting"></div>
+      <div id="empty" class="empty">加入已选的参考图片，开始整理本轮方向。</div>
+    </section>
+    <aside aria-labelledby="palette-title">
+      <div class="section-head"><h2 id="palette-title">主要颜色</h2><span id="color-count"></span></div>
+      <p class="muted">每个颜色都可修改。调色保留原图原貌；初始占位色需要按参考重新选择。</p>
+      <div id="palette"></div>
+      <p class="muted">通常保留 4–6 色；用户指定其他数量时可增减。</p><button id="add-color">增加色槽</button>
+    </aside>
+  </div>
+  <footer>图板表达参考与设计方向。资产制作、使用依据和游戏内表现需要分别检查。</footer>
+</main>
+<dialog id="image-dialog"><button id="close-image">关闭原图</button><img id="large-image" alt=""><p id="large-caption"></p></dialog>
+<dialog id="remove-dialog"><h2>移除这张参考？</h2><p>只从当前编辑中移除，已保存的旧版本和原图仍保留。</p><button id="cancel-remove">取消</button><button id="confirm-remove">移除参考</button></dialog>
+</body></html>

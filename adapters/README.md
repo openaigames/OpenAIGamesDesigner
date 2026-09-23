@@ -1,12 +1,16 @@
 # 配置和扩展适配器
 
-优先使用已有项目工具，通过配置接入；只有格式或执行语义不同才新增适配器。workflow 保持通用，GAS、Lyra、具体玩法和引擎版本的方法留在相关 Skill 参考里。
+初次使用先看 [环境准备与操作位置](environment-setup.md)，按要使用的功能选择必要组件，再配置本页的执行命令。
+
+优先使用已有项目工具，通过配置接入；只有格式或执行语义不同才新增适配器。workflow 保持通用，GAS、具体玩法和引擎版本的方法留在相关 Skill 参考里。
+
+引擎与框架分别组织在 [engines/](engines/README.md)。编辑器能力优先复用宿主现有且经过核实的 MCP；原生命令保留构建、测试与打包职责。连接、能力发现、保存重开和证据归档见 [MCP 接入约定](engines/mcp.md)。没有连接的提供方只记录为候选，不计为已实现能力。
 
 ## 引擎命令
 
-网页游戏使用 Three.js（3D）或 Phaser（2D），支持空工程初始化、依赖安装、本地 Vite 服务与构建导出；接入、测试和持续进程说明见 [网页游戏](engines/web.md)。网页浏览器验证需要真实项目命令或实际试玩，构建不会自动批准体验。
+网页游戏使用 Three.js（3D）或 Phaser（2D），支持空工程初始化、依赖安装、本地 Vite 服务与构建导出；接入、测试和持续进程说明见 [网页游戏](engines/web.md)。默认 smoke 支持 Playwright 实机加载检查；游戏规则仍需实际项目测试和试玩，构建不会自动批准体验。
 
-Godot 保留专用命令实现。Unity/Unreal 通过 `.openaigame/project.json` 的 commands 接入项目实际脚本。例如已初始化的 Unity 项目可以补充：
+各引擎默认执行能力与参数见 [引擎执行配置](engines/execution.md)。Unity/Unreal 也可通过 `.openaigame/project.json` 的 commands 覆盖默认动作，接入项目实际脚本。例如已初始化的 Unity 项目可以补充：
 
 ```json
 {
@@ -25,17 +29,7 @@ Godot 保留专用命令实现。Unity/Unreal 通过 `.openaigame/project.json` 
 
 只展开 `{project}`（原生工程根）、`{run}`（本次记录目录）、`{output}`（本次导出目录），其他参数原样保留。首项是绝对可执行文件，进程 cwd 是原生工程根，shell=False。传入 .uproject 时使用真实文件名，不把 `{project}` 当文件路径。命令来自已配置的项目，不解析 Markdown 来执行。
 
-| 动作 | Godot | Unity | Unreal |
-| --- | --- | --- | --- |
-| doctor | 调用二进制版本 | 工程结构及声明版本 | uproject 及声明版本 |
-| prepare | 导入 | 编辑器批处理导入 | 项目配置命令 |
-| smoke | 有限帧无画面启动 | 项目配置命令 | 项目配置命令 |
-| test | Godot 测试脚本 | 项目测试包装命令 | 项目测试包装命令 |
-| play | 运行工程 | 打开编辑器，不自动 Play | 编辑器 -game 启动 |
-| build | 使用 export | 项目构建命令 | 项目构建命令 |
-| export | Windows debug 导出 | 项目打包命令 | 项目打包命令 |
-
-命令未配置时输出 blocked 记录，不能模拟成功。build 只检查命令条件；要登记完整交付文件使用 export。Unity 的批处理不自动拥有项目构建方法，通常需要项目侧的 executeMethod；UE 构建与打包需按项目版本选用实际 UBT/UAT 路线。
+统一能力矩阵见 [执行配置](engines/execution.md)。默认引擎动作缺少必要配置时输出 blocked；实际进程、报告或产物出错时输出 failed。build 的含义随引擎不同：UE 为编译目标，其余为可交付构建；export 登记完整交付文件。
 
 test 包装脚本应执行实际测试、保留引擎原始报告，并在 `{run}/test-results.json` 写 `{"tests":3,"failed":0,"errors":0}`。三个值必须是整数，tests > 0、失败和错误都为 0 才通过技术检查。退出码为 0 但没有结果、零测试或格式错误都不通过。不能为了通过运行器手写一个虚构结果。
 

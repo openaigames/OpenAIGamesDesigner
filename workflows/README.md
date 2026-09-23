@@ -13,10 +13,10 @@
 | templates | 八份通用管理、里程碑、任务、规格、验证与决定骨架 | 不要求已有项目迁移或填满 |
 | tools | 文档生成、引擎运行、资产任务、数值交换、记录检查、技能打包 | 不自动批准任务或阶段 |
 | adapters | 引擎命令、本地生成包装命令、Blender 处理 | 不内置全部引擎编辑器能力或生成模型 |
-| schemas | project、run、asset-job、artifact 四类记录格式 | 不是独立的任务管理数据库 |
+| schemas | 项目、运行、引擎会话、资产任务及产物的结构化约定，见 [schemas](../schemas/) | 不是独立的任务管理数据库 |
 | tests | 工具、协议、文件保护与模拟适配器检查 | 不代替真实引擎联调或游戏验收 |
 
-`adapters/engines/` 包含 Godot、Unity、Unreal 及 Three.js/Phaser 共用的 web 适配器；`adapters/assets/` 包含 Hunyuan3D、图像和音频；`adapters/processing/` 包含 Blender。公共协议辅助文件也保存在所属目录。
+`adapters/engines/` 包含 Godot、Unity、Unreal、Three.js 和 Phaser 的独立入口；后两者共用 `web_common.py` 的网页执行逻辑。`adapters/assets/` 包含 Hunyuan3D、图像和音频；`adapters/processing/` 包含 Blender。公共协议辅助文件也保存在所属目录。
 
 ## 实际游戏项目
 
@@ -56,6 +56,6 @@ MyGame/
 
 源码是维护来源，`dist/` 是构建产物，个人 Skill 目录是安装副本，游戏目录是工作结果。打包时公共运行资源放入 `game-preproduction/runtime/`，包含 workflows、templates、tools、adapters、schemas 和可移植使用文档；六个 Skill 的专业参考各自随包分发。默认打包只包含 skills 和规定的 runtime 资源。个人开发记录、旧工具与历史分发包保存在仓库外，不参与当前流程。
 
-Unity/Unreal 当前提供工程识别和可配置命令执行。Blueprint、GAS/Lyra 资产编辑、自动导入和具体项目构建逻辑仍依赖项目自己的工具或助手实施。图像、音频、Hunyuan3D 接入是本地包装协议，未绑定云 API 或下载模型。
+Unity/Unreal 分别提供工程识别、原生运行检查、测试报告解析和构建导出入口，具体依赖见 [执行配置](../adapters/engines/execution.md)；工程创建、场景/组件、资源导入、角色动画和自动操作由各引擎制作驱动实现，共享检查点与 [会话恢复](../adapters/engines/sessions.md)。具体对象和操作以各引擎 production 说明为准，GAS 等专项制作仍按实际工程代码、可用 MCP 或项目工具落实。图像、音频、Hunyuan3D 接入是本地包装协议，未绑定云 API 或下载模型。
 
 使用见 [入门](../tools/README.md)，实际验收顺序见 [分项验证计划](../tests/README.md)。

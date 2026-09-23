@@ -31,7 +31,7 @@
 </td>
 <td width="50%" valign="top">
 <h3>🎨 协作制作资产与数值</h3>
-<p>明确资产需求、接入制作工具；按需整理可编辑数值表，比较修改、回写工程并检查实际效果。</p>
+<p>明确资产需求，按需制作可编辑的美术图板、检索素材并接入制作工具；整理数值表，比较修改、回写工程并检查实际效果。</p>
 </td>
 </tr>
 </table>
@@ -62,7 +62,9 @@
 
 ## 快速开始
 
-准备 **Codex 与 Python 3.10+**；实际制作时，再接入项目需要的引擎和资产工具。
+当前安装与使用说明面向 **Codex**。准备 Python 3.10+ 运行工具；实际制作时，再接入项目需要的引擎和资产工具。Claude Code 等其他 Agent 的安装与验证留待后续补充。
+
+先查 [按功能配置环境](adapters/environment-setup.md)：列出需要安装什么、在电脑 / 引擎 / AI 助手的哪里配置，以及怎样确认可用。只讨论和维护设计文档时无需先安装引擎。
 
 ### 1 · 获取并安装
 
@@ -82,15 +84,15 @@ cd OpenAIGamesDesigner
 python tools/package_skills.py --output dist/skills-bundle
 ```
 
-将生成包中的六个完整 Skill 目录放入 `~/.agents/skills/`，保留 `game-preproduction/runtime/` 等全部子文件。已有同名目录时先比较并备份本地修改。
+Codex 个人安装：将生成包中的六个完整 Skill 目录放入 `~/.agents/skills/`（Windows 默认是 `C:/Users/<用户名>/.agents/skills/`）。仅供某个游戏项目使用时，可放入该项目的 `.agents/skills/`；通常选择一种范围，避免同名副本混淆。保留 `game-preproduction/runtime/` 等全部子文件，已有同名目录时先比较并备份本地修改。
 
-打包目标需为新目录；更新后重新打包并同步安装副本。分发包不包含引擎、生成模型或游戏资产。
+打包目标需为新目录；更新后重新打包并同步安装副本。包内 `game-preproduction/runtime/bundle-manifest.json` 记录内容版本，使用该 runtime 下的 `tools/check_installation.py --skills-root <六个Skill的父目录>` 检查缺失或修改的文件；差异需比较并保留本地定制。分发包不包含引擎、生成模型或游戏资产。
 
 </details>
 
 ### 2 · 打开你的游戏项目
 
-安装后新开一个任务，在游戏项目目录开始，或提供已有工程的实际路径。已有项目沿用自己的结构。
+安装后在 Codex 新开一个任务，以游戏项目目录为工作目录，或提供已有工程的实际路径。已有项目沿用自己的结构。Skill 安装位置、MCP 配置与游戏项目文件是不同位置，见 [Codex 路径速查](adapters/environment-setup.md#codex-路径速查)。
 
 ### 3 · 用自然语言描述目标
 
@@ -119,13 +121,15 @@ python tools/package_skills.py --output dist/skills-bundle
 
 | 制作路线 | 接入文件 |
 | --- | --- |
-| **Three.js · 网页 3D** | [adapters/engines/web.py](adapters/engines/web.py) |
-| **Phaser · 网页 2D** | [adapters/engines/web.py](adapters/engines/web.py) |
-| **Godot** | [adapters/engines/godot.py](adapters/engines/godot.py) |
-| **Unity** | [adapters/engines/unity.py](adapters/engines/unity.py) |
-| **Unreal Engine** | [adapters/engines/unreal.py](adapters/engines/unreal.py) |
+| **Three.js · 网页 3D** | [adapters/engines/threejs/README.md](adapters/engines/threejs/README.md) |
+| **Phaser · 网页 2D** | [adapters/engines/phaser/README.md](adapters/engines/phaser/README.md) |
+| **Godot** | [adapters/engines/godot/README.md](adapters/engines/godot/README.md) |
+| **Unity** | [adapters/engines/unity/README.md](adapters/engines/unity/README.md) |
+| **Unreal Engine** | [adapters/engines/unreal/README.md](adapters/engines/unreal/README.md) |
 
 资产制作可配置图像、3D、音频与 Blender 的本地命令；数值协作支持已绑定 JSON 配置与 CSV / Excel 数值页之间的交换。
+
+Unity 与 Unreal 分别提供工程创建、场景与组件编辑、资源导入、角色动画配置及自动操作入口，通过会话记录关联检查点和中断恢复。编辑器操作也可使用宿主已有的 MCP，具体支持范围与依赖见各引擎说明。
 
 [引擎接入说明](adapters/README.md) · [资产工具接入](adapters/assets/README.md) · [数值表往返](tools/README.md#数值表往返) · [验证方法](tests/README.md)
 
@@ -139,17 +143,22 @@ OpenAIGamesDesigner/
 │   ├── game-preproduction/         # 项目管理、阶段推进与变更协调
 │   ├── game-concept/               # 游戏定位、核心体验与设计支柱
 │   ├── game-design/                # 玩法、系统、关卡与数值策划
-│   ├── game-art-direction/         # 美术方向、资产规格与视觉验收
+│   ├── game-art-direction/         # 美术方向、图板、素材选用与视觉验收
 │   ├── game-technical-design/      # 技术设计、工程实施与引擎参考
 │   └── game-prototype-validation/  # 原型、切片与变更验证
 ├── workflows/                      # 立项、原型、切片、变更、资产与交付流程
 ├── templates/                      # 项目管理、里程碑、任务和规格等交付模板
 ├── tools/                          # 项目执行、资产任务、数值交换、检查与打包
 ├── adapters/                       # 具体引擎及外部工具的接入实现
-│   ├── engines/                    # Godot、Unity、UE、Three.js 与 Phaser
+│   ├── engines/                    # 引擎运行、制作、会话恢复与 MCP 接入约定
+│   │   ├── godot/                  # Godot 命令与接入说明
+│   │   ├── unity/                  # Unity 运行、制作驱动与 C# 辅助工具
+│   │   ├── unreal/                 # UE 运行、制作驱动与 Python 辅助工具
+│   │   ├── threejs/                # 网页 3D
+│   │   └── phaser/                 # 网页 2D
 │   ├── assets/                     # 图像、3D 与音频的可配置本地命令
 │   └── processing/                 # Blender 等资产处理接入
-├── schemas/                        # 项目、执行、资产任务与产物记录约定
+├── schemas/                        # 项目、运行、引擎会话、资产任务与产物记录约定
 ├── tests/                          # 自动检查、行为场景与联调样例
 └── dist/                           # 本地打包生成的 Skill 分发包
 ```
@@ -177,6 +186,8 @@ MyGame/
 ```
 
 初次立项保存已知信息，未确定的记录为待讨论。后续只修改本轮受影响的专业内容，关联变更汇总到项目管理；定位发生变化时再更新概览。
+
+具体资产、来源、许可与交付进度由美术记录或现有资产清单统一维护，概览只保留影响定位的制作策略摘要。
 
 已有项目保留自己的目录和等价文档。游戏资料保存在项目中，Skill 安装目录保存通用方法与工具。
 

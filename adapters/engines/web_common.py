@@ -1,11 +1,12 @@
 """Three.js / Phaser projects using Node and project-local Vite.
 
-Only dependency preparation, serving and bundling have defaults. Browser and
-game tests require project-owned commands and real reports.
+Preparation, serving, bundling and a real browser smoke check have defaults.
+Game-specific behavior tests still require project-owned commands and reports.
 """
 import json
 from pathlib import Path
 from .common import configured
+from .native_support import settings, required, file_path, write_json, evidence
 
 FRAMEWORKS = {"threejs": ("three", "0.186.0"), "phaser": ("phaser", "4.2.1")}
 VITE_VERSION = "8.3.0"
@@ -36,6 +37,19 @@ def command(config, project, action, run, output):
     if action in config.get("commands", {}):
         return configured(config, action, project, run, output)
     node = str(executable(config))
+    if action == 'smoke':
+        opts = settings(config, 'web')
+        root = Path(required(opts, 'smoke_root')).expanduser()
+        if not root.is_absolute() or not (root / 'index.html').is_file():
+            raise ValueError('web.smoke_root must be an absolute built directory containing index.html')
+        module = file_path(required(opts, 'playwright_module'), 'web.playwright_module')
+        browser = file_path(required(opts, 'browser_executable'), 'web.browser_executable')
+        seconds = opts.get('smoke_seconds', 3)
+        if type(seconds) not in (int, float) or not 1 <= seconds <= 30:
+            raise ValueError('web.smoke_seconds must be 1..30')
+        write_json(run / 'browser-request.json', {'root': str(root.resolve()), 'module': str(module),
+                   'browser': str(browser), 'seconds': seconds, 'run': str(run)})
+        return [node, str(Path(__file__).with_name('browser_smoke.cjs')), str(run / 'browser-request.json')]
     if action == "prepare":
         cli = Path(config.get("package_manager_cli", ""))
         if not cli.is_absolute() or not cli.is_file() or cli.name not in {"npm-cli.js", "pnpm.cjs"}:
@@ -52,6 +66,21 @@ def command(config, project, action, run, output):
         # A unique build output outside the source avoids source-fingerprint churn.
         return [node, str(vite), "build", "--outDir", str(output)]
     return configured(config, action, project, run, output)
+
+
+def finalize(config, project, action, run, output):
+    if action != 'smoke' or action in config.get('commands', {}):
+        return {}
+    path = run / 'browser-result.json'
+    data = json.loads(path.read_text(encoding='utf-8'))
+    if (not isinstance(data, dict) or data.get('success') is not True or data.get('errors') != []
+            or type(data.get('canvas_count')) is not int or data['canvas_count'] < 1
+            or not isinstance(data.get('root'), str)):
+        raise ValueError(f'Browser smoke failed: {data}')
+    if Path(data.get('root', '')).resolve() != Path(settings(config, 'web')['smoke_root']).resolve():
+        raise ValueError('Browser checked a different build directory')
+    return {'native_result': data, 'native_result_file': evidence(path, run),
+            'screenshot': evidence(run / 'browser.png', run)}
 
 
 def starter(engine):

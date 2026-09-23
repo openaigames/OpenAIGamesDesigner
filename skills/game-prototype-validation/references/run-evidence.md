@@ -6,7 +6,17 @@
 
 需要判断原型、垂直切片或交付是否满足本轮目标时，继续用 [里程碑评审](milestone-review.md) 对照各维度证据；这里负责解释原始运行记录。
 
-以任务和里程碑中的问题为起点，核对 `runs/<run-id>/manifest.json` 的引擎版本、源文件哈希、设计/任务输入快照、实际命令、退出码、日志和产物。历史 run 与当前代码不一致时，只能证明历史版本；必要时复测。
+以任务和里程碑中的问题为起点，按实际执行入口读取记录，不要求所有执行都转换成 manifest：
+
+| 记录 | 核对重点 |
+| --- | --- |
+| `runs/<run-id>/manifest.json` | 通用命令运行的引擎版本、源文件哈希、设计/任务输入快照、实际命令、退出码、日志和产物 |
+| `runs/engine-*/session.json` | 引擎制作的工程与进程身份、`related_records`、请求与输入/worker 哈希、前后文件状态、`native_result` 及其原始报告、日志和证据哈希；实际请求在同目录 `request.json` |
+| `runs/create-*/session.json` | `operation=create`、工程身份和创建状态；沿项目相对路径 `verification` 读取关联的原生身份验证 session，不能只凭目录或工程描述文件存在就认定创建验证通过 |
+
+仅按记录类型检查它实际支持的字段，缺少必要证据时标明缺口，不补造历史快照。历史记录与当前代码不一致时，只能证明历史版本；必要时复测。创建状态为 `creating` 或会话仍在执行时，不作为完成证据。宿主原生 MCP 的调用输出按实际格式保存、关联并核对，不冒充 CLI session 或命令 manifest。
+
+使用共享工具时，按管理 Skill 的 [运行资源定位](../../game-preproduction/references/production-workflows.md) 找到工具包根；引擎会话、恢复与记录契约见其中 `adapters/engines/sessions.md` 和 `schemas/engine-session.schema.json`。独立安装且没有共享工具时，沿用工程已有记录并说明可核实范围。
 
 记录层级分别判断：
 - 命令退出/日志：是否执行成功，是否有错误、取消、超时或版本阻塞。
@@ -15,6 +25,18 @@
 - 视觉/声音/性能：需要对应呈现和采样证据；无画面启动不能证明画面或手感。
 - 阶段取舍：综合问题是否得到回答、剩余风险和用户的授权决定，不能由命令通过自动批准。
 
-manifest 的 gameplay_validation / visual_validation 默认 not_run，表示执行工具没有完成这类评审；后续评审在任务或里程碑引用该 run 并记录实际新证据，不改写原始执行事实。`needs_review` 表示运行期间源内容变化，要核对最终版本；`blocked`、`failed`、`timeout`、`cancelled` 不得记为通过。
+manifest 或 session 中的 `gameplay_validation` / `visual_validation` 为 `not_run` 时，表示该执行记录没有完成这类评审；后续评审在任务或里程碑引用原记录并记录实际新证据，不将原始执行事实改写为玩法或视觉通过。
+
+`needs_review` 是待复核，原因必须从对应记录和日志读取，不能只解释为源文件变化。引擎 session 中可能出现：
+
+| 依据 | 应如何判断 |
+| --- | --- |
+| `input_changed_during_run` | 请求或导入输入在执行期间变化，核对实际使用版本、最终状态及需重做的部分 |
+| `engine_log_errors` | 原生操作有结果，但引擎日志含错误；检查具体错误及对本轮产物的影响，不能只凭原生 success 判通过 |
+| `reconciled` | 中断/失败后已登记现场并解除对应旧锁；不代表任务已继续或完成，先重新 inspect 再决定剩余工作 |
+
+原因可能并存；其他记录类型依其实际契约解释，不能强套上述字段。`blocked`、`failed`、`timeout`、`cancelled`、`interrupted` 均不算执行通过，批次失败也可能已有部分成果，需要核实现场而不是盲目重放。
+
+`restored` 只表示文件恢复。继续检查 `restored_engine_inspection` 或 `restored_engine_inspection_error`，并用后续原生读取/运行验证当前工程；入口结构检查成功仍不等于实际启动或游戏可玩。保留原失败、恢复和后续验证之间的关联，不把恢复状态用作原制作任务完成的依据。
 
 原型结论支持继续、调整、补测或停止；切片还检查代表性体验、品质和制作可行性。既有项目局部改动按风险回归，不重做完整阶段。失败和被替代的证据保留，说明适用范围；只要求验证计划时不宣称已经执行。

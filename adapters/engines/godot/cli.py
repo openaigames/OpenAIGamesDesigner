@@ -15,7 +15,7 @@ def executable(config):
     return path
 
 
-def command(binary, engine, action, *, frames=180, script=None, preset=None, output=None):
+def command(binary, engine, action, *, frames=180, script=None, preset=None, output=None, release=False):
     base = [str(binary), "--path", str(engine)]
     if action == "prepare":
         return base + ["--headless", "--editor", "--import"]
@@ -25,6 +25,6 @@ def command(binary, engine, action, *, frames=180, script=None, preset=None, out
         return base + ["--headless", "--script", "res://" + script]
     if action == "play":
         return base
-    if action == "export":
-        return base + ["--headless", "--export-debug", preset, str(output)]
+    if action in {"export", "build"}:
+        return base + ["--headless", "--export-release" if release else "--export-debug", preset, str(output)]
     raise ValueError(f"Unsupported Godot action: {action}")

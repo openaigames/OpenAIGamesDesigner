@@ -3,6 +3,9 @@
 import argparse
 from pathlib import Path
 import shutil
+import hashlib
+import json
+from check_installation import bundle_id, MANIFEST
 
 
 def package(destination):
@@ -18,11 +21,15 @@ def package(destination):
     for folder in ("templates", "workflows", "adapters", "schemas"):
         shutil.copytree(source / folder, runtime / folder, ignore=ignore)
     (runtime / "tools").mkdir()
-    for name in ("game_workflow.py", "asset_workflow.py", "numeric_workflow.py", "validate_records.py"):
+    for name in ("game_workflow.py", "engine_setup.py", "engine_workflow.py", "asset_workflow.py", "numeric_workflow.py", "validate_records.py", "check_installation.py"):
         shutil.copy2(source / "tools" / name, runtime / "tools" / name)
     shutil.copy2(source / "tools/README.md", runtime / "tools/README.md")
     (runtime / "tests").mkdir()
     shutil.copy2(source / "tests/README.md", runtime / "tests/README.md")
+    files = {p.relative_to(destination).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+             for p in sorted(destination.rglob('*')) if p.is_file()}
+    (destination / MANIFEST).write_text(json.dumps({'version':1,'bundle_id':bundle_id(files),'files':files},
+                                                 ensure_ascii=False,indent=2),encoding='utf-8')
     return destination
 
 

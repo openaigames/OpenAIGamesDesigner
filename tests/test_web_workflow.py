@@ -12,7 +12,7 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 import game_workflow as workflow
 import package_skills
-from adapters.engines import web
+from adapters.engines import web_common
 
 
 class WebWorkflowTests(unittest.TestCase):
@@ -33,7 +33,7 @@ class WebWorkflowTests(unittest.TestCase):
         return root
 
     def test_both_routes_scaffold_and_preserve_user_files(self):
-        for engine in web.FRAMEWORKS:
+        for engine in web_common.FRAMEWORKS:
             root = self.init(engine)
             self.assertEqual(len([p for p in root.glob("*.md")]), 6)
             entry = root / "game/src/main.js"
@@ -75,7 +75,7 @@ class WebWorkflowTests(unittest.TestCase):
             cli.write_text("// fixture")
             config["package_manager_cli"] = str(cli)
             (game / lock).write_text("{}")
-            argv = web.command(config, game, "prepare", self.root, self.root)
+            argv = web_common.command(config, game, "prepare", self.root, self.root)
             self.assertEqual(argv[0], str(Path(sys.executable).resolve()))
             self.assertIn(expected, argv)
 

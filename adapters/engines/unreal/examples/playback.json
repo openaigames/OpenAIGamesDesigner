@@ -1,0 +1,8 @@
+{
+  "engine": "unreal", "mode": "playback", "scene": "/Game/OAGD/Validation",
+  "seconds": 6, "capture_interval": 2,
+  "actions": [
+    {"at": 1, "op": "position", "target": "Probe", "position": [100, 100, 100]},
+    {"at": 3, "op": "position", "target": "Probe", "position": [100, -100, 100]}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "engine": "unity", "mode": "playback", "scene": "Assets/OAGD/Validation.unity", "camera": "Camera",
+  "seconds": 6, "capture_interval": 2,
+  "actions": [
+    {"at": 1, "op": "position", "target": "Probe", "position": [1, 0, 0]},
+    {"at": 3, "op": "position", "target": "Probe", "position": [-1, 0, 0]}
+  ]
+}

@@ -51,6 +51,130 @@
           "type": "string"
         }
       }
+    },
+    "godot": {
+      "type": "object",
+      "properties": {
+        "export_filename": {
+          "type": "string",
+          "minLength": 1
+        },
+        "export_mode": {
+          "enum": [
+            "debug",
+            "release"
+          ]
+        }
+      }
+    },
+    "unity": {
+      "type": "object",
+      "properties": {
+        "smoke_scene": {
+          "type": "string",
+          "minLength": 1
+        },
+        "smoke_seconds": {
+          "type": "number",
+          "minimum": 1
+        },
+        "test_platform": {
+          "enum": [
+            "EditMode",
+            "PlayMode"
+          ]
+        },
+        "test_filter": {
+          "type": "string",
+          "minLength": 1
+        },
+        "build_target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "build_scenes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "build_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "development": {
+          "type": "boolean"
+        }
+      }
+    },
+    "unreal": {
+      "type": "object",
+      "properties": {
+        "smoke_map": {
+          "type": "string",
+          "minLength": 1
+        },
+        "smoke_seconds": {
+          "type": "number",
+          "minimum": 1
+        },
+        "test_filter": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dotnet_executable": {
+          "type": "string",
+          "minLength": 1
+        },
+        "platform": {
+          "type": "string",
+          "minLength": 1
+        },
+        "configuration": {
+          "enum": [
+            "Debug",
+            "DebugGame",
+            "Development",
+            "Test",
+            "Shipping"
+          ]
+        },
+        "build_target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "export_maps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "web": {
+      "type": "object",
+      "properties": {
+        "smoke_root": {
+          "type": "string",
+          "minLength": 1
+        },
+        "playwright_module": {
+          "type": "string",
+          "minLength": 1
+        },
+        "browser_executable": {
+          "type": "string",
+          "minLength": 1
+        },
+        "smoke_seconds": {
+          "type": "number",
+          "minimum": 1
+        }
+      }
     }
   }
 }

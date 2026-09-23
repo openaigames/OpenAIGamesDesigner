@@ -27,7 +27,7 @@
 | 用户修改的 XLSX | 可选 openpyxl 只读所选页，默认 Parameters；表头在第一行，严格对应绑定，无多余列/记录；其他计算/说明页不导入 |
 | 公式单元格 | 直接导入拒绝，即使带缓存。用可靠计算工具重算，核对依赖和结果，再导出纯数值页/CSV；保留原工作簿作为依据 |
 | 新增/删除记录、改 ID、字段/单位/公式变化 | 不在通用数值覆盖范围内，按功能/数据结构变更实现迁移并重新建立基线 |
-| UE DataTable、CurveTable、DataAsset、GAS 定义、Lyra 配置 | 定位工程已有作者源/导入器，通过实际可用的编辑器接口、脚本或工程命令更新与重载；此工具不修改 .uasset，也不自动接通 GAS/Lyra |
+| UE DataTable、CurveTable、DataAsset、GAS 定义或自有能力配置 | 定位工程已有作者源/导入器，通过实际可用的编辑器接口、脚本或工程命令更新与重载；此工具不修改 .uasset，也不自动接通 GAS |
 | Unity ScriptableObject、Godot Resource、其他格式 | 复用项目导入器或按需求实现专项转换。仅项目确实加载被绑定 JSON 时才使用本工具直接写回 |
 
 `plan` 是文件级差异，保存后表格再次修改需要新计划。`apply` 重新计算并比对计划，保存 `.openaigame/numeric-imports/<id>/before.json` 与 `receipt.json`。完成状态为 `configuration_written`，`engine_validation` 保持 `not_run`；它不创建 engine run，也不代替相关 `game_workflow.py run` 或项目检查。

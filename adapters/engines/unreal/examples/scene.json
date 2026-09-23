@@ -1,0 +1,19 @@
+{
+  "engine": "unreal",
+  "mode": "edit",
+  "operations": [
+    {"op": "scene", "path": "/Game/OAGD/Validation", "create": true},
+    {"op": "blueprint", "path": "/Game/OAGD/BP_Probe", "components": [
+      {"name": "Body", "type": "StaticMeshComponent", "properties": {
+        "static_mesh": {"asset": "/Engine/BasicShapes/Cube"},
+        "mobility": {"enum": "ComponentMobility.MOVABLE"}
+      }}
+    ]},
+    {"op": "actor", "target": "Probe", "source": "/Game/OAGD/BP_Probe", "create": true,
+      "position": [100, 0, 100], "scale": [1, 1, 1]},
+    {"op": "actor", "target": "Light", "class": "PointLight", "create": true,
+      "position": [0, 0, 400]},
+    {"op": "actor", "target": "PlayerStart", "class": "PlayerStart", "create": true,
+      "position": [-500, 0, 180]}
+  ]
+}

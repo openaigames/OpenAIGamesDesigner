@@ -20,16 +20,17 @@ Node 与包管理器路径是本机实际路径，示例不能直接照抄。也
 | --- | --- | --- |
 | doctor | 检查 Node 路径、package.json 中选定框架声明 | 配置可读；不证明运行环境或网页可用 |
 | prepare | 安装项目依赖，已有锁文件时严格沿用 | 安装命令完成；保存真实日志 |
-| build / export | 调用工程本地 Vite，输出到独立 builds/运行编号 | 构建命令完成；export 另检查非空 index.html 并登记产物哈希 |
+| build / export | 调用工程本地 Vite，输出到独立 builds/运行编号 | 检查非空 index.html 并登记产物哈希 |
 | play | Vite 在 127.0.0.1:5173 提供开发服务，端口冲突报错 | 这是持续进程；超时会停止并如实记录 timeout，不能当作试玩通过 |
-| smoke / test | 项目配置命令，无虚假的默认成功 | 使用真实浏览器检查或游戏断言；test 必须返回实际测试报告 |
+| smoke | Playwright 加载明确选择的构建 | HTTP、控制台、资源请求和可见 canvas 检查，保存截图 |
+| test | 项目自己的测试命令 | 必须执行游戏断言并返回实际测试报告 |
 
 ```sh
 python tools/game_workflow.py run --project "MyGame" --action prepare --timeout 600
 python tools/game_workflow.py run --project "MyGame" --action export --timeout 180
 ```
 
-沿用 [命令配置与报告协议](../README.md)，commands 可覆盖默认动作。测试包装器传播失败并把真实报告摘要写入 `{run}/test-results.json`。没有 smoke/test 配置会记录 blocked，不能将构建冒充浏览器测试。
+沿用 [命令配置与报告协议](../README.md)，commands 可覆盖默认动作。测试包装器传播失败并把真实报告摘要写入 `{run}/test-results.json`。浏览器 smoke 已有默认实现，需要配置实际构建目录、Playwright 和浏览器；行为 test 仍需项目提供命令与报告。缺少所需配置会记录 blocked，不能将构建冒充浏览器或行为测试。
 
 实际试玩可由宿主终端管理开发进程，记录工作目录、命令、URL、退出方式；使用浏览器打开输出 URL。CLI play 适合有限时长会话，不是后台服务管理器。不要用 file:// 加载游戏。交付前另以 HTTP 服务打开导出目录，检查子路径、资产请求、控制台异常、输入、重开和目标设备。启动服务不等于公开发布，导出不会部署。
 
@@ -41,3 +42,20 @@ python tools/game_workflow.py run --project "MyGame" --action export --timeout 1
 - 数值主源可为工程 JSON；通过现有数值交换工具修改后，重新加载并验证实际行为。记录是构建时打包还是运行时 fetch，不能假定改表会自动更新已导出的包。
 
 依据：[Three.js 官方手册](https://threejs.org/manual/)、[Phaser 安装](https://docs.phaser.io/phaser/getting-started/installation)、[Vite 入门与环境要求](https://vite.dev/guide/)。
+
+## 浏览器检查配置
+
+先执行 export，再把需要检查的实际构建目录填入 `web.smoke_root`。检查已有产物，不暗中选择最新文件夹：
+
+```json
+{
+  "web": {
+    "smoke_root": "C:/MyGame/builds/RUN_ID",
+    "playwright_module": "C:/Tools/node_modules/playwright/index.js",
+    "browser_executable": "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
+    "smoke_seconds": 3
+  }
+}
+```
+
+需要 Playwright 和实际 Chromium 系浏览器；本工具不自动下载。smoke 临时绑定 127.0.0.1 随机端口，检查 HTTP、控制台、资源请求和非空可见 canvas，保存 `browser-result.json`、截图及已读取资源哈希，完成后关闭服务和浏览器。它不证明 canvas 中的内容正确，也不代替输入、胜败、重开等游戏测试。自定义渲染入口、需登录服务或非 canvas 游戏使用 `commands.smoke`。

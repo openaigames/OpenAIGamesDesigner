@@ -138,7 +138,7 @@ class IntakeTests(unittest.TestCase):
         runtime = bundle / "game-preproduction/runtime"
         self.assertFalse((runtime / "docs").exists())
         for relative in ("workflows/README.md", "tools/README.md", "adapters/README.md",
-                         "adapters/engines/godot.md", "adapters/assets/README.md", "tests/README.md"):
+                         "adapters/engines/godot/README.md", "adapters/assets/README.md", "tests/README.md"):
             self.assertTrue((runtime / relative).is_file(), relative)
         runtime_markdown = list(runtime.rglob("*.md"))
         self.assertEqual(records.markdown_errors(runtime, runtime_markdown), [])

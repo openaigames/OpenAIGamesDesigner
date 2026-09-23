@@ -1,4 +1,4 @@
 interface:
   display_name: "游戏美术方向"
-  short_description: "定义游戏美术方向，为已有项目新增或替换资产提供制作规格、引用检查与视觉验收"
-  default_prompt: "使用 $game-art-direction 根据现有风格和本轮需求，推进美术方向或资产变更，明确规格、依赖与验证状态。"
+  short_description: "将体验目标转成美术规则，制作可编辑并导出保存的 Moodboard，衔接素材检索、资产规格与验收"
+  default_prompt: "使用 $game-art-direction 将体验目标落实为美术方向与资产要求，沿用已有选择；需要新 Moodboard 时先询问是否制作，同意并确定风格后筛图、编辑色板并保存整图，按需继续选材、制作与验证。"

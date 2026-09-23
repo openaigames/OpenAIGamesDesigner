@@ -10,7 +10,7 @@ from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMAS = ROOT / "schemas"
-KINDS = ("project", "run", "asset-job", "artifact")
+KINDS = ("project", "run", "asset-job", "artifact", "engine-session")
 PROJECT_ENTRIES = ("Project Management.md", "Game Concept.md", "Game Design Document.md",
                    "Art Direction.md", "Technical Design.md", "Risk & Assumption List.md")
 
@@ -103,6 +103,14 @@ def check_record(kind, value, project, record_path):
             report = value.get("test_report")
             if report:
                 check_file(record_path.parent, report["path"], report["sha256"])
+                if report.get('source'):
+                    check_file(record_path.parent, report['source']['path'], report['source']['sha256'])
+            for key in ('native_result_file', 'screenshot'):
+                if value.get(key):
+                    check_file(record_path.parent, value[key]['path'], value[key]['sha256'])
+            if value.get('native_test_report', {}).get('source'):
+                source = value['native_test_report']['source']
+                check_file(record_path.parent, source['path'], source['sha256'])
             for relation in ("task", "milestone"):
                 if value.get(relation): check_file(project, value[relation])
         if kind == "asset-job":
@@ -121,6 +129,31 @@ def check_record(kind, value, project, record_path):
             check_file(project, value["path"], value["sha256"])
             if contained(project, value["path"]).stat().st_size != value["bytes"]:
                 raise ValueError("Artifact byte count mismatch")
+        if kind == "engine-session":
+            if record_path.parent.name.startswith('create-') and value.get('operation') != 'create':
+                raise ValueError('Creation session must declare operation=create')
+            if not Path(value['project']).resolve().is_relative_to(project.resolve()):
+                raise ValueError('Engine session project lies outside the game project')
+            for relative, sha in value.get('evidence_hashes', {}).items():
+                check_file(record_path.parent, relative, sha)
+            for relative, sha in value.get('before', {}).items():
+                check_file(record_path.parent / 'before', relative, sha)
+            for relative in value.get('related_records', {}).values():
+                check_file(project, relative)
+            if value.get('operation') == 'create' and value['status'] in {'completed', 'needs_review'}:
+                verification = contained(project, value.get('verification'))
+                if verification == record_path.resolve():
+                    raise ValueError('Creation cannot verify itself')
+                child = json.loads(verification.read_text(encoding='utf-8-sig'))
+                if not isinstance(child, dict) or child.get('operation') == 'create' or 'verification' in child:
+                    raise ValueError('Creation requires a direct engine execution verification')
+                child_errors = check_record('engine-session', child, project, verification)
+                if child_errors: raise ValueError('Invalid creation verification: ' + '; '.join(child_errors))
+                if (Path(child['project']).resolve() != Path(value['project']).resolve()
+                        or child['engine'] != value['engine']
+                        or child['status'] not in {'completed', 'needs_review'}
+                        or (value['status'] == 'completed' and child['status'] != 'completed')):
+                    raise ValueError('Creation verification identity/status mismatch')
     except (OSError, ValueError, KeyError, TypeError) as error:
         errors.append(str(error))
     return errors
@@ -210,7 +243,7 @@ def linked_files(project, path):
     return found
 
 
-def closeout_errors(project):
+def closeout_errors(project, report_roots=None):
     """Check persistent handoff after implementation, including interrupted/failed work.
 
     Does not approve quality or infer task completion. Manual reports are allowed when
@@ -226,9 +259,17 @@ def closeout_errors(project):
     links = linked_files(project, management)
     if not any(p.is_relative_to(project / "game") or p == project / ".openaigame/project.json" for p in links):
         errors.append("Closeout needs a management link to the actual engine entry or project config")
+    reports = [project / 'tests/reports', project / 'production/validation']
+    reports += [contained(project, name) for name in (report_roots or [])]
     def evidence(path):
-        return ((path.is_relative_to(project / "runs") and path.name == "manifest.json") or
-                path.is_relative_to(project / "tests/reports")) and path.stat().st_size > 0
+        if not path.stat().st_size: return False
+        if path.is_relative_to(project / 'runs') and path.name in {'manifest.json', 'session.json'}:
+            kind = 'run' if path.name == 'manifest.json' else 'engine-session'
+            try:
+                return not check_record(kind, json.loads(path.read_text(encoding='utf-8-sig')), project, path)
+            except (OSError, ValueError, TypeError, AttributeError):
+                return False
+        return path.suffix.lower() in {'.md', '.json', '.txt'} and any(path.is_relative_to(p) for p in reports)
     owners = [management, project / "Risk & Assumption List.md"]
     owners += [p for p in links if p.is_relative_to(project / "production/tasks") or p.is_relative_to(project / "production/milestones")]
     for owner in owners:
@@ -246,6 +287,7 @@ def main(argv=None):
     parser.add_argument("--layout", action="store_true", help="Check new-project layout; omit for existing/custom projects")
     parser.add_argument("--production", action="store_true", help="With --layout, check minimum implementation handoff files and links")
     parser.add_argument("--closeout", action="store_true", help="With --layout --production, check saved state and evidence links after implementation, even when incomplete")
+    parser.add_argument('--report-root', action='append', default=[], help='Additional project-relative directory for closeout reports')
     args = parser.parse_args(argv)
     project = args.project.resolve()
     records = []
@@ -260,13 +302,15 @@ def main(argv=None):
             records.append((args.kind, path))
         else:
             for kind, pattern in (("project", ".openaigame/project.json"), ("run", "runs/*/manifest.json"),
+                                  ("engine-session", "runs/engine-*/session.json"),
+                                  ("engine-session", "runs/create-*/session.json"),
                                   ("asset-job", ".openaigame/asset-jobs/*/job.json")):
                 records.extend((kind, p) for p in project.glob(pattern))
         errors = []
         if args.layout:
             errors.extend(layout_errors(project, args.production))
         if args.closeout:
-            errors.extend(closeout_errors(project))
+            errors.extend(closeout_errors(project, args.report_root))
         for kind, path in records:
             if not path.resolve().is_relative_to(project): errors.append(f"{path}: outside project"); continue
             try:

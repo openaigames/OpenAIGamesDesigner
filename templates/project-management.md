@@ -29,7 +29,7 @@
 
 ## 执行与验证
 
-关联实际使用的执行与验证记录。采用本工具运行器时可引用 `runs/<run-id>/manifest.json` 和 `.openaigame/project.json`，仅在文件真实存在后添加入口；其他工程沿用自身记录。命令完成、功能测试、体验验证、视觉验证、里程碑取舍分别判断。失败记录不覆盖，源文件哈希不是可恢复备份。
+关联实际使用的执行与验证记录。采用本工具运行器时可引用 `runs/<run-id>/manifest.json`、`runs/engine-*/session.json`、`runs/create-*/session.json` 和 `.openaigame/project.json`，仅在文件真实存在后添加入口；其他工程沿用自身记录。命令完成、功能测试、体验验证、视觉验证、里程碑取舍分别判断。失败记录不覆盖，源文件哈希不是可恢复备份。
 
 ## 下一步
 
