@@ -257,3 +257,7 @@ MyGame/
 [专业 Skills](skills/) · [工作流与架构](workflows/README.md) · [交付模板](templates/) · [适配器](adapters/README.md) · [测试与验证](tests/README.md)
 
 专业方法放在对应 Skill，具体工具接入放在适配器，通用流程负责串联。欢迎通过实际项目中的需求与验证结果，逐步完善这套工具。
+
+## 许可证
+
+工具包自身采用 [MIT License](LICENSE)，允许使用、修改、分发与商用，需保留许可证和版权声明。第三方组件与素材适用各自条款，见 [第三方声明](THIRD_PARTY_NOTICES.md)。

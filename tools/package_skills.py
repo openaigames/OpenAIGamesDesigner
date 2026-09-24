@@ -15,11 +15,20 @@ def package(destination):
         raise ValueError("Destination already exists; choose a new bundle directory.")
     if destination.is_relative_to(source) and not destination.is_relative_to(source / "dist"):
         raise ValueError("Bundle must be under dist or outside the source repository.")
+    for relative in ("LICENSE", "THIRD_PARTY_NOTICES.md", "licenses/README.md", "licenses/third-party-sources.json"):
+        if not (source / relative).is_file():
+            raise ValueError("Required license document is missing: " + relative)
     ignore = shutil.ignore_patterns("__pycache__", "*.pyc", ".godot", "runtime")
     shutil.copytree(source / "skills", destination, ignore=ignore)
+    shutil.copy2(source / "LICENSE", destination / "LICENSE")
+    for skill in destination.glob("*/SKILL.md"):
+        shutil.copy2(source / "LICENSE", skill.parent / "LICENSE")
     runtime = destination / "game-preproduction/runtime"
     for folder in ("templates", "workflows", "adapters", "schemas"):
         shutil.copytree(source / folder, runtime / folder, ignore=ignore)
+    for name in ("LICENSE", "THIRD_PARTY_NOTICES.md"):
+        shutil.copy2(source / name, runtime / name)
+    shutil.copytree(source / "licenses", runtime / "licenses")
     (runtime / "tools").mkdir()
     for name in ("game_workflow.py", "engine_setup.py", "engine_workflow.py", "asset_workflow.py", "asset_library.py", "settings_server.py", "project_workbench.py", "asset_audit.py", "numeric_workflow.py", "validate_records.py", "check_installation.py"):
         shutil.copy2(source / "tools" / name, runtime / "tools" / name)

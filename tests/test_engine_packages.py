@@ -14,6 +14,28 @@ from adapters.engines import threejs, phaser
 
 
 class EnginePackageTests(unittest.TestCase):
+    def test_portable_bundle_preserves_first_and_third_party_licenses(self):
+        with tempfile.TemporaryDirectory() as temp:
+            bundle = package_skills.package(Path(temp) / 'bundle')
+            runtime = bundle / 'game-preproduction/runtime'
+            license_text = (ROOT / 'LICENSE').read_bytes()
+            self.assertEqual((bundle / 'LICENSE').read_bytes(), license_text)
+            for skill in (ROOT / 'skills').glob('*/SKILL.md'):
+                self.assertEqual((bundle / skill.parent.name / 'LICENSE').read_bytes(), license_text)
+            expected = [ROOT / 'LICENSE', ROOT / 'THIRD_PARTY_NOTICES.md']
+            expected.extend(p for p in (ROOT / 'licenses').rglob('*') if p.is_file())
+            expected.extend(ROOT / p for p in (
+                'tools/workbench/web/vendor/three/LICENSE',
+                'tools/workbench/web/vendor/three/examples/jsm/misc/SculptGL.LICENSE.txt'))
+            manifest = json.loads((bundle / check_installation.MANIFEST).read_text(encoding='utf-8'))
+            for source in expected:
+                packaged = runtime / source.relative_to(ROOT)
+                self.assertEqual(packaged.read_bytes(), source.read_bytes(), str(source))
+                self.assertIn(packaged.relative_to(bundle).as_posix(), manifest['files'])
+            report = check_installation.check(bundle)
+            self.assertEqual(report['missing'], [])
+            self.assertEqual(report['changed'], [])
+
     def test_bundle_manifest_detects_missing_and_locally_modified_files(self):
         with tempfile.TemporaryDirectory() as temp:
             bundle=package_skills.package(Path(temp)/'bundle')
