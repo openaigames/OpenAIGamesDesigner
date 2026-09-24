@@ -10,3 +10,6 @@ dist/
 # Local visual drafts stay out of the distributed toolkit.
 /README.preview.md
 /.github/assets/*-preview.svg
+
+# Local prototypes and trial assets are kept outside release sources.
+/prototypes/

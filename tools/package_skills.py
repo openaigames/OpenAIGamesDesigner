@@ -21,9 +21,10 @@ def package(destination):
     for folder in ("templates", "workflows", "adapters", "schemas"):
         shutil.copytree(source / folder, runtime / folder, ignore=ignore)
     (runtime / "tools").mkdir()
-    for name in ("game_workflow.py", "engine_setup.py", "engine_workflow.py", "asset_workflow.py", "asset_library.py", "settings_server.py", "numeric_workflow.py", "validate_records.py", "check_installation.py"):
+    for name in ("game_workflow.py", "engine_setup.py", "engine_workflow.py", "asset_workflow.py", "asset_library.py", "settings_server.py", "project_workbench.py", "asset_audit.py", "numeric_workflow.py", "validate_records.py", "check_installation.py"):
         shutil.copy2(source / "tools" / name, runtime / "tools" / name)
     shutil.copytree(source / 'tools/settings-ui', runtime / 'tools/settings-ui')
+    shutil.copytree(source / 'tools/workbench', runtime / 'tools/workbench', ignore=ignore)
     shutil.copy2(source / "tools/README.md", runtime / "tools/README.md")
     (runtime / "tests").mkdir()
     shutil.copy2(source / "tests/README.md", runtime / "tests/README.md")

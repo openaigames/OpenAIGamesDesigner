@@ -7,7 +7,7 @@
 面向独立开发者与小团队，围绕同一个可持续编辑的游戏工程，
 从新想法走向原型、垂直切片与持续迭代。
 
-[快速开始](#快速开始) · [开发流程](#开发流程) · [免费游戏素材库](#免费游戏素材库) · [引擎与工具](#引擎与工具) · [项目文件](#项目文件)
+[快速开始](#快速开始) · [开发流程](#开发流程) · [项目看板](#项目看板) · [游戏资产合集](#游戏资产合集) · [引擎与工具](#引擎与工具) · [项目文件](#项目文件)
 
 </div>
 
@@ -56,7 +56,7 @@
 | 制作、处理与导入资产 | [资产制作](workflows/asset-production.md) |
 | 打包交付与反馈接续 | [交付](workflows/delivery.md) |
 
-相关skills：[项目管理](skills/game-preproduction/SKILL.md) · [概览与定位](skills/game-concept/SKILL.md) · [游戏策划](skills/game-design/SKILL.md) · [美术方向](skills/game-art-direction/SKILL.md) · [技术设计](skills/game-technical-design/SKILL.md) · [原型验证](skills/game-prototype-validation/SKILL.md)
+相关 Skills：[项目管理](skills/game-preproduction/SKILL.md) · [概览与定位](skills/game-concept/SKILL.md) · [游戏策划](skills/game-design/SKILL.md) · [美术方向](skills/game-art-direction/SKILL.md) · [技术设计](skills/game-technical-design/SKILL.md) · [原型验证](skills/game-prototype-validation/SKILL.md)
 
 </details>
 
@@ -115,31 +115,66 @@ Codex 个人安装：将生成包中的六个完整 Skill 目录放入 `~/.agent
 
 [完整使用说明 →](tools/README.md)
 
-## 免费游戏素材库
+## 项目看板
 
-**按类型查找素材，按下载条件选择来源。** 素材库覆盖 2D、3D、动作、VFX、音频、字体与引擎模块，提供作者来源、免费范围、许可依据、账号要求及文件下载入口，帮助助手选材、获取并登记到游戏项目。Moodboard 参考图另按图板规则筛选。
+**在浏览器里浏览游戏目录中的资产、核对3D模型生成任务、配置3D模型API Key。**
 
-| 模型可直接下载 · 无需登录 | 需要登录或额外操作 |
-| --- | --- |
-| [Kenney](https://kenney.nl/assets) — 2D、3D、UI、材质、VFX、音频<br>[Poly Haven](https://polyhaven.com/) — 3D、材质、HDRI | [Quaternius](https://quaternius.com/) — 按条目判断登录；有额外流程<br>[itch.io free game assets](https://itch.io/game-assets/free) — 按条目判断登录；有额外流程 |
-| [ambientCG](https://ambientcg.com/) — 3D、材质、HDRI<br>[OpenGameArt](https://opengameart.org/) — 2D、3D、UI、材质、VFX、动画、音频、字体 | [Mixamo](https://www.mixamo.com/) — 需登录<br>[Fab](https://www.fab.com/) — 按条目判断登录；有额外流程 |
-| [Godot Asset Library](https://godotengine.org/asset-library/asset) — 模块、VFX、UI<br>[KayKit](https://kaylousberg.com/game-assets) — 3D、动画 | [Unity Asset Store](https://assetstore.unity.com/) — 需登录<br>[Freesound](https://freesound.org/) — 需登录 |
-| [Game-icons.net](https://game-icons.net/) — 2D、UI<br>[Google Fonts](https://fonts.google.com/) — 字体 | [CraftPix Freebies](https://craftpix.net/freebies/) — 需登录<br>[Blendkit（原 BlenderKit）](https://www.blendkit.com/) — 按条目判断登录；有额外流程 |
-| [Lucide](https://lucide.dev/icons/) — UI<br>[Effekseer Sample Effects](https://effekseer.github.io/en/contribute.html) — VFX | — |
-| [TextureCan](https://www.texturecan.com/) — 材质、3D<br>[Incompetech](https://incompetech.com/music/royalty-free/music.html) — 音频 | — |
+![项目看板示例：资产分类与标签筛选、模型和音频列表，以及主角模型的 3D 预览](.github/assets/project-workbench-example.png)
 
-下载方式按具体素材和文件格式区分。例如 Fab 部分免费文件可匿名下载，但需要接受 EULA 并选择格式；加入个人库则需要登录。免登录栏提供可直接获取的文件示例，使用其他素材或版本时仍需核对其下载条件、许可和引擎兼容性。
+直接告诉助手：
 
-[查看完整合集、文件下载地址与登录步骤 →](adapters/assets/asset-sources.md) · [机器可读素材目录](adapters/assets/sources.json)
-
-```sh
-# 查找可免登录下载的特效来源
-python tools/asset_library.py sources --kind vfx --access direct --query "magic impact"
-# 查看确实需要账号的动画来源
-python tools/asset_library.py sources --kind animation --login required
+```text
+打开这个游戏项目的看板，我要浏览本地资产。
 ```
 
-目录查询只准备检索路线；选定素材后，助手继续核实当前文件和许可，再使用统一下载与登记工具保存到游戏项目。合集不限制从其他来源找素材，也不限制自制、修改或已授权生成。
+有游戏目录后即可使用，无需先完成美术登记。看板按需打开，不会因为创建了项目就自动启动。也可在工具包根目录运行以下命令；安装版从 `game-preproduction/runtime/` 运行：
+
+```sh
+python tools/project_workbench.py --project "游戏项目绝对路径"
+```
+
+服务启动后会打开浏览器。同一台电脑上的其他浏览器可使用相同的本机网址；服务需保持运行，重启后地址可能变化。本地资产浏览不需要 API Key。
+
+| 页面 | 可以做什么 |
+| --- | --- |
+| **资产库** | 扫描支持格式的文件，按类型、目录、名称和标签查找；切换网格或列表、收藏、预览及查看来源与许可 |
+| **制作任务** | 查看资产生成请求、确认状态和结果；准备 Tripo / 混元 3D 文本生成任务，核对后授权，由助手执行 |
+| **服务与密钥** | 配置生成服务；Windows 支持当前用户的本机加密保存，其他系统使用环境变量。保存配置不会启动生成 |
+
+### 资产预览范围
+
+| 资产 | 当前支持 |
+| --- | --- |
+| GLB / glTF | 旋转、缩放、平移、线框、骨骼与部件查看；文件含动画时可选择片段、播放和调整进度 |
+| OBJ | 直接查看几何；读取模型引用的项目内 MTL 和贴图，缺少材质时使用中性材质 |
+| 图片、音频、视频 | 常见图片格式的缩放与平移、音频播放和波形、视频播放；实际解码取决于浏览器支持 |
+| VFX | 预览看板支持的 `.vfx.json` 粒子配置及贴图；引擎原生特效需另行导出视频或其他可浏览形式 |
+| 引擎资源与其他模型格式 | 列出文件信息；UE 等引擎模型可导出 GLB 并关联原资源卡片，FBX、STL 等尚不直接渲染 |
+
+关联预览需要先从原制作工具或引擎导出，并记录源文件与依赖版本。源资源变化后，旧预览会失效；浏览器画面可能与引擎材质、场景效果不同。动画分类统计已读取到动画片段的文件，未导出的引擎动作文件仍列在“引擎资源”。
+
+### 标签跟随美术记录
+
+`Art Direction.md` 统一保存对象与标签。主角的模型、贴图、动画、音效和 VFX 可以归属同一对象，共享“主角”等标签，并在看板中筛选。
+
+固定程序扫描文件、计算版本并对照美术记录；“检查美术清单”列出未登记、归属或标签缺项、文件缺失及版本变化。AI 助手依据项目资料补齐用途和归属，未知内容保留待确认。看板不会自行调用模型判断用途，也没有后台目录监听；新增或修改文件后点击“刷新目录”。
+
+[看板启动与命令说明 →](tools/README.md#项目看板与资产核查) · [标签与关联预览说明 →](skills/game-preproduction/references/project-workbench.md)
+
+## 游戏资产合集
+
+合集覆盖 2D、3D、动画、VFX、音频、字体与引擎模块，并标注免费与付费情况。以下为部分来源：
+
+| 来源 | 主要内容 | 是否付费 |
+| --- | --- | --- |
+| [Kenney](https://kenney.nl/assets) | 2D、3D、UI、音效 | 单独资源包免费，整合包付费 |
+| [Quaternius](https://quaternius.com/) | 低多边形 3D、角色、动画 | 部分免费，扩展版本付费 |
+| [Poly Haven](https://polyhaven.com/) | 3D、PBR 材质、HDRI | 公开资产免费 |
+| [Effekseer](https://effekseer.github.io/en/contribute.html) | VFX 示例效果 | 免费 |
+| [Freesound](https://freesound.org/) | 音效、环境声音 | 免费，需登录 |
+| [Fab](https://www.fab.com/) | 模型、动画、VFX、音频、引擎模块 | 免费与付费均有 |
+
+[查看完整资产合集、收费说明与获取步骤 →](adapters/assets/asset-sources.md)
 
 ## 引擎与工具
 
@@ -153,7 +188,7 @@ python tools/asset_library.py sources --kind animation --login required
 | **Unity** | [adapters/engines/unity/README.md](adapters/engines/unity/README.md) |
 | **Unreal Engine** | [adapters/engines/unreal/README.md](adapters/engines/unreal/README.md) |
 
-资产制作支持 [Tripo / Hunyuan3D API](adapters/assets/generation-api.md)（[本机密钥设置页](adapters/assets/local-settings.md)）、[免费素材检索与登记](adapters/assets/asset-sources.md)，以及图像、音频与 Blender 的本地命令；数值协作支持已绑定 JSON 配置与 CSV / Excel 数值页之间的交换。
+资产制作支持 [Tripo / Hunyuan3D API](adapters/assets/generation-api.md)（[本机密钥设置页](adapters/assets/local-settings.md)）、[资产检索与登记](adapters/assets/asset-sources.md)，以及图像、音频与 Blender 的本地命令；数值协作支持已绑定 JSON 配置与 CSV / Excel 数值页之间的交换。
 
 Unity 与 Unreal 分别提供工程创建、场景与组件编辑、资源导入、角色动画配置及自动操作入口，通过会话记录关联检查点和中断恢复。编辑器操作也可使用宿主已有的 MCP，具体支持范围与依赖见各引擎说明。
 
@@ -174,7 +209,7 @@ OpenAIGamesDesigner/
 │   └── game-prototype-validation/  # 原型、切片与变更验证
 ├── workflows/                      # 立项、原型、切片、变更、资产与交付流程
 ├── templates/                      # 项目管理、里程碑、任务和规格等交付模板
-├── tools/                          # 项目执行、资产任务、数值交换、检查与打包
+├── tools/                          # 项目看板、项目执行、资产任务、数值交换与检查
 ├── adapters/                       # 具体引擎及外部工具的接入实现
 │   ├── engines/                    # 引擎运行、制作、会话恢复与 MCP 接入约定
 │   │   ├── godot/                  # Godot 命令与接入说明

@@ -1,0 +1,76 @@
+.project-context{min-height:57px}
+.art-audit-summary{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:0 20px 12px;color:var(--muted);font-size:13px}
+.art-audit-summary button{padding:4px 8px;background:var(--selected);color:var(--blue);border-radius:5px;font-size:13px}
+.art-editor-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:14px}
+.art-editor-actions .text-button{font-size:14px}
+.card-tags .record-pending{background:#fff0dc;color:#8b571b}
+.audit-issue-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-height:48vh;overflow:auto;margin:20px 0}
+.audit-issue-group{border:1px solid var(--line);border-radius:8px;padding:14px;min-width:0}
+.audit-issue-group h3{margin:0 0 10px;font-size:16px;display:flex;justify-content:space-between;gap:8px}
+.audit-issue-group h3 span{color:var(--muted);font-weight:400}
+.audit-issue{padding:9px 0;border-top:1px solid var(--line);font-size:14px;overflow-wrap:anywhere}
+.audit-issue code,.audit-issue small{display:block;color:var(--muted);font-size:12px;margin-top:5px}
+.art-source-dialog code{overflow-wrap:anywhere}
+#art-record-form label{display:block;font-size:15px;margin:18px 0 8px}
+#art-record-form input:not([type=hidden]),#art-record-form select{width:100%;padding:10px 12px;font:15px var(--font);color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px}
+.art-form-error{color:#a02d29;font-size:14px}
+.art-form-error:empty{display:none}
+.art-document{max-height:62vh;overflow:auto;font-size:14px;line-height:1.8}
+.art-document h2{font-size:21px}.art-document h3{font-size:18px}
+.art-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:6px;margin:12px 0}
+.art-document table{border-collapse:collapse;min-width:100%;font-size:13px}
+.art-document td{border:1px solid var(--line);padding:8px;min-width:100px;max-width:260px;overflow-wrap:anywhere}
+.art-document tr:first-child{font-weight:600;background:var(--selected)}
+@media(max-width:650px){.audit-issue-grid{grid-template-columns:1fr}}
+.library-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tag-name{overflow-wrap:anywhere;min-width:0}
+.tag-symbol{font-size:18px;color:var(--blue);width:18px;text-align:center;flex-shrink:0}
+.tag-empty{font-size:13px;color:var(--muted);margin:5px 10px}
+.filter-caption{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#active-tag-filter{font-size:13px;padding:3px 8px;background:var(--selected);color:var(--blue);border:1px solid var(--selected-line);border-radius:5px}
+.card-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.card-tags span{font-size:12px;line-height:1.6;padding:2px 6px;border-radius:4px;background:var(--selected);color:var(--blue);overflow-wrap:anywhere}
+.tag-editor{padding:0 6px 19px}
+.inspector.expanded #inspector-content{grid-template-columns:minmax(0,1fr) minmax(280px,320px)}
+.inspector.expanded .tag-editor{grid-column:2;grid-row:2;padding:0 18px 18px}
+.tag-editor-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.tag-editor-heading strong{font-size:14px;font-weight:600}
+.tag-editor-heading>span,.tag-save-status{font-size:12px;color:var(--muted)}
+.editable-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.editable-tag{display:inline-flex;max-width:100%;border-radius:5px;background:var(--selected);border:1px solid var(--selected-line)}
+.editable-tag button{padding:4px 7px;color:var(--blue);font-size:13px;overflow-wrap:anywhere;min-width:0}
+.editable-tag button:last-child{border-left:1px solid var(--selected-line);flex-shrink:0}
+.editable-tag button:hover{background:#dfe7ff}
+.tag-add-form{display:flex;gap:7px}
+.tag-add-form input,#bulk-tag-input{border:1px solid #ccd3e2;background:var(--panel);border-radius:6px;padding:8px 10px;font:14px var(--font);color:var(--ink);min-width:0;flex:1}
+.tag-add-form input:focus,#bulk-tag-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px var(--selected)}
+.tag-add-form .button{min-height:36px;padding:5px 12px}
+.tag-save-status:empty{display:none}
+.bulk-tags-dialog{width:min(620px,calc(100vw - 32px));max-height:calc(100vh - 48px);padding:25px;overflow:auto}
+.bulk-tags-dialog h2{font-size:24px;margin:0}
+.bulk-tags-dialog .dialog-heading button{font-size:25px;padding:0 8px;color:var(--muted)}
+.bulk-tags-dialog>form>p{font-size:14px}
+.bulk-select-all{display:flex;gap:9px;align-items:center;font-size:14px;margin:15px 0 10px}
+#bulk-tag-count{margin-left:auto;color:var(--muted)}
+.bulk-tag-assets{max-height:270px;overflow:auto;border:1px solid var(--line);border-radius:7px;margin-bottom:18px}
+.bulk-tag-assets label{display:flex;align-items:flex-start;gap:9px;padding:11px 12px;border-bottom:1px solid var(--line);cursor:pointer}
+.bulk-tag-assets label:last-child{border-bottom:0}
+.bulk-tag-assets label:has(input:checked){background:var(--selected)}
+.bulk-tag-assets strong{font-size:14px;font-weight:600}
+.bulk-tag-assets small{display:block;font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.bulk-tags-dialog input[type=checkbox]{width:16px;height:16px;accent-color:var(--blue);flex-shrink:0}
+#bulk-tag-input{display:block;width:100%;margin-top:7px}
+.library-footer>span#disk-summary{display:block}
+.tag-origin-heading{font-size:12px;color:var(--muted);margin:12px 12px 5px}
+.art-assignment{padding-bottom:14px;margin-bottom:15px;border-bottom:1px solid var(--line)}
+.inherited-tags button{border:1px solid #bed1f5;background:var(--selected);color:var(--blue);border-radius:5px;padding:5px 9px;font-size:14px}
+.art-record-state,.art-unlinked{font-size:13px;color:var(--muted);margin:8px 0}
+.art-unlinked{margin:0 0 13px}
+.art-record-warning{font-size:13px;color:var(--orange-ink)}
+.art-source-dialog{width:min(850px,calc(100vw - 32px));max-width:850px;max-height:calc(100vh - 40px);padding:25px;overflow:auto}
+.art-source-dialog h2{margin:0;font-size:23px}
+.art-source-dialog .dialog-heading button{font-size:25px;color:var(--muted)}
+.art-source-dialog>p{font-size:14px}
+.art-source-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.art-source-path{font:13px Consolas,monospace;overflow-wrap:anywhere;color:var(--muted)}
+.art-source-text{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.8 var(--font);background:var(--soft);padding:18px;border:1px solid var(--line);border-radius:7px;max-height:55vh;overflow:auto;color:var(--ink)}

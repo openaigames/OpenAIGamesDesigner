@@ -21,8 +21,8 @@ APPROVAL_STORAGE_ERROR = ('无法读写本机授权记录。请让助手检查�
 
 
 class SettingsServer(HTTPServer):
-    def __init__(self, port=0, project=None, job_id=None):
-        super().__init__(('127.0.0.1', port), Handler)
+    def __init__(self, port=0, project=None, job_id=None, handler=None):
+        super().__init__(('127.0.0.1', port), handler or Handler)
         self.origin = 'http://127.0.0.1:' + str(self.server_port)
         # Cookies are host-scoped, not port-scoped; concurrent windows must not overwrite each other.
         self.cookie_name = 'oagd_settings_' + str(self.server_port)
@@ -33,14 +33,15 @@ class SettingsServer(HTTPServer):
         self.project = Path(project).resolve() if project else None
         self.job_id = job_id
 
-    def state(self):
+    def state(self, job_id=None):
+        job_id = job_id or self.job_id
         state = {**credential_store.status(), 'csrf': self.csrf, 'approval': None}
-        if self.project and self.job_id:
+        if self.project and job_id:
             try:
                 from asset_workflow import read_job
-                _, job = read_job(self.project, self.job_id)
+                _, job = read_job(self.project, job_id)
                 fingerprint = generation_approval.for_job(self.project, job)
-                details = {'project': str(self.project), 'job_id': self.job_id,
+                details = {'project': str(self.project), 'job_id': job_id,
                     'provider': job['provider'], 'parameters': job['request']['parameters'],
                     'inputs': [{k: item[k] for k in ('path', 'sha256')} for item in job['request']['inputs']]}
                 try:
@@ -60,7 +61,7 @@ class SettingsServer(HTTPServer):
                     return state
                 state['approval'] = {**details, 'fingerprint': fingerprint, 'approved': approved}
             except (OSError, ValueError, KeyError, TypeError):
-                state['approval'] = {'job_id': self.job_id, 'error': '请先配置此任务的凭据，并确认任务仍在等待执行。'}
+                state['approval'] = {'job_id': job_id, 'error': '请先配置此任务的凭据，并确认任务仍在等待执行。'}
         return state
 
     @property

@@ -1,6 +1,6 @@
 ---
 name: game-art-direction
-description: 将游戏体验目标转成美术方向与制作规则；制作主题或资产 Moodboard、编辑图片与色板并导出保存；支持免费素材检索、跨类型选材、资产规格与视觉验收，也用于美术逆向研究。方向设计不等于资产已制作或导入。
+description: 将游戏体验目标转成美术方向与制作规则；制作主题或资产 Moodboard、编辑图片与色板并导出保存；支持免费与付费素材检索、跨类型选材、资产规格与视觉验收，也用于美术逆向研究。方向设计不等于资产已制作或导入。
 ---
 
 # 游戏美术方向
@@ -24,7 +24,7 @@ description: 将游戏体验目标转成美术方向与制作规则；制作主�
 | 初期方向、参考观察、结构化记录和交付 | [美术交付指导](references/outputs.md) |
 | 体验转成风格规则、图板落实为资产设计说明 | [体验目标与风格生产规则](references/style-production.md) |
 | 主题或资产 Moodboard、逐色编辑、整图导出与保存 | [图板与色板](references/moodboard-and-palette.md) |
-| 免费/现成素材、占位替换及跨类型选材 | [素材检索与获取](references/asset-sourcing.md) |
+| 免费与付费素材、占位替换及跨类型选材 | [素材检索与获取](references/asset-sourcing.md) |
 | 已有资产新增、修改、替换与交接 | [资产变更](references/asset-change.md) |
 | 具体生产规格、数量、格式与验收条件 | [资产规格](references/asset-production-specs.md) |
 | 动画、VFX 与声音制作 | [动态视听制作](references/animation-vfx-audio-production.md) |
@@ -34,6 +34,10 @@ description: 将游戏体验目标转成美术方向与制作规则；制作主�
 | 战斗动画、命中反馈与技能表现 | [战斗表现交接](references/combat-presentation.md) |
 
 按本轮问题选读，不把所有类型的生产要求套到一项素材上。表现服务玩家行动与判断，不独立决定玩法成功或世界状态。已授权制作、处理或获取时按资产执行方法继续到真实产物，不只写方向或列网站。
+
+## 看板与资产归属
+
+需要看板标签、目录核查或资产记录补齐时，按 [项目看板与美术清单](../game-preproduction/references/project-workbench.md) 使用固定扫描工具。对象、用途与标签以 Art Direction 或其指定权威入口为准，同对象文件共享标签；模型负责有依据的归属，未知保留待补齐。独立安装且没有共享工具时继续维护原记录，不宣称已扫描或已接入。
 
 ## 图板与视觉依据
 

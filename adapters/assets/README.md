@@ -6,7 +6,7 @@
 | --- | --- |
 | 填写、更新、删除本机 API Key | [独立设置页](local-settings.md) |
 | Tripo / Hunyuan3D 文生或单图生模型 | [生成 API 配置与恢复](generation-api.md) |
-| 免费素材搜索、下载、许可和来源登记 | [素材来源与资产库工具](asset-sources.md) |
+| 免费与付费资产搜索、获取、许可和来源登记 | [素材来源与资产库工具](asset-sources.md) |
 | 其他图像/音频/本地 Hunyuan3D 工具 | 下文的可配置本地命令协议 |
 | Blender 模型转换 | 下文 Blender 处理 |
 

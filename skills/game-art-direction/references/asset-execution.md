@@ -28,7 +28,7 @@ Art Direction.md 保存已知需求、候选方案、选定或委托依据、暂
 
 Tripo/混元的新 API 生成须先准备 queued 任务，再运行 `tools/settings_server.py --project <游戏项目> --approve-job <任务编号>`，让用户亲自查看并确认；助手不得代点授权按钮或直接写授权凭据。保存密钥不代表同意收费生成。已有有效的本次授权可直接执行，不重复索取；修改请求、账户或另建任务需要新授权。等待时可继续独立设计、素材规格与验证计划，不绕过拦截直接调用底层 SDK。查询/下载既有云任务不属于新的生成授权。
 
-免费/现成素材使用 `tools/asset_library.py` 与 `adapters/assets/asset-sources.md`：sources 返回分类目录和宿主检索计划，search/files 返回 Poly Haven 实际结果；其他来源用可用网页工具搜索，并核对原页面。acquire 下载或复制选定文件，from-job 引用生成结果，登记作者、许可依据、版本及哈希。需要账户的来源按站点下载流程获取，不猜测下载地址；工具缺失时沿用已有资产表并注明待登记。资产获取不应伪装成生成任务。
+免费与付费现成素材使用 `tools/asset_library.py` 与 `adapters/assets/asset-sources.md`：sources 返回分类目录和宿主检索计划，search/files 返回 Poly Haven 实际结果；其他来源用可用网页工具搜索，并核对原页面。acquire 下载或复制选定文件，from-job 引用生成结果，登记作者、许可依据、版本及哈希。需要账户的来源按站点下载流程获取，不猜测下载地址；工具缺失时沿用已有资产表并注明待登记。资产获取不应伪装成生成任务。
 
 完成后把选定资产 ID、用途、来源和登记索引链接写回 Art Direction.md/资产规格；必要时同步技术接入任务和管理摘要。Blender 使用选定上游文件并保持贴图等依赖，转换和引擎导入分别留证。
 

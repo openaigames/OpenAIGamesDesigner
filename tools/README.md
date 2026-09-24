@@ -8,7 +8,7 @@
 
 ## 从自然需求开始
 
-在游戏项目目录打开 AI 助手，直接描述目标，例如“我想做一个探索解谜游戏”，或“在这个 UE 工程里增加蓄力攻击”。助手根据当前资料澄清关键未知、选择专业方法并维护项目文件；已有工程从当前目标继续，无需重新立项或指定文档流程，也不会自动生成看板。
+在游戏项目目录打开 AI 助手，直接描述目标，例如“我想做一个探索解谜游戏”，或“在这个 UE 工程里增加蓄力攻击”。助手根据当前资料澄清关键未知、选择专业方法并维护项目文件；已有工程从当前目标继续，无需重新立项或指定文档流程；项目看板按需启动。
 
 仅需文档时可直接使用模板，或生成一个具体任务：
 
@@ -133,8 +133,27 @@ apply 重新比对表格、基线与计划，保存原文件备份和 `.openaiga
 
 ### 素材来源与资产登记
 
-`asset_library.py` 提供分类 sources、Poly Haven 实时 search/files、下载或本地复制 acquire、生成任务 from-job、list/verify/index。使用 [素材获取指南](../adapters/assets/asset-sources.md)；API 任务的 doctor/resume 与凭据配置见 [生成接入](../adapters/assets/generation-api.md)。
+`asset_library.py` 的 `sources` 支持类型、收费（`--pricing free|mixed|paid|unknown`）、登录要求和获取方式分别筛选；收费分类按来源范围精确匹配，混合网站仍需核对所选版本的价格。另提供 Poly Haven 实时 search/files、下载或本地复制 acquire、生成任务 from-job、list/verify/index。使用 [素材获取指南](../adapters/assets/asset-sources.md)；API 任务的 doctor/resume 与凭据配置见 [生成接入](../adapters/assets/generation-api.md)。
 
 ### 本机密钥设置页
 
 运行 `python tools/settings_server.py` 打开独立页面，保存 Tripo / 腾讯混元兼容接口 API Key；无需游戏项目。`--status` 只查看配置是否存在，`--no-open` 供宿主自行打开返回的启动链接。详见 [本机设置](../adapters/assets/local-settings.md)。
+
+## 项目看板与资产核查
+
+```sh
+python tools/project_workbench.py --project "MyGame"
+python tools/project_workbench.py --project "MyGame" --view services
+python tools/project_workbench.py --project "MyGame" --approve-job A实际任务编号
+python tools/asset_audit.py --project "MyGame"
+```
+
+`MyGame` 换成游戏根目录的绝对路径。看板使用同一套界面，绑定当前项目，在自动分配的本机端口启动；`--no-open --ready-file <新临时文件>` 可交给宿主打开返回地址。同一台电脑的不同浏览器可以直接使用相同地址，页面自动建立连接，无需一次性链接；服务仍只监听 `127.0.0.1`，写入保留 Origin 与 CSRF 校验。默认闲置 120 分钟退出，关闭页面不立即停止服务。真实资产在游戏目录，网页和 Three.js 在共享 runtime，不复制游戏或样例到安装包。
+
+支持本地 3D、图片、音频、视频、粒子演示和引擎文件索引。当前实时 3D 支持 GLB/glTF、OBJ（含项目内相对路径 MTL/贴图；缺材质显示中性几何）。FBX、工程原生 VFX 等显示文件和格式适配状态，不宣称浏览器直接运行引擎效果。标签来自 Art Direction；刷新或检查重新扫描，无后台监听和后台模型调用。
+
+引擎模型可先在对应引擎中导出 GLB，再用项目 `.asset-browser/previews.json` 关联原文件。格式为 `{"version":1,"assets":{"game/Content/Mesh.uasset":{"path":"previews/Mesh.glb","source_sha256":"原文件SHA256","sha256":"GLB的SHA256","dependencies":{"game/Content/Material.uasset":"依赖SHA256"},"note":"预览范围说明"}}}`。所有路径相对项目根目录，预览仅接受有效 GLB；源文件、预览或所列依赖变化后拒绝使用旧预览，并显示失效原因。依赖应由引擎导出步骤完整记录，扫描器不会推断任意 uasset 的依赖。原资产卡片保留原路径、格式与美术标签；GLB 副本也需登记到原 Art Direction 对象。关联预览不代表自动导出、支持整个引擎场景或已包含动画。
+
+旧项目初次建立记录区使用 `asset_audit.py --project "MyGame" --init-art`，保留原文；`--register-missing` 只登记文件事实。模型再依据原清单补齐对象和标签，沿用稳定 ID，未知用途保留待补齐。自定义美术入口用项目 `.openaigame/workbench.json` 的 `art_document` 相对路径。固定标记区格式与旧记录映射由专业 Skill 的项目看板参考说明。
+
+服务页复用本机加密存储，保存不发起生成；制作页读取实际 asset-jobs，可建立 API 文本请求并核对已有请求。用户确认后由助手运行现有 asset_workflow，界面不模拟进度、不自行调用生成平台。独立设置页仍适用于无游戏项目的配置。

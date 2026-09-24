@@ -59,6 +59,33 @@ class SourceTests(unittest.TestCase):
         self.assertTrue(all(s['download']['login'] == 'conditional' for s in result['sources']))
         self.assertEqual(library.sources(access='direct', login='required')['sources'], [])
 
+    def test_pricing_is_independent_of_login_and_download_evidence(self):
+        rows = [
+            {'id': 'legacy', 'domain': 'example.org', 'kinds': ['3d']},
+            {'id': 'free-account', 'domain': 'example.org', 'kinds': ['3d'],
+             'pricing': {'model': 'free'}, 'download': {'mode': 'user-step', 'login': 'required'}},
+            {'id': 'mixed-direct', 'domain': 'example.org', 'kinds': ['3d'],
+             'pricing': {'model': 'mixed'}, 'download': {'mode': 'direct', 'login': 'none'},
+             'verification': {'status': 'sample_download_passed', 'files': [{'url': 'https://example.org/a.zip'}]}},
+            {'id': 'paid-account', 'domain': 'example.org', 'kinds': ['3d'],
+             'pricing': {'model': 'paid'}, 'download': {'mode': 'user-step', 'login': 'required'}}
+        ]
+        catalog = Mock()
+        catalog.read_text.return_value = json.dumps({'sources': rows})
+        cases = [
+            ({'pricing': 'unknown'}, ['legacy']),
+            ({'pricing': 'free', 'login': 'required'}, ['free-account']),
+            ({'pricing': 'mixed', 'access': 'direct'}, ['mixed-direct']),
+            ({'pricing': 'paid', 'login': 'required'}, ['paid-account']),
+            ({'pricing': 'free', 'access': 'direct'}, []),
+            ({}, [row['id'] for row in rows]),
+        ]
+        for filters, expected in cases:
+            with self.subTest(filters=filters):
+                self.assertEqual([row['id'] for row in library.sources(catalog=catalog, **filters)['sources']], expected)
+        with self.assertRaises(ValueError):
+            library.sources(pricing='login-free')
+
     def test_catalogue_has_auditable_routes(self):
         rows = library.sources()['sources']
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
@@ -66,6 +93,10 @@ class SourceTests(unittest.TestCase):
             with self.subTest(source=row['id']):
                 self.assertTrue(set(row['kinds']) <= set(library.KINDS))
                 self.assertTrue(row['evidence_urls'])
+                self.assertIn(row['pricing']['model'], library.PRICING)
+                self.assertTrue(row['pricing']['summary'])
+                self.assertTrue(row['pricing']['evidence_urls'])
+                self.assertRegex(row['pricing']['checked_at'], r'^\d{4}-\d{2}-\d{2}$')
                 self.assertTrue(row['download']['method'])
                 self.assertTrue(row['download']['user_step'])
                 self.assertRegex(row['verification']['checked_at'], r'^\d{4}-\d{2}-\d{2}$')
@@ -81,7 +112,7 @@ class SourceTests(unittest.TestCase):
     def test_cli_combines_filters_without_claiming_live_search(self):
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
-            status = library.main(['sources', '--kind', 'vfx', '--access', 'direct', '--login', 'none', '--query', 'laser'])
+            status = library.main(['sources', '--kind', 'vfx', '--access', 'direct', '--login', 'none', '--pricing', 'free', '--query', 'laser'])
         result = json.loads(output.getvalue())
         self.assertEqual(status, 0)
         self.assertEqual(result['status'], 'search_plan')
@@ -89,9 +120,22 @@ class SourceTests(unittest.TestCase):
         self.assertIn('effekseer', {s['id'] for s in result['sources']})
         for row in result['sources']:
             self.assertIn('vfx', row['kinds'])
+            self.assertEqual(row['pricing']['model'], 'free')
             self.assertIn('laser', row['search_query'])
         with self.assertRaises(ValueError):
             library.sources(access='pretend-free')
+
+    def test_requested_sources_are_unique_and_sketchfab_is_not_a_tested_download(self):
+        rows = library.sources()['sources']
+        ids = [row['id'] for row in rows]
+        for source_id in ('kenney', 'quaternius', 'ambientcg', 'mixamo', 'sketchfab', 'polyhaven'):
+            self.assertEqual(ids.count(source_id), 1)
+        sketchfab = next(row for row in rows if row['id'] == 'sketchfab')
+        self.assertEqual(sketchfab['download']['mode'], 'user-step')
+        self.assertEqual(sketchfab['download']['login'], 'required')
+        self.assertEqual(sketchfab['verification']['files'], [])
+        self.assertNotEqual(sketchfab['verification']['status'], 'sample_download_passed')
+        self.assertNotIn('sketchfab', {row['id'] for row in library.sources(access='direct')['sources']})
 
 
 if __name__ == '__main__':

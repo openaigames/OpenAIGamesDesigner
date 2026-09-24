@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "checked_at": "2026-09-23",
+  "version": 3,
+  "checked_at": "2026-09-24",
   "sources": [
     {
       "id": "kenney",
@@ -18,7 +18,7 @@
       "access": "browser_or_direct_link",
       "free_scope": "单独资源包与付费合集分别核实",
       "license_hint": "查看具体包的许可文件",
-      "notes": "适合统一风格的原型素材；VFX 分类也可能是光照贴图而非粒子系统。",
+      "notes": "覆盖 2D/3D 角色、瓦片、UI、图标和音效，适合统一风格原型；VFX 内容也可能是光效贴图而非粒子系统。",
       "download": {
         "mode": "direct",
         "login": "none",
@@ -43,8 +43,19 @@
       },
       "evidence_urls": [
         "https://kenney.nl/assets/particle-pack",
-        "https://kenney.nl/support"
-      ]
+        "https://kenney.nl/support",
+        "https://kenney.nl/assets",
+        "https://kenney.itch.io/kenney-game-assets"
+      ],
+      "pricing": {
+        "model": "mixed",
+        "summary": "单独资源包免费；All-in-1 整合包付费。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://kenney.nl/assets",
+          "https://kenney.itch.io/kenney-game-assets"
+        ]
+      }
     },
     {
       "id": "polyhaven",
@@ -85,8 +96,18 @@
       "evidence_urls": [
         "https://polyhaven.com/a/aerial_rocks_02",
         "https://polyhaven.com/license",
-        "https://polyhaven.com/our-api"
-      ]
+        "https://polyhaven.com/our-api",
+        "https://polyhaven.com/"
+      ],
+      "pricing": {
+        "model": "free",
+        "summary": "公开模型、材质和 HDRI 免费；支持者权益与工具另计。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://polyhaven.com/",
+          "https://polyhaven.com/license"
+        ]
+      }
     },
     {
       "id": "ambientcg",
@@ -126,8 +147,18 @@
       },
       "evidence_urls": [
         "https://ambientcg.com/view?id=Wood051",
-        "https://docs.ambientcg.com/license/"
-      ]
+        "https://docs.ambientcg.com/license/",
+        "https://ambientcg.com/"
+      ],
+      "pricing": {
+        "model": "free",
+        "summary": "公开材质、HDRI 和模型免费；支持者权益另列。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://ambientcg.com/",
+          "https://docs.ambientcg.com/license/"
+        ]
+      }
     },
     {
       "id": "quaternius",
@@ -139,13 +170,13 @@
         "animation"
       ],
       "access": "browser_or_direct_link",
-      "free_scope": "选择免费版本，合集和扩展版本分别核实",
+      "free_scope": "许多模型包和 Standard 版本免费；Pro、Source 等内容按具体包区分。",
       "license_hint": "逐包查看下载页及随包许可",
-      "notes": "角色、环境、动画库；检查骨架与根运动，不能仅凭同为 FBX 假定兼容。",
+      "notes": "低多边形角色、建筑、动物、环境与动画；检查所选版本、骨架和根运动，不能仅凭同为 FBX 假定兼容。",
       "download": {
         "mode": "user-step",
         "login": "conditional",
-        "method": "免费包由作者页面转到 Google Drive / itch.io 等，入口随包不同。",
+        "method": "通过作者页面进入 Google Drive / itch.io 等获取所选版本；免费与付费文件可能位于同一下载页。",
         "user_step": "打开作者给出的包链接；如出现登录或领取由用户完成，再取得原始包。"
       },
       "verification": {
@@ -157,8 +188,19 @@
       },
       "evidence_urls": [
         "https://quaternius.com/packs/survival.html",
-        "https://quaternius.com/faq.html"
-      ]
+        "https://quaternius.com/faq.html",
+        "https://quaternius.com/",
+        "https://quaternius.itch.io/universal-animation-library/purchase"
+      ],
+      "pricing": {
+        "model": "mixed",
+        "summary": "许多模型包及 Standard 版免费；部分 Pro、Source 版和扩展包付费。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://quaternius.com/",
+          "https://quaternius.itch.io/universal-animation-library/purchase"
+        ]
+      }
     },
     {
       "id": "opengameart",
@@ -203,13 +245,21 @@
       },
       "evidence_urls": [
         "https://opengameart.org/content/80-cc0-rpg-sfx",
-        "https://opengameart.org/content/80-cc0-rpg-sfx"
-      ]
+        "https://opengameart.org/content/faq"
+      ],
+      "pricing": {
+        "model": "free",
+        "summary": "站内公开素材免费；各资产的署名与许可要求分别核对。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://opengameart.org/content/faq"
+        ]
+      }
     },
     {
       "id": "itch",
-      "name": "itch.io free game assets",
-      "url": "https://itch.io/game-assets/free",
+      "name": "itch.io Game Assets",
+      "url": "https://itch.io/game-assets",
       "domain": "itch.io",
       "kinds": [
         "2d",
@@ -240,9 +290,16 @@
         "files": []
       },
       "evidence_urls": [
-        "https://itch.io/docs/creators/pricing",
         "https://itch.io/docs/creators/pricing"
-      ]
+      ],
+      "pricing": {
+        "model": "mixed",
+        "summary": "包含免费、可零价下载和付费包；同一包的额外文件可能收费。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://itch.io/docs/creators/pricing"
+        ]
+      }
     },
     {
       "id": "mixamo",
@@ -254,7 +311,7 @@
         "animation"
       ],
       "access": "browser_login",
-      "free_scope": "使用 Adobe 账号，按当前服务条件获取",
+      "free_scope": "角色、动画及自动绑定服务免费；需要可用的个人 Adobe ID，无需 Creative Cloud 订阅。",
       "license_hint": "https://helpx.adobe.com/creative-cloud/faq/mixamo-faq.html",
       "notes": "动画与自动绑定服务；下载的是动作资源，不是完整动作控制框架。 官方 FAQ 列出中国国家代码及 Enterprise/Federated ID 限制，不能承诺所有账号可用。",
       "download": {
@@ -271,9 +328,58 @@
         "files": []
       },
       "evidence_urls": [
-        "https://helpx.adobe.com/creative-cloud/faq/mixamo-faq.html",
         "https://helpx.adobe.com/creative-cloud/faq/mixamo-faq.html"
-      ]
+      ],
+      "pricing": {
+        "model": "free",
+        "summary": "角色、动画及自动绑定服务免费；需要可用的个人 Adobe ID，无需 Creative Cloud 订阅。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://helpx.adobe.com/creative-cloud/faq/mixamo-faq.html"
+        ]
+      }
+    },
+    {
+      "id": "sketchfab",
+      "name": "Sketchfab",
+      "url": "https://sketchfab.com/3d-models",
+      "domain": "sketchfab.com",
+      "kinds": [
+        "3d",
+        "animation"
+      ],
+      "access": "browser_login",
+      "free_scope": "仅作者开放下载的免费模型；展示中的模型不一定可下载，付费购买转到 Fab。",
+      "license_hint": "逐模型保存作者、原始页面、具体 Creative Commons 许可及署名要求；经 Fab 获取的文件按该条目的许可登记。",
+      "notes": "适合角色、道具、建筑、扫描与动画模型检索。检查 Downloadable 状态、实际文件格式、贴图和骨架；预览不证明资产可获取。Sketchfab 展示/托管订阅不等于购买模型。",
+      "download": {
+        "mode": "user-step",
+        "login": "required",
+        "method": "筛选 Downloadable，核对许可后登录 Sketchfab 下载；付费模型进入作者对应的 Fab 页面。官方 Download API 需要用户认证，本工具未集成该 API。",
+        "user_step": "用户完成所需账号登录；在已授权预算与许可范围内获取所选文件，再用 local 方式登记到项目。"
+      },
+      "verification": {
+        "checked_at": "2026-09-24",
+        "status": "download_not_tested",
+        "sample_page": "https://sketchfab.com/developers/download-api/guidelines",
+        "scope": "核对官方检索摘要、下载认证文档与 Fab 商店迁移说明；部分站点页面返回 403，未登录或下载模型。",
+        "files": []
+      },
+      "evidence_urls": [
+        "https://sketchfab.com/",
+        "https://sketchfab.com/developers/download-api/guidelines",
+        "https://www.unrealengine.com/blog/fab-epics-new-unified-content-marketplace-launches-today"
+      ],
+      "pricing": {
+        "model": "mixed",
+        "summary": "提供免费可下载模型；付费模型购买转到 Fab，Sketchfab 已停止站内商店交易。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://sketchfab.com/",
+          "https://sketchfab.com/developers/download-api/guidelines",
+          "https://www.unrealengine.com/blog/fab-epics-new-unified-content-marketplace-launches-today"
+        ]
+      }
     },
     {
       "id": "fab",
@@ -291,13 +397,13 @@
         "module"
       ],
       "access": "browser_or_launcher_may_require_login",
-      "free_scope": "仅选择当前免费且可获取的条目；限时领取状态另记",
+      "free_scope": "含免费及限时免费条目；付费条目、许可档位和限时领取状态分别记录。",
       "license_hint": "记录每个条目的许可、价格与领取版本",
       "notes": "包含 UE/Unity 内容和代码模块；下载后按引擎、版本、插件依赖评估，不能通用解包即视为导入。",
       "download": {
         "mode": "user-step",
         "login": "conditional",
-        "method": "部分免费文件可匿名接受 EULA 后下载；加入库需登录，UE/UEFN 内容走 Launcher/集成。",
+        "method": "部分免费文件可匿名接受 EULA 后下载；付费购买和加入库需账号，UE/UEFN 内容走 Launcher/集成。",
         "user_step": "按所选文件完成 EULA/领取流程；需要个人库或引擎专用格式时用户登录 Epic 账号。"
       },
       "verification": {
@@ -309,8 +415,18 @@
       },
       "evidence_urls": [
         "https://dev.epicgames.com/documentation/en-us/fab/purchasing-and-downloading-assets-in-fab",
-        "https://www.fab.com/eula"
-      ]
+        "https://www.fab.com/eula",
+        "https://www.fab.com/"
+      ],
+      "pricing": {
+        "model": "mixed",
+        "summary": "包含免费与付费资产；限时免费、许可档位及领取期限逐项核实。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://www.fab.com/",
+          "https://dev.epicgames.com/documentation/en-us/fab/purchasing-and-downloading-assets-in-fab"
+        ]
+      }
     },
     {
       "id": "unity-store",
@@ -328,13 +444,13 @@
         "module"
       ],
       "access": "browser_or_editor_login",
-      "free_scope": "筛选免费条目",
+      "free_scope": "包含免费包；付费包按所选版本和许可条件获取。",
       "license_hint": "查看具体资源 EULA 与附加条款",
       "notes": "核对 Unity 版本与 Built-in/URP/HDRP；动作控制器和动画文件分别登记。",
       "download": {
         "mode": "user-step",
         "login": "required",
-        "method": "Unity ID 领取免费包，再由相同账号在 Package Manager 获取。",
+        "method": "使用 Unity ID 领取免费包或购买已授权的付费包，再由相同账号在 Package Manager 获取。",
         "user_step": "用户登录、Add to My Assets，然后在目标 Unity 工程下载；先核对版本与管线。"
       },
       "verification": {
@@ -347,7 +463,16 @@
       "evidence_urls": [
         "https://docs.unity.com/en-us/asset-store/downloads/purchase-asset-packages",
         "https://assetstore.unity.com/"
-      ]
+      ],
+      "pricing": {
+        "model": "mixed",
+        "summary": "包含免费与付费资产；以具体包和许可选项的当前价格为准。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://assetstore.unity.com/",
+          "https://docs.unity.com/en-us/asset-store/downloads/purchase-asset-packages"
+        ]
+      }
     },
     {
       "id": "godot-library",
@@ -387,8 +512,17 @@
       },
       "evidence_urls": [
         "https://godotengine.org/asset-library/asset/5421",
-        "https://github.com/ar-bh/basic-fps-controller-godot"
-      ]
+        "https://github.com/ar-bh/basic-fps-controller-godot",
+        "https://docs.godotengine.org/en/stable/community/asset_library/what_is_assetlib.html"
+      ],
+      "pricing": {
+        "model": "free",
+        "summary": "此目录中的开源插件、工具和示例免费。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://docs.godotengine.org/en/stable/community/asset_library/what_is_assetlib.html"
+        ]
+      }
     },
     {
       "id": "kaykit",
@@ -400,7 +534,7 @@
         "animation"
       ],
       "access": "browser_or_direct_link",
-      "free_scope": "作者公开的免费包；付费 Extras/Source 版本不包含在内",
+      "free_scope": "作者公开免费包；付费角色、Extras/Source 与合集的内容和价格另核实。",
       "license_hint": "样例 CC0；逐包保留 LICENSE",
       "notes": "风格化低多边形套件；官方 GitHub 可直接取文件，角色与动画按具体包核对。",
       "download": {
@@ -439,8 +573,17 @@
       },
       "evidence_urls": [
         "https://github.com/KayKit-Game-Assets/KayKit-Prototype-Bits-1.0",
-        "https://github.com/KayKit-Game-Assets/KayKit-Prototype-Bits-1.0/blob/main/LICENSE.txt"
-      ]
+        "https://github.com/KayKit-Game-Assets/KayKit-Prototype-Bits-1.0/blob/main/LICENSE.txt",
+        "https://kaylousberg.itch.io/"
+      ],
+      "pricing": {
+        "model": "mixed",
+        "summary": "公开免费包与付费角色包、扩展内容和整合包并存。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://kaylousberg.itch.io/"
+        ]
+      }
     },
     {
       "id": "game-icons",
@@ -480,7 +623,16 @@
       "evidence_urls": [
         "https://game-icons.net/",
         "https://game-icons.net/faq.html"
-      ]
+      ],
+      "pricing": {
+        "model": "free",
+        "summary": "公开 SVG / PNG 图标免费，使用时保留所需署名。",
+        "checked_at": "2026-09-23",
+        "evidence_urls": [
+          "https://game-icons.net/",
+          "https://game-icons.net/faq.html"
+        ]
+      }
     },
     {
       "id": "google-fonts",
@@ -519,7 +671,16 @@
       "evidence_urls": [
         "https://github.com/google/fonts/tree/main/ofl/abel",
         "https://github.com/google/fonts/blob/main/ofl/abel/OFL.txt"
-      ]
+      ],
+      "pricing": {
+        "model": "free",
+        "summary": "Google Fonts 目录中的字体免费；按所选字体许可使用。",
+        "checked_at": "2026-09-23",
+        "evidence_urls": [
+          "https://github.com/google/fonts/tree/main/ofl/abel",
+          "https://github.com/google/fonts/blob/main/ofl/abel/OFL.txt"
+        ]
+      }
     },
     {
       "id": "lucide",
@@ -557,8 +718,18 @@
       },
       "evidence_urls": [
         "https://lucide.dev/icons/swords",
-        "https://lucide.dev/license"
-      ]
+        "https://lucide.dev/license",
+        "https://lucide.dev/"
+      ],
+      "pricing": {
+        "model": "free",
+        "summary": "公开图标免费，保留版权与许可声明。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://lucide.dev/",
+          "https://lucide.dev/license"
+        ]
+      }
     },
     {
       "id": "effekseer",
@@ -597,7 +768,15 @@
       "evidence_urls": [
         "https://effekseer.github.io/en/contributes/Effekseer01/index.html",
         "https://effekseer.github.io/en/contribute.html"
-      ]
+      ],
+      "pricing": {
+        "model": "free",
+        "summary": "官方公开示例效果包免费；按具体包核对许可。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://effekseer.github.io/en/contribute.html"
+        ]
+      }
     },
     {
       "id": "texturecan",
@@ -637,7 +816,15 @@
       "evidence_urls": [
         "https://www.texturecan.com/details/658/",
         "https://www.texturecan.com/terms/"
-      ]
+      ],
+      "pricing": {
+        "model": "free",
+        "summary": "公开 PBR 贴图与模型免费。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://www.texturecan.com/terms/"
+        ]
+      }
     },
     {
       "id": "incompetech",
@@ -675,8 +862,18 @@
       },
       "evidence_urls": [
         "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100377",
-        "https://incompetech.com/music/royalty-free/licenses/"
-      ]
+        "https://incompetech.com/music/royalty-free/licenses/",
+        "https://incompetech.com/music/royalty-free/music.html"
+      ],
+      "pricing": {
+        "model": "mixed",
+        "summary": "单曲可按署名许可免费使用；免署名许可与整库下载收费。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://incompetech.com/music/royalty-free/licenses/",
+          "https://incompetech.com/music/royalty-free/music.html"
+        ]
+      }
     },
     {
       "id": "freesound",
@@ -704,14 +901,21 @@
         "files": []
       },
       "evidence_urls": [
-        "https://freesound.org/help/faq/",
         "https://freesound.org/help/faq/"
-      ]
+      ],
+      "pricing": {
+        "model": "free",
+        "summary": "公开声音免费下载；需要账号，许可按单条音频核对。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://freesound.org/help/faq/"
+        ]
+      }
     },
     {
       "id": "craftpix",
-      "name": "CraftPix Freebies",
-      "url": "https://craftpix.net/freebies/",
+      "name": "CraftPix",
+      "url": "https://craftpix.net/",
       "domain": "craftpix.net",
       "kinds": [
         "2d",
@@ -726,7 +930,7 @@
       "download": {
         "mode": "user-step",
         "login": "required",
-        "method": "免费条目需要注册或登录后下载；匿名访问样例下载入口会显示登录表单。",
+        "method": "注册或登录后从 Freebies 下载免费版本；付费包或订阅内容按已取得的权益获取。",
         "user_step": "用户免费注册/登录后下载 Freebies 选定版本。"
       },
       "verification": {
@@ -738,8 +942,19 @@
       },
       "evidence_urls": [
         "https://craftpix.net/freebies/free-kids-math-game-ui-kit-numbers-counting/",
-        "https://craftpix.net/file-licenses/"
-      ]
+        "https://craftpix.net/file-licenses/",
+        "https://craftpix.net/",
+        "https://craftpix.net/freebies/"
+      ],
+      "pricing": {
+        "model": "mixed",
+        "summary": "Freebies 免费；付费素材包和订阅内容另列。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://craftpix.net/",
+          "https://craftpix.net/freebies/"
+        ]
+      }
     },
     {
       "id": "blendkit",
@@ -753,14 +968,14 @@
         "module"
       ],
       "access": "browser_or_addon_may_require_login",
-      "free_scope": "只选 Free 内容，Full Plan 和付费插件另列",
+      "free_scope": "提供 Free 内容；Full Plan 和付费插件按所选方案获取。",
       "license_hint": "逐项 CC0 或 Royalty Free；不可将 Royalty Free 素材作为素材包转售",
       "notes": "Blender 模型、材质、HDRI 与插件；程序材质需烘焙/转换，下载插件不等于取得所选模型。",
       "download": {
         "mode": "user-step",
         "login": "conditional",
         "method": "通过官方集成取资产；官方说明免费插件可免登录，其他资产的账户要求按所选条目。",
-        "user_step": "准备对应集成并筛选 Free；所选模型等若要求账户则用户登录，再获取文件。"
+        "user_step": "准备对应集成，按预算选择 Free、Full Plan 或插件；需要账户时用户登录，付费内容按已有购买或订阅权益获取。"
       },
       "verification": {
         "checked_at": "2026-09-23",
@@ -771,9 +986,20 @@
       },
       "evidence_urls": [
         "https://www.blendkit.com/get-blender-add-ons/",
-        "https://www.blendkit.com/docs/licenses/"
-      ]
+        "https://www.blendkit.com/docs/licenses/",
+        "https://www.blendkit.com/"
+      ],
+      "pricing": {
+        "model": "mixed",
+        "summary": "Free 内容免费；Full Plan 内容和部分插件付费。",
+        "checked_at": "2026-09-24",
+        "evidence_urls": [
+          "https://www.blendkit.com/",
+          "https://www.blendkit.com/get-blender-add-ons/"
+        ]
+      }
     }
   ],
-  "verification_policy": "direct 仅表示至少一个列出的样例匿名完整下载成功；站点不保证所有文件免费、同许可、可下载或适配。其余来源需浏览器、登录或专用工具，按条目复核。"
+  "verification_policy": "direct 仅表示至少一个列出的样例匿名完整下载成功；站点不保证所有文件免费、同许可、可下载或适配。其余来源需浏览器、登录或专用工具，按条目复核。",
+  "pricing_policy": "pricing.model 描述所列资源库的收费范围，free=免费、mixed=部分免费且有付费内容或购买入口、paid=付费、unknown=待核实。公开免费库的可选捐赠、早期访问和独立工具不计为公开资产价格。分类不代替具体版本的当前报价或许可；与账号及下载证据分别核对。"
 }

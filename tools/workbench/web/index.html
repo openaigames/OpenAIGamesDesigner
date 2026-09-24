@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>项目工作台 · OpenAIGamesDesigner</title>
+  <link rel="icon" type="image/png" href="/logos/openaigamesdesigner.png">
+  <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/brand.css"><link rel="stylesheet" href="/workbench.css"><link rel="stylesheet" href="/media-viewport.css"><link rel="stylesheet" href="/asset-tags.css">
+  <script type="importmap">{"imports":{"three":"/vendor/three/build/three.module.js","three/addons/":"/vendor/three/examples/jsm/"}}</script>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#assets" aria-label="项目工作台首页"><img class="brand-mark" src="/logos/openaigamesdesigner.png" alt="" width="48" height="48"><span>OpenAIGamesDesigner</span></a>
+  <span class="top-divider"></span>
+  <div class="header-context">项目工作台<span>/</span><strong id="current-view-label">资产库</strong></div>
+  <div class="top-end"><button id="help" class="icon-button" aria-label="使用帮助" title="使用帮助" data-icon="help"></button></div>
+</header>
+<main id="connection-page" class="connection-page" aria-labelledby="connection-title" hidden>
+  <h1 id="connection-title">暂时无法连接项目看板</h1>
+  <p id="connection-reason"></p>
+  <ol><li>服务正在运行时，刷新页面即可重新连接。</li><li>如果服务已关闭，使用项目的看板启动入口，或让助手重新打开看板。</li></ol>
+  <p class="connection-note">同一台电脑上的浏览器可以直接使用相同网址。看板服务需要保持运行；重启后若端口改变，请使用新的地址。此提示不代表项目资产已丢失。</p>
+  <button id="connection-retry" class="button primary">重试连接</button>
+</main>
+<div class="workspace" id="workbench" data-view="assets">
+  <aside class="sidebar">
+    <div class="project-context" aria-label="当前游戏"><strong id="project-name">正在读取项目…</strong></div>
+  <nav class="workspace-tabs" aria-label="工作台导航">
+    <button data-view="assets" class="workspace-tab active" aria-current="page"><span data-icon="layers"></span>资产库</button>
+    <button data-view="tasks" class="workspace-tab"><span data-icon="list"></span>制作任务<span id="pending-count" class="nav-count">0</span></button>
+    <button data-view="services" class="workspace-tab"><span data-icon="code"></span>服务与密钥</button>
+  </nav>
+    <div class="sidebar-context">
+    <div id="asset-navigation">
+      <div class="side-label">资源库</div><nav id="categories" aria-label="资产分类"></nav>
+      <div class="side-line"></div><button class="side-item" id="favorites"><span data-icon="star"></span><span>我的收藏</span><span id="fav-count" class="count">0</span></button>
+      <div class="side-label">标签</div><nav id="tag-navigation" aria-label="标签筛选"></nav>
+      <div class="side-heading"><span class="side-label">项目目录</span><span data-icon="folder"></span></div><nav id="folders" aria-label="项目目录"></nav>
+    </div>
+    <div id="task-navigation" hidden><div class="side-label">任务状态</div><nav id="task-filters" aria-label="任务筛选"></nav></div>
+    <div id="service-navigation" hidden><div class="side-label">工作台设置</div><button class="side-item active" id="service-home"><span data-icon="code"></span><span>生成服务</span></button></div>
+    </div>
+  </aside>
+  <main class="library"><section class="library-heading"><div><h1 id="view-title">全部资产<span id="total-count"></span></h1></div><div class="library-actions"><button id="bulk-tags" class="button secondary">检查美术清单</button><button id="refresh" class="button secondary"><span data-icon="refresh"></span>刷新目录</button></div></section><div class="toolbar"><label class="search"><span data-icon="search"></span><input id="search" type="search" placeholder="搜索名称、标签或路径…" aria-label="搜索资产"><kbd>/</kbd></label><select id="sort" aria-label="资产排序"><option value="default">默认顺序</option><option value="name">名称 A–Z</option><option value="size">文件大小</option><option value="recent">最近修改</option></select><button id="view-toggle" class="icon-button bordered" aria-label="切换列表视图" data-icon="list"></button></div><div class="library-caption"><div class="filter-caption"><span id="result-count">正在扫描本地目录…</span><button id="active-tag-filter" hidden></button></div><div><span class="local-dot"></span><span id="scan-status">本地索引</span></div></div><div class="grid-scroll"><div id="asset-grid" class="asset-grid" aria-label="资产列表"></div><div id="empty" class="empty" hidden><span data-icon="search"></span><h2>没有找到匹配资产</h2><p>试试其他关键词，或清除当前筛选。</p><button id="clear-filter" class="button secondary">查看全部资产</button></div></div><footer class="library-footer"><span id="disk-summary"></span></footer></main>
+<aside class="inspector" id="inspector"><div class="inspector-bar"><span><span class="local-dot"></span>资产预览</span><div><button id="favorite-asset" class="icon-button" aria-label="收藏当前资产" data-icon="star"></button><button id="expand" class="icon-button" aria-label="展开预览" data-icon="expand"></button></div></div><div id="inspector-content"><div class="asset-heading"><div id="asset-badges"></div><h2 id="asset-title">选择一个资产</h2><p id="asset-subtitle"></p></div><section id="asset-tag-editor" class="tag-editor" aria-label="资产标签"></section><div id="preview" class="preview"><div class="preview-loading">正在准备预览…</div></div><div id="preview-controls"></div><div class="detail-tabs" role="tablist"><button role="tab" aria-selected="true" data-tab="details">资产信息</button><button role="tab" aria-selected="false" data-tab="source">来源与许可</button></div><div id="details" class="detail-panel"></div><div id="source" class="detail-panel" hidden></div><div class="path-box"><span>本地文件</span><code id="file-path"></code><button id="copy-path" aria-label="复制资产路径" class="icon-button" data-icon="copy"></button></div></div></aside>
+
+  <main id="task-view" class="workbench-page" hidden>
+    <header class="page-heading"><div><h1>制作任务</h1></div><button class="button primary" id="new-task"><span data-icon="spark"></span>新建任务</button></header>
+    <div class="task-overview" id="task-overview"></div>
+    <div class="task-layout"><section class="task-list-panel"><div class="list-heading"><h2 id="task-list-title">全部任务</h2><span id="task-list-count"></span></div><div id="task-list"></div></section><section id="task-detail" class="task-detail" aria-label="任务详情" aria-live="polite"></section></div>
+  </main>
+  <main id="service-view" class="workbench-page services-page" hidden>
+    <header class="page-heading"><div><h1>服务与密钥</h1></div></header>
+    <section class="provider-grid" id="provider-grid" aria-label="生成服务"></section>
+        <div class="settings-footnote"><span data-icon="check"></span><div><strong>保存配置不会启动任务</strong><p>Windows 支持当前用户的本机加密保存；其他系统使用环境变量。已保存的密钥不回显，也不写进游戏项目。</p></div></div>
+  </main>
+</div>
+<div id="toast" role="status"></div>
+<dialog id="info-dialog"><div class="dialog-heading"><img class="brand-mark" src="/logos/openaigamesdesigner.png" alt="" width="48" height="48"><button id="close-dialog" class="icon-button" data-icon="close" aria-label="关闭说明"></button></div><h2>使用帮助</h2><div id="dialog-body"></div><button id="dialog-done" class="button primary">知道了</button></dialog>
+<dialog id="brief-dialog" class="brief-dialog"><form id="brief-form"><div class="dialog-heading"><button type="button" class="icon-button" data-close="brief-dialog" aria-label="关闭任务编辑" data-icon="close"></button></div><h2 id="brief-heading">新建制作任务</h2><p>准备好制作需求，再进入任务确认。</p><label for="brief-provider">生成服务</label><select id="brief-provider"><option value="hunyuan3d">混元 3D</option><option value="tripo">Tripo AI</option></select><label for="brief-prompt">制作需求</label><textarea id="brief-prompt" required maxlength="1200" rows="5" placeholder="描述形状、材质、风格和用途…"></textarea><p class="dialog-note">保存为项目中的待确认任务；核对并授权后由助手执行。</p><div class="dialog-actions"><button type="button" class="button secondary" data-close="brief-dialog">取消</button><button type="submit" class="button primary">保存到待确认</button></div></form></dialog>
+<script type="module" src="/workbench.js"></script>
+</body></html>

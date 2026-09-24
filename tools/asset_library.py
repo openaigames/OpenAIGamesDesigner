@@ -19,15 +19,20 @@ from validate_records import contained, check_record
 
 CATALOG = Path(__file__).resolve().parents[1] / 'adapters/assets/sources.json'
 KINDS = ('2d', '3d', 'ui', 'texture', 'hdri', 'vfx', 'animation', 'audio', 'font', 'module')
+PRICING = ('free', 'mixed', 'paid', 'unknown')
 
 
-def sources(kind=None, query='', catalog=CATALOG, *, access=None, login=None):
+def sources(kind=None, query='', catalog=CATALOG, *, access=None, login=None, pricing=None):
     if access not in (None, 'direct', 'user-step') or login not in (None, 'none', 'required', 'conditional', 'unknown'):
         raise ValueError('Unsupported source access or login filter')
+    if pricing not in (None, *PRICING):
+        raise ValueError('Unsupported source pricing filter')
     data = json.loads(catalog.read_text(encoding='utf-8'))
     def matches(entry):
         route = entry.get('download', {})
         if kind and kind not in entry['kinds']:
+            return False
+        if pricing and entry.get('pricing', {}).get('model', 'unknown') != pricing:
             return False
         if login and route.get('login', 'unknown') != login:
             return False
@@ -42,6 +47,7 @@ def sources(kind=None, query='', catalog=CATALOG, *, access=None, login=None):
     entries = [entry for entry in data['sources'] if matches(entry)]
     return {'status': 'search_plan', 'results_are_assets': False,
             'catalog_checked_at': data.get('checked_at'),
+            'pricing_scope': data.get('pricing_policy', 'Source price categories only; verify the selected asset version and license.'),
             'verification_scope': data.get('verification_policy', 'Source metadata only; verify the selected asset before acquisition.'),
             'sources': [{**entry, 'search_query': f'site:{entry["domain"]} {query} {kind or "game assets"}'.strip()}
                         for entry in entries]}
@@ -203,6 +209,8 @@ def main(argv=None):
                           help='Filter verified anonymous sample downloads or sources needing extra steps')
     discover.add_argument('--login', choices=('none', 'required', 'conditional', 'unknown'),
                           help='Account requirement, separate from browser/tool steps')
+    discover.add_argument('--pricing', choices=PRICING,
+                          help='Exact source price category; mixed sources also contain free assets. Not a live item price check')
     search = sub.add_parser('search', help='Search live Poly Haven assets')
     search.add_argument('--query', default='')
     search.add_argument('--kind', choices=tuple(polyhaven.TYPES))
@@ -221,7 +229,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         if args.action == 'sources':
-            result = sources(args.kind, args.query, access=args.access, login=args.login)
+            result = sources(args.kind, args.query, access=args.access, login=args.login, pricing=args.pricing)
         elif args.action == 'search':
             result = polyhaven.search(args.query, args.kind, args.limit)
         elif args.action == 'files':

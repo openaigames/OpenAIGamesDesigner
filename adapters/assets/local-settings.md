@@ -76,3 +76,7 @@ python tools/settings_server.py --status
 当前加密设置页支持 Windows；其他系统继续使用环境变量，不降级为明文存储。DPAPI 保护绑定当前用户，换账户或机器时应重新配置。这是本机可信工具的凭据存储，不隔离同一用户下的恶意程序。实现依据：[Microsoft DPAPI](https://learn.microsoft.com/en-us/windows/win32/api/dpapi/nf-dpapi-cryptprotectdata)。
 
 页面不加载第三方脚本、不把已保存密钥回填输入框；设置 API 校验本机 Host、来源、会话和写入令牌。任务工具仅在真正执行生成请求时向所选平台发送认证信息。
+
+## 游戏项目中的统一入口
+
+有游戏项目时优先使用 `python tools/project_workbench.py --project <游戏根> --view services`，或携带 `--approve-job <ID>` 打开制作页核对对应任务。此入口的服务保存与确认复用本文同一套存储和单次授权，任务确认后仍由助手执行，不会自动生成。没有项目时继续使用独立设置页。更多见 [项目看板](../../tools/README.md#项目看板与资产核查)。

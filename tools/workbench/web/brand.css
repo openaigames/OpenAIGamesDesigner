@@ -1,0 +1,119 @@
+/* Match tools/settings-ui/style.css and its original OpenAIGamesDesigner logo. */
+:root {
+  color-scheme: light;
+  --ink: #111d49;
+  --blue: #1749ee;
+  --orange: #ff8131;
+  --bg: #fbfaf7;
+  --panel: #ffffff;
+  --card: #ffffff;
+  --line: #e5e9f2;
+  --muted: #63708a;
+  --text: var(--ink);
+  --accent: var(--blue);
+  --soft: #f4f6fc;
+  --selected: #edf1ff;
+  --selected-line: #c6d3ff;
+  --orange-soft: #fff0e3;
+  --orange-ink: #b84c0a;
+  --success: #1f957a;
+  --font: "Segoe UI", "Microsoft YaHei", sans-serif;
+}
+
+.topbar, .sidebar, .inspector { background: var(--panel); }
+.brand { color: var(--ink); font-size: 20px; font-weight: 800; letter-spacing: -.6px; }
+.brand-mark { width: 48px; height: 48px; object-fit: contain; background: transparent; border-radius: 50%; }
+.top-divider, .side-line { background: var(--line); }
+.top-end, .workspace-label, .top-path { color: var(--muted); }
+.local-dot { background: var(--success); }
+.project-icon { background: var(--selected); border-color: #dee7ff; color: var(--blue); }
+.project-switch small, .project-switch > span:last-child, .side-label,
+.side-heading > span:last-child, .side-bottom, .side-bottom small { color: var(--muted); }
+.side-item { color: var(--muted); }
+.side-item:hover { background: var(--soft); color: var(--ink); }
+.side-item.active { background: var(--selected); color: var(--blue); font-weight: 600; }
+.side-item .count { color: var(--muted); }
+.side-item.active .count { color: var(--blue); }
+
+.eyebrow { color: var(--blue); }
+h1 span { border-color: var(--line); color: var(--muted); background: var(--panel); }
+.library-heading p, .library-caption, .library-footer { color: var(--muted); }
+.library-footer { border-color: var(--line); }
+.button { border-color: #dfe4ef; font-weight: 600; }
+.secondary { background: var(--panel); color: var(--ink); }
+.secondary:hover { background: #f1f4fc; }
+.primary, .play-toggle { background: var(--blue); color: #fff; border-color: var(--blue); }
+.primary:hover, .play-toggle:hover { background: #103bc9; }
+.search { background: var(--panel); color: var(--muted); border-color: #ccd3e2; }
+.search:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px #1749ee12; }
+.search input { color: var(--ink); }
+.search input::placeholder { color: var(--muted); }
+kbd { border-color: var(--line); color: var(--muted); background: var(--soft); }
+select { border-color: #ccd3e2; color: var(--ink); background: var(--panel); }
+.icon-button { color: var(--muted); }
+.icon-button:hover { color: var(--blue); background: var(--selected); }
+.icon-button.active { color: var(--blue); background: var(--selected); }
+.icon-button.bordered { border-color: #ccd3e2; background: var(--panel); }
+button:focus-visible, a:focus-visible, select:focus-visible { outline: 3px solid #ffb46b; }
+
+.asset-card { background: var(--card); border-color: var(--line); box-shadow: 0 3px 14px #111d4903; }
+.asset-card:hover { background: var(--card); border-color: #b6c5f0; }
+.asset-card.selected { border-color: var(--blue); box-shadow: 0 0 0 1px #1749ee18; }
+.thumb { background: var(--soft); }
+.thumb.model { background: radial-gradient(ellipse at 50% 40%, #fff, #e9edf7 85%); }
+.thumb.image, .preview.checker {
+  background-color: #f8f9fc;
+  background-image: linear-gradient(45deg, #e7ecf5 25%, transparent 25%), linear-gradient(-45deg, #e7ecf5 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e7ecf5 75%), linear-gradient(-45deg, transparent 75%, #e7ecf5 75%);
+}
+.thumb.audio { background: #edf2ff; }
+.thumb.vfx { background: radial-gradient(ellipse, #2d3d73, var(--ink)); }
+.thumb > .ico { color: var(--muted); }
+.file-badge { background: #fffffff0; border-color: var(--line); color: var(--muted); }
+.card-star { color: var(--orange-ink); }
+.card-star svg { fill: #ff813126; }
+.anim-badge { background: #edf1fff2; color: var(--blue); border-color: var(--selected-line); }
+.card-title { color: var(--ink); font-weight: 600; }
+.card-meta { color: var(--muted); }
+.type-dot { background: var(--blue); }
+.type-dot.image { background: var(--success); }
+.type-dot.audio { background: #507ac8; }
+.type-dot.vfx { background: var(--orange); }
+
+.inspector-bar { border-color: var(--line); }
+.inspector-bar > span { color: var(--muted); }
+.inspector-bar > span .local-dot { background: var(--orange); }
+.asset-heading p { color: var(--muted); }
+.badge { background: var(--orange-soft); border-color: #f7d6bf; color: var(--orange-ink); }
+.badge.blue { background: var(--selected); border-color: #dee7ff; color: var(--blue); }
+.preview { background: var(--soft); border-color: var(--line); }
+.preview-caption, .preview-top, .preview-loading, .preview-error { color: var(--muted); }
+/* A navy canvas keeps luminous VFX legible inside the light workspace. */
+.preview.vfx-stage { background: radial-gradient(ellipse at 50% 45%, #293a70, var(--ink)); }
+.preview.vfx-stage .preview-top { color: #d9e2ff; }
+.timeline-row, .control-note { color: var(--muted); }
+.toggle-chip { color: var(--muted); border-color: #dfe4ef; background: var(--panel); }
+.toggle-chip:hover { background: var(--soft); color: var(--blue); }
+.toggle-chip.active { background: var(--selected); border-color: var(--selected-line); color: var(--blue); }
+.detail-tabs { border-color: var(--line); }
+.detail-tabs button { color: var(--muted); }
+.detail-tabs button[aria-selected=true] { color: var(--blue); border-color: var(--blue); }
+.detail-panel, .data-row span { color: var(--muted); }
+.data-row strong { color: var(--ink); }
+.asset-tags span { background: var(--soft); color: var(--muted); }
+.path-box { background: var(--soft); border-color: var(--line); }
+.path-box > span, .path-box code, .parts { color: var(--muted); }
+.empty { color: var(--muted); }
+.empty h2 { color: var(--ink); }
+.audio-stage > .ico { color: var(--blue); }
+.audio-stage p, .image-tools label { color: var(--muted); }
+
+#toast { background: var(--ink); color: #fff; box-shadow: 0 10px 35px #111d4926; }
+dialog { background: var(--panel); border-color: var(--line); box-shadow: 0 24px 80px #111d492b; }
+dialog::backdrop { background: #111d4938; }
+dialog p, #dialog-body ul { color: var(--muted); }
+dialog code { background: var(--soft); color: var(--blue); }
+::-webkit-scrollbar-thumb { background: #ccd3e2; }
+@media (max-width: 850px) {
+  .brand { font-size: 17px; }
+  .brand-mark { width: 38px; height: 38px; }
+}
