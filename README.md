@@ -209,7 +209,7 @@ Unity 与 Unreal 分别提供工程创建、场景与组件编辑、资源导入
 
 ```text
 OpenAIGamesDesigner/
-├── skills/                         # AI 专业工作方法与按需参考
+├── skills/     # AI 专业工作方法与按需参考
 │   ├── game-preproduction/         # 项目管理、阶段推进与变更协调
 │   ├── game-concept/               # 游戏定位、核心体验与设计支柱
 │   ├── game-design/                # 系统规则、成长数值与 GDD 索引
@@ -225,21 +225,21 @@ OpenAIGamesDesigner/
 │   ├── game-technical-art/         # 骨架、重定向、挂点与导入技术
 │   ├── game-technical-design/      # 技术设计、工程实施与引擎参考
 │   └── game-prototype-validation/  # 设计、运行、品质与交付验证
-├── workflows/                      # 立项、原型、切片、变更、资产与交付流程
-├── templates/                      # 项目管理、里程碑、任务和规格等交付模板
-├── tools/                          # 项目看板、项目执行、资产任务、数值交换与检查
-├── adapters/                       # 具体引擎及外部工具的接入实现
+├── workflows/  # 立项、原型、切片、变更、资产与交付流程
+├── templates/  # 项目管理、里程碑、任务和规格等交付模板
+├── tools/      # 项目看板、项目执行、资产任务、数值交换与检查
+├── adapters/   # 具体引擎及外部工具的接入实现
 │   ├── engines/                    # 引擎运行、制作、会话恢复与 MCP 接入约定
-│   │   ├── godot/                  # Godot 命令与接入说明
-│   │   ├── unity/                  # Unity 运行、制作驱动与 C# 辅助工具
-│   │   ├── unreal/                 # UE 运行、制作驱动与 Python 辅助工具
-│   │   ├── threejs/                # 网页 3D
-│   │   └── phaser/                 # 网页 2D
+│   │   ├── godot/    # Godot 命令与接入说明
+│   │   ├── unity/    # Unity 运行、制作驱动与 C# 辅助工具
+│   │   ├── unreal/   # UE 运行、制作驱动与 Python 辅助工具
+│   │   ├── threejs/  # 网页 3D
+│   │   └── phaser/   # 网页 2D
 │   ├── assets/                     # 生成 API、素材检索下载与本地处理
 │   └── processing/                 # Blender 等资产处理接入
-├── schemas/                        # 项目、运行、引擎会话、资产任务与产物记录约定
-├── tests/                          # 自动检查、行为场景与联调样例
-└── dist/                           # 本地打包生成的 Skill 分发包
+├── schemas/    # 项目、运行、引擎会话、资产任务与产物记录约定
+├── tests/      # 自动检查、行为场景与联调样例
+└── dist/       # 本地打包生成的 Skill 分发包
 ```
 
 ### 新游戏项目目录
