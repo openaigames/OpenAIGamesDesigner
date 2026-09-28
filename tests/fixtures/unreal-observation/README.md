@@ -1,6 +1,6 @@
 # Unreal 原生工程验证内容
 
-自制 C++ 验证模块，许可沿用仓库 LICENSE，只使用 Engine BasicShapes，不包含用户剑术包。它证明原生数据、可操作规则、运行绑定、观察和交付接口；不代表成品角色动画或游戏美术。
+自制 C++ 验证模块，许可沿用仓库 LICENSE，只使用 Engine BasicShapes，不包含第三方或私有角色动画资产。它证明原生数据、可操作规则、运行绑定、观察和交付接口；不代表成品角色动画或游戏美术。
 
 在隔离项目创建 `ToolkitObservation.uproject`，开启 PythonScriptPlugin、EditorScriptingUtilities，添加 Runtime 模块 ToolkitObservation；将 Source 目录放入工程。UE 5.8.2 / Win64 实际编译与运行；需要兼容的 C++ 工具链。
 
@@ -18,4 +18,4 @@
 
 `observe-complete-flow` 的动作是定时调用游戏处理函数，不能报成人工按键试玩。截图不含声音；本 UE 夹具没有制作音频，声音观察由 Godot 自制夹具覆盖。阶段交付为可编辑原生工程，在明确的 UE 5.8.2 接收环境打开/编译/运行；未声称完成商店包、跨平台发布或任意游戏类型。
 
-Unreal 原包角色与真实动画由 [共享原生动画接口](../../../adapters/engines/unreal/native-animation.md) 处理，与这个无骨架的规则探针分开。旧动画测试场 C++ 可另放入独立实验模块，并启用 ProceduralMeshComponent；不要将其默认附着答案套到业务角色上。
+Unreal 原包角色与真实动画由 [共享原生动画接口](../../../adapters/engines/unreal/native-animation.md) 处理，与这个无骨架的规则探针分开。旧动画测试场 C++ 可另放入独立实验模块，并启用 ProceduralMeshComponent；实际角色的附件绑定应从对应工程配置读取。

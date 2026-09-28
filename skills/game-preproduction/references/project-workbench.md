@@ -21,11 +21,11 @@ UE 等引擎原资源可以直接关联原始项目文件并进入测试，不�
 
 ## 两类素材看板
 
-共享工作台的“素材看板”（`--view review` / `#review`）只保留“候补素材”和“游戏应用”。支持格式的本地文件刷新后自动出现：项目根目录 `game/` 外为候补，`game/` 内为游戏应用；按完整目录段判断，不把 `gameplay/` 或嵌套目录中的 `game` 当作游戏目录。无需先登记、开始测试或晋升。点击卡片直接预览，可按类型、角色和名称筛选。
+共享工作台的“素材看板”（`--view review` / `#review`）只保留“候补素材”和“游戏应用”。支持格式的本地文件刷新后自动出现，归属依据 `.openaigame/project.json` 的工程及内容根：UE 使用工程/插件 Content，Unity 使用 Assets，其他路线使用引擎根；显式 content_roots 和 asset_exclude_roots 可调整范围。没有配置时才按项目根的 `game/` 判断。配置示例和扫描过滤规则见共享 runtime 的 `tools/workbench/README.md`“游戏内容根”。浏览无需前置登记或阶段晋升。点击卡片直接预览，可按类型、角色和名称筛选。
 
 游戏应用按目录归属显示，不等于已经运行验证。角色卡片将模型和实际绑定的动作聚合；选择角色后可切换“展示动画”，不要求用户先找动作文件再选人物。绑定依据必须来自工程真实配置、资源或引用读回，不能由同目录、相似名称或同骨架推测。未有关联的文件仍正常显示，但不冒充角色动作组合。
 
-角色绑定读取项目 `.asset-browser/characters.json`（version 1）。包含 `characters`（id、title、role、model、actions）、`dependencies`（项目内文件路径到 SHA-256）与可选的 evidence / generatedBy；model 和每个 action.path 必须是 game 内真实资产并登记版本。动作项包含 label 与 path。支持多个角色共享模型但具有不同动作列表。清单、模型、动作或配置版本失效时停止使用绑定并显示原因，原文件仍可浏览。扫描器不替引擎自动推导或修改绑定。
+角色绑定读取项目 `.asset-browser/characters.json`（version 1）。包含 `characters`（id、title、role、model、actions）、`dependencies`（项目内文件路径到 SHA-256）与可选的 evidence / generatedBy；model 和每个 action.path 必须属于配置的游戏内容根，是真实资产并登记版本。动作项包含 label 与 path。支持多个角色共享模型但具有不同动作列表。清单、模型、动作或配置版本失效时停止使用绑定并显示原因，原文件仍可浏览。扫描器不替引擎自动推导或修改绑定。
 
 UE 原资源浏览预览通过 `.asset-browser/previews.json` 关联 GLB 或二进制 FBX。导出副本保留源文件与依赖版本，按源资产归属显示，不把派生副本重新列为候补。游戏角色的模型与动作均应准备对应预览；动作预览包含已绑定的角色网格，切换时保留人物入口和播放控件。工程真实材质、武器附件、根运动、混合及最终效果仍需在引擎核对，浏览器预览不替代运行表现。
 

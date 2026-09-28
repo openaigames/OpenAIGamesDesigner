@@ -39,6 +39,8 @@ def package(destination):
     shutil.copy2(source / "tools/README.md", runtime / "tools/README.md")
     (runtime / "tests").mkdir()
     shutil.copy2(source / "tests/README.md", runtime / "tests/README.md")
+    shutil.copy2(source / 'tests/validation-v0.2.1.md', runtime / 'tests/validation-v0.2.1.md')
+    shutil.copytree(source / 'tests/evidence', runtime / 'tests/evidence', ignore=ignore)
     shutil.copytree(source / 'tests/fixtures',runtime / 'tests/fixtures',ignore=ignore)
     files = {p.relative_to(destination).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
              for p in sorted(destination.rglob('*')) if p.is_file()}

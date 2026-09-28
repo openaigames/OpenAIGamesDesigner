@@ -1,0 +1,100 @@
+{
+  "passed": true,
+  "version": "0.2.1",
+  "integrity": {
+    "bundle_id": "57192601315746d15ad872392dcb9b763152801b65dc0fcdbdcc14aced84e614",
+    "toolkit_version": "0.2.1",
+    "files_checked": 1008,
+    "missing": [],
+    "changed": []
+  },
+  "cli": [
+    {
+      "tool": "game_workflow.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "engine_workflow.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "engine_setup.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "asset_workflow.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "asset_library.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "asset_audit.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "numeric_workflow.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "numeric_models.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "project_links.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "asset_fit.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "engine_characters.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "record_evidence.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "observation.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "validate_records.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "check_installation.py",
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "tool": "project_workbench.py",
+      "returncode": 0,
+      "error": null
+    }
+  ],
+  "browser_history_records": 7,
+  "player_boss_keeps": 2,
+  "prior_native_evidence_readback": "current; no new native-engine execution claimed",
+  "zip_sha256": "2ca5cd93cadee6bdbe3c46fbc4bb53763d95db3daa0e53725b343656d7a5db6f",
+  "scope": "Initial integration release associated with a7ad9a9845a32338a979304e52e2d4b01d577dc5; not a hash of later documentation revisions.",
+  "source_record_sha256": "d6ec43bc956db4b5f2ce2490111658f6dadd92de0325b008fbb7d8ef9db53ae3",
+  "redaction": "Selected validation fields only; workstation paths and expanded runtime inventory omitted."
+}

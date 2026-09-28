@@ -90,7 +90,7 @@ cd OpenAIGamesDesigner
 python tools/package_skills.py --output dist/skills-bundle
 ```
 
-Codex 个人安装：将生成包中的十五个完整 Skill 目录放入 `~/.agents/skills/`（Windows 默认是 `C:/Users/<用户名>/.agents/skills/`）。仅供某个游戏项目使用时，可放入该项目的 `.agents/skills/`；通常选择一种范围，避免同名副本混淆。保留 `game-preproduction/runtime/` 等全部子文件，已有同名目录时先比较并备份本地修改。
+Codex 个人安装：将生成包的完整内容（十五个 Skill 目录和包根目录 `LICENSE`）合入 `~/.agents/skills/`（Windows 默认是 `C:/Users/<用户名>/.agents/skills/`）。仅供某个游戏项目使用时，可放入该项目的 `.agents/skills/`；通常选择一种范围，避免同名副本混淆。保留 `game-preproduction/runtime/` 等全部子文件。首次安装到空目录时复制包内全部内容；更新已有安装时逐文件比较并备份本地修改，保留其他 Skill 和个人文件，不整体替换安装根目录。复制完成后运行下方完整性检查，`missing` 和 `changed` 应为空；有意保留的本地定制需逐项说明。
 
 打包目标需为新目录；更新后重新打包并同步安装副本。包内 `game-preproduction/runtime/bundle-manifest.json` 记录内容版本，使用该 runtime 下的 `tools/check_installation.py --skills-root <Skill 安装根目录>` 检查缺失或修改的文件；差异需比较并保留本地定制。分发包不包含引擎、生成模型或游戏资产。
 
@@ -212,10 +212,19 @@ OpenAIGamesDesigner/
 ├── skills/                         # AI 专业工作方法与按需参考
 │   ├── game-preproduction/         # 项目管理、阶段推进与变更协调
 │   ├── game-concept/               # 游戏定位、核心体验与设计支柱
-│   ├── game-design/                # 玩法、系统、关卡与数值策划
-│   ├── game-art-direction/         # 美术方向、图板、素材选用与视觉验收
+│   ├── game-design/                # 系统规则、成长数值与 GDD 索引
+│   ├── game-combat-design/         # 操作、招式、敌人决策与战斗调校
+│   ├── game-level-design/          # 空间、路线、遭遇与可玩布局
+│   ├── game-art-direction/         # 视觉方向、风格与跨资产一致性
+│   ├── game-character-art/         # 角色、武器与装备美术
+│   ├── game-environment-art/       # 场景、材质、光照与布景
+│   ├── game-animation-pipeline/    # 动作制作、校准、连续性与交接
+│   ├── game-vfx-design/            # 战斗、移动与环境特效
+│   ├── game-audio-design/          # 音效、音乐、混音与实际监听
+│   ├── game-ui-ux/                 # 游戏界面与完整交互路径
+│   ├── game-technical-art/         # 骨架、重定向、挂点与导入技术
 │   ├── game-technical-design/      # 技术设计、工程实施与引擎参考
-│   └── game-prototype-validation/  # 原型、切片与变更验证
+│   └── game-prototype-validation/  # 设计、运行、品质与交付验证
 ├── workflows/                      # 立项、原型、切片、变更、资产与交付流程
 ├── templates/                      # 项目管理、里程碑、任务和规格等交付模板
 ├── tools/                          # 项目看板、项目执行、资产任务、数值交换与检查

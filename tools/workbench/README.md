@@ -1,8 +1,32 @@
 # 项目素材看板
 
-`#review` 自动呈现候补素材（game 外）和游戏应用（game 内）。目录扫描是两栏归属的唯一依据，无登记/测试/晋升步骤；所有旧检查记录保留，兼容 API 继续支持历史工具。
+`#review` 按实际文件位置和项目配置呈现候补素材、游戏应用两栏。文件可直接浏览；旧检查记录保留，兼容 API 供历史工具使用。目录归属不代表实际绑定或品质通过。
 
 `GET /api/assets` 返回每个资产的 location（candidate/game）、previewCopy，以及 characters 与 characterBindingError。派生预览不作为独立候补展示；角色模型与绑定动作在看板合并为角色卡片，其余文件按类型浏览。角色详情用“展示动画”切换实际绑定动作。
+
+## 游戏内容根
+
+归属由 `tools/content_roots.py` 统一计算，读取项目 `.openaigame/project.json`。保留已有 `engine_root` 和引擎配置，不为使用看板移动原工程。
+
+| 配置情况 | 默认游戏内容范围 |
+| --- | --- |
+| 未建立项目配置 | 项目根的 `game/`，按完整目录段匹配 |
+| Unreal | `engine_root/Content` 及工程插件中的 Content |
+| Unity | `engine_root/Assets` |
+| Godot / Three.js / Phaser | `engine_root` |
+
+显式 `content_roots` 覆盖上述默认范围；目录必须位于已配置的引擎根内。`asset_exclude_roots` 排除辅助目录。两者使用相对游戏项目根的路径，例如在现有 UE 配置中合并以下字段：
+
+```json
+{
+  "engine": "unreal",
+  "engine_root": "UEProject",
+  "content_roots": ["UEProject/Content", "UEProject/Plugins/Combat/Content"],
+  "asset_exclude_roots": ["UEProject/Content/SourceReferences"]
+}
+```
+
+示例仅展示归属字段；保留项目已有的版本、编辑器和运行配置。扫描仍过滤构建缓存、派生预览及约定的项目记录目录，不把它们作为游戏源资产。配置无效时报告原因并停止推断游戏归属，不静默退回默认目录。支持格式且位于游戏内容根之外的普通素材归为候补。
 
 ## 角色绑定清单
 
@@ -25,7 +49,7 @@
 }
 ```
 
-从工程真实绑定导出清单，不能由同目录或文件名推测。所有模型、动作须在 game 内并覆盖哈希；依赖变化、丢失或非法路径会停止绑定展示并报告原因。支持多个角色共享模型。绑定清单仅描述工程事实，不负责导入或改写游戏。
+从工程真实绑定导出清单，不能由同目录或文件名推测。所有模型、动作须属于配置的游戏内容根并覆盖哈希；依赖变化、丢失或非法路径会停止绑定展示并报告原因。支持多个角色共享模型。绑定清单仅描述工程事实，不负责导入或改写游戏。
 
 UE 预览映射 `.asset-browser/previews.json` 沿用 version 1，path 现在允许独立 GLB 或二进制 FBX，source_sha256、sha256、dependencies 仍按原规则验证。角色动作预览必须含网格，以便切换动画时继续显示人物。FBX 内嵌动画和源骨架使用已随包提供的 FBXLoader，纯动作候补仍支持会话中的同骨架人物预览。
 

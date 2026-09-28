@@ -18,7 +18,7 @@ if __name__=='__main__' and '--session' in sys.argv:
     raise SystemExit(0)
 
 import unreal as u
-import os, json
+import os, json, re
 from pathlib import Path
 
 root = Path(os.environ['ANIMLAB_WORKSPACE']).resolve()
@@ -102,6 +102,13 @@ def import_clips():
     u.log('ANIMLAB_IMPORT_COMPLETE clips=' + str(len(results)))
 
 def build_stage():
+    module = os.environ.get('ANIMLAB_MODULE', '')
+    if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', module):
+        raise RuntimeError('Set ANIMLAB_MODULE to the actual module containing AnimationLabMode')
+    mode_path = '/Script/' + module + '.AnimationLabMode'
+    mode_class = u.load_class(None, mode_path)
+    if mode_class is None:
+        raise RuntimeError('Compile and load the animation lab module first: ' + mode_path)
     subsystem = u.get_editor_subsystem(u.LevelEditorSubsystem)
     path = '/Game/AnimationLab/Maps/AnimationLab'
     if u.EditorAssetLibrary.does_asset_exist(path):
@@ -124,7 +131,7 @@ def build_stage():
     start = actors.spawn_actor_from_class(u.PlayerStart, u.Vector(0,0,0))
     start.set_actor_label('Animation lab origin')
     world = u.get_editor_subsystem(u.UnrealEditorSubsystem).get_editor_world()
-    world.get_world_settings().set_editor_property('default_game_mode', u.load_class(None, '/Script/'+os.environ.get('ANIMLAB_MODULE','RiftDuel')+'.AnimationLabMode'))
+    world.get_world_settings().set_editor_property('default_game_mode', mode_class)
     subsystem.save_current_level()
     u.EditorLoadingAndSavingUtils.save_dirty_packages(True,True)
     u.log('ANIMLAB_MAP_SAVED ' + path)

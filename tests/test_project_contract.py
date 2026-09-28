@@ -2,7 +2,8 @@
 from pathlib import Path
 import re
 import unittest
-from urllib.parse import unquote
+import tempfile
+from document_links import local_reference_errors
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,25 +32,27 @@ class ProjectContractTests(unittest.TestCase):
         )
 
     def test_active_markdown_links_and_template_references(self):
-        files = [ROOT / "README.md", ROOT / "THIRD_PARTY_NOTICES.md", ROOT / "licenses/README.md"]
+        files = [ROOT / name for name in ("README.md", "THIRD_PARTY_NOTICES.md", "licenses/README.md", "RELEASE_NOTES.md", "RELEASE-v0.2.md")]
         for folder in ("skills", "workflows", "templates", "tools", "adapters", "tests"):
             files.extend((ROOT / folder).rglob("*.md"))
-        missing = []
+        missing = local_reference_errors(files)
         for path in files:
             content = path.read_text(encoding="utf-8-sig")
-            for target in re.findall(r"\[[^\]\n]*\]\(([^)\n]+)\)", content):
-                target = target.strip().split(' "')[0].strip("<>")
-                if re.match(r"^[a-zA-Z][\w+.-]*:", target) or target.startswith("#"):
-                    continue
-                if "{{" in target:
-                    continue
-                target = unquote(target.split("#")[0])
-                if target and not (path.parent / target).exists():
-                    missing.append((str(path.relative_to(ROOT)), target))
             for target in re.findall(r"`(templates/[^`\n]+\.md)`", content):
                 if not (ROOT / target).is_file():
                     missing.append((str(path.relative_to(ROOT)), target))
         self.assertEqual(missing, [], "Active references must resolve; historical dist is excluded.")
+
+    def test_link_check_detects_broken_sections_and_ignores_code_examples(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            page = root / 'guide.md'
+            page.write_text('# 接入 / 1\n# 接入 / 1\n<a id="old-anchor"></a>\n```md\n# 假标题\n[x](missing.md)\n```\n', encoding='utf-8')
+            entry = root / 'README.md'
+            entry.write_text('[one](guide.md#接入--1)\n[two](guide.md#接入--1-1)\n[old](guide.md#old-anchor)\n', encoding='utf-8')
+            self.assertEqual(local_reference_errors([page, entry]), [])
+            entry.write_text('[broken](guide.md#旧标题)\n[fake](guide.md#假标题)\n[missing](gone.md)\n', encoding='utf-8')
+            self.assertEqual([row[3] for row in local_reference_errors([entry])], ['missing heading', 'missing heading', 'missing file'])
 
     def test_execution_structure_has_callable_entries(self):
         expected = ["tools/game_workflow.py", "tools/engine_workflow.py", "tools/asset_workflow.py", "tools/numeric_workflow.py", "tools/validate_records.py",

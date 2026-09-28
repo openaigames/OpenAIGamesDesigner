@@ -1,0 +1,24 @@
+Testing core
+Remote task recorded; polling.
+Remote task recorded; polling.
+Model files downloaded; engine import and quality checks are pending.
+Remote task recorded; polling.
+----------------------------------------------------------------------
+Ran 262 tests in 88.093s
+
+OK
+Testing game-animation-pipeline
+----------------------------------------------------------------------
+Ran 20 tests in 0.509s
+
+OK
+Testing game-art-direction
+----------------------------------------------------------------------
+Ran 13 tests in 1.391s
+
+OK
+Animation preview framing: root motion remains visible; source pose restored.
+Loading completion: coalesced request and outstanding texture dependencies passed.
+Motion guard: declined navigation retains draft, accepted discard once, busy save blocks, detached views release.
+Observation math: clock separation, explicit alignment, no extrapolation, large traces passed.
+All test suites passed

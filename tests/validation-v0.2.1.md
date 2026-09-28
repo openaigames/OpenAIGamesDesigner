@@ -1,10 +1,10 @@
 # v0.2.1 整合验证记录
 
-日期：2026-09-28。范围：将 deric-yang 已合入上游的五项贡献适配到本地 v0.2；保留十五职业、五阶段连续区间任务、共享运行工具、两栏素材看板及角色动作绑定。
+日期：2026-09-28。初始整合记录对应提交 `a7ad9a9845a32338a979304e52e2d4b01d577dc5`：将 deric-yang 的五项贡献适配到 v0.2，保留十五职业、五阶段连续区间任务、共享运行工具、两栏素材看板及角色动作绑定。文档修订后的检查单独记录，不回写为初始整合时已执行。
 
 ## 来源与变更
 
-分支 `codex/integrate-v0.2.1` 从上游 `98870c3cf6adc12ebab218152a7041a0f0e7df6b` 建立。以下贡献提交保留为祖先，作者仍为 Yang Jianwen / deric-yang；本轮新增维护提交不冒充原作者。
+整合以 `98870c3cf6adc12ebab218152a7041a0f0e7df6b` 为基础。以下贡献提交保留为祖先，作者为 Yang Jianwen / deric-yang；适配修改另记维护提交。
 
 | 原贡献 | 原提交 | 整合后的职责与实现 |
 | --- | --- | --- |
@@ -18,7 +18,7 @@
 
 ## 自动回归
 
-使用 Windows、工具运行时 Python/Node，以及实际 Blender 4.5.9。完整命令为 `python -B -X utf8 tools/run_tests.py --node <Node 可执行文件>`，环境变量 `OAGD_BLENDER` 指向实际 Blender。完整执行日志保存在本次整合工作目录 `full-tests-final.log`。
+使用 Windows、Python/Node 运行时及实际 Blender 4.5.9。完整命令为 `python -B -X utf8 tools/run_tests.py --node <Node 可执行文件>`，环境变量 `OAGD_BLENDER` 指向实际 Blender。[完整执行日志](evidence/v0.2.1/integration-tests.log)、[Blender 日志](evidence/v0.2.1/blender-tests.log) 和 [Skill 格式检查](evidence/v0.2.1/skill-format-validation.log) 均随仓库归档。
 
 | 检查 | 实际结果 |
 | --- | --- |
@@ -47,14 +47,24 @@
 
 ## 职业行为与验证边界
 
-独立评估执行了 16 个请求的职业路由与处理步骤推演：6 个角色动画、4 个战斗、6 个表现返修情境。报告为整合工作目录 `skill-forward-evaluation.md`。因评估时可见预期条件，该结果不是盲测；没有原始游戏素材，不宣称其动画、美术或听感通过。
+独立评估执行了 16 个请求的职业路由与处理步骤推演：6 个角色动画、4 个战斗、6 个表现返修情境，见 [归档报告](evidence/v0.2.1/skill-forward-evaluation.md)。因评估时可见预期条件，该结果不是盲测；没有原始游戏素材，不宣称其动画、美术或听感通过。
 
-评估发现动画入口固定使用“Unreal 独立测试场”与非 UE 项目目标有歧义。本轮已改为“目标引擎的独立测试场”，明确按目标引擎选择方法；现有 UE 脚本能力不扩称为多引擎实现。
+评估发现动画入口固定使用“Unreal 独立测试场”与非 UE 项目目标有歧义，整合时已改为“目标引擎的独立测试场”，明确按目标引擎选择方法；现有 UE 脚本能力不扩称为多引擎实现。
 
-本轮没有重新启动用户的 Boss 战，没有新增 Unreal/Godot 游戏体验验收，也没有把旧音频反馈当作新内容的听感结论。既有 v0.2 Godot 任务/观察与 UE 数值回执已通过新运行包读取，属于兼容性检查。
+验证范围不包含新增 Unreal/Godot 游戏体验验收或新内容听感评审。既有 v0.2 Godot 任务/观察与 UE 数值回执通过运行包读取，属于兼容性检查。
 
 ## 分发检查
 
 运行包在独立空目录、移除 `PYTHONPATH` 的条件下执行 16 个 CLI 入口，检查新动作模块、历史记录、角色选择、旧原生证据与版本诊断。发布包使用 `tools/package_skills.py` 生成，并以 `tools/check_installation.py` 逐文件校验。ZIP 同时检查 CRC 与 SHA-256。
 
-最终源码、本地副本、个人安装和 ZIP 的同步结果与哈希单独写入本次整合工作目录的 `整合完成报告.md`、`portable-release-validation.json` 和 `sync-v021-result.json`；避免在被哈希的包内写入自引用哈希。备份保留被替换文件的原始字节，未列入分发清单的个人文件保持原样。
+[初始分发验证摘要](evidence/v0.2.1/portable-summary.json) 保留对应版本的结果和哈希；这些历史哈希不用于判断后续文档修订包。当前包的内容身份由随包 manifest 确定，使用 runtime 下的 `tools/check_installation.py --skills-root <安装根>` 核查。安装同步回执属于使用者本机记录，不是公开工具能力的依赖；更新时备份被替换文件并保留个人定制。
+
+## 文档修订回归（2026-09-28）
+
+修正安装完整性、十五职业目录、内容根、八类文档、生成 API、验证夹具分发和章节导航；验证材料归档为仓库相对链接。旧 `/1` 测试场要求显式模块，并在创建地图前检查 AnimationLabMode 类可加载，历史项目专属代码单列依赖。
+
+在相同 Windows / Blender 4.5.9 环境执行统一入口：[295 项 Python 测试及 4 个 Node 脚本通过](evidence/v0.2.1/documentation-tests.log)，无跳过。Python 分组为根 tests 262、动画 20、美术 13；Blender 6 项包含在根测试中，不重复计数。[十五个 Skill 格式检查通过](evidence/v0.2.1/documentation-skill-format.log)。
+
+新增回归实际复制完整包到空安装目录，检查所有文件和包内文档链接；对照只漏根 LICENSE 的安装，确认能准确报告缺失。章节校验覆盖同名标题、中文和历史显式锚点，忽略代码块中的演示链接。
+
+旧 UE 模块保护的 4 项测试使用受控 Unreal 接口，检查缺少/非法模块、类未编译及自定义模块路径在编辑地图前的处理。它们不构成 Unreal 编辑器实机创建或动画品质验收；共享 `/2` 会话与实际采样接口未改动。

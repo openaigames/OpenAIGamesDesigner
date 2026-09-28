@@ -1,6 +1,6 @@
 # 开始使用
 
-项目工作台提供两类素材看板：`python tools/project_workbench.py --project "MyGame" --view review`。game 外的文件自动列为候补，game 内列为游戏应用；角色按实际绑定关联模型与可选动画，不再要求登记和测试晋升。预览与角色清单接口见 [看板说明](workbench/README.md)，操作流程见 game-preproduction Skill 的 `references/project-workbench.md`。
+项目工作台提供两类素材看板：`python tools/project_workbench.py --project "MyGame" --view review`。扫描到的文件按配置的游戏内容根归为候补或游戏应用；角色按实际绑定关联模型与可选动画，可直接预览并保存动作选择。预览与角色清单接口见 [看板说明](workbench/README.md)，操作流程见 game-preproduction Skill 的 `references/project-workbench.md`。
 
 不确定需要安装哪些软件、在哪配置时，先看 [按功能配置环境](../adapters/environment-setup.md)。
 
@@ -30,7 +30,19 @@ python tools/game_workflow.py document --project "MyGame" --kind task --id T001 
 python tools/game_workflow.py document --project "MyGame" --kind feature-spec --id F001 --title "蓄力攻击"
 ```
 
-支持 prototype、vertical-slice、task、feature-spec、asset-spec、validation-report、decision 七种 document 类型；管理由 scaffold、init 或人工建立。新资产规格在 `design/assets/`，已有 `assets/specs/` 沿用。目标文件已存在时拒绝覆盖，已有文档由助手原位修改。
+支持 prototype、vertical-slice、content-production、task、feature-spec、asset-spec、validation-report、decision 八种 document 类型；content-production 用于内容制作里程碑。管理由 scaffold、init 或人工建立。新资产规格在 `design/assets/`，已有 `assets/specs/` 沿用。目标文件已存在时拒绝覆盖，已有文档由助手原位修改。
+
+## 阶段任务与证据
+
+`document --kind task` 创建 Markdown 专业说明。需要按五阶段连续区间记录计划、状态、依赖和评审时，使用 `task` 子命令；两者用途不同，生成 Markdown 不会自动建立阶段状态记录。
+
+```sh
+python tools/game_workflow.py task --project "MyGame" create --spec production/task-request.json
+python tools/game_workflow.py task --project "MyGame" show --id T001
+python tools/record_evidence.py --project "MyGame" --register production/evidence-request.json
+```
+
+请求文件需先按实际目标填写，结构分别见 [任务约定](../schemas/task.schema.json) 和 [证据约定](../schemas/evidence.schema.json)。阶段范围、推进和恢复见 [阶段区间执行](../workflows/stage-execution.md)，实际事件/空间记录见 [运行观察](../adapters/engines/observations.md)。专业小修可沿用已有任务，无需强制创建完整阶段档案。
 
 ## 在已有项目上修改
 
@@ -150,11 +162,13 @@ python tools/project_workbench.py --project "MyGame" --approve-job A实际任务
 python tools/asset_audit.py --project "MyGame"
 ```
 
-`MyGame` 换成游戏根目录的绝对路径。看板使用同一套界面，绑定当前项目，在自动分配的本机端口启动；`--no-open --ready-file <新临时文件>` 可交给宿主打开返回地址。同一台电脑的不同浏览器可以直接使用相同地址，页面自动建立连接，无需一次性链接；服务仍只监听 `127.0.0.1`，写入保留 Origin 与 CSRF 校验。默认闲置 120 分钟退出，关闭页面不立即停止服务。真实资产在游戏目录，网页和 Three.js 在共享 runtime，不复制游戏或样例到安装包。
+`MyGame` 换成游戏根目录的绝对路径。看板使用同一套界面，绑定当前项目，在自动分配的本机端口启动；`--no-open --ready-file <新临时文件>` 可交给宿主打开返回地址。同一台电脑的不同浏览器可以直接使用相同地址，页面自动建立连接，无需一次性链接；服务仍只监听 `127.0.0.1`，写入保留 Origin 与 CSRF 校验。默认闲置 120 分钟退出，关闭页面不立即停止服务。用户游戏资产留在游戏项目，网页和 Three.js 在共享 runtime。分发包包含可再分发的自制验证夹具，位于 runtime 的 `tests/fixtures/`；用户真实工程与素材不随包分发。完整维护测试和打包脚本只在源码仓库。
 
 支持本地 3D、图片、音频、视频、粒子演示和引擎文件索引。实时 3D 支持 GLB/glTF、OBJ（含项目内 MTL/贴图）和 FBX 模型/骨架/动作。缺贴图和不兼容骨架会显示具体限制；浏览器不执行 Niagara、AnimBP、碰撞或引擎最终材质。动作预览可跟随角色或查看完整位移轨迹，不修改源资产。标签来自现有美术记录，未登记资产仍可浏览。
 
 引擎角色使用实际消费者导出及 `engine_characters.py` 同步到现有 `.asset-browser/characters.json` / `previews.json`。选择角色即可选择工程关联动作，并区分组件直接绑定、AnimBP 静态引用和工程声明可用集合。导出预览支持 FBX 和 GLB；原文件、派生文件及所列依赖均冻结 SHA256，变更后旧预览失效。项目配置的内容根决定候补/游戏应用归属，运行备份和派生预览不再作为候补重新扫描。浏览器动作与游戏最终表现分开，原生导出接口的限制见 [Unreal 原生动画](../adapters/engines/unreal/native-animation.md)。
+
+资产归属的内容根、排除目录和配置示例见 [游戏内容根](workbench/README.md#游戏内容根)。在实际预览下记录动作的待定/保留/不采用，按角色与用途分别保存；导出与历史迁移见 [动作取舍](workbench/motion-review.md)。这些选择不移动文件，也不替代引擎验证。
 
 数值预测调用 `numeric_workflow.py --project <项目> model --request <相对请求.json> --out production/numeric-models/<版本>.json`。支持明确算式树、分段线性曲线和阶梯阈值；参数与实测引用实际 JSON pointer、权威文件和执行记录。输出 JSON/HTML 比较以及共享看板图表；`model-check --report <相对报告>` 检查依赖新鲜度。模型不覆盖游戏权威参数，不把预测当实测或最优手感。
 

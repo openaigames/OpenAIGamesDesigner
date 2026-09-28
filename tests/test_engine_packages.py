@@ -1,5 +1,6 @@
 """Engine package migration must work without the maintenance checkout."""
 import json
+import shutil
 from pathlib import Path
 import subprocess
 import sys
@@ -11,9 +12,24 @@ sys.path.insert(0, str(ROOT / 'tools'))
 import package_skills
 import check_installation
 from adapters.engines import threejs, phaser
+from document_links import local_reference_errors
 
 
 class EnginePackageTests(unittest.TestCase):
+    def test_complete_fresh_install_and_packaged_documentation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            bundle = package_skills.package(Path(temp) / 'bundle')
+            # README installation copies all bundle contents, including root LICENSE.
+            installed = Path(temp) / 'fresh-skills'
+            shutil.copytree(bundle, installed)
+            result = check_installation.check(installed)
+            self.assertEqual(result['missing'], [])
+            self.assertEqual(result['changed'], [])
+            self.assertEqual(local_reference_errors(installed.rglob('*.md')), [])
+            # Reproduce the old incomplete instruction, so the omission stays visible.
+            (installed / 'LICENSE').unlink()
+            self.assertEqual(check_installation.check(installed)['missing'], ['LICENSE'])
+
     def test_portable_bundle_preserves_first_and_third_party_licenses(self):
         with tempfile.TemporaryDirectory() as temp:
             bundle = package_skills.package(Path(temp) / 'bundle')

@@ -33,7 +33,7 @@ python tools/game_workflow.py run --project "MyGame" --action play --timeout 600
 python tools/game_workflow.py run --project "MyGame" --action test --script tests/test_game.gd --timeout 120
 ```
 
-测试脚本必须真的执行断言，并在通过时输出 `OAGD_TEST_PASS count=N`（N > 0）。单有该标记不是独立验收依据，需检查脚本的测试含义；退出码或日志错误会影响结果。`tests/fixtures/godot-2d/` 是源码仓库中的联调样例，不属于正式设计，也不包含在个人 Skill 运行包里。
+测试脚本必须真的执行断言，并在通过时输出 `OAGD_TEST_PASS count=N`（N > 0）。单有该标记不是独立验收依据，需检查脚本的测试含义；退出码或日志错误会影响结果。`tests/fixtures/godot-2d/` 是自制联调样例，源码和个人 Skill 的共享 runtime 均包含它；使用时复制到独立测试项目。它不属于用户游戏设计，完整维护测试代码仍只在源码仓库。
 
 导出需要项目已配置的预设和匹配版本 export templates：
 
@@ -44,5 +44,7 @@ python tools/game_workflow.py run --project "MyGame" --action export --preset "W
 build / export 均按已有预设导出并记录关联文件哈希。默认文件名为 game.exe、模式为 debug；其他平台及 release 可在 `godot` 配置段指定，见 [执行配置](execution.md)。真实独立包需要在目标环境打开、检查资源和日志，不能从模拟测试推断成功。
 
 每次 run 保存输入快照、命令、版本、日志和状态。运行中发现工程文件变化会提示复核；工程哈希不是备份。命令通过不证明手感、视觉、性能或里程碑通过。
+
+实际事件、参数、空间与媒体采集见 [共享运行观察](../observations.md#godot-2d)，可复用的观察夹具见 runtime 或源码的 `tests/fixtures/godot-observation/`。
 
 参数依据：[Godot 官方命令行说明](https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html)。

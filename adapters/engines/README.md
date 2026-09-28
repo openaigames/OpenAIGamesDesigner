@@ -26,6 +26,9 @@
 | `web_common.py` | Three.js / Phaser 共用的初始化、依赖、服务与构建逻辑 |
 | `browser_smoke.cjs` | 网页构建的浏览器加载、截图与错误检查 |
 | `execution.md` | 通用运行协议和各引擎配置导航 |
+| [observations.md](observations.md) | Godot / Unreal 的实际事件、参数、附件和空间采集 |
+| [unreal/native-animation.md](unreal/native-animation.md) | UE 原生角色、动画与关联预览导出 |
+| [unreal/native-data.md](unreal/native-data.md) | UE 原生参数读回与保护性写入 |
 | `mcp.md` | 宿主 MCP 接入及证据约定，不是 MCP 服务实现 |
 | `web.md` | 网页游戏共同使用方式与浏览器检查配置 |
 

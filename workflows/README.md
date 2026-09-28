@@ -16,7 +16,7 @@
 | schemas | 项目、运行、引擎会话、资产任务及产物的结构化约定，见 [schemas](../schemas/) | 不是独立的任务管理数据库 |
 | tests | 工具、协议、文件保护与模拟适配器检查 | 不代替真实引擎联调或游戏验收 |
 
-`adapters/engines/` 包含 Godot、Unity、Unreal、Three.js 和 Phaser 的独立入口；后两者共用 `web_common.py` 的网页执行逻辑。`adapters/assets/` 包含 Hunyuan3D、图像和音频；`adapters/processing/` 包含 Blender。公共协议辅助文件也保存在所属目录。
+`adapters/engines/` 包含 Godot、Unity、Unreal、Three.js 和 Phaser 的独立入口；后两者共用 `web_common.py` 的网页执行逻辑。`adapters/assets/` 包含 Tripo / Hunyuan3D API、本地 Hunyuan3D、图像和音频包装；`adapters/processing/` 包含 Blender。公共协议辅助文件也保存在所属目录。
 
 ## 实际游戏项目
 
@@ -56,6 +56,6 @@ MyGame/
 
 源码是维护来源，`dist/` 是构建产物，个人 Skill 目录是安装副本，游戏目录是工作结果。打包时公共运行资源放入 `game-preproduction/runtime/`，包含 workflows、templates、tools、adapters、schemas 和可移植使用文档；十五个 Skill 的专业参考各自随包分发。默认打包只包含 skills 和规定的 runtime 资源。个人开发记录、旧工具与历史分发包保存在仓库外，不参与当前流程。
 
-Unity/Unreal 分别提供工程识别、原生运行检查、测试报告解析和构建导出入口，具体依赖见 [执行配置](../adapters/engines/execution.md)；工程创建、场景/组件、资源导入、角色动画和自动操作由各引擎制作驱动实现，共享检查点与 [会话恢复](../adapters/engines/sessions.md)。具体对象和操作以各引擎 production 说明为准，项目功能按实际工程代码、可用 MCP 或项目工具实现。图像、音频、Hunyuan3D 接入是本地包装协议，未绑定云 API 或下载模型。
+Unity/Unreal 分别提供工程识别、原生运行检查、测试报告解析和构建导出入口，具体依赖见 [执行配置](../adapters/engines/execution.md)；工程创建、场景/组件、资源导入、角色动画和自动操作由各引擎制作驱动实现，共享检查点与 [会话恢复](../adapters/engines/sessions.md)。具体对象和操作以各引擎 production 说明为准，项目功能按实际工程代码、可用 MCP 或项目工具实现。图像、音频和本地 Hunyuan3D 使用可配置包装命令；Tripo / Hunyuan3D 另有云 API 接入，共用资产任务记录。具体模式、凭据和恢复见 [资产接入](../adapters/assets/README.md)。工具包不附带生成模型权重。
 
 使用见 [入门](../tools/README.md)，实际验收顺序见 [分项验证计划](../tests/README.md)。

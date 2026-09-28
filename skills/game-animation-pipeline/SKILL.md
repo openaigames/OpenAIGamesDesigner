@@ -41,7 +41,7 @@ description: 制作、校准和验收游戏角色动画资产及武器绑定；�
 | Blender ↔ UE 可执行流程、工具与已知边界 | [运行管线](references/running-the-pipeline.md) |
 | 测试场验收与游戏接入 | [验收和交接](references/review-and-handoff.md) |
 
-`scripts/anim_pipeline.py` 按显式协议版本检查清单、采样和交接：`/2` 支持外部制作、原生复用和局部修改；`/1` 保留旧攻击样例的严格回传检查。骨骼命名、接触事件及测量缺口见 [运行管线的适用范围](references/running-the-pipeline.md#适配器适用范围)。`scripts/blender_stage.py` 提供目标骨架校准、基线烘焙、FBX 导出、外部预览。`scripts/ue_editor_stage.py` 提供参考导出、独立导入和旧测试场生成；原生 `/2` 采样使用共享 Unreal Playback 的实际项目消费者。`assets/unreal` 为旧 `/1` 可移植测试场 C++，需编译到授权实验模块，不是已安装的 Unreal 插件。`assets/rift-baseline` 仅是 Rift Duel 的采样适配器，其他项目使用自己的采样入口。
+`scripts/anim_pipeline.py` 按显式协议版本检查清单、采样和交接：`/2` 支持外部制作、原生复用和局部修改；`/1` 保留旧攻击样例的严格回传检查。骨骼命名、接触事件及测量缺口见 [运行管线的适用范围](references/running-the-pipeline.md#当前入口与-1-兼容范围)。`scripts/blender_stage.py` 提供目标骨架校准、基线烘焙、FBX 导出、外部预览。`scripts/ue_editor_stage.py` 提供参考导出、独立导入和旧测试场生成；原生 `/2` 采样使用共享 Unreal Playback 的实际项目消费者。`assets/unreal` 为旧 `/1` 可移植测试场 C++，需编译到授权实验模块，不是已安装的 Unreal 插件。项目专属旧采样代码的依赖和保留范围见 [历史采样适配器](references/legacy-rift-capture.md)，不用于初始化新工程。
 
 工具能完成的技术检查要实际运行。资产或软件缺失时完成不依赖它的工作，说明具体未执行环节；不要用示意角色、浏览器骨架或代理几何冒充指定角色的动画验收。使用用户指定的 DCC 时沿用该工具；Blender 适配器不是强制选择。
 
