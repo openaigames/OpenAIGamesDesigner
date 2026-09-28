@@ -1,0 +1,51 @@
+{
+  "engine": "unreal",
+  "mode": "edit",
+  "scene": "/Game/ObservationArena",
+  "operations": [
+    {
+      "op": "native_patch",
+      "path": "/Game/ObservationSettings",
+      "read_method": "ExportAuthorData",
+      "write_method": "ApplyAuthorData",
+      "expected": {
+        "walk_speed": 180,
+        "windup": 0.11999999731779099,
+        "cleanup_delay": 0.07500000298023224,
+        "damage_keys": [
+          [
+            0,
+            10
+          ],
+          [
+            1,
+            20
+          ]
+        ]
+      },
+      "values": {
+        "walk_speed": 240,
+        "cleanup_delay": 0,
+        "damage_keys": [
+          [
+            0,
+            12
+          ],
+          [
+            1,
+            30
+          ]
+        ]
+      }
+    },
+    {
+      "op": "actor",
+      "target": "PlayableProbe",
+      "position": [
+        0,
+        100,
+        55
+      ]
+    }
+  ]
+}

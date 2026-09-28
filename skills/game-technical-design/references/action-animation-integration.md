@@ -1,8 +1,10 @@
 # UE 动作资源与能力集成
 
-跨引擎的骨架、参考姿态、镜像、握持与步幅处理见 [角色模型与动作资产匹配](character-animation-production.md)；本页负责 UE 能力与动画系统的接入边界。
-
 用于把已确定的角色动作接入可玩工程；采用 GAS 或自有动作系统均适用。先读取本轮动作规格和美术资产决定，最终美术不必一次全部确定，但占位范围、动作来源或选材委托需有依据。
+
+源动作制作、握持/穿插诊断与外部回传按需交给已安装的 [game-animation-pipeline](../../game-animation-pipeline/SKILL.md)。已有 UE 资源可先在引擎中检查，不必为资产登记而导出。粗动作接入用于玩法实验，代表招式达到约定质量后再扩展；独立动作播放、游戏功能和体验分别验证。技能未安装时继续沿用项目工具，不把它列为强制前置依赖。
+
+正式接入前核对该对象已采用的职责、素材组合和不匹配项处理决定，方法见 [角色职责与素材适配](../../game-art-direction/references/role-asset-fit.md)。允许在职责/招式尚未定型时先做明确标为探索的外部/独立引擎小样，验证素材能力并反馈设计；这不要求先完成正式替换。角色可重定向不证明适合持物或该交互，不能用强拉 IK、判定扩张或过度变速补救根本冲突。素材探索导致职责/招式变化时，关联当前规则修订及 AI、位移、判定、事件和中断影响，再替换实际消费者；单独安装时沿用项目规格。
 
 ## 区分用户所说的“动作模组”
 
@@ -40,3 +42,5 @@ GAS 加一套动画包只解决部分基础。敌人决策、关卡/遭遇、摄
 使用 workflows 中既有原型、切片、资产制作或功能变更流程；分别留下导入/引用读回、运行事件/数值、图形试玩证据，并联动 Art Direction、Technical Design、GDD、验证报告与项目管理。不要把源资产预览、编辑器运行和独立构建运行混成一项通过。
 
 依据：[Animation Montage](https://dev.epicgames.com/documentation/en-us/unreal-engine/animation-montage-in-unreal-engine)、[GAS](https://dev.epicgames.com/documentation/en-us/unreal-engine/gameplay-ability-system-for-unreal-engine)。具体接口以项目版本和可用工具核实。
+
+异源骨架与握持加工见 [技术美术集成方法](../../game-technical-art/references/character-animation-integration.md)。程序在动画混合、IK 和骨骼修正完成后采样挂接与武器轨迹，明确更新顺序和单一写入者。窗口、迟到回调、同时命中及顿帧见 [战斗运行时契约](combat-runtime-contracts.md)。

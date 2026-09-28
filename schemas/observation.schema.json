@@ -1,0 +1,585 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Measured runtime and spatial observations",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "context",
+    "objects",
+    "clocks",
+    "events",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "engine",
+        "engine_version",
+        "project",
+        "build",
+        "input_mode",
+        "method",
+        "conditions",
+        "sampling_overhead"
+      ],
+      "properties": {
+        "engine": {
+          "type": "string",
+          "minLength": 1
+        },
+        "engine_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project": {
+          "type": "string",
+          "minLength": 1
+        },
+        "build": {
+          "type": "string",
+          "minLength": 1
+        },
+        "run_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "input_mode": {
+          "enum": [
+            "human",
+            "automated_input",
+            "component_call",
+            "none",
+            "mixed"
+          ]
+        },
+        "method": {
+          "type": "string",
+          "minLength": 1
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "sampling_overhead": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "label",
+          "source",
+          "kind"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "clocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "unit",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "unit": {
+            "enum": [
+              "seconds",
+              "milliseconds"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "object",
+          "clock",
+          "time",
+          "event"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "object": {
+            "type": "string",
+            "minLength": 1
+          },
+          "clock": {
+            "type": "string",
+            "minLength": 1
+          },
+          "time": {
+            "type": "number",
+            "minimum": 0
+          },
+          "event": {
+            "type": "string",
+            "minLength": 1
+          },
+          "data": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "curves": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "object",
+          "clock",
+          "unit",
+          "measurement",
+          "samples"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "object": {
+            "type": "string",
+            "minLength": 1
+          },
+          "clock": {
+            "type": "string",
+            "minLength": 1
+          },
+          "unit": {
+            "type": "string",
+            "minLength": 1
+          },
+          "measurement": {
+            "enum": [
+              "measured",
+              "estimated",
+              "model"
+            ]
+          },
+          "samples": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "media": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "kind",
+          "clock",
+          "anchors",
+          "description",
+          "audio_coverage"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "video",
+              "audio",
+              "image"
+            ]
+          },
+          "clock": {
+            "type": "string",
+            "minLength": 1
+          },
+          "anchors": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "audio_coverage": {
+            "enum": [
+              "included",
+              "not_included",
+              "unknown"
+            ]
+          }
+        }
+      }
+    },
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "object",
+          "value",
+          "unit",
+          "provenance",
+          "source",
+          "conditions"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "object": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": [
+              "number",
+              "boolean",
+              "string"
+            ]
+          },
+          "unit": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provenance": {
+            "enum": [
+              "asset_default",
+              "author_example",
+              "project_authored",
+              "reference_measured",
+              "estimate",
+              "runtime_readback",
+              "model"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "conditions": {
+            "type": "string",
+            "minLength": 1
+          },
+          "overrides": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "space": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dimensions",
+        "unit",
+        "axes",
+        "objects"
+      ],
+      "properties": {
+        "dimensions": {
+          "type": "integer",
+          "enum": [
+            2,
+            3
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "axes": {
+          "type": "string",
+          "minLength": 1
+        },
+        "objects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "position",
+              "kind",
+              "measurement"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "position": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "bounds": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              },
+              "vertices": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              },
+              "kind": {
+                "type": "string",
+                "minLength": 1
+              },
+              "measurement": {
+                "enum": [
+                  "engine_geometry",
+                  "collision_query",
+                  "runtime_sample",
+                  "estimate"
+                ]
+              },
+              "collision": {
+                "enum": [
+                  "enabled",
+                  "disabled",
+                  "unknown"
+                ]
+              },
+              "projection": {
+                "type": "object"
+              },
+              "geometry_kind": {
+                "type": "string"
+              },
+              "geometry_source": {
+                "type": "string"
+              },
+              "shape": {
+                "type": "object"
+              },
+              "edges": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "routes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "object",
+              "clock",
+              "measurement",
+              "samples",
+              "conditions"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "object": {
+                "type": "string",
+                "minLength": 1
+              },
+              "clock": {
+                "type": "string",
+                "minLength": 1
+              },
+              "measurement": {
+                "enum": [
+                  "actual_movement",
+                  "navigation_query",
+                  "model"
+                ]
+              },
+              "samples": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              },
+              "conditions": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "object",
+              "clock",
+              "time",
+              "start",
+              "end",
+              "blocked",
+              "channel",
+              "conditions"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "object": {
+                "type": "string",
+                "minLength": 1
+              },
+              "clock": {
+                "type": "string",
+                "minLength": 1
+              },
+              "time": {
+                "type": "number",
+                "minimum": 0
+              },
+              "start": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "end": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "blocked": {
+                "type": "boolean"
+              },
+              "channel": {
+                "type": "string",
+                "minLength": 1
+              },
+              "conditions": {
+                "type": "string",
+                "minLength": 1
+              },
+              "point": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "normal": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "hit_object": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

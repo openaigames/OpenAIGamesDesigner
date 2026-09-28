@@ -184,6 +184,18 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual((row['kind'],row['preview']),('model','native'))
         self.assertEqual(self.request('/asset/current/mesh.mtl')[0],200)
 
+    def test_fbx_is_routed_to_native_loader_without_conversion(self):
+        payload=b'FBX routing fixture; actual parsing is covered with real files in browser validation'
+        (self.root/'motion.fbx').write_bytes(payload)
+        row=next(a for a in self.request('/api/assets')[2]['assets'] if a['name']=='motion.fbx')
+        self.assertEqual((row['ext'],row['preview']),('FBX','native'))
+        self.assertEqual(row['path'],'motion.fbx')
+        self.assertNotIn('previewPath',row)
+        self.assertEqual(self.request('/asset/current/motion.fbx')[2],payload)
+        self.assertEqual(self.request('/vendor/three/examples/jsm/loaders/FBXLoader.js')[0],200)
+        self.assertEqual(self.request('/vendor/three/examples/jsm/libs/fflate.module.js')[0],200)
+        self.assertFalse((self.root/'.asset-browser/previews.json').exists())
+
     def test_engine_preview_keeps_original_identity_and_shared_tags(self):
         source,target,dependency,path,mapping=self.preview_fixture()
         self.art('register',{'paths':[]}) if '<!-- art-objects:' in self.doc.read_text() else registry.initialize(self.root)

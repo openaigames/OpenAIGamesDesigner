@@ -1,0 +1,213 @@
+{
+  "engine": "unreal",
+  "mode": "playback",
+  "scene": "/Game/ObservationArena",
+  "seconds": 5,
+  "capture_interval": 0.25,
+  "camera_target": "View",
+  "actions": [
+    {
+      "op": "method",
+      "at": 1,
+      "target": "PlayableProbe",
+      "method": "Attack",
+      "arguments": []
+    },
+    {
+      "op": "method",
+      "at": 1.3,
+      "target": "PlayableProbe",
+      "method": "Cancel",
+      "arguments": []
+    },
+    {
+      "op": "method",
+      "at": 2,
+      "target": "PlayableProbe",
+      "method": "Attack",
+      "arguments": []
+    },
+    {
+      "op": "method",
+      "at": 3,
+      "target": "PlayableProbe",
+      "method": "SetTravel",
+      "arguments": [
+        1,
+        0
+      ]
+    },
+    {
+      "op": "method",
+      "at": 3.8,
+      "target": "PlayableProbe",
+      "method": "SetTravel",
+      "arguments": [
+        0,
+        0
+      ]
+    },
+    {
+      "op": "method",
+      "at": 4.2,
+      "target": "PlayableProbe",
+      "method": "RestartEncounter",
+      "arguments": []
+    }
+  ],
+  "observe": {
+    "interval": 0.025,
+    "conditions": [
+      "Self-authored engine primitive fixture, not game art quality validation",
+      "Automated gameplay handlers; movement uses FloatingPawnMovement with collision, not position teleport",
+      "First attack cancelled; second attack completes recovery",
+      "First action scheduled after startup warmup; no screenshots in timing run; verify effect active at cancel",
+      "Two actual hits clear the target; RestartEncounter restores health, movement, effects and starting transform. Screenshots have no audio; timed handler calls are not human input."
+    ],
+    "actors": [
+      {
+        "id": "player",
+        "target": "PlayableProbe",
+        "kind": "player",
+        "event_exporter": "ExportObservationEvents",
+        "properties": [
+          {
+            "id": "walk_speed",
+            "property": "applied_walk_speed",
+            "unit": "cm/s"
+          },
+          {
+            "id": "damage",
+            "property": "applied_damage",
+            "unit": "HP"
+          },
+          {
+            "id": "effect",
+            "property": "effect_active",
+            "unit": "boolean"
+          },
+          {
+            "id": "target_health",
+            "property": "target_health",
+            "unit": "HP"
+          }
+        ]
+      },
+      {
+        "id": "floor",
+        "target": "Floor",
+        "kind": "terrain"
+      },
+      {
+        "id": "cover",
+        "target": "Cover",
+        "kind": "cover"
+      },
+      {
+        "id": "camera",
+        "target": "View",
+        "kind": "camera"
+      }
+    ],
+    "queries": [
+      {
+        "id": "forward",
+        "object": "player",
+        "start": {
+          "target": "PlayableProbe",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        "end": [
+          400,
+          100,
+          55
+        ],
+        "channel": 1,
+        "ignore": [
+          "PlayableProbe"
+        ],
+        "purpose": "forward cover visibility along this explicit ray"
+      },
+      {
+        "id": "ground--400",
+        "object": "floor",
+        "start": [
+          -400,
+          100,
+          600
+        ],
+        "end": [
+          -400,
+          100,
+          -300
+        ],
+        "channel": 1,
+        "ignore": [
+          "PlayableProbe"
+        ],
+        "purpose": "sample terrain height at specified x/y only"
+      },
+      {
+        "id": "ground-0",
+        "object": "floor",
+        "start": [
+          0,
+          100,
+          600
+        ],
+        "end": [
+          0,
+          100,
+          -300
+        ],
+        "channel": 1,
+        "ignore": [
+          "PlayableProbe"
+        ],
+        "purpose": "sample terrain height at specified x/y only"
+      },
+      {
+        "id": "ground-220",
+        "object": "floor",
+        "start": [
+          220,
+          100,
+          600
+        ],
+        "end": [
+          220,
+          100,
+          -300
+        ],
+        "channel": 1,
+        "ignore": [
+          "PlayableProbe"
+        ],
+        "purpose": "sample terrain height at specified x/y only"
+      },
+      {
+        "id": "ground-600",
+        "object": "floor",
+        "start": [
+          600,
+          100,
+          600
+        ],
+        "end": [
+          600,
+          100,
+          -300
+        ],
+        "channel": 1,
+        "ignore": [
+          "PlayableProbe"
+        ],
+        "purpose": "sample terrain height at specified x/y only"
+      }
+    ]
+  }
+}

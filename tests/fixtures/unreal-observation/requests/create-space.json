@@ -1,0 +1,113 @@
+{
+  "engine": "unreal",
+  "mode": "edit",
+  "operations": [
+    {
+      "op": "scene",
+      "path": "/Game/ObservationArena",
+      "create": true
+    },
+    {
+      "op": "actor",
+      "target": "Floor",
+      "create": true,
+      "source": "/Engine/BasicShapes/Cube",
+      "position": [
+        0,
+        0,
+        -30
+      ],
+      "scale": [
+        16,
+        12,
+        0.5
+      ]
+    },
+    {
+      "op": "actor",
+      "target": "Cover",
+      "create": true,
+      "source": "/Engine/BasicShapes/Cube",
+      "position": [
+        220,
+        100,
+        60
+      ],
+      "scale": [
+        0.7,
+        2.5,
+        1.2
+      ]
+    },
+    {
+      "op": "actor",
+      "target": "Probe",
+      "create": true,
+      "source": "/Engine/BasicShapes/Sphere",
+      "position": [
+        -300,
+        0,
+        70
+      ],
+      "scale": [
+        0.45,
+        0.45,
+        1.4
+      ],
+      "components": [
+        {
+          "type": "StaticMeshComponent",
+          "properties": {
+            "mobility": {
+              "enum": "ComponentMobility.MOVABLE"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "op": "actor",
+      "target": "View",
+      "create": true,
+      "class": "CameraActor",
+      "position": [
+        -900,
+        0,
+        800
+      ],
+      "rotation": [
+        -40,
+        0,
+        0
+      ]
+    },
+    {
+      "op": "actor",
+      "target": "Sun",
+      "create": true,
+      "class": "DirectionalLight",
+      "rotation": [
+        -45,
+        -30,
+        0
+      ]
+    },
+    {
+      "op": "actor",
+      "target": "Sky",
+      "create": true,
+      "class": "SkyLight"
+    },
+    {
+      "op": "actor",
+      "target": "Spawn",
+      "create": true,
+      "class": "PlayerStart",
+      "position": [
+        -400,
+        0,
+        150
+      ]
+    }
+  ]
+}

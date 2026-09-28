@@ -24,6 +24,9 @@
       "type": "string",
       "minLength": 1
     },
+    "content_roots": {"type":"array","minItems":1,"items":{"type":"string","minLength":1}},
+    "links_spec": {"type":"string","minLength":1},
+    "asset_exclude_roots": {"type":"array","items":{"type":"string","minLength":1}},
     "godot_executable": {
       "type": "string"
     },
@@ -112,6 +115,7 @@
     "unreal": {
       "type": "object",
       "properties": {
+        "automation_culture": {"type":"string","pattern":"^[A-Za-z-]{2,16}$"},
         "smoke_map": {
           "type": "string",
           "minLength": 1

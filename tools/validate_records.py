@@ -10,7 +10,7 @@ from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMAS = ROOT / "schemas"
-KINDS = ("project", "run", "asset-job", "artifact", "engine-session", "asset-library")
+KINDS = ("project", "run", "asset-job", "artifact", "engine-session", "asset-library", "task", "evidence", "observation", "observation-record", "project-links")
 PROJECT_ENTRIES = ("Project Management.md", "Game Concept.md", "Game Design Document.md",
                    "Art Direction.md", "Technical Design.md", "Risk & Assumption List.md")
 
@@ -35,7 +35,7 @@ def validate(value, schema, at="$"):
     """Interpret the subset used by the bundled schemas; unknown keywords fail closed."""
     supported = {"$schema", "title", "description", "$ref", "type", "required", "properties",
                  "additionalProperties", "items", "enum", "const", "minimum", "minLength",
-                 "minItems", "pattern"}
+                 "minItems", "maxItems", "pattern"}
     unsupported = set(schema) - supported
     if unsupported:
         return [f"{at}: unsupported schema keywords {sorted(unsupported)}"]
@@ -67,6 +67,7 @@ def validate(value, schema, at="$"):
             elif isinstance(sub, dict): errors.extend(validate(item, sub, at + "." + key))
     if isinstance(value, list):
         if len(value) < schema.get("minItems", 0): errors.append(f"{at}: too few items")
+        if "maxItems" in schema and len(value) > schema["maxItems"]: errors.append(f"{at}: too many items")
         for i, item in enumerate(value):
             errors.extend(validate(item, schema.get("items", {}), f"{at}[{i}]"))
     if isinstance(value, str):
@@ -90,6 +91,29 @@ def check_record(kind, value, project, record_path):
     errors = contract(kind, value)
     if errors: return errors
     try:
+        if kind=='project-links':
+            import project_links
+            project_links.inspect(project,record_path.relative_to(project).as_posix())
+        if kind=='observation-record':
+            import observation
+            registered=observation.read(project,value['id'])
+            if registered['status']=='stale':raise ValueError('Observation applies to a historical version; changed: '+', '.join(registered['changed']))
+        if kind == 'observation':
+            import observation
+            observation.validate_capture(value)
+            for media in value.get('media', []):
+                check_file(project, media['path'])
+        if kind == 'task':
+            import task_state
+            task_state.validate(value)
+            state = task_state.status(project, value)
+            if state['effective_state'] == 'needs_revalidation':
+                raise ValueError('Completed task has changed evidence or unresolved checks; revalidate affected conclusions.')
+        if kind == 'evidence':
+            import record_evidence
+            record_evidence.validate_evidence(value)
+            for name, sha in {**value['files'], **value['dependencies']}.items():
+                check_file(project, name, sha)
         if kind == "project":
             engine = contained(project, value["engine_root"])
             if not engine.is_dir(): raise ValueError("Missing engine_root")
@@ -313,6 +337,9 @@ def main(argv=None):
             records.append((args.kind, path))
         else:
             for kind, pattern in (("project", ".openaigame/project.json"), ("run", "runs/*/manifest.json"),
+                                  ("task", "production/tasks/*.json"),
+                                  ("evidence", ".openaigame/evidence/*.json"),
+                                  ("observation-record", ".openaigame/observations/*.json"),
                                   ("engine-session", "runs/engine-*/session.json"),
                                   ("engine-session", "runs/create-*/session.json"),
                                   ("asset-library", ".openaigame/asset-library/*/record.json"),

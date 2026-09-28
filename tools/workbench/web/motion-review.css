@@ -11,3 +11,5 @@
 .motion-actions .button{font-size:12px;padding:7px}
 .motion-review details{margin-top:12px}
 .motion-review pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;max-height:200px;overflow:auto}
+
+.motion-scope{display:grid;gap:10px;margin:12px 0}.motion-discard{max-width:420px;border:1px solid #c5ccdd;border-radius:12px;padding:24px}.motion-discard button{margin:8px 8px 0 0}.motion-discard::backdrop{background:#18213766}

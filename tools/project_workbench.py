@@ -6,7 +6,9 @@ from urllib.parse import urlsplit, parse_qs, unquote, quote
 from socketserver import ThreadingMixIn
 import settings_server, asset_workflow
 from adapters.assets import credential_store, generation_approval
-from workbench import asset_browser as browser, art_registry as registry, motion_review
+from workbench import asset_browser as browser, art_registry as registry, asset_review
+from workbench import production_review, motion_review
+import task_state
 
 WEB=Path(__file__).with_name('workbench')/'web'
 
@@ -20,7 +22,9 @@ class WorkbenchServer(ThreadingMixIn, settings_server.SettingsServer):
         self.cookie_name='oagd_workbench_'+str(self.server_port)
         self.view='tasks' if job_id else view
         self.art_lock=threading.Lock()
+        self.review_lock=threading.Lock()
         self.session_lock=threading.Lock()
+        self.runtime_at_start=production_review.diagnostics()
     @property
     def launch_url(self):
         query='?job='+quote(self.job_id) if self.job_id else ''
@@ -32,9 +36,6 @@ class WorkbenchServer(ThreadingMixIn, settings_server.SettingsServer):
             asset['url']=result['assetBase']+quote(asset['path'],safe='/')
             asset['assetRoot']=result['assetBase']
             if asset.get('previewPath'):asset['previewUrl']=result['assetBase']+quote(asset['previewPath'],safe='/')
-            if asset.get('animations'):
-                try:asset['motionFingerprint']=motion_review.source_version(self.project,asset)['fingerprint']
-                except (OSError,ValueError,KeyError,TypeError):pass
         result['artAudit']['document']=registry.document_path(self.project).relative_to(self.project).as_posix()
         return result
 
@@ -76,9 +77,23 @@ class Handler(settings_server.Handler):
             if route=='/api/state':return self._reply(200,self.server.state())
             if route=='/api/projects':return self._reply(200,{'projects':[{'key':'current','name':browser.game_name({'root':root,'name':root.name}),'root':str(root)}]})
             if route=='/api/assets':return self._reply(200,self.server.snapshot())
-            if route=='/api/art-audit':return self._reply(200,self.server.snapshot()['artAudit'])
             if route=='/api/motion-review':return self._reply(200,motion_review.snapshot(root))
-            if route=='/api/motion-handoff':return self._reply(200,motion_review.handoff(root))
+            if route=='/api/motion-handoff':return self._reply(200,motion_review.handoff(root,query.get('character',[None])[0]))
+            if route=='/api/production':return self._reply(200,production_review.snapshot(root))
+            if route=='/api/runtime':
+                current=production_review.diagnostics()
+                return self._reply(200,{'started':self.server.runtime_at_start,'current':current,
+                    'restart_required':current!=self.server.runtime_at_start})
+            if route=='/api/production-task':
+                tid=query.get('id',[''])[0]
+                return self._reply(200,{'task':task_state.read(root,tid),'status':task_state.status(root,tid),'recovery':task_state.recovery(root,tid)})
+            if route=='/api/observation':return self._reply(200,production_review.detail(root,query.get('id',[''])[0]))
+            if route=='/api/observation-media':
+                return self.file(production_review.media_path(root,query.get('id',[''])[0],int(query.get('index',['-1'])[0])),asset=True)
+            if route=='/api/asset-review':return self._reply(200,asset_review.snapshot(root))
+            if route=='/api/asset-review-evidence':
+                return self.file(asset_review.evidence_path(root,query.get('id',[''])[0],query.get('gate',[''])[0],query.get('index',[''])[0]),asset=True)
+            if route=='/api/art-audit':return self._reply(200,self.server.snapshot()['artAudit'])
             if route=='/api/art-source':
                 if query.get('source',['direction'])[0]!='direction':raise ValueError('来源不存在')
                 path=registry.document_path(root)
@@ -114,7 +129,7 @@ class Handler(settings_server.Handler):
                         if not allowed:raise ValueError('文件未登记')
                 return self.file(path,asset=True)
             return self.file(browser.within(WEB,'index.html' if route=='/' else route.lstrip('/')))
-        except (OSError,ValueError,KeyError,TypeError):return self._reply(404,{'error':'记录或文件无法读取，请检查项目文件后刷新。'})
+        except (OSError,ValueError,KeyError,TypeError,StopIteration,IndexError):return self._reply(404,{'error':'记录或文件无法读取，请检查项目文件后刷新。'})
     def do_POST(self):
         route=urlsplit(self.path).path
         if route=='/session':
@@ -137,8 +152,25 @@ class Handler(settings_server.Handler):
         try:
             data=self.body()
             if data.get('project','current')!='current':raise ValueError('项目不存在')
-            if route=='/api/motion-review':
-                with self.server.art_lock:result=motion_review.save(root,data)
+            if route in ('/api/motion-context','/api/motion-review'):
+                try:
+                    with self.server.review_lock:
+                        result=motion_review.describe(root,data) if route=='/api/motion-context' else motion_review.save(root,data)
+                    return self._reply(200,result)
+                except registry.RevisionConflict as error:return self._reply(409,{'error':str(error)})
+                except (OSError,ValueError,KeyError,TypeError) as error:return self._reply(400,{'error':str(error)})
+            if route in ('/api/production-task','/api/review-note','/api/review-note-link'):
+                try:
+                    if route=='/api/review-note':result=production_review.annotate(root,data)
+                    elif route=='/api/review-note-link':result=production_review.link_note(root,data)
+                    elif data.get('action')=='create':result=task_state.create(root,data['spec'])
+                    elif data.get('action')=='migrate':result=task_state.migrate(root,data['spec'])
+                    elif data.get('action')=='update':result=task_state.update(root,data['id'],data['revision'],data['operation'])
+                    else:raise ValueError('Unsupported task operation')
+                    return self._reply(200,result)
+                except (ValueError,KeyError,TypeError) as error:return self._reply(409,{'error':str(error)})
+            if route=='/api/asset-review':
+                with self.server.review_lock:result=asset_review.mutate(root,data)
                 return self._reply(200,result)
             if route=='/api/jobs':
                 provider=data.get('provider');prompt=data.get('prompt')
@@ -165,6 +197,7 @@ class Handler(settings_server.Handler):
                 return self._reply(200,self.server.snapshot())
             return self._reply(404,{'error':'接口不存在'})
         except registry.RevisionConflict as error:return self._reply(409,{'error':str(error)})
+        except asset_review.ReviewError as error:return self._reply(400,{'error':str(error)})
         except (ValueError,TypeError,KeyError):return self._reply(400,{'error':'记录未保存。请检查输入、文档格式、服务配置与任务状态。'})
         except OSError:return self._reply(409,{'error':'无法读写项目或本机授权记录，请检查当前用户权限。'})
     def edit_art(self,route,data):
@@ -224,7 +257,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--project',required=True,type=Path)
     parser.add_argument('--port',type=int,default=0)
-    parser.add_argument('--view',choices=('assets','tasks','services'),default='assets')
+    parser.add_argument('--view',choices=('assets','review','tasks','services','production','observation'),default='assets')
     parser.add_argument('--approve-job')
     parser.add_argument('--no-open',action='store_true')
     parser.add_argument('--ready-file',type=Path)

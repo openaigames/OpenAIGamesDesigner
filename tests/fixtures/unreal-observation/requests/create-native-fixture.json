@@ -1,0 +1,28 @@
+{
+  "engine": "unreal",
+  "mode": "edit",
+  "scene": "/Game/ObservationArena",
+  "operations": [
+    {
+      "op": "data_asset",
+      "path": "/Game/ObservationSettings",
+      "class": "/Script/ToolkitObservation.ObservationSettings"
+    },
+    {
+      "op": "actor",
+      "target": "PlayableProbe",
+      "create": true,
+      "class": "/Script/ToolkitObservation.ObservationPawn",
+      "position": [
+        -100,
+        0,
+        55
+      ],
+      "properties": {
+        "settings": {
+          "asset": "/Game/ObservationSettings"
+        }
+      }
+    }
+  ]
+}

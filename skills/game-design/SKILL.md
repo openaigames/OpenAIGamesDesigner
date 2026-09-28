@@ -1,9 +1,11 @@
 ---
 name: game-design
-description: 游戏玩法与系统策划：支持初期 GDD、已有项目新增功能/系统、修改规则与内容配置，形成可交接的详细规格和变更影响；也用于玩法逆向分析。项目定位由 game-concept 负责。
+description: 游戏系统策划与 GDD 总索引：设计或修改系统规则、成长经济、内容定义和跨系统接口，支持素材驱动方案及玩法逆向研究。战斗、关卡、UI/UX 可直接调用各自职业 Skill，不要求经过总 GDD 入口。
 ---
 
 # Game Design Document 策划设计
+
+本 Skill 维护系统规则与跨系统关系。战斗/射击由 `game-combat-design`、关卡由 `game-level-design`、界面流程由 `game-ui-ux` 维护详细方法；本入口保留导航和专业接口。只需一个专业时直接进入，不先完成全部策划文件。阶段与设计深度按本轮目标决定：完整策划可交付制作所需规格，但文档完成不代表机制或品质已经实证。
 
 规则修改先落在 GDD 或负责该规则的详细规格，再检查表现资产、技术接口和验证的依赖。专业总入口链接详细规格；参数引用实际生效配置，不维护第二份数值。 跨方向工作按 [变更联动](../game-preproduction/references/dependency-and-change-impact.md) 关联同一变更入口并回写管理摘要；仅安装本 Skill 时沿用项目现有变更记录，缺少管理 Skill 不阻塞本专业工作。
 
@@ -21,13 +23,15 @@ description: 游戏玩法与系统策划：支持初期 GDD、已有项目新增
 
 从用户的创意、目标和现状识别本轮设计问题，使用 [设计推理与参考选择](references/design-reasoning.md)。先理解玩家行动、选择、后果与系统联系，再按需选择方法，不要求用户选择游戏类型，不从标签或参考作品推导必备系统。没有匹配专题仍可根据项目目标提出规则、记录假设并验证。
 
-当前专业参考为 [战斗](references/combat-design.md)、[射击](references/shooting-design.md)、[探索与冒险](references/exploration-adventure-design.md)。它们是可组合的参考，不是项目分类或功能清单；只读取本轮相关部分。射击可用于没有伤害的发射机制，探索可以没有战斗，跨活动关系要单独分析，不能分别套模板后拼接。
+当前专业参考为 [战斗](../game-combat-design/references/combat-design.md)、[射击](../game-combat-design/references/shooting-design.md)、[探索与冒险](references/exploration-adventure-design.md)。它们是可组合的参考，不是项目分类或功能清单；只读取本轮相关部分。射击可用于没有伤害的发射机制，探索可以没有战斗，跨活动关系要单独分析，不能分别套模板后拼接。
 
-涉及区域和流程编排使用 [关卡设计](references/level-design.md)；涉及控制、镜头和环境对象使用 [移动与交互](references/movement-interaction.md)；涉及信息、焦点、操作流程和教学使用 [UI/UX](references/ui-ux.md)。按实际问题组合，与相关规则共享状态来源，不要求每轮加载全部专题。
+涉及区域和流程编排使用 [关卡设计](../game-level-design/references/level-design.md)；涉及控制、镜头和环境对象使用 [移动与交互](references/movement-interaction.md)；涉及信息、焦点、操作流程和教学使用 [UI/UX](../game-ui-ux/references/ui-ux.md)。按实际问题组合，与相关规则共享状态来源，不要求每轮加载全部专题。
 
 新作初期使用 references/outputs.md。新增或修改玩法、规则、系统或详细内容时读取 [功能规格与设计变更](references/feature-design.md)，按本轮功能展开而非重写全部 GDD。初期模板中的简化约束只适用于立项任务，不限制已有项目所需的详细设计。
 
 维护 `Game Design Document.md` 或项目已有的设计文档与专项规格。读取与本轮有关的体验目标、用户选择和玩法资料；已有工程还要核对相关配置、实现与试玩证据。缺少会改变系统设计的关键需求时才聚焦反问；不自行决定项目理念，不为了填齐系统而加入用户未要求的机制。
+
+规划可由需求或素材进入：职责明确时提出必要行为再找资源；玩法未定、已有资源可复用或预算/周期受素材供给限制时，可主动先搜索并检查资源能力，再形成职责、玩家选择和规则。通用探索见 [素材检索与获取](../game-art-direction/references/asset-sourcing.md)，角色/敌人组合见 [角色职责与素材适配](../game-art-direction/references/role-asset-fit.md)。单独安装时沿用同一判断记录到现有规格，无需补齐整份 GDD 才能探索。区分用户已定目标、素材启发的候选和待验证假设；玩家装备不自动成为敌人要求，素材也不能静默改掉已定选择。
 
 ## 规则与系统
 

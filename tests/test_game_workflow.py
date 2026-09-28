@@ -92,10 +92,10 @@ class WorkflowTests(unittest.TestCase):
             {p.relative_to(runtime / "templates").as_posix()
              for p in (runtime / "templates").rglob("*") if p.is_file()},
             {"project-management.md", "milestones/prototype.md", "milestones/vertical-slice.md",
-             "task.md", "feature-spec.md", "asset-spec.md", "validation-report.md", "decision.md"},
+             "task.md", "feature-spec.md", "asset-spec.md", "validation-report.md", "decision.md", "milestones/content-production.md"},
         )
         target = self.root / "fresh project with spaces"
-        for kind in ("prototype", "vertical-slice", "task", "feature-spec", "asset-spec",
+        for kind in ("prototype", "vertical-slice", "content-production", "task", "feature-spec", "asset-spec",
                      "validation-report", "decision"):
             with self.subTest(kind=kind):
                 result = subprocess.run(

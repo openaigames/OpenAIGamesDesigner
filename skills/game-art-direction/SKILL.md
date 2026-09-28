@@ -1,9 +1,13 @@
 ---
 name: game-art-direction
-description: 将游戏体验目标转成美术方向与制作规则；制作主题或资产 Moodboard、编辑图片与色板并导出保存；支持免费与付费素材检索、跨类型选材、资产规格与视觉验收，也用于美术逆向研究。方向设计不等于资产已制作或导入。
+description: 游戏美术指导：将体验目标转成视觉方向、风格规格与跨资产一致性，制作或修订 Moodboard，支持素材探索和视觉研究。角色、环境、动画、特效各自制作由对应职业 Skill 承接，方向选定不等于资产完成。
 ---
 
 # 游戏美术方向
+
+候选资产与组合能力使用现有资产库和看板，见 [候选组合与证据](references/candidate-combinations.md)。真实动作预览、目标缺口、价格许可和角色职责分别记录；候补与游戏应用仍为两个目录归属区，不恢复强制测试晋升流程。
+
+负责全局视觉语言与品质标准；角色/装备、场景、动画、VFX 分别由对应制作 Skill 完成实际资产，音频和 UI/UX 独立负责其专业设计。共享选材、资产清单与风格依据，本 Skill 不成为每次搜索或制作的必经审批点。跨专业代表样例由实际对象/事件关联，单资源好看不能证明整组协调。
 
 将体验目标转成表现规则、参考与资产要求，维护 `Art Direction.md` 或现有美术入口。先读取核心体验、镜头、平台、当前任务及用户要求保留的品牌、角色与颜色；局部资产变更沿用现有风格，不重做全项目美术。
 
@@ -17,6 +21,8 @@ description: 将游戏体验目标转成美术方向与制作规则；制作主�
 
 资产以可逐项更新的表格记录，用稳定 ID 关联来源、许可、版本、制作/获取、导入和验证；动作按对象映射模型/骨架与资源。沿用权威资产清单，不在概览或其他文件重复维护；未知不造文件或完成状态。格式见 [资产与动作记录表](references/outputs.md#资产与动作记录表)。Game Concept 只保留影响定位的制作策略摘要，资源明细由本侧负责。
 
+选材支持两种入口：需求明确时按职责找素材；玩法/表现未定或素材供给限制较强时，可主动先搜索和检查素材，再根据实际能力形成方案。通用方法见 [素材检索与获取](references/asset-sourcing.md)，角色、敌人/Boss 组合见 [角色职责与素材适配](references/role-asset-fit.md)。搜索和代表检查无需先完成详细策划；批量校准与正式接入前须明确对象交互和适配依据。保留用户已定目标和约束，候选不自动升级为设计基线。
+
 ## 按当前任务读取
 
 | 当前需要 | 参考 |
@@ -24,14 +30,14 @@ description: 将游戏体验目标转成美术方向与制作规则；制作主�
 | 初期方向、参考观察、结构化记录和交付 | [美术交付指导](references/outputs.md) |
 | 体验转成风格规则、图板落实为资产设计说明 | [体验目标与风格生产规则](references/style-production.md) |
 | 主题或资产 Moodboard、逐色编辑、整图导出与保存 | [图板与色板](references/moodboard-and-palette.md) |
-| 免费与付费素材、占位替换及跨类型选材 | [素材检索与获取](references/asset-sourcing.md) |
+| 免费与付费素材、素材驱动设计、占位替换及跨类型选材 | [素材检索与获取](references/asset-sourcing.md) |
 | 已有资产新增、修改、替换与交接 | [资产变更](references/asset-change.md) |
 | 具体生产规格、数量、格式与验收条件 | [资产规格](references/asset-production-specs.md) |
 | 动画、VFX 与声音制作 | [动态视听制作](references/animation-vfx-audio-production.md) |
 | 生成或处理后的素材检查 | [素材质检](references/generated-asset-review.md) |
-| 环境、灰盒转美术与路线线索 | [环境可读性](references/environment-readability.md) |
+| 环境、灰盒转美术与路线线索 | [环境可读性](../game-environment-art/references/environment-readability.md) |
 | 移动交互动画、UI 动效与状态表现 | [动作与界面交接](references/animation-and-ui-feedback.md) |
-| 战斗动画、命中反馈与技能表现 | [战斗表现交接](references/combat-presentation.md)、[特效/音效/运镜配方](references/combat-effects-recipes.md) |
+| 战斗动画、命中反馈与技能表现 | [战斗表现交接](references/combat-presentation.md) |
 
 按本轮问题选读，不把所有类型的生产要求套到一项素材上。表现服务玩家行动与判断，不独立决定玩法成功或世界状态。已授权制作、处理或获取时按资产执行方法继续到真实产物，不只写方向或列网站。
 

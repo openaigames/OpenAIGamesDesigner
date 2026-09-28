@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {seconds,rawTime,duration,mediaTime,alignedOffset,extrema,camera2DCorners} from '../tools/workbench/web/observation-math.js';
+const a={clocks:[{id:'game',unit:'seconds'},{id:'wall',unit:'milliseconds'}],events:[{id:'cancel',clock:'game',time:3},{id:'late',clock:'wall',time:30000}],curves:[]};
+const b={clocks:[{id:'device',unit:'milliseconds'}],events:[{id:'cancel2',clock:'device',time:8000}]};
+const corners=camera2DCorners({screen_center:[10,20],viewport_size:[200,100],zoom:[1,1],rotation_radians:Math.PI/2});
+assert.ok(Math.abs(corners[0][0]-60)<1e-8&&Math.abs(corners[0][1]+80)<1e-8,'rotated camera footprint must follow actual orientation');
+assert.equal(duration(a,'game'),3);
+assert.equal(duration(a,'wall'),30);
+assert.equal(seconds(b,'device',1500),1.5);
+assert.equal(rawTime(b,'device',1.5),1500);
+assert.deepEqual(alignedOffset(a,'cancel',b,'cancel2'),{seconds:5,leftClock:'game',rightClock:'device'});
+assert.throws(()=>alignedOffset(a,'missing',b,'cancel2'));
+assert.equal(mediaTime([[3,0],[5,1]],4),.5);
+assert.equal(mediaTime([[3,0],[5,1]],2),null);
+assert.equal(mediaTime([[3,0]],4),null);
+assert.equal(mediaTime([[3,0],[5,0]],4),null);
+assert.deepEqual(extrema(Array.from({length:250000},(_,i)=>i)),[0,249999]);
+console.log('Observation math: clock separation, explicit alignment, no extrapolation, large traces passed.');

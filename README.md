@@ -5,7 +5,9 @@
 # OpenAIGamesDesigner
 
 AI 游戏开发工具包：涵盖游戏设计、美术、工程实施与验证，
-从新想法走向原型、垂直切片与持续迭代。
+从任一开发阶段进入，在约定连续区间内完成设计、制作、验证与交付。
+
+v0.2.1：十五个职业 Skill、五阶段任务、共享项目看板与真实运行证据，新增按角色与版本保存的动作取舍和 Blender 静态加工。参见 [本次更新](RELEASE_NOTES.md) 与 [v0.2 基础能力](RELEASE-v0.2.md)。
 
 [快速开始](#快速开始) · [开发流程](#开发流程) · [项目看板](#项目看板) · [游戏资产合集](#游戏资产合集) · [引擎与工具](#引擎与工具) · [项目文件](#项目文件)
 
@@ -38,14 +40,14 @@ AI 游戏开发工具包：涵盖游戏设计、美术、工程实施与验证�
 
 ## 开发流程
 
-![开发流程：确定方向、机制原型、打磨垂直切片、持续制作与交付；相邻阶段均可退回前一步修改](.github/assets/workflow-overview.svg)
+![五阶段：立项、玩法验证、制作验证、内容制作、最终交付；任意连续区间与定向回退](.github/assets/workflow-overview.svg)
 
-可以从新想法开始，也可以直接进入已有项目的一次修改。项目管理串联**概览、策划、美术、技术与验证**，按当前任务调用专业方法。
+五个阶段为 **立项 → 玩法验证 → 制作验证 → 内容制作 → 最终交付**。可以选择其中任意连续区间（共十五种），从已有工程、素材、设计稿或新想法进入；先核对所选起点的必要输入，在请求的终点交接。遇到问题只回退受影响的对象和检查，同一原生工程持续演进。
 
 重要创作取舍由你决定，AI 在已确定的范围内推进。设计、工程改动和实际验证分别记录，后续对话可以沿着项目文件继续工作。
 
 <details>
-<summary>查看六条工作流与专业入口</summary>
+<summary>查看阶段约定、可复用工作流与职业入口</summary>
 
 | 这次想完成什么 | 工作流 |
 | --- | --- |
@@ -55,10 +57,14 @@ AI 游戏开发工具包：涵盖游戏设计、美术、工程实施与验证�
 | 新增、修改或移除功能 | [功能变更](workflows/feature-change.md) |
 | 制作、处理与导入资产 | [资产制作](workflows/asset-production.md) |
 | 打包交付与反馈接续 | [交付](workflows/delivery.md) |
+| 选择开发区间与检查出口 | [五阶段定义](workflows/development-stages.md) · [阶段任务执行](workflows/stage-execution.md) |
+| 从代表样例扩展到完整体验 | [内容制作](workflows/content-production.md) |
 
-相关 Skills：[项目管理](skills/game-preproduction/SKILL.md) · [概览与定位](skills/game-concept/SKILL.md) · [游戏策划](skills/game-design/SKILL.md) · [美术方向](skills/game-art-direction/SKILL.md) · [技术设计](skills/game-technical-design/SKILL.md) · [原型验证](skills/game-prototype-validation/SKILL.md)
+职业入口：[制作管理](skills/game-preproduction/SKILL.md) · [创意与定位](skills/game-concept/SKILL.md) · [系统策划](skills/game-design/SKILL.md) · [战斗策划](skills/game-combat-design/SKILL.md) · [关卡策划](skills/game-level-design/SKILL.md) · [美术指导](skills/game-art-direction/SKILL.md) · [角色美术](skills/game-character-art/SKILL.md) · [场景美术](skills/game-environment-art/SKILL.md) · [动画](skills/game-animation-pipeline/SKILL.md) · [特效](skills/game-vfx-design/SKILL.md) · [音频](skills/game-audio-design/SKILL.md) · [UI/UX](skills/game-ui-ux/SKILL.md) · [技术美术](skills/game-technical-art/SKILL.md) · [技术与工程](skills/game-technical-design/SKILL.md) · [验证](skills/game-prototype-validation/SKILL.md)。每项可独立调用，按实际任务组合；不要求十五个代理或十五份根文档。
 
 </details>
+
+动画资产管线支持已有 UE 动画直接测试，以及按需进行 Blender 制作、武器校准和回传。先验证粗动作与玩法，再打磨代表招式并扩展；详见 [制作顺序与验证分工](skills/game-animation-pipeline/references/production-order.md)。工具包包含脚本与测试场 C++ 源码，不包含角色、动作素材或已编译的 Unreal 插件。
 
 ## 快速开始
 
@@ -71,7 +77,7 @@ AI 游戏开发工具包：涵盖游戏设计、美术、工程实施与验证�
 使用有仓库访问权限的账号获取本仓库，在 Codex 中打开，然后输入：
 
 ```text
-把这个仓库的六个 Skill 和必要运行资源安装到本机。
+把这个仓库的十五个 Skill 和必要运行资源安装到本机。
 如果已有同名版本，先比较差异并保留我的修改。
 ```
 
@@ -84,9 +90,9 @@ cd OpenAIGamesDesigner
 python tools/package_skills.py --output dist/skills-bundle
 ```
 
-Codex 个人安装：将生成包中的六个完整 Skill 目录放入 `~/.agents/skills/`（Windows 默认是 `C:/Users/<用户名>/.agents/skills/`）。仅供某个游戏项目使用时，可放入该项目的 `.agents/skills/`；通常选择一种范围，避免同名副本混淆。保留 `game-preproduction/runtime/` 等全部子文件，已有同名目录时先比较并备份本地修改。
+Codex 个人安装：将生成包中的十五个完整 Skill 目录放入 `~/.agents/skills/`（Windows 默认是 `C:/Users/<用户名>/.agents/skills/`）。仅供某个游戏项目使用时，可放入该项目的 `.agents/skills/`；通常选择一种范围，避免同名副本混淆。保留 `game-preproduction/runtime/` 等全部子文件，已有同名目录时先比较并备份本地修改。
 
-打包目标需为新目录；更新后重新打包并同步安装副本。包内 `game-preproduction/runtime/bundle-manifest.json` 记录内容版本，使用该 runtime 下的 `tools/check_installation.py --skills-root <六个Skill的父目录>` 检查缺失或修改的文件；差异需比较并保留本地定制。分发包不包含引擎、生成模型或游戏资产。
+打包目标需为新目录；更新后重新打包并同步安装副本。包内 `game-preproduction/runtime/bundle-manifest.json` 记录内容版本，使用该 runtime 下的 `tools/check_installation.py --skills-root <Skill 安装根目录>` 检查缺失或修改的文件；差异需比较并保留本地定制。分发包不包含引擎、生成模型或游戏资产。
 
 </details>
 
@@ -117,7 +123,7 @@ Codex 个人安装：将生成包中的六个完整 Skill 目录放入 `~/.agent
 
 ## 项目看板
 
-**在浏览器里浏览游戏目录中的资产、核对3D模型生成任务、配置3D模型API Key。**
+**在同一看板查看阶段任务、角色与动作、空间和运行证据；按需管理资产生成服务。**
 
 ![项目看板示例：资产分类与标签筛选、模型和音频列表，以及主角模型的 3D 预览](.github/assets/project-workbench-example.png)
 
@@ -137,6 +143,9 @@ python tools/project_workbench.py --project "游戏项目绝对路径"
 
 | 页面 | 可以做什么 |
 | --- | --- |
+| **项目与阶段** | 查看本轮区间、对象、主责、实际产物、当前缺口，读写与 CLI 共用的任务记录 |
+| **运行评审** | 读取真实观察记录；空间投影、路线、事件、曲线、媒体、参数来源与版本批注 |
+| **素材看板** | 候补 / 游戏应用两栏，按实际内容根归类，已绑定角色可以切换动作 |
 | **资产库** | 扫描支持格式的文件，按类型、目录、名称和标签查找；切换网格或列表、收藏、预览及查看来源与许可 |
 | **制作任务** | 查看资产生成请求、确认状态和结果；准备 Tripo / 混元 3D 文本生成任务，核对后授权，由助手执行 |
 | **服务与密钥** | 配置生成服务；Windows 支持当前用户的本机加密保存，其他系统使用环境变量。保存配置不会启动生成 |
@@ -149,7 +158,7 @@ python tools/project_workbench.py --project "游戏项目绝对路径"
 | OBJ | 直接查看几何；读取模型引用的项目内 MTL 和贴图，缺少材质时使用中性材质 |
 | 图片、音频、视频 | 常见图片格式的缩放与平移、音频播放和波形、视频播放；实际解码取决于浏览器支持 |
 | VFX | 预览看板支持的 `.vfx.json` 粒子配置及贴图；引擎原生特效需另行导出视频或其他可浏览形式 |
-| 引擎资源与其他模型格式 | 列出文件信息；UE 等引擎模型可导出 GLB 并关联原资源卡片，FBX、STL 等尚不直接渲染 |
+| 引擎资源与其他模型格式 | 列出文件信息；UE 等引擎模型可导出 GLB 并关联原资源卡片，FBX 可直接预览骨骼动画；STL 暂仅列出信息，UE 原资源按需关联派生预览或引擎证据 |
 
 关联预览需要先从原制作工具或引擎导出，并记录源文件与依赖版本。源资源变化后，旧预览会失效；浏览器画面可能与引擎材质、场景效果不同。动画分类统计已读取到动画片段的文件，未导出的引擎动作文件仍列在“引擎资源”。
 

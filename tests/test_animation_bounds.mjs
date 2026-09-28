@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {register} from 'node:module';
+register('./three-loader.mjs',import.meta.url);
+const THREE=await import('three');
+const {animationBounds,clipPoseBounds}=await import('../tools/workbench/web/animation-bounds.js');
+const root=new THREE.Group();root.name='hero';root.add(new THREE.Mesh(new THREE.BoxGeometry(2,2,2),new THREE.MeshBasicMaterial()));
+const clip=new THREE.AnimationClip('travel',2,[new THREE.VectorKeyframeTrack('hero.position',[0,2],[0,0,0,1000,0,0])]);
+const box=animationBounds(root,clip);
+assert.ok(box.min.x<=-1&&box.max.x>=1001,'bounds must contain the actual root-motion envelope');
+assert.deepEqual(root.position.toArray(),[0,0,0],'temporary sampling must restore author pose');
+const pose=clipPoseBounds(root,clip,1);
+assert.equal(pose.getCenter(new THREE.Vector3()).x,500);
+assert.equal(pose.getSize(new THREE.Vector3()).x,2,'following-camera fit retains character size, not trajectory length');
+assert.deepEqual(root.position.toArray(),[0,0,0]);
+console.log('Animation preview framing: root motion remains visible; source pose restored.');

@@ -237,7 +237,7 @@ def execute(root, project, config, driver, request_path, timeout, related=None):
         record['input_hashes'] = {str(path): digest(path) for path in input_files}
         worker_files = driver.worker_files()
         record['worker_hashes'] = {str(path): digest(path) for path in worker_files}
-        request.update(request_id=session.name, project=str(project), report=str(session / 'result.json'),
+        request.update(request_id=session.name, project=str(project), workspace=str(root), report=str(session / 'result.json'),
                        session=str(session))
         write(session / 'session.json', record)
         write(session / 'request.json', request)

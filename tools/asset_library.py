@@ -224,6 +224,9 @@ def main(argv=None):
     listing = sub.add_parser('list')
     listing.add_argument('--query', default='')
     sub.add_parser('verify')
+    fit=sub.add_parser('fit',help='Record a versioned candidate combination, capabilities and unmet target requirements')
+    fit.add_argument('--request',required=True)
+    sub.add_parser('fits',help='Read current candidate combination evidence and historical versions')
     export = sub.add_parser('index')
     export.add_argument('--out', required=True)
     args = parser.parse_args(argv)
@@ -238,7 +241,13 @@ def main(argv=None):
             if args.project is None or not args.project.is_dir():
                 raise ValueError('Select an existing game project')
             root = args.project.resolve()
-            if args.action in ('acquire', 'from-job'):
+            if args.action=='fit':
+                import asset_fit
+                result=asset_fit.register(root,json.loads(contained(root,args.request).read_text(encoding='utf-8-sig')))
+            elif args.action=='fits':
+                import asset_fit
+                result=asset_fit.snapshot(root)
+            elif args.action in ('acquire', 'from-job'):
                 request = json.loads(contained(root, args.request).read_text(encoding='utf-8-sig'))
                 job = None
                 if args.action == 'from-job':

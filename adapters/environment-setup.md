@@ -10,7 +10,7 @@
 
 | 内容 | Codex 使用的位置 | 如何操作 |
 | --- | --- | --- |
-| 个人 Skills | `~/.agents/skills/<skill-name>/` | 将打包生成的六个完整 Skill 目录放入这里，供本机多个项目使用 |
+| 个人 Skills | `~/.agents/skills/<skill-name>/` | 将打包生成的七个完整 Skill 目录放入这里，供本机多个项目使用 |
 | 项目级 Skills（可选） | `<游戏项目>/.agents/skills/<skill-name>/` | 只为当前项目安装时使用；与个人安装通常二选一，避免维护不一致的副本 |
 | 已安装工具包根 | 所选安装位置下的 `game-preproduction/runtime/` | 在此目录调用 `tools/game_workflow.py` 等工具；不能只复制 SKILL.md |
 | Codex 的 Skill 展示信息 | 各 Skill 的 `agents/openai.yaml` | 随技能包保留；这里不是 MCP 配置或游戏设计记录 |
@@ -21,7 +21,7 @@
 | 引擎和执行命令配置 | `<游戏项目>/.openaigame/project.json` | 本工具包使用，记录真实引擎位置、程序路径与项目命令；不会注册 MCP |
 | 资产工具配置 | `<游戏项目>/.openaigame/asset-providers.json` | 登记实际生成或处理工具；不会安装模型或引擎插件 |
 
-安装后在 Codex 新开任务，确认六个 Skill 可被发现；可明确输入“使用 game-preproduction，检查这个游戏项目的当前阶段”验证读取，再测试自然语言自动触发。文件存在、Skill 被读取、CLI 可运行和引擎已连接是不同检查项。
+安装后在 Codex 新开任务，确认七个 Skill 可被发现；可明确输入“使用 game-preproduction，检查这个游戏项目的当前阶段”验证读取，再测试自然语言自动触发。文件存在、Skill 被读取、CLI 可运行和引擎已连接是不同检查项。
 
 路径依据：[Codex Skills 官方说明](https://learn.chatgpt.com/docs/build-skills)、[Codex MCP 官方说明](https://learn.chatgpt.com/docs/extend/mcp)。以下通用表中的“助手端”当前指 Codex。
 
@@ -29,7 +29,7 @@
 
 | 想使用的功能 | 必需环境 | 在哪里安装或配置 | 如何确认可用 |
 | --- | --- | --- | --- |
-| 讨论立项、GDD、美术和技术方案，维护项目文件 | 能读写项目的 AI 助手与六个 Skills | 助手的 Skill 安装目录；在游戏项目目录开始任务 | 新任务能读取 Skill，并把已知与待定保存到项目文件；不需要先安装引擎 |
+| 讨论立项、GDD、美术和技术方案，维护项目文件 | 能读写项目的 AI 助手与本轮需要的 Skills | 助手的 Skill 安装目录；在游戏项目目录开始任务 | 新任务能读取 Skill，并把已知与待定保存到项目文件；不需要先安装引擎 |
 | 初始化文档、记录任务、检查文件和运行记录 | Python 3.10+ 与完整运行资源 | 本机 Python；源码 `tools/` 或已安装的 `game-preproduction/runtime/tools/` | 在对应工具包根执行 `python tools/game_workflow.py --help` |
 | Three.js 网页 3D / Phaser 网页 2D | 兼容项目 Vite 的 Node.js、npm 或 pnpm、浏览器 | 本机安装 Node；游戏工程安装依赖；项目配置记录 Node 与包管理器路径 | 依赖安装 → 构建 → HTTP 打开导出版本 → 实际操作；见 [网页说明](engines/web.md) |
 | Godot 原型与试玩 | 项目所需 Godot 4 可执行文件 | 本机安装 / 解压引擎；在项目配置登记路径 | 查询版本、导入并运行真实场景；见 [Godot 配置](engines/godot/README.md#环境配置) |
@@ -41,6 +41,7 @@
 | Tripo / Hunyuan3D API 生成 | Python、网络、服务账户与凭据 | Tripo/混元 API Key 可在[本机设置页](assets/local-settings.md)保存；TC3 使用环境变量，项目可覆盖默认配置 | doctor 检查存在，再生成一个小任务；见 [API 配置](assets/generation-api.md) |
 | 免费与付费资产检索与获取 | Python、网络；部分来源需要浏览器登录 | [素材目录](assets/asset-sources.md)；无需本地生成模型 | 实际搜索 → 获取文件 → verify → 导入检查 |
 | 其他图像、3D、音频生成 | 用户选定的实际生成工具 / 服务及包装脚本 | 工具自己的环境；游戏项目 `.openaigame/asset-providers.json` | 先完成一次小任务，检查真实文件和日志；见 [资产接入](assets/README.md) |
+| 动画制作与武器校准 | `game-animation-pipeline`；按所选路径配置 Blender、UE 与 C++ 工具链 | 已有 UE 资源直接检查；需外部修改时配置源工具并按技能执行回传 | 独立动作测试与实际游戏验证分别记录；随包适配器的骨架/事件约束见该技能说明 |
 | Blender 模型处理 | Blender 与适用的输入格式 / 依赖文件 | 本机安装 Blender；资产提供方配置填写其可执行路径 | 转换后重新打开检查模型、材质和动画；见 [资产处理说明](assets/README.md) |
 | 数值 CSV 往返 | Python、真实 JSON 主源与字段绑定 | 游戏项目中的数值绑定文件；CSV 可用表格软件编辑 | 导出 → 修改 → 比较 → 应用 → 引擎重载确认 |
 | 读取数值 Excel 表 | 上述环境，另加运行工具所用 Python 的 `openpyxl` | 在同一 Python 环境执行 `python -m pip install openpyxl` | 读取指定数值页并检查差异；见 [数值往返](../tools/README.md#数值表往返) |

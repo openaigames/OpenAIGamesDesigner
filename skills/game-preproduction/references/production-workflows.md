@@ -10,8 +10,12 @@
 | 新增/修改/修复 | workflows/feature-change.md |
 | 资产制作、处理与接入 | workflows/asset-production.md |
 | 交付与反馈 | workflows/delivery.md |
+| 五阶段区间与接手 | workflows/development-stages.md / stage-execution.md |
+| 内容扩展与完整体验 | workflows/content-production.md |
 
-上述流程只规定输入、交付、依赖与反馈，不绑定引擎或玩法。依据实际问题选择专业参考：战斗规则由 game-design、表现交接由 game-art-direction、工程实施由 game-technical-design、战斗回归由 game-prototype-validation 负责。原型/切片/修改是一条流程的选择；UE/Godot 与 GAS 是实施方法的选择，不据此新增一套顶层 workflow。
+上述流程只规定输入、交付、依赖与反馈，不绑定引擎或玩法。依据实际问题选择专业参考：系统接口由 game-design 汇总，战斗由 game-combat-design、空间由 game-level-design、美术方向由 game-art-direction 主责；具体资产由各制作职业负责，工程实施由 game-technical-design、独立验证由 game-prototype-validation 负责。原型/切片/修改是一条流程的选择；UE/Godot 与 GAS 是实施方法的选择，不据此新增一套顶层 workflow。
+
+角色动画制作、武器绑定或外部/引擎验证任务按需使用 `game-animation-pipeline` 的 [制作顺序与验证分工](../../game-animation-pipeline/references/production-order.md)：粗动作尽早进入可操作的引擎实验，再用代表招式联调反馈与精修，随后扩展。已有 UE 资源可直接测试。它提供专业方法与适配器，继续沿用原型、切片或资产流程，不新增一套管理文档。独立安装缺少该技能时使用现有专业资料和实际工具，不声明其脚本已可用。
 
 一般策划问题交给 game-design，从其 `references/design-reasoning.md` 理解目标和系统联系，再按需选择共享方法及当前专业参考。战斗、射击、探索、关卡、移动交互与 UI/UX 是可组合的方法，无需用户先选游戏类型，也不要求全部参与；尚无专门参考的新机制仍沿用通用设计与验证方法。跨活动的输入、结果、状态和反馈应按项目真实规则交接，依赖与证据变化见 [变更影响](dependency-and-change-impact.md)。
 
@@ -27,13 +31,14 @@
 
 新项目用 `validate_records.py --project <实际根目录> --layout --markdown` 检查位置；主要实现前增加 `--production` 检查设计、技术及管理所链接的里程碑/任务。已有结构不用该布局检查。运行时携带任务、里程碑和设计输入，保存真实 run，不把零条记录检查成功当成执行验证。
 
-模板固定为项目管理、两类里程碑、任务、功能规格、资产规格、验证报告和重要决定。玩法/美术/技术的差异由各自专业参考展开，不随专题增加平行模板。
+模板包含项目管理、原型/制作验证样例/内容制作三类里程碑、任务、功能规格、资产规格、验证报告和重要决定。玩法/美术/技术的差异由各自专业参考展开，不随专题增加平行模板。
 
 | 模板（相对 templates/） | document --kind | CLI 默认输出位置 |
 | --- | --- | --- |
 | project-management.md | scaffold 建立新作；init 配置工程时按需补建 | Project Management.md |
 | milestones/prototype.md | prototype | production/milestones/<id>.md |
 | milestones/vertical-slice.md | vertical-slice | production/milestones/<id>.md |
+| milestones/content-production.md | content-production | production/milestones/<id>.md |
 | task.md | task | production/tasks/<id>.md |
 | feature-spec.md | feature-spec | design/features/<id>.md |
 | asset-spec.md | asset-spec | design/assets/<id>.md（已有 assets/specs 沿用） |

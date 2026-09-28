@@ -1,14 +1,12 @@
 # 测试与验证
 
-角色重定向、持械镜像、跑步滑步与披风返修的独立输入见 `tests/character-animation-scenarios.md`（仅源码维护仓库）。场景编写与实际回放分别记录。
-
 验证分为代码检查、实际工具联调和游戏验收。每个真实案例分别记录输入版本、执行命令、输出、日志及观察；执行状态与结论保存在对应的验证报告中。
 
 UE 能力选型与动作集成的自然语言评估位于源码 `tests/ability-system-choice-scenarios.md`：检查何时主动介绍 GAS、何时沿用自有实现，以及动画包/控制模块/完整框架的区分。该场景集不随运行包分发，列出场景不代表行为评估已通过。
 
 | 顺序 | 验证对象 | 操作与通过依据 | 需要保存的证据 |
 | --- | --- | --- | --- |
-| 1 | 工具和分发 | 全部 unittest、源码与包链接、六个 Skill 格式、异地包 CLI | 源码版本、命令结果、包文件检查与异地执行记录 |
+| 1 | 工具和分发 | 全部 unittest、源码与包链接、十五个 Skill 格式、异地包 CLI | 源码版本、命令结果、包文件检查与异地执行记录 |
 | 2 | Skill 自然语言行为 | 新对话只给想法；再接手旧项目新增/修改功能；检查自动澄清、按需文件、未要求时不启动看板、不重新立项 | 原始输入、澄清过程、交付文件与实际观察 |
 | 3 | 一个本地生成工具 | 配置实际 wrapper，提交 → 执行 → 查询 → 打开真实产物；失败一次再重试 | 工具及模型版本、任务记录、产物与质量检查；各提供器分别验证 |
 | 4 | Blender | 带贴图的真实模型导入 → 转换 → 再打开，核对比例、材质、动画及依赖 | 输入与输出模型、处理日志、重新打开后的检查 |
@@ -28,13 +26,17 @@ python tools/package_skills.py --output dist/新的验证包目录
 python tools/validate_records.py --project "实际游戏项目路径" --markdown
 ```
 
-测试代码和打包脚本只在源码维护仓库内；分发包带运行工具和本说明。命令行示例使用 [入门](../tools/README.md)。
+自动测试代码、评估场景集和打包脚本在源码维护仓库内；分发包带运行工具、本说明及可再分发的 tests/fixtures 原生工程配方。原生夹具的 README 标明实际用途和运行方式。命令行示例使用 [入门](../tools/README.md)。
 
 每个真实案例使用 `templates/validation-report.md` 或项目现有报告记录：验证范围、证据文件/版本、实际执行、观察、未通过项与下一步。管理文件只链接该报告，并依据本轮范围更新任务；代码检查、产物生成、引擎导入、质量通过和用户认可分别记录。引擎与框架的具体能力按使用它们的项目需求验收，不作为所有游戏的前置条件。
 
 
-统一测试入口仅在源码维护仓库运行：`python tools/run_tests.py` 包含根 tests 和各 Skill 的 scripts/tests，分进程执行并汇总失败。`--list` 查看组，`--group core` 或 `--group game-art-direction` 只跑指定组；分组结果不等于全部测试通过。
+统一测试入口仅在源码维护仓库运行：`python tools/run_tests.py` 包含根 tests 和各 Skill 的 scripts/tests，分进程执行并汇总失败。`--list` 查看组，`--group core`、`--group game-art-direction` 或 `--group game-animation-pipeline` 只跑指定组；分组结果不等于全部测试通过。
 
 开发环境可用 `python -m pip install -r tests/requirements.txt` 安装 YAML/Excel 检查依赖。GitHub Actions 在 Windows、Python 3.10/3.12 上执行同一入口，运行状态与日志可在仓库的 Actions 页面查看。引擎实机、外部服务和自然语言行为评估按上表单独执行并记录结果。
 
 资产 API 自动测试使用受控响应和子进程，覆盖认证格式、任务 ID 恢复、文件/ZIP 边界、来源与许可登记，不调用收费服务。真实验证按提供器分别进行：doctor → 小任务生成 → 查询 → 下载 → 打开模型 → 中断后恢复同一 ID。免费来源另验搜索/下载；目录搜索计划不能计为网站 API 已接通。
+
+新增职业行为评估输入位于源码 tests/ 下：`character-animation-scenarios.md` 的 C1–C6、`combat-design-scenarios.md` 的时序/受击/Boss 情境、`production-method-scenarios.md` 的六个战斗表现情境。这些维护用场景集不进入安装包。场景数量不计入自动测试通过数，实际评估结果单独记录。
+
+Blender 实机回归：设置 `OAGD_BLENDER` 为实际可执行文件，再运行统一入口；未设置的 skipped 不代表实机通过。动作取舍的后端、迁移和浏览器控件测试包含于同一入口。

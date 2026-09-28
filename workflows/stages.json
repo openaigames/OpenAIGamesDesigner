@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "stages": [
+    {"number":1,"name":"立项","workflow":"project-intake","checks":[
+      {"id":"design","dimension":"professional","description":"约定范围的目标、规则、约束、接口和验证计划足以交接"}]},
+    {"number":2,"name":"玩法验证","workflow":"prototype-build","checks":[
+      {"id":"functional","dimension":"technical","description":"机制在实际运行中可操作，实验条件明确"},
+      {"id":"mechanism","dimension":"professional","description":"核心假设有实际试玩依据，保留或调整的理由明确"}]},
+    {"number":3,"name":"制作验证","workflow":"stage-execution","checks":[
+      {"id":"integration","dimension":"technical","description":"约定代表样例在实际工程中集成并可操作"},
+      {"id":"quality","dimension":"professional","description":"样例达到本轮明确的品质范围"},
+      {"id":"production","dimension":"professional","description":"制作规格、成本依据与目标环境性能可支持后续决策"}]},
+    {"number":4,"name":"内容制作","workflow":"content-production","checks":[
+      {"id":"functional","dimension":"technical","description":"约定内容已经接入，完整操作路径和相关回归有证据"},
+      {"id":"content","dimension":"professional","description":"内容范围与品质覆盖完整，样例未被外推为全部通过"},
+      {"id":"experience","dimension":"professional","description":"整体体验有实际观察，外部试玩与自测区别记录"}]},
+    {"number":5,"name":"最终交付","workflow":"delivery","checks":[
+      {"id":"delivery","dimension":"technical","description":"指定版本可在约定接收环境取得、运行或继续编辑"},
+      {"id":"handoff","dimension":"professional","description":"内容、必要源文件、依赖、说明和已知问题交接完整"}]}
+  ]
+}

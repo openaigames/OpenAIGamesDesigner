@@ -1,0 +1,14 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"Registered observation with source versions",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","id","created_at","capture","dependencies","data"],
+  "properties":{
+    "schema_version":{"const":1},
+    "id":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"},
+    "created_at":{"type":"string","minLength":1},
+    "capture":{"type":"string","minLength":1},
+    "dependencies":{"type":"object","additionalProperties":{"type":"string","pattern":"^[a-f0-9]{64}$"}},
+    "data":{"$ref":"observation.schema.json"}
+  }
+}

@@ -12,6 +12,6 @@
 | 相机、坐标参照和信息获取 | [镜头与空间理解](movement-interaction/camera-and-space.md) |
 | 对象选择、使用过程、取消与完成 | [环境交互](movement-interaction/interaction-contracts.md) |
 
-战斗位移的攻防价值引用 [战斗空间](combat/controls-and-space.md)；关卡引用实际移动包络，不能各自定义另一套跳跃距离。动画表现与工程状态通过美术和技术专业交接，不默认动画播放即动作成功。
+战斗位移的攻防价值引用 [战斗空间](../../game-combat-design/references/combat/controls-and-space.md)；关卡引用实际移动包络，不能各自定义另一套跳跃距离。动画表现与工程状态通过美术和技术专业交接，不默认动画播放即动作成功。
 
 已有规格可局部更新，复杂能力可用工具包 `templates/feature-spec.md`，按本参考细化输入/状态、位移、控制权、交互对象与边界。文档足够实现与实际操作体验通过分别记录。

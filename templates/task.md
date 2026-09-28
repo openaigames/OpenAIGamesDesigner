@@ -1,6 +1,7 @@
 # {{id}} — {{title}}
 
-- 状态：draft（draft / ready / active / blocked / review / done / cancelled）
+- 状态：draft（已有同 ID JSON 任务时引用其状态，不另维护一份完成值）。
+- 起止阶段、对象与交付范围：按实际任务填写；独立小修只记录必要范围。
 - 所属里程碑：待关联；独立小改动可无里程碑。
 - 负责方向：按需指定。
 

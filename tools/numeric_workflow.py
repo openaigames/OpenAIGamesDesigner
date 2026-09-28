@@ -301,6 +301,9 @@ def main(argv=None):
     plan.add_argument('--out', required=True)
     apply = sub.add_parser('apply')
     apply.add_argument('--plan', required=True)
+    model=sub.add_parser('model',help='Evaluate explicit prediction and source-linked measurements without writing author data')
+    model.add_argument('--request',required=True);model.add_argument('--out',required=True)
+    check=sub.add_parser('model-check');check.add_argument('--report',required=True)
     args = parser.parse_args(argv)
     root = args.project.resolve()
     try:
@@ -310,6 +313,9 @@ def main(argv=None):
             result = export_table(root, local(root, args.binding), local(root, args.session))
         elif args.command == 'plan':
             result = make_plan(root, local(root, args.session), local(root, args.table), args.sheet, local(root, args.out))
+        elif args.command in ('model','model-check'):
+            import numeric_models
+            result=numeric_models.evaluate(root,args.request,args.out) if args.command=='model' else numeric_models.assess(root,args.report)
         else:
             result = apply_plan(root, local(root, args.plan))
         print(json.dumps(result, ensure_ascii=False, indent=2))

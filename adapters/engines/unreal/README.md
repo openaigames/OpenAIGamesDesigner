@@ -36,6 +36,8 @@ doctor 检查编辑器文件与工程声明；prepare 加载工程检查，smoke
 | 场景、Blueprint 组件、Actor、资源导入和动画绑定 | [制作请求与支持范围](production.md) |
 | PIE 自动操作、帧序列和时间采样 | [自动操作与采样](production.md) |
 | 会话状态、检查点与中断恢复 | [会话管理](../sessions.md) |
+| 实际事件、参数、附件与空间读回 | [共享运行观察](../observations.md) |
+| 原生 DataAsset / CurveFloat 的读回与保护性写入 | [原生参数接口](native-data.md) |
 
 Python 制作接口、宿主 MCP 和游戏运行逻辑是不同能力。具体操作以接口定义为准；场景保存、引擎运行、游戏行为和性能应分别检查。
 

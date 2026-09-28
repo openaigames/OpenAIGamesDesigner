@@ -13,18 +13,21 @@ class ProjectContractTests(unittest.TestCase):
         self.assertEqual(
             {p.parent.name for p in (ROOT / "skills").glob("*/SKILL.md")},
             {"game-preproduction", "game-concept", "game-design", "game-art-direction",
-             "game-technical-design", "game-prototype-validation"},
+             "game-technical-design", "game-prototype-validation", "game-animation-pipeline",
+             "game-combat-design", "game-level-design", "game-technical-art", "game-character-art",
+             "game-environment-art", "game-vfx-design", "game-audio-design", "game-ui-ux"},
         )
         self.assertEqual(
             {p.name for p in (ROOT / "workflows").glob("*.md") if p.name != "README.md"},
             {"project-intake.md", "prototype-build.md", "vertical-slice.md",
-             "feature-change.md", "asset-production.md", "delivery.md"},
+             "feature-change.md", "asset-production.md", "delivery.md", "development-stages.md",
+             "stage-execution.md", "content-production.md"},
         )
         self.assertEqual(
             {p.relative_to(ROOT / "templates").as_posix()
              for p in (ROOT / "templates").rglob("*") if p.is_file()},
             {"project-management.md", "milestones/prototype.md", "milestones/vertical-slice.md",
-             "task.md", "feature-spec.md", "asset-spec.md", "validation-report.md", "decision.md"},
+             "task.md", "feature-spec.md", "asset-spec.md", "validation-report.md", "decision.md", "milestones/content-production.md"},
         )
 
     def test_active_markdown_links_and_template_references(self):
@@ -58,7 +61,8 @@ class ProjectContractTests(unittest.TestCase):
         for name in expected:
             self.assertTrue((ROOT / name).is_file(), name)
         self.assertEqual({p.name for p in (ROOT / "schemas").glob("*.json")},
-                         {"project.schema.json", "run.schema.json", "asset-job.schema.json", "artifact.schema.json", "engine-session.schema.json", "asset-library.schema.json"})
+                         {"project.schema.json", "run.schema.json", "asset-job.schema.json", "artifact.schema.json", "engine-session.schema.json", "asset-library.schema.json",
+                          "task.schema.json","evidence.schema.json","observation.schema.json","observation-record.schema.json","project-links.schema.json"})
 
 
 if __name__ == "__main__":

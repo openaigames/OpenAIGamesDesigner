@@ -18,12 +18,12 @@
 | 玩家知道什么、为什么愿意承担不确定性 | [信息、选择与风险](shared/information-and-risk.md) |
 | 结果如何积累、转化、消耗并改变后续选择 | [资源、成长与选择](shared/resources-and-progression.md) |
 | 节奏割裂、体验问题或改动效果怎样分析 | [节奏与迭代](shared/pacing-and-iteration.md) |
-| 攻防、受击、对抗与敌人应对 | [战斗参考](combat-design.md) |
-| 瞄准、发射、轨迹、武器操控或射击反馈 | [射击参考](shooting-design.md) |
+| 攻防、受击、对抗与敌人应对 | [战斗参考](../../game-combat-design/references/combat-design.md) |
+| 瞄准、发射、轨迹、武器操控或射击反馈 | [射击参考](../../game-combat-design/references/shooting-design.md) |
 | 导航、发现、通行、探索活动与冒险接续 | [探索与冒险参考](exploration-adventure-design.md) |
-| 区域空间、路线、段落编排、检查点和灰盒 | [关卡设计](level-design.md) |
+| 区域空间、路线、段落编排、检查点和灰盒 | [关卡设计](../../game-level-design/references/level-design.md) |
 | 控制响应、镜头、移动能力与环境使用 | [移动与交互](movement-interaction.md) |
-| 信息结构、界面流程、输入焦点和机制学习 | [UI/UX](ui-ux.md) |
+| 信息结构、界面流程、输入焦点和机制学习 | [UI/UX](../../game-ui-ux/references/ui-ux.md) |
 
 这些只是当前可用参考。遇到库中没有的机制，用 [功能规格方法](feature-design.md) 从实际目标构造规则、关系、边界与观察依据；必要时研究相关材料，不将陌生机制硬归类。不要根据“射击”加载全部战斗，不根据“冒险”加入任务、敌人、血条或开放世界。
 

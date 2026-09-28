@@ -1,6 +1,8 @@
 """Local asset browser with Art Direction as the sole tag and registration source."""
 import argparse, hashlib, json, mimetypes, os, struct, time, threading, uuid
-from . import art_registry, model_previews
+import content_roots
+from . import art_registry, model_previews, asset_usage, character_bindings
+import asset_fit
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlsplit, quote, parse_qs
@@ -8,7 +10,7 @@ from urllib.parse import unquote, urlsplit, quote, parse_qs
 HERE=Path(__file__).resolve().parent
 WEB=HERE/'web'
 SKIP={'.git','.svn','.asset-browser','.openaigame','node_modules','Intermediate','Binaries','DerivedDataCache','Saved','.idea','.vscode','dist','Library','Temp','obj','builds','Licenses'}
-KINDS={'.glb':'model','.gltf':'model','.obj':'model','.fbx':'model','.stl':'model','.png':'image','.jpg':'image','.jpeg':'image','.webp':'image','.gif':'image','.svg':'image','.wav':'audio','.ogg':'audio','.mp3':'audio','.flac':'audio','.m4a':'audio','.mp4':'video','.webm':'video','.uasset':'engine','.umap':'engine','.tscn':'engine','.tres':'engine','.prefab':'engine','.vfx':'engine','.efkefc':'engine','.blend':'engine','.dds':'texture','.tga':'texture','.exr':'texture','.hdr':'texture','.ktx2':'texture','.ttf':'other','.otf':'other'}
+KINDS={'.glb':'model','.gltf':'model','.obj':'model','.fbx':'model','.stl':'model','.png':'image','.jpg':'image','.jpeg':'image','.webp':'image','.gif':'image','.svg':'image','.wav':'audio','.ogg':'audio','.mp3':'audio','.flac':'audio','.m4a':'audio','.mp4':'video','.webm':'video','.uasset':'engine','.umap':'engine','.tscn':'engine','.tres':'engine','.prefab':'engine','.controller':'engine','.anim':'animation','.bvh':'animation','.unity':'engine','.vfx':'engine','.efkefc':'engine','.blend':'engine','.dds':'texture','.tga':'texture','.exr':'texture','.hdr':'texture','.ktx2':'texture','.ttf':'other','.otf':'other'}
 MIME={'.glb':'model/gltf-binary','.gltf':'model/gltf+json','.js':'text/javascript','.ogg':'audio/ogg','.json':'application/json','.bin':'application/octet-stream'}
 TAG_LOCK=threading.Lock()
 
@@ -82,6 +84,11 @@ def library_metadata(root):
 def asset_files(root,registered):
     seen=set()
     for folder,dirs,files in os.walk(root,followlinks=False):
+        # Execution checkpoints and engine-derived preview history are evidence,
+        # not newly discovered candidate assets. Mapped previews remain readable.
+        relative_folder=Path(folder).relative_to(root).as_posix()
+        if relative_folder=='.':dirs[:]=[d for d in dirs if d!='runs']
+        if relative_folder=='previews':dirs[:]=[d for d in dirs if d!='engine']
         dirs[:]=[d for d in dirs if d not in SKIP and not d.startswith('.') and not (Path(folder)/d).is_symlink() and not (hasattr(Path(folder)/d,'is_junction') and (Path(folder)/d).is_junction())]
         for name in sorted(files):
             p=Path(folder)/name
@@ -96,7 +103,14 @@ def asset_files(root,registered):
 
 
 def scan(root):
+    usage,usage_audit=asset_usage.read(root)
+    content_layout=content_roots.layout(root)
+    try:
+        config=json.loads((root/'.asset-browser'/'catalog-config.json').read_text(encoding='utf-8'))
+        excluded=[p.rstrip('/')+'/' for p in config.get('excludePrefixes',[]) if isinstance(p,str) and p and not p.startswith('/') and '..' not in p.split('/')]
+    except (OSError,ValueError,TypeError,AttributeError):excluded=[]
     preview_records,preview_error=model_previews.read(root)
+    preview_copies={r.get('path') for r in preview_records.values() if isinstance(r,dict) and isinstance(r.get('path'),str)}
     registry=None;registry_error=None
     try:registry=art_registry.load(root)
     except (OSError,ValueError) as error:registry_error=str(error)
@@ -109,6 +123,7 @@ def scan(root):
     items=[]
     for p in asset_files(root,library):
         name=p.name
+        if any(p.relative_to(root).as_posix().startswith(prefix) for prefix in excluded):continue
         if p.is_symlink() or name.startswith('.'):continue
         ext=p.suffix.lower(); kind='vfx' if name.endswith('.vfx.json') else KINDS.get(ext)
         if not kind:continue
@@ -119,9 +134,14 @@ def scan(root):
                  'url':'/asset/'+quote(rel,safe='/'),'folder':p.parent.relative_to(root).as_posix(),'tags':[],
                  'source':None,'author':'未登记','license':'未登记'}
             row.update({k:v for k,v in (catalog.get(rel,{}) if isinstance(catalog.get(rel,{}),dict) else {}).items() if k in {'title','source','author','license','note','texture','color','rank'}})
+            ownership=content_roots.classify(root,rel,content_layout)
+            row['location']=ownership['location']
+            row['locationReason']=ownership['reason']
+            row['previewCopy']=rel in preview_copies
+            row['usage']=usage.get(rel,{'status':'local','roles':[],'clips':[]})
             row['art']=art_registry.classify(root,row,registry) if registry else None
             row['tags']=row['art']['tags'] if row['art'] else []
-            row['preview']='native' if ext in {'.glb','.gltf','.obj','.png','.jpg','.jpeg','.webp','.gif','.svg','.wav','.ogg','.mp3','.mp4','.webm','.m4a'} or kind=='vfx' else 'unavailable'
+            row['preview']='native' if ext in {'.glb','.gltf','.obj','.fbx','.png','.jpg','.jpeg','.webp','.gif','.svg','.wav','.ogg','.mp3','.mp4','.webm','.m4a'} or kind=='vfx' else 'unavailable'
             row['assetRoot']='/asset/'
             if rel in preview_records:
                 row.update(model_previews.resolve(root,rel,preview_records[rel],gltf_info))
@@ -133,5 +153,7 @@ def scan(root):
             items.append(row)
         except (OSError,ValueError,struct.error):continue
     items.sort(key=lambda a:(a.get('rank',100),0 if a.get('animations') else 1 if a['kind']=='model' else 2 if a['kind']=='vfx' else 3,a['path']))
-    return {'project':game_name({'root':root,'name':root.name}),'root':str(root),'projectId':hashlib.sha256(str(root).encode()).hexdigest()[:16],'previewMappingError':preview_error,
-            'assets':items,'artAudit':{**art_registry.audit(items,registry,registry_error),'canInitialize':art_registry.can_initialize(root)},'artObjects':list(registry['objects'].values()) if registry else [],'artRevision':registry['revision'] if registry else None,'scannedAt':time.time(),'totalBytes':sum(x['bytes'] for x in items),'demo':False}
+    audit_registry={**registry,'assets':{k:v for k,v in registry['assets'].items() if not any(k.startswith(prefix) for prefix in excluded)}} if registry else None
+    characters,character_error=character_bindings.read(root,items)
+    return {**asset_fit.snapshot(root),'contentLayout':content_layout,'characters':characters,'characterBindingError':character_error,'project':game_name({'root':root,'name':root.name}),'root':str(root),'projectId':hashlib.sha256(str(root).encode()).hexdigest()[:16],'previewMappingError':preview_error,
+            'assets':items,'usageAudit':usage_audit,'artAudit':{**art_registry.audit(items,audit_registry,registry_error),'canInitialize':art_registry.can_initialize(root)},'artObjects':list(registry['objects'].values()) if registry else [],'artRevision':registry['revision'] if registry else None,'scannedAt':time.time(),'totalBytes':sum(x['bytes'] for x in items),'demo':False}

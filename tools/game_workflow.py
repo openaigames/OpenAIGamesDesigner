@@ -26,6 +26,7 @@ IGNORED = {".git", ".godot", "__pycache__", "node_modules", ".venv", "Library", 
 DOCUMENTS = {
     "prototype": ("milestones/prototype.md", "production/milestones"),
     "vertical-slice": ("milestones/vertical-slice.md", "production/milestones"),
+    "content-production": ("milestones/content-production.md", "production/milestones"),
     "task": ("task.md", "production/tasks"),
     "feature-spec": ("feature-spec.md", "design/features"),
     "asset-spec": ("asset-spec.md", "design/assets"),
@@ -519,6 +520,8 @@ def status(args):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="subcommand", required=True)
+    import task_state
+    task_state.add_parser(sub)
     scaffold = sub.add_parser("scaffold", help="Save a new brief and management entry without choosing an engine")
     scaffold.add_argument("--project", type=Path, required=True)
     scaffold.add_argument("--brief", required=True, help="The user's actual request, not an invented design")
@@ -553,7 +556,9 @@ def main(argv=None):
     state.add_argument("--limit", type=int, default=10)
     args = parser.parse_args(argv)
     try:
-        if args.subcommand == "scaffold":
+        if args.subcommand == "task":
+            return task_state.cli(args)
+        elif args.subcommand == "scaffold":
             scaffold_project(args)
         elif args.subcommand == "init":
             init_project(args)
@@ -567,7 +572,7 @@ def main(argv=None):
             if args.limit < 1:
                 raise ValueError("limit must be positive")
             status(args)
-    except (ValueError, OSError, json.JSONDecodeError) as error:
+    except (ValueError, OSError, KeyError, TypeError, json.JSONDecodeError) as error:
         print(str(error), file=sys.stderr)
         return 2
     return 0

@@ -1,0 +1,5 @@
+{
+  "movement": {"speed": 180.0},
+  "combat": {"windup": 0.12, "cleanup_delay": 0.075, "range": 180.0},
+  "arena": {"target_width": 40.0, "target_height": 120.0}
+}

@@ -171,6 +171,53 @@ assert any(i.packed_file for i in bpy.data.images), 'Texture not packed'
         self.assertFalse(result.exists())
         self.assertFalse((output / 'processed.glb').exists())
 
+    def test_animation_only_fbx_and_gltf_conversion_preserves_tracks(self):
+        """A mesh is unnecessary for convert; static recipes must still reject rigs."""
+        fixture = self.root / 'animation.py'
+        fixture.write_text('''import bpy, sys
+from pathlib import Path
+folder=Path(sys.argv[sys.argv.index('--')+1])
+bpy.ops.object.select_all(action='SELECT');bpy.ops.object.delete(use_global=False)
+bpy.ops.object.armature_add();rig=bpy.context.object;rig.name='MotionRig'
+rig.data.bones[0].name='Root'
+bone=rig.pose.bones['Root'];bone.rotation_mode='XYZ'
+bone.rotation_euler=(0,0,0);bone.keyframe_insert('rotation_euler',frame=1)
+bone.rotation_euler=(0,.7,0);bone.keyframe_insert('rotation_euler',frame=24)
+bpy.context.scene.frame_end=24
+bpy.ops.export_scene.fbx(filepath=str(folder/'motion.fbx'),object_types={'ARMATURE'},add_leaf_bones=False,bake_anim=True)
+bpy.ops.export_scene.gltf(filepath=str(folder/'motion.glb'),export_format='GLB',export_animations=True)
+''')
+        self.run_blender(['--python', str(fixture), '--', str(self.root)])
+        def document(path):
+            import struct
+            raw=path.read_bytes();size,kind=struct.unpack('<II',raw[12:20])
+            self.assertEqual(kind,0x4E4F534A)
+            return json.loads(raw[20:20+size])
+        # Inspect exported input as well as output, so an empty generated fixture cannot pass.
+        input_doc=document(self.root/'motion.glb')
+        self.assertTrue(input_doc.get('animations'))
+        for extension in ('fbx','glb'):
+            source=self.root/('motion.'+extension);before=hashlib.sha256(source.read_bytes()).hexdigest()
+            request={'inputs':[{'snapshot':str(source)}],'parameters':{'format':'both'}}
+            proc,output,result=self.execute(request,'motion-'+extension)
+            self.assertEqual(proc.returncode,0,proc.stdout+proc.stderr)
+            output_doc=document(output/'processed.glb')
+            self.assertTrue(output_doc.get('animations'))
+            self.assertTrue(any('Root' in n.get('name','') for n in output_doc.get('nodes',[])))
+            self.assertTrue(all(a.get('channels') and a.get('samplers') for a in output_doc['animations']))
+            self.assertEqual(hashlib.sha256(source.read_bytes()).hexdigest(),before)
+            check=self.root/('check-motion-'+extension+'.py')
+            check.write_text('''import bpy,sys
+bpy.ops.wm.open_mainfile(filepath=sys.argv[sys.argv.index('--')+1])
+assert len(bpy.data.actions)>0
+assert not any(o.type=='MESH' for o in bpy.data.objects)
+''')
+            self.run_blender(['--python',str(check),'--',str(output/'processed.blend')])
+            request['parameters']={'operation':'optimize','decimate_ratio':.5}
+            refused,_,result=self.execute(request,'refuse-motion-'+extension)
+            self.assertNotEqual(refused.returncode,0)
+            self.assertFalse(result.exists())
+
 
 if __name__ == '__main__':
     unittest.main()

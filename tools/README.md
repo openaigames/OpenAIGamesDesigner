@@ -1,5 +1,7 @@
 # 开始使用
 
+项目工作台提供两类素材看板：`python tools/project_workbench.py --project "MyGame" --view review`。game 外的文件自动列为候补，game 内列为游戏应用；角色按实际绑定关联模型与可选动画，不再要求登记和测试晋升。预览与角色清单接口见 [看板说明](workbench/README.md)，操作流程见 game-preproduction Skill 的 `references/project-workbench.md`。
+
 不确定需要安装哪些软件、在哪配置时，先看 [按功能配置环境](../adapters/environment-setup.md)。
 
 当前宿主说明以 Codex 为准，安装目录和配置范围见 [Codex 路径速查](../adapters/environment-setup.md#codex-路径速查)。下文 CLI 通过本地 Python 执行，游戏项目通过 `--project` 指定，不把安装目录当作游戏输出目录。
@@ -127,9 +129,9 @@ apply 重新比对表格、基线与计划，保存原文件备份和 `.openaiga
 
 ## 安装一致性与维护测试
 
-每个新分发包在 `game-preproduction/runtime/bundle-manifest.json` 保存内容版本及文件哈希。安装后运行 `python <runtime>/tools/check_installation.py --skills-root <六个Skill的父目录>`，检查缺失或修改的文件。检查只报告差异，不覆盖本地定制，也不删除用户额外文件；更新前比较、备份并合并实际差异。旧安装没有 manifest 时重新打包并同步，不把缺清单当作安装正确。
+每个新分发包在 `game-preproduction/runtime/bundle-manifest.json` 保存内容版本及文件哈希。安装后运行 `python <runtime>/tools/check_installation.py --skills-root <已安装Skill的父目录>`，检查缺失或修改的文件。检查只报告差异，不覆盖本地定制，也不删除用户额外文件；更新前比较、备份并合并实际差异。旧安装没有 manifest 时重新打包并同步，不把缺清单当作安装正确。
 
-维护仓库运行 `python tools/run_tests.py` 执行根测试和 Skill 内脚本测试。此入口及 CI 属于源码维护工具，不随游戏运行包分发。
+维护仓库运行 `python tools/run_tests.py` 执行根测试和 Skill 内脚本测试，包括 `game-animation-pipeline` 的协议检查；`--group game-animation-pipeline` 可单独运行该组。此入口及 CI 属于源码维护工具，不随游戏运行包分发。
 
 ### 素材来源与资产登记
 
@@ -150,9 +152,11 @@ python tools/asset_audit.py --project "MyGame"
 
 `MyGame` 换成游戏根目录的绝对路径。看板使用同一套界面，绑定当前项目，在自动分配的本机端口启动；`--no-open --ready-file <新临时文件>` 可交给宿主打开返回地址。同一台电脑的不同浏览器可以直接使用相同地址，页面自动建立连接，无需一次性链接；服务仍只监听 `127.0.0.1`，写入保留 Origin 与 CSRF 校验。默认闲置 120 分钟退出，关闭页面不立即停止服务。真实资产在游戏目录，网页和 Three.js 在共享 runtime，不复制游戏或样例到安装包。
 
-支持本地 3D、图片、音频、视频、粒子演示和引擎文件索引。当前实时 3D 支持 GLB/glTF、OBJ（含项目内相对路径 MTL/贴图；缺材质显示中性几何）。FBX、工程原生 VFX 等显示文件和格式适配状态，不宣称浏览器直接运行引擎效果。标签来自 Art Direction；刷新或检查重新扫描，无后台监听和后台模型调用。
+支持本地 3D、图片、音频、视频、粒子演示和引擎文件索引。实时 3D 支持 GLB/glTF、OBJ（含项目内 MTL/贴图）和 FBX 模型/骨架/动作。缺贴图和不兼容骨架会显示具体限制；浏览器不执行 Niagara、AnimBP、碰撞或引擎最终材质。动作预览可跟随角色或查看完整位移轨迹，不修改源资产。标签来自现有美术记录，未登记资产仍可浏览。
 
-引擎模型可先在对应引擎中导出 GLB，再用项目 `.asset-browser/previews.json` 关联原文件。格式为 `{"version":1,"assets":{"game/Content/Mesh.uasset":{"path":"previews/Mesh.glb","source_sha256":"原文件SHA256","sha256":"GLB的SHA256","dependencies":{"game/Content/Material.uasset":"依赖SHA256"},"note":"预览范围说明"}}}`。所有路径相对项目根目录，预览仅接受有效 GLB；源文件、预览或所列依赖变化后拒绝使用旧预览，并显示失效原因。依赖应由引擎导出步骤完整记录，扫描器不会推断任意 uasset 的依赖。原资产卡片保留原路径、格式与美术标签；GLB 副本也需登记到原 Art Direction 对象。关联预览不代表自动导出、支持整个引擎场景或已包含动画。
+引擎角色使用实际消费者导出及 `engine_characters.py` 同步到现有 `.asset-browser/characters.json` / `previews.json`。选择角色即可选择工程关联动作，并区分组件直接绑定、AnimBP 静态引用和工程声明可用集合。导出预览支持 FBX 和 GLB；原文件、派生文件及所列依赖均冻结 SHA256，变更后旧预览失效。项目配置的内容根决定候补/游戏应用归属，运行备份和派生预览不再作为候补重新扫描。浏览器动作与游戏最终表现分开，原生导出接口的限制见 [Unreal 原生动画](../adapters/engines/unreal/native-animation.md)。
+
+数值预测调用 `numeric_workflow.py --project <项目> model --request <相对请求.json> --out production/numeric-models/<版本>.json`。支持明确算式树、分段线性曲线和阶梯阈值；参数与实测引用实际 JSON pointer、权威文件和执行记录。输出 JSON/HTML 比较以及共享看板图表；`model-check --report <相对报告>` 检查依赖新鲜度。模型不覆盖游戏权威参数，不把预测当实测或最优手感。
 
 旧项目初次建立记录区使用 `asset_audit.py --project "MyGame" --init-art`，保留原文；`--register-missing` 只登记文件事实。模型再依据原清单补齐对象和标签，沿用稳定 ID，未知用途保留待补齐。自定义美术入口用项目 `.openaigame/workbench.json` 的 `art_document` 相对路径。固定标记区格式与旧记录映射由专业 Skill 的项目看板参考说明。
 

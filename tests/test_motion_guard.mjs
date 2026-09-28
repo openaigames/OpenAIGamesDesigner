@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {draftGuard} from '../tools/workbench/web/motion-guard.js';
+let answer=false,dirty=true,busy=false,connected=true,confirmations=0,discards=0;
+const guard=draftGuard(()=>{confirmations++;return answer;});
+guard.attach({pending:()=>connected&&(dirty||busy),busy:()=>connected&&busy,discard:()=>{dirty=false;discards++;}});
+assert.equal(await guard.allow(),false);assert.equal(dirty,true);assert.equal(discards,0);
+answer=true;assert.equal(await guard.allow(),true);assert.equal(dirty,false);assert.equal(discards,1);
+assert.equal(await guard.allow(),true);assert.equal(confirmations,2);
+busy=true;assert.equal(await guard.allow(),false);assert.equal(confirmations,2);
+connected=false;assert.equal(guard.pending(),false);assert.equal(await guard.allow(),true);
+guard.attach({pending:()=>false,busy:()=>false});assert.equal(await guard.allow(),true);
+console.log('Motion guard: declined navigation retains draft, accepted discard once, busy save blocks, detached views release.');

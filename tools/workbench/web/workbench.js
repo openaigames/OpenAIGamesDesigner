@@ -1,19 +1,28 @@
+import {allowMotionNavigation} from './motion-review.js';
 import {api,state as initialState} from './session.js';
 import {getLibraryData,openLibraryAsset,setLibraryActive,icon,escape as esc,toast,refreshLibrary} from './app.js';
+import {createAssetReview} from './asset-review.js';
+import {createProductionReview} from './production-review.js';
 const $=id=>document.getElementById(id);
+const assetReview=createAssetReview({getLibraryData,refreshLibrary,escape:esc,toast,preview:async(path,characterId)=>{if(await setView('assets')!==false)await openLibraryAsset(path,characterId);}});
+const productionReview=createProductionReview({escape:esc,toast});
 const providers={hunyuan3d:{name:'混元 3D',logo:'/logos/hunyuan3d.png'},tripo:{name:'Tripo AI',logo:'/logos/tripo.png'}};
 const names={queued:'待确认 / 待执行',running:'制作中',succeeded:'已生成',registered:'已登记结果',failed:'失败',blocked:'受阻',cancelled:'已取消',interrupted:'已中断'};
 let state=initialState,jobs=[],view='assets',filter='all',selected=new URLSearchParams(location.search).get('job'),reviewVersion=0,refreshing=false;
 function icons(root=document){root.querySelectorAll('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon));}
-function setView(next,hash=true){
-  view=['assets','tasks','services'].includes(next)?next:'assets';$('workbench').dataset.view=view;
-  $('current-view-label').textContent={assets:'资产库',tasks:'制作任务',services:'服务与密钥'}[view];
+async function setView(next,hash=true){
+  if(next!==view&&!await allowMotionNavigation()){history.replaceState(null,'',location.pathname+location.search+'#'+view);return false;}
+  view=['assets','review','tasks','services','production','observation'].includes(next)?next:'assets';$('workbench').dataset.view=view;
+  $('current-view-label').textContent={assets:'资产库',review:'素材看板',tasks:'素材生成任务',services:'服务与密钥',production:'项目与阶段',observation:'运行评审'}[view];
+  $('production-view').hidden=view!=='production';$('observation-view').hidden=view!=='observation';
   document.querySelector('.library').hidden=view!=='assets';$('inspector').hidden=view!=='assets';
+  $('review-view').hidden=view!=='review';$('review-navigation').hidden=view!=='review';
   $('task-view').hidden=view!=='tasks';$('service-view').hidden=view!=='services';
   $('asset-navigation').hidden=view!=='assets';$('task-navigation').hidden=view!=='tasks';$('service-navigation').hidden=view!=='services';
   document.querySelectorAll('.workspace-tab').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);if(b.dataset.view===view)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
   setLibraryActive(view==='assets');if(hash)history.replaceState(null,'',location.pathname+location.search+'#'+view);
-  if(view==='tasks')refreshJobs(true);if(view==='services')refreshServices();
+  if(view==='review')assetReview.activate();if(view==='tasks')refreshJobs(true);if(view==='services')refreshServices();
+  if(['production','observation'].includes(view))productionReview.activate(view);
 }
 function taskNav(){
   $('pending-count').textContent=jobs.filter(j=>j.status==='queued').length;
@@ -50,7 +59,7 @@ async function showJob(){
         catch(e){toast(e.message);await showJob();}
       };
     }
-    $('task-detail').querySelectorAll('[data-result]').forEach(b=>b.onclick=async()=>{await refreshLibrary(true);setView('assets');openLibraryAsset(b.dataset.result);});
+    $('task-detail').querySelectorAll('[data-result]').forEach(b=>b.onclick=async()=>{await refreshLibrary(true);if(await setView('assets')!==false)await openLibraryAsset(b.dataset.result);});
   }catch(e){if(version===reviewVersion)$('task-detail').innerHTML=`<p class="art-record-warning">${esc(e.message)}</p>`;}
 }
 function renderServices(){
@@ -63,6 +72,7 @@ function renderServices(){
   if(!state.storage_available)toast('此系统请使用环境变量配置密钥');
 }
 async function refreshServices(){try{state=await api('/api/state');renderServices();}catch(e){toast(e.message);}}
+$('back-to-board').onclick=()=>setView('review');
 document.querySelectorAll('.workspace-tab').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 $('task-filters').onclick=e=>{const b=e.target.closest('[data-filter]');if(b){filter=b.dataset.filter;renderJobs();}};
 $('new-task').onclick=()=>{$('brief-form').reset();$('brief-dialog').showModal();};
@@ -71,7 +81,7 @@ $('brief-form').onsubmit=async e=>{e.preventDefault();const button=e.target.quer
   try{const result=await api('/api/jobs',{provider:$('brief-provider').value,prompt:$('brief-prompt').value});selected=result.job.id;filter='all';$('brief-dialog').close();await refreshJobs(true);toast('已保存制作请求，尚未提交生成');}
   catch(error){toast(error.message);}finally{button.disabled=false;}
 };
-$('help').onclick=()=>{$('dialog-body').innerHTML='<ul><li>看板读取当前游戏目录，点击刷新发现新增资产。</li><li>标签来自 Art Direction；检查美术清单可查找漏登、缺少归属和版本变化。</li><li>在制作任务中核对需求、确认请求和查看结果；确认后由助手执行。</li><li>Windows 可加密保存服务密钥；其他系统使用环境变量。保存配置不会启动任务。</li><li>可预览的图片、粒子配置和音频波形支持拖动与缩放。GLB/glTF、OBJ 支持旋转、缩放与平移；引擎模型需先关联导出的 GLB。</li></ul>';$('info-dialog').showModal();};
+$('help').onclick=()=>{$('dialog-body').innerHTML='<ul><li>看板读取当前游戏目录，点击刷新发现新增资产。</li><li>标签来自 Art Direction；检查美术清单可查找漏登、缺少归属和版本变化。</li><li>在制作任务中核对需求、确认请求和查看结果；确认后由助手执行。</li><li>Windows 可加密保存服务密钥；其他系统使用环境变量。保存配置不会启动任务。</li><li>可预览的图片、粒子配置和音频波形支持拖动与缩放。GLB/glTF、FBX、OBJ 支持旋转、缩放与平移；引擎角色关联导出预览后可切换已绑定动作。</li></ul>';$('info-dialog').showModal();};
 window.addEventListener('hashchange',()=>setView(location.hash.slice(1),false));
 window.addEventListener('workbench:assets-ready',()=>{document.title=getLibraryData().project+' · 项目工作台';});
 setInterval(()=>{if(view==='tasks'&&!document.hidden)refreshJobs();},4000);

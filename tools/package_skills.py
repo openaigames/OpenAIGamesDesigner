@@ -26,20 +26,23 @@ def package(destination):
     runtime = destination / "game-preproduction/runtime"
     for folder in ("templates", "workflows", "adapters", "schemas"):
         shutil.copytree(source / folder, runtime / folder, ignore=ignore)
-    for name in ("LICENSE", "THIRD_PARTY_NOTICES.md"):
+    for name in ("LICENSE", "THIRD_PARTY_NOTICES.md", "RELEASE_NOTES.md"):
         shutil.copy2(source / name, runtime / name)
+    shutil.copy2(source / 'VERSION', runtime / 'VERSION')
     shutil.copytree(source / "licenses", runtime / "licenses")
     (runtime / "tools").mkdir()
-    for name in ("game_workflow.py", "engine_setup.py", "engine_workflow.py", "asset_workflow.py", "asset_library.py", "settings_server.py", "project_workbench.py", "asset_audit.py", "numeric_workflow.py", "validate_records.py", "check_installation.py"):
+    for name in ("game_workflow.py", "engine_setup.py", "engine_workflow.py", "asset_workflow.py", "asset_library.py", "settings_server.py", "project_workbench.py", "asset_audit.py", "numeric_workflow.py", "validate_records.py", "check_installation.py", "record_io.py", "record_evidence.py", "task_state.py", "content_roots.py", "observation.py", "project_links.py", "asset_fit.py", "engine_characters.py"):
         shutil.copy2(source / "tools" / name, runtime / "tools" / name)
     shutil.copytree(source / 'tools/settings-ui', runtime / 'tools/settings-ui')
+    shutil.copy2(source / 'tools/numeric_models.py',runtime / 'tools/numeric_models.py')
     shutil.copytree(source / 'tools/workbench', runtime / 'tools/workbench', ignore=ignore)
     shutil.copy2(source / "tools/README.md", runtime / "tools/README.md")
     (runtime / "tests").mkdir()
     shutil.copy2(source / "tests/README.md", runtime / "tests/README.md")
+    shutil.copytree(source / 'tests/fixtures',runtime / 'tests/fixtures',ignore=ignore)
     files = {p.relative_to(destination).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
              for p in sorted(destination.rglob('*')) if p.is_file()}
-    (destination / MANIFEST).write_text(json.dumps({'version':1,'bundle_id':bundle_id(files),'files':files},
+    (destination / MANIFEST).write_text(json.dumps({'version':1,'toolkit_version':(source/'VERSION').read_text('utf-8').strip(),'bundle_id':bundle_id(files),'files':files},
                                                  ensure_ascii=False,indent=2),encoding='utf-8')
     return destination
 

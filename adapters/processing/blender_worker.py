@@ -16,19 +16,23 @@ def import_source(bpy, source):
     before = set(bpy.data.objects)
     suffix = source.suffix.lower()
     if suffix in {".glb", ".gltf"}:
-        bpy.ops.import_scene.gltf(filepath=str(source))
+        # Editor-only bone display meshes must not become conversion output or statistics.
+        options = {"disable_bone_shape": True} if "disable_bone_shape" in bpy.ops.import_scene.gltf.get_rna_type().properties else {}
+        bpy.ops.import_scene.gltf(filepath=str(source), **options)
     elif suffix == ".fbx":
         bpy.ops.import_scene.fbx(filepath=str(source))
     else:
         bpy.ops.wm.obj_import(filepath=str(source))
     objects = [obj for obj in bpy.data.objects if obj not in before]
-    if not any(obj.type == "MESH" for obj in objects):
-        raise ValueError("Imported source has no mesh")
+    if not any(obj.type in {"MESH", "ARMATURE"} or obj.animation_data for obj in objects):
+        raise ValueError("Imported source has no supported mesh, rig or animation")
     return objects
 
 
 def require_static(objects):
     """Refuse destructive processing of rigs, animated objects or shape keys."""
+    if not any(obj.type == "MESH" for obj in objects):
+        raise ValueError("Assembly/optimization requires a mesh")
     for obj in objects:
         if obj.type not in {"MESH", "EMPTY"} or obj.animation_data:
             raise ValueError("Assembly/optimization currently requires static meshes and empty nodes")

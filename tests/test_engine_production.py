@@ -23,6 +23,11 @@ class ProductionContracts(unittest.TestCase):
                 with self.subTest(path=path.name, engine=engine):
                     production_driver(engine).validate_request(json.loads(path.read_text()))
 
+    def test_public_native_fixture_recipes_match_unreal_contract(self):
+        for path in (ROOT/'tests/fixtures/unreal-observation/requests').glob('*.json'):
+            with self.subTest(path=path.name):
+                production_driver('unreal').validate_request(json.loads(path.read_text('utf-8')))
+
     def setUp(self):
         temp=tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)

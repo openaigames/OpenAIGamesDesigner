@@ -7,6 +7,11 @@ import re
 import time
 import traceback
 import unreal
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+from observation_worker import Observer, actor_detail
+import native_data
+import character_export
 
 
 def save_json(path, data):
@@ -67,7 +72,7 @@ def properties(obj, values):
 def find_actor(name, world=None):
     actors = (unreal.GameplayStatics.get_all_actors_of_class(world, unreal.Actor) if world
               else unreal.get_editor_subsystem(unreal.EditorActorSubsystem).get_all_level_actors())
-    matches = [a for a in actors if a.get_actor_label() == name]
+    matches = [a for a in actors if (a.get_name()==name[5:] if name.startswith('name:') else a.get_path_name()==name[5:] if name.startswith('path:') else a.get_actor_label()==name)]
     if len(matches) != 1:
         raise ValueError('Actor must resolve uniquely: ' + name + ' matches=' + str(len(matches)))
     return matches[0]
@@ -85,6 +90,18 @@ def component(actor, description):
 def apply(op):
     kind = op['op']
     level = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
+    if kind=='native_patch':return native_data.patch(op,asset,package)
+    if kind=='data_asset':
+        path=package(op['path'])
+        if unreal.EditorAssetLibrary.does_asset_exist(path):raise ValueError('Native asset exists; use guarded native_patch')
+        target_class=cls(op['class'])
+        if not isinstance(unreal.get_default_object(target_class),unreal.DataAsset):raise ValueError('data_asset requires a native DataAsset class')
+        factory=unreal.DataAssetFactory()
+        factory.set_editor_property('data_asset_class',target_class)
+        parent,name=path.rsplit('/',1)
+        created=unreal.AssetToolsHelpers.get_asset_tools().create_asset(name,parent,target_class,factory)
+        if not created or not unreal.EditorAssetLibrary.save_loaded_asset(created,only_if_is_dirty=False):raise ValueError('Native data asset creation/save failed')
+        return {'op':kind,'path':created.get_path_name(),'class':created.get_class().get_path_name()}
     if kind == 'scene':
         path = package(op['path'])
         if op.get('create'):
@@ -129,6 +146,10 @@ def apply(op):
             location = vector(op.get('position', [0, 0, 0]))
             if isinstance(source, unreal.Blueprint):
                 actor = actors.spawn_actor_from_class(source.generated_class(), location)
+            elif isinstance(source,unreal.StaticMesh):
+                # Actor factories are not consistently registered in commandlets.
+                actor = actors.spawn_actor_from_class(unreal.StaticMeshActor,location)
+                if actor:actor.static_mesh_component.set_static_mesh(source)
             else:
                 actor = (actors.spawn_actor_from_object(source, location) if op.get('source')
                          else actors.spawn_actor_from_class(source, location))
@@ -140,7 +161,8 @@ def apply(op):
         if 'position' in op:
             actor.set_actor_location(vector(op['position']), False, False)
         if 'rotation' in op:
-            actor.set_actor_rotation(unreal.Rotator(*op['rotation']), False)
+            pitch,yaw,roll=op['rotation']
+            actor.set_actor_rotation(unreal.Rotator(pitch=pitch,yaw=yaw,roll=roll), False)
         if 'scale' in op:
             actor.set_actor_scale3d(vector(op['scale']))
         properties(actor, op.get('properties', {}))
@@ -210,9 +232,9 @@ def apply(op):
     return {'op': kind, 'target': op.get('target', op.get('path'))}
 
 
-def inspect_scene():
+def inspect_scene(targets=None):
     output = []
-    for actor in unreal.get_editor_subsystem(unreal.EditorActorSubsystem).get_all_level_actors():
+    for actor in ([find_actor(t) for t in targets] if targets else unreal.get_editor_subsystem(unreal.EditorActorSubsystem).get_all_level_actors()):
         components = []
         for c in actor.get_components_by_class(unreal.ActorComponent):
             detail = {'name': c.get_name(), 'class': c.get_class().get_path_name(), 'references': {}}
@@ -224,7 +246,7 @@ def inspect_scene():
                     pass  # Not every component exposes these optional reference properties.
             components.append(detail)
         transform = actor.get_actor_transform()
-        output.append({'label': actor.get_actor_label(), 'class': actor.get_class().get_path_name(),
+        output.append({'native':actor_detail(actor), 'label': actor.get_actor_label(), 'class': actor.get_class().get_path_name(),
                        'position': [transform.translation.x, transform.translation.y, transform.translation.z],
                        'scale': [transform.scale3d.x, transform.scale3d.y, transform.scale3d.z],
                        'rotation': str(actor.get_actor_rotation()), 'components': components})
@@ -239,6 +261,7 @@ class Playback:
         self.level = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
         self.started = time.monotonic()
         self.first = None
+        self.first_world_time = None
         self.last_world_time = None
         self.deltas = []
         self.step = 0
@@ -247,6 +270,19 @@ class Playback:
         self.finish_at = None
         self.screenshot_tasks = []
         self.busy = False
+        self.observer = Observer(request,find_actor) if request.get('observe') else None
+        self.observation_camera=None
+        self.editor_camera=None
+        if request.get('observation_camera'):
+            spec=request['observation_camera'];pitch,yaw,roll=spec['rotation']
+            self.editor_camera=unreal.get_editor_subsystem(unreal.EditorActorSubsystem).spawn_actor_from_class(
+                unreal.CameraActor,vector(spec['position']),unreal.Rotator(pitch=pitch,yaw=yaw,roll=roll),transient=False)
+            # RF_Transient actors are excluded from PIE world duplication.
+            # This camera exists only in this fresh, unsaved editor world;
+            # destroy it after PIE and never save the author scene.
+            if not self.editor_camera:raise ValueError('Unsaved observation camera creation failed')
+            self.editor_camera.set_actor_label('OAGDObservation_'+request['request_id'])
+            self.editor_camera.get_component_by_class(unreal.CameraComponent).set_field_of_view(spec.get('field_of_view',60))
         unreal.EditorPythonScripting.set_keep_python_script_alive(True)
         self.handle = unreal.register_slate_post_tick_callback(self.tick)
         self.level.editor_request_begin_play()
@@ -255,11 +291,22 @@ class Playback:
         if self.finish_at is not None:
             return
         self.finish_at = time.monotonic()
+        # Completed screenshot wrappers must be released while the editor and
+        # automation modules still exist, not from Python module teardown.
+        self.screenshot_tasks.clear()
+        if self.observer:
+            try:
+                save_json(self.directory/'observation.json',self.observer.capture(self.request['project'],unreal.SystemLibrary.get_engine_version()))
+                save_json(self.directory/'runtime-bindings.json',{'schema_version':1,'scope':'PIE sampled components; unobserved animation availability is unknown','samples':self.observer.bindings})
+                if self.observer.pose_sampler:
+                    save_json(self.directory/'animation-capture.json',self.observer.pose_sampler.capture(unreal.SystemLibrary.get_engine_version()))
+            except Exception:
+                error = (error or '')+'\nObservation export failed: '+traceback.format_exc()
         self.level.editor_request_end_play()
         ordered = sorted(self.deltas)
         p95 = ordered[math.ceil(len(ordered) * .95) - 1] if ordered else None
         report = {'request_id': self.request['request_id'], 'scope': 'PIE world delta sampled once per observed world time from editor Slate tick; not GPU profiling',
-                  'recording_scope': 'active PIE viewport PNG sequence; includes capture overhead',
+                  'recording_scope': 'active PIE viewport PNG sequence; includes capture overhead' if self.capture else 'No PNG capture; editor/observer sampling overhead remains',
                   'frames': len(ordered), 'actions_completed': self.step, 'captures': self.capture, 'error': error,
                   'mean_ms': sum(ordered)/len(ordered) if ordered else None, 'p95_ms': p95,
                   'max_ms': max(ordered) if ordered else None,
@@ -288,8 +335,17 @@ class Playback:
             if self.finish_at is not None:
                 if time.monotonic() - self.finish_at > 3 and not self.level.is_in_play_in_editor():
                     unreal.unregister_slate_post_tick_callback(self.handle)
+                    self.handle=None
+                    self.observer=None
+                    self.observation_camera=None
+                    if self.editor_camera:
+                        unreal.get_editor_subsystem(unreal.EditorActorSubsystem).destroy_actor(self.editor_camera)
+                        self.editor_camera=None
+                    self.level=None
+                    # ExecutePythonScript's own editor tick requests exit once
+                    # keepalive is false. Do not close the editor recursively
+                    # from inside the Slate callback that is still unwinding.
                     unreal.EditorPythonScripting.set_keep_python_script_alive(False)
-                    unreal.SystemLibrary.quit_editor()
                 return
             world = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
             if not world or not self.level.is_in_play_in_editor():
@@ -298,8 +354,23 @@ class Playback:
                 return
             if self.first is None:
                 self.first = time.monotonic()
-            elapsed = time.monotonic() - self.first
+                if self.request.get('observation_camera'):
+                    self.observation_camera=find_actor('OAGDObservation_'+self.request['request_id'],world)
+                    controller=unreal.GameplayStatics.get_player_controller(world,0)
+                    if not controller:raise ValueError('Observation camera requires actual PIE controller')
+                    controller.set_view_target_with_blend(self.observation_camera,0)
+                    self.result['observation_camera']={'scope':'Temporary unsaved editor camera copied into PIE; destroyed after EndPlay; no package save',**actor_detail(self.observation_camera)}
+                if self.request.get('camera_target'):
+                    controller=unreal.GameplayStatics.get_player_controller(world,0)
+                    if not controller:raise ValueError('Observation camera requires an actual PIE player controller')
+                    controller.set_view_target_with_blend(find_actor(self.request['camera_target'],world),0)
             world_time = unreal.GameplayStatics.get_time_seconds(world)
+            if self.first_world_time is None:self.first_world_time=world_time
+            elapsed = world_time-self.first_world_time
+            wall_elapsed = time.monotonic()-self.first
+            if wall_elapsed>max(90,self.request['seconds']*10):
+                self.finish('PIE game-time progress or capture watchdog timed out')
+                return
             if world_time != self.last_world_time:
                 dt = unreal.GameplayStatics.get_world_delta_seconds(world) * 1000
                 if dt > 0:
@@ -316,16 +387,26 @@ class Playback:
                 else:
                     raise ValueError('Unsupported gameplay action: ' + action['op'])
                 with (self.directory / 'actions.jsonl').open('a', encoding='utf-8') as f:
-                    f.write(json.dumps({'action': action, 'time': elapsed, 'position': str(actor.get_actor_location())}) + '\n')
+                    f.write(json.dumps({'action': action, 'time': elapsed, 'world_time':world_time,'wall_elapsed':wall_elapsed,
+                        'clock':'PIE game seconds since first sample','position': str(actor.get_actor_location())}) + '\n')
                 self.step += 1
+            if self.observer:
+                self.observer.sample(world,world_time)
             pending = any(not t.is_task_done() for t in self.screenshot_tasks)
             if (self.request.get('capture_interval', 0) > 0 and elapsed >= self.next_capture
                     and elapsed < self.request['seconds'] and not pending):
                 filename = str(self.directory / 'frames' / ('frame-%06d.png' % self.capture))
-                task = unreal.AutomationLibrary.take_high_res_screenshot(640, 360, filename)
+                camera=self.observation_camera or (find_actor(self.request['camera_target'],world) if self.request.get('camera_target') else None)
+                if camera and not isinstance(camera,unreal.CameraActor):raise ValueError('camera_target must be a CameraActor for screenshot capture')
+                task = unreal.AutomationLibrary.take_high_res_screenshot(640, 360, filename,camera=camera)
                 if not task or not task.is_valid_task():
                     raise ValueError('Screenshot task could not be started')
                 self.screenshot_tasks.append(task)
+                if self.observer:
+                    self.observer.media.append({'path':str(Path(filename).relative_to(Path(self.request['workspace']))).replace('\\','/'),
+                        'kind':'image','clock':'game','anchors':[[world_time,0]],
+                        'description':'Screenshot requested at world time; completion may be later. No subframe synchronization.',
+                        'audio_coverage':'not_included'})
                 self.capture += 1
                 self.next_capture = elapsed + self.request['capture_interval']
             if elapsed >= self.request['seconds'] and not any(not t.is_task_done() for t in self.screenshot_tasks):
@@ -350,6 +431,8 @@ def main():
         level = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
         if request.get('scene') and not level.load_level(package(request['scene'])):
             raise ValueError('Failed to load requested scene')
+        result['native_data']=[native_data.read(spec,asset) for spec in request.get('native_reads',[])]
+        result['characters']=character_export.collect(request,find_actor)
         if request['mode'] == 'playback':
             if not request.get('scene'):
                 raise ValueError('Playback requires an explicit scene')
@@ -360,7 +443,10 @@ def main():
             raise ValueError('Inspect cannot execute mutations')
         for operation in request.get('operations', []):
             result['completed'].append(apply(operation))
-        if request['mode'] == 'edit':
+        # Asset operations save their own packages. An asset-only commandlet
+        # has an unsaved /Temp world and must not try to save or reload it.
+        scene_changed = any(op['op'] in ('scene','actor','animation') for op in request.get('operations', []))
+        if request['mode'] == 'edit' and scene_changed:
             world = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
             path = world.get_path_name().split('.')[0]
             package(path)
@@ -368,7 +454,7 @@ def main():
                 raise ValueError('Scene save failed')
             if not level.load_level(path):
                 raise ValueError('Saved scene reload failed')
-        result['objects'] = inspect_scene()
+        result['objects'] = inspect_scene(request.get('inspect_targets'))
         result['success'] = True
     except Exception:
         result['error'] = traceback.format_exc()

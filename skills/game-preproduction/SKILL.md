@@ -1,11 +1,13 @@
 ---
 name: game-preproduction
-description: 以项目管理文件协调游戏立项、原型构建、垂直切片和持续开发：澄清需求，维护阶段、决定、任务及 GDD/美术/技术与运行证据的关联；支持已有项目新增与修改。不自动生成看板，不用于一般软件项目管理。
+description: 游戏制作管理：以五阶段任意连续区间组织立项、玩法验证、制作验证、内容制作与最终交付，协调专业任务、依赖、范围和真实证据；支持任意阶段接手及局部修改。不自动生成看板，不用于一般软件项目管理。
 ---
 
 # 游戏项目管理
 
-负责本轮目标、项目阶段、范围、依赖、决定和完成依据，通过 `Project Management.md` 或已有同等入口协调专业文件。保留 game-preproduction 名称兼容现有调用，职责覆盖立项、原型、垂直切片和持续开发。管理记录保存摘要与关联，不复制专业正文。
+负责本轮目标、阶段区间、对象范围、依赖、决定和完成依据，通过 `Project Management.md` 或已有同等入口协调专业文件。保留 game-preproduction 名称兼容现有调用，职责覆盖全部五阶段。管理记录保存摘要与关联，不复制专业正文。
+
+多阶段或需要恢复的任务使用 [阶段区间与任务状态](references/stage-intervals.md)。从任意阶段进入，完成任意连续区间，到约定终点交付；已有有效成果按依赖复用。项目与局部对象可处于不同阶段，单专业小修不强制生成全套文档。用户提问默认是当前任务的沟通，不自动替换目标或结束已授权制作。
 
 ## 开始与关键决定
 
@@ -20,6 +22,8 @@ description: 以项目管理文件协调游戏立项、原型构建、垂直切�
 - **初版资产**：明确白模/现成素材范围、主要模型和关键动作来源，或有效选材委托。只选引擎、要求 Demo 或推迟最终风格不等于接受白模。沿用已有决定，不逐个资源重复确认；方法见 [资产方案](../game-art-direction/references/asset-execution.md)。
 
 待决时只暂停依赖该决定的操作，继续文件、设计、只读环境和其他独立工作。用户已要求实现时推进真实工程，不停在文档；只要求研究、设计或立项时不扩大为制作或发布。
+
+根据本轮主要未知选择需求驱动或素材驱动：可由角色职责找资源，也可先探索可用素材，再据其实际能力形成职责/玩法候选；不把详细策划完成作为搜索或小样检查前提。按 [角色职责与素材适配](../game-art-direction/references/role-asset-fit.md) 记录入口、证据、缺口与采用依据，批量制作/正式接入前关联当前规则。明确目标与已定规则需继承，占位与暂定实现可按委托调整；玩家选择不外推为 Boss 要求。沿用现有授权，只将超出范围的取舍保留待决。
 
 ## 按当前任务读取
 
@@ -39,12 +43,17 @@ description: 以项目管理文件协调游戏立项、原型构建、垂直切�
 | --- | --- | --- |
 | 项目管理 | game-preproduction | Project Management.md |
 | 定位与体验承诺 | game-concept | Game Concept.md |
-| 玩法与规则 | game-design | Game Design Document.md |
-| 表现与资产 | game-art-direction | Art Direction.md |
+| 系统规则与策划总索引 | game-design | Game Design Document.md |
+| 战斗与关卡 | game-combat-design / game-level-design | 各自专业规格，由 GDD 链接 |
+| 视觉方向 | game-art-direction | Art Direction.md |
+| 角色/装备与环境制作 | game-character-art / game-environment-art | 同一资产清单及相应源文件 |
+| 动画制作与连续性 | game-animation-pipeline | 动作规格及实际链路 |
+| 特效、音频、界面 | game-vfx-design / game-audio-design / game-ui-ux | 各自规格、资源及实际消费者 |
+| 骨架/挂点/导入与材质技术 | game-technical-art | 源到引擎的处理与读回 |
 | 技术与工程 | game-technical-design | Technical Design.md |
 | 风险、实验与证据 | game-prototype-validation | Risk & Assumption List.md |
 
-不因六个 Skill 就启动六个 Agent。小改动可由单一专业完成；跨方向时沿同一任务/变更入口追踪“变化 → 消费者 → 修改或复核 → 验证”。授权范围内有依据的关联修改直接完成，新取舍保留待决，无关内容不重写。概览只在定位、体验、受众或支柱改变时更新；资源来源与进度由美术维护，局部变化不重置全项目阶段。
+不因多个 Skill 就启动对应数量的 Agent。小改动可由单一专业完成；跨方向时沿同一任务/变更入口追踪“变化 → 消费者 → 修改或复核 → 验证”。授权范围内有依据的关联修改直接完成，新取舍保留待决，无关内容不重写。概览只在定位、体验、受众或支柱改变时更新；资源来源与进度由美术维护，局部变化不重置全项目阶段。
 
 ## 收尾与接续
 

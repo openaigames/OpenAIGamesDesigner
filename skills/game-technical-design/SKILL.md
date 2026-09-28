@@ -5,6 +5,10 @@ description: 游戏技术设计与工程实施：支持原型/垂直切片构建
 
 # 游戏技术设计
 
+本 Skill 承担游戏程序与技术负责人职责，完成原生玩法/工具/构建实现；骨架、蒙皮、重定向、挂点和材质技术由 `game-technical-art` 提供专业处理，动画姿态/连续性由 `game-animation-pipeline` 负责。程序仍对最终运行组件、附着、状态和事件负责；跨专业沿同一对象查因，不能以技术读回正确代替品质达标。
+
+本轮可以位于五阶段中的任意连续区间，原生工程持续演进。制作任务不能停在创建空工程、配置 CLI 或编译成功；规则、输入、内容与反馈需落实为实际可操作行为，按约定终点完成并记录运行依据。
+
 维护 `Technical Design.md` 或已有技术入口，负责选型、接口与工程实施。读取本轮体验、规则、资产方案和真实工程；局部任务只更新受影响部分。技术限制引出新的体验取舍时提出候选，不静默改写策划。跨方向按 [变更联动](../game-preproduction/references/dependency-and-change-impact.md) 更新同一变更入口；独立安装时沿用项目现有记录，缺少管理 Skill 不阻塞工作。
 
 ## 实施前的关键判断
@@ -24,7 +28,7 @@ description: 游戏技术设计与工程实施：支持原型/垂直切片构建
 | 原型/切片实现、引擎创建、编辑、运行与恢复入口 | [引擎实施](references/engine-execution.md)，再读所选引擎的说明 |
 | 已选网页路线 | [网页实施](references/web-execution.md)：Three.js 3D、Phaser 2D；已有框架沿用，不默认改成网页 |
 | 编辑器自动化 | [MCP 接入](references/mcp-engine-integration.md)：核实宿主工具、工程身份与能力；原生脚本不冒充 MCP |
-| 角色重定向、镜像、武器挂接、披风与步幅 | [角色资产匹配](references/character-animation-production.md)；UE 能力侧另见 [动作接入](references/action-animation-integration.md) |
+| 角色与动作资源绑定 | [动作与动画接入](references/action-animation-integration.md) |
 | 关卡、移动、交互与 UI 状态落实 | [玩法接口](references/gameplay-interface-contracts.md) |
 | 字段、配置覆盖、版本与持久化 | [数据配置](references/data-configuration.md) |
 | CSV/Excel 调参回传 | [数值交换](references/numeric-exchange.md)：主源、差异、可恢复写回及运行生效核对 |

@@ -1,0 +1,17 @@
+{
+  "engine": "unreal",
+  "mode": "inspect",
+  "scene": "/Game/ObservationArena",
+  "native_reads": [
+    {
+      "id": "settings",
+      "path": "/Game/ObservationSettings",
+      "read_method": "ExportAuthorData",
+      "properties": [
+        "walk_speed",
+        "windup",
+        "cleanup_delay"
+      ]
+    }
+  ]
+}
