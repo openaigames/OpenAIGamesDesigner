@@ -13,6 +13,8 @@ v0.2.1：十五个职业 Skill、五阶段任务、共享项目看板与真实�
 
 </div>
 
+<br>
+
 ## 从你正在做的事开始
 
 <table>
@@ -37,6 +39,8 @@ v0.2.1：十五个职业 Skill、五阶段任务、共享项目看板与真实�
 </td>
 </tr>
 </table>
+
+<br>
 
 ## 开发流程
 
@@ -65,6 +69,8 @@ v0.2.1：十五个职业 Skill、五阶段任务、共享项目看板与真实�
 </details>
 
 动画资产管线支持已有 UE 动画直接测试，以及按需进行 Blender 制作、武器校准和回传。先验证粗动作与玩法，再打磨代表招式并扩展；详见 [制作顺序与验证分工](skills/game-animation-pipeline/references/production-order.md)。工具包包含脚本与测试场 C++ 源码，不包含角色、动作素材或已编译的 Unreal 插件。
+
+<br>
 
 ## 快速开始
 
@@ -121,6 +127,8 @@ Codex 个人安装：将生成包的完整内容（十五个 Skill 目录和包�
 
 [完整使用说明 →](tools/README.md)
 
+<br>
+
 ## 项目看板
 
 **在同一看板查看阶段任务、角色与动作、空间和运行证据；按需管理资产生成服务。**
@@ -143,6 +151,8 @@ python tools/project_workbench.py --project "游戏项目绝对路径"
 
 [看板启动与命令说明 →](tools/README.md#项目看板与资产核查) · [标签与关联预览说明 →](skills/game-preproduction/references/project-workbench.md)
 
+<br>
+
 ## 游戏资产合集
 
 合集覆盖 2D、3D、动画、VFX、音频、字体与引擎模块，并标注免费与付费情况。以下为部分来源：
@@ -157,6 +167,8 @@ python tools/project_workbench.py --project "游戏项目绝对路径"
 | [Fab](https://www.fab.com/) | 模型、动画、VFX、音频、引擎模块 | 免费与付费均有 |
 
 [查看完整资产合集、收费说明与获取步骤 →](adapters/assets/asset-sources.md)
+
+<br>
 
 ## 引擎与工具
 
@@ -175,6 +187,8 @@ python tools/project_workbench.py --project "游戏项目绝对路径"
 Unity 与 Unreal 分别提供工程创建、场景与组件编辑、资源导入、角色动画配置及自动操作入口，通过会话记录关联检查点和中断恢复。编辑器操作也可使用宿主已有的 MCP，具体支持范围与依赖见各引擎说明。
 
 [引擎接入说明](adapters/README.md) · [资产工具接入](adapters/assets/README.md) · [数值表往返](tools/README.md#数值表往返) · [验证方法](tests/README.md)
+
+<br>
 
 ## 项目文件
 
@@ -242,6 +256,8 @@ MyGame/
 具体资产、来源、许可与交付进度由美术记录或现有资产清单统一维护，概览只保留影响定位的制作策略摘要。
 
 已有项目保留自己的目录和等价文档。游戏资料保存在项目中，Skill 安装目录保存通用方法与工具。
+
+<br>
 
 ## 许可证
 
