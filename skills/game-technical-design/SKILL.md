@@ -24,7 +24,7 @@ description: 游戏技术设计与工程实施：支持原型/垂直切片构建
 | 原型/切片实现、引擎创建、编辑、运行与恢复入口 | [引擎实施](references/engine-execution.md)，再读所选引擎的说明 |
 | 已选网页路线 | [网页实施](references/web-execution.md)：Three.js 3D、Phaser 2D；已有框架沿用，不默认改成网页 |
 | 编辑器自动化 | [MCP 接入](references/mcp-engine-integration.md)：核实宿主工具、工程身份与能力；原生脚本不冒充 MCP |
-| 角色与动作资源绑定 | [动作与动画接入](references/action-animation-integration.md) |
+| 角色重定向、镜像、武器挂接、披风与步幅 | [角色资产匹配](references/character-animation-production.md)；UE 能力侧另见 [动作接入](references/action-animation-integration.md) |
 | 关卡、移动、交互与 UI 状态落实 | [玩法接口](references/gameplay-interface-contracts.md) |
 | 字段、配置覆盖、版本与持久化 | [数据配置](references/data-configuration.md) |
 | CSV/Excel 调参回传 | [数值交换](references/numeric-exchange.md)：主源、差异、可恢复写回及运行生效核对 |
