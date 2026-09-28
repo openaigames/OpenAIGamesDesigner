@@ -6,7 +6,7 @@ from urllib.parse import urlsplit, parse_qs, unquote, quote
 from socketserver import ThreadingMixIn
 import settings_server, asset_workflow
 from adapters.assets import credential_store, generation_approval
-from workbench import asset_browser as browser, art_registry as registry
+from workbench import asset_browser as browser, art_registry as registry, motion_review
 
 WEB=Path(__file__).with_name('workbench')/'web'
 
@@ -32,6 +32,9 @@ class WorkbenchServer(ThreadingMixIn, settings_server.SettingsServer):
             asset['url']=result['assetBase']+quote(asset['path'],safe='/')
             asset['assetRoot']=result['assetBase']
             if asset.get('previewPath'):asset['previewUrl']=result['assetBase']+quote(asset['previewPath'],safe='/')
+            if asset.get('animations'):
+                try:asset['motionFingerprint']=motion_review.source_version(self.project,asset)['fingerprint']
+                except (OSError,ValueError,KeyError,TypeError):pass
         result['artAudit']['document']=registry.document_path(self.project).relative_to(self.project).as_posix()
         return result
 
@@ -74,6 +77,8 @@ class Handler(settings_server.Handler):
             if route=='/api/projects':return self._reply(200,{'projects':[{'key':'current','name':browser.game_name({'root':root,'name':root.name}),'root':str(root)}]})
             if route=='/api/assets':return self._reply(200,self.server.snapshot())
             if route=='/api/art-audit':return self._reply(200,self.server.snapshot()['artAudit'])
+            if route=='/api/motion-review':return self._reply(200,motion_review.snapshot(root))
+            if route=='/api/motion-handoff':return self._reply(200,motion_review.handoff(root))
             if route=='/api/art-source':
                 if query.get('source',['direction'])[0]!='direction':raise ValueError('来源不存在')
                 path=registry.document_path(root)
@@ -132,6 +137,9 @@ class Handler(settings_server.Handler):
         try:
             data=self.body()
             if data.get('project','current')!='current':raise ValueError('项目不存在')
+            if route=='/api/motion-review':
+                with self.server.art_lock:result=motion_review.save(root,data)
+                return self._reply(200,result)
             if route=='/api/jobs':
                 provider=data.get('provider');prompt=data.get('prompt')
                 if provider not in ('tripo','hunyuan3d') or not isinstance(prompt,str) or not 1<=len(prompt.strip())<=1200:raise ValueError('请填写服务与制作需求')
