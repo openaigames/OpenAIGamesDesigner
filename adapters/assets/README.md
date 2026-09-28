@@ -81,7 +81,7 @@ python tools/asset_workflow.py --project "MyGame" retry --job A编号
 
 ## Blender 处理
 
-用同一 submit/run 入口选择 `--provider blender`。请求参数 `{"format":"glb"}` 或 `{"format":"blend"}`；inputs 第一项是 GLB/glTF/FBX/OBJ 主文件。内置脚本后台导入并输出 processed 文件，记录网格数、顶点数。它不进行自动拓扑优化、绑定、烘焙或游戏内验收；需要这类工作时由技术/美术方法规划并扩展处理脚本。该版本脚本面向具有 `bpy.ops.wm.obj_import` 的 Blender，实际版本兼容须联调。
+用同一 submit/run 入口选择 `--provider blender`。默认保持单模型转换；还支持显式静态资产拼合与减面，输出 GLB、可编辑 blend 或两者，以及输入哈希、实际面数和布局报告。参数、坐标约定、能力边界与往返验证见 [Blender 处理配方](../processing/README.md)。不自动处理角色蒙皮、LOD、碰撞、缩图或质量验收。
 
 生成 → 处理 → 工程导入是三个可追踪步骤。每个后续任务使用明确选定的上游文件，资产规格记录来源链和许可；产物登记不替代资产库搜索、缩略图或引擎引用扫描。
 
