@@ -32,7 +32,7 @@ class ProjectContractTests(unittest.TestCase):
         )
 
     def test_active_markdown_links_and_template_references(self):
-        files = [ROOT / name for name in ("README.md", "THIRD_PARTY_NOTICES.md", "licenses/README.md", "RELEASE_NOTES.md", "RELEASE-v0.2.md")]
+        files = [ROOT / name for name in ("README.md", "THIRD_PARTY_NOTICES.md", "licenses/README.md")]
         for folder in ("skills", "workflows", "templates", "tools", "adapters", "tests"):
             files.extend((ROOT / folder).rglob("*.md"))
         missing = local_reference_errors(files)

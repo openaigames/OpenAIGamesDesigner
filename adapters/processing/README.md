@@ -50,4 +50,4 @@
 
 在源码仓库根运行 `python -B -m unittest discover -s tests -p test_blender_recipes.py -v`（完整维护测试不随运行包分发）。没有配置 Blender 时，只验证参数与失败边界；真实往返测试会显示 skipped。设置 `OAGD_BLENDER` 为本机绝对可执行路径后，运行同一命令会用自制临时模型执行拼合、减面、贴图打包、重开两种格式、布局/原件保持、重复运行和形态键保护检查。测试不读取真实游戏素材。
 
-v0.2.1 整合实现的实际往返回归使用 Windows / Blender 4.5.9，见 [版本验证记录](../../tests/validation-v0.2.1.md)。上游静态配方提交 `fe03b386d6bbc8e84360c053278051b5cd4a5dff` 的说明曾报告 Blender 5.2.2 LTS；该历史声明未附原始日志，不作为当前整合提交在该版本上的测试证明。其他版本通过同一入口单独验证。CI 没有 Blender 时不能把 skipped 写成实机通过。测试夹具的几何/依赖检查不构成美术验收；仍需在项目镜头、地形和目标运行环境中审阅实际资产。
+Blender 联调需设置 `OAGD_BLENDER` 为实际可执行文件，再运行 `python tools/run_tests.py`。记录所用 Blender 版本、输入、输出与原始日志；CI 没有 Blender 时不能把 skipped 写成实机通过。测试夹具的几何与依赖检查不构成美术验收，仍需在项目镜头、地形和目标运行环境中审阅实际资产。

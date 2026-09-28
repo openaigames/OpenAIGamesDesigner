@@ -1,6 +1,6 @@
 # 游戏职业 Skill 的场景评估
 
-原七入口场景全部保留；v0.2 的十五职业、五阶段和历史问题回归见 [v0.2 场景](v02-scenarios.md)。
+各入口的职业协作、五阶段任务和历史问题回归见 [阶段与职业验收场景](stage-scenarios.md)。
 
 当前新增的数值职业任务与交接见 [数值策划场景](numerical-design-scenarios.md)。
 

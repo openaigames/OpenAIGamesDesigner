@@ -6,7 +6,7 @@
 
 ## 当前入口与 /1 兼容范围
 
-v0.2 的 `/2` 支持外部制作、原生复用、局部修改、显式骨名/附件、方向和辅助手握持区间，见 [模式和绑定](modes-and-bindings.md)。下列旧攻击样例限制只适用于 `/1`，不可外推到 `/2`。已有 UE 原生动作使用 `/2 native_reuse`，不再通过省略 gate 绕过验收。
+动画协议 `/2` 支持外部制作、原生复用、局部修改、显式骨名/附件、方向和辅助手握持区间，见 [模式和绑定](modes-and-bindings.md)。下列旧攻击样例限制只适用于 `/1`，不可外推到 `/2`。已有 UE 原生动作使用 `/2 native_reuse`，不再通过省略 gate 绕过验收。
 
 当前工程执行统一调用共享会话：`python ue_editor_stage.py --session --project <项目根> --request <实际请求.json> --runtime <工具包根>`。请求沿用 `engine_workflow.py` 的 inspect/edit/playback，角色读取、派生预览、绑定检查和连续帧都复用同一生命周期与回执。独立安装 Skill 时，可明确指定已有的共享运行时；不要求启动其他职业或新建审批。
 

@@ -25,7 +25,7 @@ def check(root):
             raise ValueError('Manifest path escapes installation: ' + relative)
         if not path.is_file(): missing.append(relative)
         elif hashlib.sha256(path.read_bytes()).hexdigest() != expected: changed.append(relative)
-    return {'bundle_id': manifest['bundle_id'], 'toolkit_version':manifest.get('toolkit_version','unversioned'), 'files_checked':len(files), 'missing':missing, 'changed':changed}
+    return {'bundle_id': manifest['bundle_id'], 'files_checked':len(files), 'missing':missing, 'changed':changed}
 
 
 def main():

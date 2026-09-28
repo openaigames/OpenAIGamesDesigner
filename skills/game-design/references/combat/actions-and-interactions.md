@@ -1,6 +1,6 @@
 # 专业参考迁移索引
 
-v0.2 起，本方法的唯一维护源为 [动作、技能与交互规则](../../../game-combat-design/references/combat/actions-and-interactions.md)。本文件保留旧入口兼容，不维护第二份正文。
+本方法的唯一维护源为 [动作、技能与交互规则](../../../game-combat-design/references/combat/actions-and-interactions.md)。本文件保留旧入口兼容，不维护第二份正文。
 
 <a id="动作技能与交互规则"></a>
 - [动作、技能与交互规则](../../../game-combat-design/references/combat/actions-and-interactions.md#动作技能与交互规则)

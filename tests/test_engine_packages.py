@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
@@ -16,6 +17,32 @@ from document_links import local_reference_errors
 
 
 class EnginePackageTests(unittest.TestCase):
+    def test_public_source_packages_without_local_release_records(self):
+        with tempfile.TemporaryDirectory() as temp:
+            source=Path(temp)/'source'
+            source.mkdir()
+            for name in ('skills','templates','workflows','adapters','schemas','tools','tests','licenses'):
+                shutil.copytree(ROOT/name,source/name,ignore=shutil.ignore_patterns(
+                    '__pycache__','*.pyc','runtime','dist','evidence','validation-v*.md'))
+            for name in ('LICENSE','THIRD_PARTY_NOTICES.md'):
+                shutil.copy2(ROOT/name,source/name)
+            with patch.object(package_skills,'__file__',str(source/'tools/package_skills.py')):
+                bundle=package_skills.package(Path(temp)/'public-bundle')
+                # Local review notes must never change the distributable output.
+                (source/'VERSION').write_text('private-review-version',encoding='utf-8')
+                (source/'RELEASE_NOTES.md').write_text('private release notes',encoding='utf-8')
+                (source/'RELEASE-archive.md').write_text('private historical notes',encoding='utf-8')
+                (source/'tests/evidence').mkdir()
+                (source/'tests/evidence/internal.txt').write_text('private test receipt',encoding='utf-8')
+                local_bundle=package_skills.package(Path(temp)/'local-bundle')
+            public=json.loads((bundle/check_installation.MANIFEST).read_text(encoding='utf-8'))
+            local=json.loads((local_bundle/check_installation.MANIFEST).read_text(encoding='utf-8'))
+            self.assertEqual(public,local)
+            self.assertNotIn('toolkit_version',public)
+            report=check_installation.check(bundle)
+            self.assertEqual(report['missing'],[])
+            self.assertEqual(report['changed'],[])
+
     def test_complete_fresh_install_and_packaged_documentation(self):
         with tempfile.TemporaryDirectory() as temp:
             bundle = package_skills.package(Path(temp) / 'bundle')

@@ -1,6 +1,6 @@
 # 专业参考迁移索引
 
-v0.2 起，本方法的唯一维护源为 [敌人、Boss 与遭遇设计](../../../game-combat-design/references/combat/enemies-and-encounters.md)。本文件保留旧入口兼容，不维护第二份正文。
+本方法的唯一维护源为 [敌人、Boss 与遭遇设计](../../../game-combat-design/references/combat/enemies-and-encounters.md)。本文件保留旧入口兼容，不维护第二份正文。
 
 <a id="敌人boss-与遭遇设计"></a>
 - [敌人、Boss 与遭遇设计](../../../game-combat-design/references/combat/enemies-and-encounters.md#敌人boss-与遭遇设计)

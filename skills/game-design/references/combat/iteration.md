@@ -1,6 +1,6 @@
 # 专业参考迁移索引
 
-v0.2 起，本方法的唯一维护源为 [战斗诊断、调试与迭代](../../../game-combat-design/references/combat/iteration.md)。本文件保留旧入口兼容，不维护第二份正文。
+本方法的唯一维护源为 [战斗诊断、调试与迭代](../../../game-combat-design/references/combat/iteration.md)。本文件保留旧入口兼容，不维护第二份正文。
 
 <a id="战斗诊断调试与迭代"></a>
 - [战斗诊断、调试与迭代](../../../game-combat-design/references/combat/iteration.md#战斗诊断调试与迭代)

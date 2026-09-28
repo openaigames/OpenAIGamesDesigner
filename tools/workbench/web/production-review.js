@@ -25,7 +25,7 @@ export function createProductionReview({escape:esc,toast}){
   try{
    snapshot=await api('/api/production');
    if(view==='production'){
-    const runtime=await api('/api/runtime');$('production-runtime').textContent=`工具包 ${runtime.started.version} · ${runtime.started.distribution==='source'?'源码运行':'已分发版本'}${runtime.restart_required?' · 文件已更新，请重启看板服务':''} · ${snapshot.layout.reason}`;
+    const runtime=await api('/api/runtime');$('production-runtime').textContent=`${runtime.started.distribution==='source'?'源码运行':'安装包运行'}${runtime.restart_required?' · 文件已更新，请重启看板服务':''} · ${snapshot.layout.reason}`;
     renderTasks();if(taskId)await loadTask(taskId);renderStandards();renderModels();
    }else{
     const options=snapshot.observations.map(o=>option(o.id,`${o.id} · ${title[o.status]} · ${o.context.engine}`)).join('');

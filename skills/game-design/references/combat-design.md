@@ -1,6 +1,6 @@
 # 专业参考迁移索引
 
-v0.2 起，本方法的唯一维护源为 [战斗系统设计：入口与使用方法](../../game-combat-design/references/combat-design.md)。本文件保留旧入口兼容，不维护第二份正文。
+本方法的唯一维护源为 [战斗系统设计：入口与使用方法](../../game-combat-design/references/combat-design.md)。本文件保留旧入口兼容，不维护第二份正文。
 
 <a id="战斗系统设计入口与使用方法"></a>
 - [战斗系统设计：入口与使用方法](../../game-combat-design/references/combat-design.md#战斗系统设计入口与使用方法)

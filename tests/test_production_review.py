@@ -1,10 +1,38 @@
 """Board/CLI consistency, optimistic updates and evidence media boundaries."""
 import json
+from pathlib import Path
+import tempfile
 import unittest
+from unittest.mock import patch
 import test_project_workbench as base
 from test_observation import capture
 import observation
 import task_state
+
+
+class RuntimeIdentityTests(unittest.TestCase):
+    def test_content_change_is_detected_without_reading_local_release_notes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)
+            (root/'tools/workbench').mkdir(parents=True)
+            entry=root/'tools/workbench/production_review.py'
+            entry.write_text('# original code',encoding='utf-8')
+            with patch.object(base.wb.production_review,'__file__',str(entry)):
+                initial=base.wb.production_review.diagnostics()
+                (root/'VERSION').write_text('local-only',encoding='utf-8')
+                (root/'RELEASE_NOTES.md').write_text('private notes',encoding='utf-8')
+                self.assertEqual(initial,base.wb.production_review.diagnostics())
+                entry.write_text('# updated code',encoding='utf-8')
+                changed=base.wb.production_review.diagnostics()
+                self.assertNotEqual(initial['version'],changed['version'])
+                self.assertNotEqual(initial['files'],changed['files'])
+                # Existing manifests stay readable, without exposing internal labels.
+                (root/'bundle-manifest.json').write_text(json.dumps(
+                    {'bundle_id':'a'*64,'toolkit_version':'local-only'}),encoding='utf-8')
+                installed=base.wb.production_review.diagnostics()
+                self.assertEqual(installed['distribution'],'installed-bundle')
+                self.assertEqual(installed['bundle_id'],'a'*64)
+                self.assertNotIn('local-only',json.dumps(installed))
 
 
 class ProductionReviewTests(unittest.TestCase):
@@ -66,7 +94,8 @@ class ProductionReviewTests(unittest.TestCase):
         self.assertEqual(self.request('/api/production')[0],200)
         self.assertFalse((self.root/'production').exists())
         runtime=self.request('/api/runtime')[2]
-        self.assertEqual(runtime['started']['version'],(base.ROOT/'VERSION').read_text().strip())
+        self.assertRegex(runtime['started']['version'],r'^[0-9a-f]{12}$')
+        self.assertEqual(runtime['started']['files'],runtime['current']['files'])
         self.assertFalse(runtime['restart_required'])
 
     def test_note_links_to_actual_scoped_issue_and_retains_evidence(self):

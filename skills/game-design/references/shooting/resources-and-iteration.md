@@ -1,6 +1,6 @@
 # 专业参考迁移索引
 
-v0.2 起，本方法的唯一维护源为 [射击资源、节奏与诊断](../../../game-combat-design/references/shooting/resources-and-iteration.md)。本文件保留旧入口兼容，不维护第二份正文。
+本方法的唯一维护源为 [射击资源、节奏与诊断](../../../game-combat-design/references/shooting/resources-and-iteration.md)。本文件保留旧入口兼容，不维护第二份正文。
 
 <a id="射击资源节奏与诊断"></a>
 - [射击资源、节奏与诊断](../../../game-combat-design/references/shooting/resources-and-iteration.md#射击资源节奏与诊断)

@@ -1,6 +1,6 @@
 # 专业参考迁移索引
 
-v0.2 起，本方法的唯一维护源为 [状态、恢复与灰盒验证](../../../game-level-design/references/level-design/state-and-blockout.md)。本文件保留旧入口兼容，不维护第二份正文。
+本方法的唯一维护源为 [状态、恢复与灰盒验证](../../../game-level-design/references/level-design/state-and-blockout.md)。本文件保留旧入口兼容，不维护第二份正文。
 
 <a id="状态恢复与灰盒验证"></a>
 - [状态、恢复与灰盒验证](../../../game-level-design/references/level-design/state-and-blockout.md#状态恢复与灰盒验证)

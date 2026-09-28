@@ -1,6 +1,6 @@
 # 专业参考迁移索引
 
-v0.2 起，本方法的唯一维护源为 [环境表现与关卡可读性](../../game-environment-art/references/environment-readability.md)。本文件保留旧入口兼容，不维护第二份正文。
+本方法的唯一维护源为 [环境表现与关卡可读性](../../game-environment-art/references/environment-readability.md)。本文件保留旧入口兼容，不维护第二份正文。
 
 <a id="环境表现与关卡可读性"></a>
 - [环境表现与关卡可读性](../../game-environment-art/references/environment-readability.md#环境表现与关卡可读性)

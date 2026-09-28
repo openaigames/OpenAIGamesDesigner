@@ -7,21 +7,22 @@ import content_roots
 import project_links
 import record_evidence
 import numeric_models
+from check_installation import bundle_id
 from record_io import local,identifier,read_json,write_json,now,digest,changed_files,snapshot_files
 
 
 def diagnostics():
     runtime=Path(__file__).resolve().parents[2]
-    version=runtime/'VERSION'
     tracked=[p for folder in ('tools','adapters','workflows','schemas') for p in (runtime/folder).rglob('*')
         if p.is_file() and p.suffix in {'.py','.gd','.js','.css','.html','.json'}
         and not set(p.parts)&{'__pycache__','vendor','node_modules'}]
-    result={'version':version.read_text('utf-8').strip() if version.is_file() else 'unversioned',
-            'runtime':str(runtime),'files':{str(p.relative_to(runtime)):digest(p) for p in tracked if p.is_file()},'distribution':'source'}
+    files={p.relative_to(runtime).as_posix():digest(p) for p in tracked if p.is_file()}
+    result={'version':bundle_id(files)[:12],
+            'runtime':str(runtime),'files':files,'distribution':'source'}
     manifest=runtime/'bundle-manifest.json'
     if manifest.is_file():
         data=read_json(manifest)
-        result.update(distribution='installed-bundle',bundle_id=data.get('bundle_id'),bundle_version=data.get('toolkit_version','unversioned'))
+        result.update(distribution='installed-bundle',bundle_id=data.get('bundle_id'))
     return result
 
 

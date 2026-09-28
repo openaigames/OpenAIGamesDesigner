@@ -1,6 +1,6 @@
 # 专业参考迁移索引
 
-v0.2 起，本方法的唯一维护源为 [操作、信息与战斗空间](../../../game-combat-design/references/combat/controls-and-space.md)。本文件保留旧入口兼容，不维护第二份正文。
+本方法的唯一维护源为 [操作、信息与战斗空间](../../../game-combat-design/references/combat/controls-and-space.md)。本文件保留旧入口兼容，不维护第二份正文。
 
 <a id="操作信息与战斗空间"></a>
 - [操作、信息与战斗空间](../../../game-combat-design/references/combat/controls-and-space.md#操作信息与战斗空间)

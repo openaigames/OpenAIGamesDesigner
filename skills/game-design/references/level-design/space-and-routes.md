@@ -1,6 +1,6 @@
 # 专业参考迁移索引
 
-v0.2 起，本方法的唯一维护源为 [从体验目标到空间与路线](../../../game-level-design/references/level-design/space-and-routes.md)。本文件保留旧入口兼容，不维护第二份正文。
+本方法的唯一维护源为 [从体验目标到空间与路线](../../../game-level-design/references/level-design/space-and-routes.md)。本文件保留旧入口兼容，不维护第二份正文。
 
 <a id="从体验目标到空间与路线"></a>
 - [从体验目标到空间与路线](../../../game-level-design/references/level-design/space-and-routes.md#从体验目标到空间与路线)

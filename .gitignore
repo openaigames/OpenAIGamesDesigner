@@ -13,3 +13,11 @@ dist/
 
 # Local prototypes and trial assets are kept outside release sources.
 /prototypes/
+
+# Maintainer release notes and review receipts stay local.
+/VERSION
+/RELEASE*.md
+/CHANGELOG*.md
+/.local-review/
+/tests/validation-v*.md
+/tests/evidence/

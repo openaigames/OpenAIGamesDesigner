@@ -1,6 +1,6 @@
 # 专业参考迁移索引
 
-v0.2 起，本方法的唯一维护源为 [武器、技能组合与成长](../../../game-combat-design/references/combat/loadouts-and-progression.md)。本文件保留旧入口兼容，不维护第二份正文。
+本方法的唯一维护源为 [武器、技能组合与成长](../../../game-combat-design/references/combat/loadouts-and-progression.md)。本文件保留旧入口兼容，不维护第二份正文。
 
 <a id="武器技能组合与成长"></a>
 - [武器、技能组合与成长](../../../game-combat-design/references/combat/loadouts-and-progression.md#武器技能组合与成长)
