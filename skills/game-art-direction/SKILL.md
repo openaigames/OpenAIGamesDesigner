@@ -31,7 +31,7 @@ description: 将游戏体验目标转成美术方向与制作规则；制作主�
 | 生成或处理后的素材检查 | [素材质检](references/generated-asset-review.md) |
 | 环境、灰盒转美术与路线线索 | [环境可读性](references/environment-readability.md) |
 | 移动交互动画、UI 动效与状态表现 | [动作与界面交接](references/animation-and-ui-feedback.md) |
-| 战斗动画、命中反馈与技能表现 | [战斗表现交接](references/combat-presentation.md) |
+| 战斗动画、命中反馈与技能表现 | [战斗表现交接](references/combat-presentation.md)、[特效/音效/运镜配方](references/combat-effects-recipes.md) |
 
 按本轮问题选读，不把所有类型的生产要求套到一项素材上。表现服务玩家行动与判断，不独立决定玩法成功或世界状态。已授权制作、处理或获取时按资产执行方法继续到真实产物，不只写方向或列网站。
 
