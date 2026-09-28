@@ -10,7 +10,7 @@ from record_io import identifier, local, now, read_json, write_json, project_loc
 import record_evidence
 
 CATALOG = Path(__file__).resolve().parents[1] / 'workflows/stages.json'
-PROFESSIONS = {'game-preproduction', 'game-concept', 'game-design', 'game-combat-design',
+PROFESSIONS = {'game-preproduction', 'game-concept', 'game-design', 'game-numerical-design', 'game-combat-design',
                'game-level-design', 'game-art-direction', 'game-character-art', 'game-environment-art',
                'game-animation-pipeline', 'game-vfx-design', 'game-audio-design', 'game-ui-ux',
                'game-technical-art', 'game-technical-design', 'game-prototype-validation'}

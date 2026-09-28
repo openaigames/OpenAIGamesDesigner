@@ -1,6 +1,6 @@
 # 数值交换与工程接入
 
-用于策划/用户编辑表格后把已授权的改动带回真实工程。字段、单位、覆盖顺序与状态生命周期沿用 [数据配置](data-configuration.md)；策划表制作方式见 [数值创作](../../game-design/references/numeric-authoring.md)。
+用于策划/用户编辑表格后把已授权的改动带回真实工程。字段、单位、覆盖顺序与状态生命周期沿用 [数据配置](data-configuration.md)；策划表制作方式见 [数值创作](../../game-numerical-design/references/numeric-authoring.md)。
 
 ## 确认来源与消费者
 

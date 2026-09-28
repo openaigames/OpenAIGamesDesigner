@@ -7,7 +7,7 @@
 AI 游戏开发工具包：涵盖游戏设计、美术、工程实施与验证，
 从任一开发阶段进入，在约定连续区间内完成设计、制作、验证与交付。
 
-v0.2.1：十五个职业 Skill、五阶段任务、共享项目看板与真实运行证据，新增按角色与版本保存的动作取舍和 Blender 静态加工。参见 [本次更新](RELEASE_NOTES.md) 与 [v0.2 基础能力](RELEASE-v0.2.md)。
+v0.2.1：十六个职业 Skill（新增数值策划）、五阶段任务、共享项目看板与真实运行证据，新增按角色与版本保存的动作取舍和 Blender 静态加工。参见 [本次更新](RELEASE_NOTES.md) 与 [v0.2 基础能力](RELEASE-v0.2.md)。
 
 [快速开始](#快速开始) · [开发流程](#开发流程) · [项目看板](#项目看板) · [游戏资产合集](#游戏资产合集) · [引擎与工具](#引擎与工具) · [项目文件](#项目文件)
 
@@ -64,7 +64,7 @@ v0.2.1：十五个职业 Skill、五阶段任务、共享项目看板与真实�
 | 选择开发区间与检查出口 | [五阶段定义](workflows/development-stages.md) · [阶段任务执行](workflows/stage-execution.md) |
 | 从代表样例扩展到完整体验 | [内容制作](workflows/content-production.md) |
 
-职业入口：[制作管理](skills/game-preproduction/SKILL.md) · [创意与定位](skills/game-concept/SKILL.md) · [系统策划](skills/game-design/SKILL.md) · [战斗策划](skills/game-combat-design/SKILL.md) · [关卡策划](skills/game-level-design/SKILL.md) · [美术指导](skills/game-art-direction/SKILL.md) · [角色美术](skills/game-character-art/SKILL.md) · [场景美术](skills/game-environment-art/SKILL.md) · [动画](skills/game-animation-pipeline/SKILL.md) · [特效](skills/game-vfx-design/SKILL.md) · [音频](skills/game-audio-design/SKILL.md) · [UI/UX](skills/game-ui-ux/SKILL.md) · [技术美术](skills/game-technical-art/SKILL.md) · [技术与工程](skills/game-technical-design/SKILL.md) · [验证](skills/game-prototype-validation/SKILL.md)。每项可独立调用，按实际任务组合；不要求十五个代理或十五份根文档。
+职业入口：[制作管理](skills/game-preproduction/SKILL.md) · [创意与定位](skills/game-concept/SKILL.md) · [系统策划](skills/game-design/SKILL.md) · [数值策划](skills/game-numerical-design/SKILL.md) · [战斗策划](skills/game-combat-design/SKILL.md) · [关卡策划](skills/game-level-design/SKILL.md) · [美术指导](skills/game-art-direction/SKILL.md) · [角色美术](skills/game-character-art/SKILL.md) · [场景美术](skills/game-environment-art/SKILL.md) · [动画](skills/game-animation-pipeline/SKILL.md) · [特效](skills/game-vfx-design/SKILL.md) · [音频](skills/game-audio-design/SKILL.md) · [UI/UX](skills/game-ui-ux/SKILL.md) · [技术美术](skills/game-technical-art/SKILL.md) · [技术与工程](skills/game-technical-design/SKILL.md) · [验证](skills/game-prototype-validation/SKILL.md)。每项可独立调用，按实际任务组合；不要求每个职业单独启动代理或建立根文档。
 
 </details>
 
@@ -83,7 +83,7 @@ v0.2.1：十五个职业 Skill、五阶段任务、共享项目看板与真实�
 使用有仓库访问权限的账号获取本仓库，在 Codex 中打开，然后输入：
 
 ```text
-把这个仓库的十五个 Skill 和必要运行资源安装到本机。
+把这个仓库的十六个 Skill 和必要运行资源安装到本机。
 如果已有同名版本，先比较差异并保留我的修改。
 ```
 
@@ -96,7 +96,7 @@ cd OpenAIGamesDesigner
 python tools/package_skills.py --output dist/skills-bundle
 ```
 
-Codex 个人安装：将生成包的完整内容（十五个 Skill 目录和包根目录 `LICENSE`）合入 `~/.agents/skills/`（Windows 默认是 `C:/Users/<用户名>/.agents/skills/`）。仅供某个游戏项目使用时，可放入该项目的 `.agents/skills/`；通常选择一种范围，避免同名副本混淆。保留 `game-preproduction/runtime/` 等全部子文件。首次安装到空目录时复制包内全部内容；更新已有安装时逐文件比较并备份本地修改，保留其他 Skill 和个人文件，不整体替换安装根目录。复制完成后运行下方完整性检查，`missing` 和 `changed` 应为空；有意保留的本地定制需逐项说明。
+Codex 个人安装：将生成包的完整内容（十六个 Skill 目录和包根目录 `LICENSE`）合入 `~/.agents/skills/`（Windows 默认是 `C:/Users/<用户名>/.agents/skills/`）。仅供某个游戏项目使用时，可放入该项目的 `.agents/skills/`；通常选择一种范围，避免同名副本混淆。保留 `game-preproduction/runtime/` 等全部子文件。首次安装到空目录时复制包内全部内容；更新已有安装时逐文件比较并备份本地修改，保留其他 Skill 和个人文件，不整体替换安装根目录。复制完成后运行下方完整性检查，`missing` 和 `changed` 应为空；有意保留的本地定制需逐项说明。
 
 打包目标需为新目录；更新后重新打包并同步安装副本。包内 `game-preproduction/runtime/bundle-manifest.json` 记录内容版本，使用该 runtime 下的 `tools/check_installation.py --skills-root <Skill 安装根目录>` 检查缺失或修改的文件；差异需比较并保留本地定制。分发包不包含引擎、生成模型或游戏资产。
 
@@ -199,7 +199,8 @@ OpenAIGamesDesigner/
 ├── skills/     # AI 专业工作方法与按需参考
 │   ├── game-preproduction/         # 项目管理、阶段推进与变更协调
 │   ├── game-concept/               # 游戏定位、核心体验与设计支柱
-│   ├── game-design/                # 系统规则、成长数值与 GDD 索引
+│   ├── game-design/                # 系统规则、成长经济机制与 GDD 索引
+│   ├── game-numerical-design/      # 公式、曲线、概率、供需与定量平衡
 │   ├── game-combat-design/         # 操作、招式、敌人决策与战斗调校
 │   ├── game-level-design/          # 空间、路线、遭遇与可玩布局
 │   ├── game-art-direction/         # 视觉方向、风格与跨资产一致性

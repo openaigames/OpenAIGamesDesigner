@@ -13,7 +13,7 @@
 | 五阶段区间与接手 | workflows/development-stages.md / stage-execution.md |
 | 内容扩展与完整体验 | workflows/content-production.md |
 
-上述流程只规定输入、交付、依赖与反馈，不绑定引擎或玩法。依据实际问题选择专业参考：系统接口由 game-design 汇总，战斗由 game-combat-design、空间由 game-level-design、美术方向由 game-art-direction 主责；具体资产由各制作职业负责，工程实施由 game-technical-design、独立验证由 game-prototype-validation 负责。原型/切片/修改是一条流程的选择；UE/Godot 与 GAS 是实施方法的选择，不据此新增一套顶层 workflow。
+上述流程只规定输入、交付、依赖与反馈，不绑定引擎或玩法。依据实际问题选择专业参考：系统接口由 game-design 汇总，定量模型与平衡由 game-numerical-design 主责，战斗由 game-combat-design、空间由 game-level-design、美术方向由 game-art-direction 主责；具体资产由各制作职业负责，工程实施由 game-technical-design、独立验证由 game-prototype-validation 负责。原型/切片/修改是一条流程的选择；UE/Godot 与 GAS 是实施方法的选择，不据此新增一套顶层 workflow。
 
 角色动画制作、武器绑定或外部/引擎验证任务按需使用 `game-animation-pipeline` 的 [制作顺序与验证分工](../../game-animation-pipeline/references/production-order.md)：粗动作尽早进入可操作的引擎实验，再用代表招式联调反馈与精修，随后扩展。已有 UE 资源可直接测试。它提供专业方法与适配器，继续沿用原型、切片或资产流程，不新增一套管理文档。独立安装缺少该技能时使用现有专业资料和实际工具，不声明其脚本已可用。
 
@@ -51,7 +51,7 @@
 
 资产生成/处理使用工具包 `adapters/assets/README.md` 和 `tools/asset_workflow.py`；仅本地配置命令和 Blender 处理，不预设云服务。任务保存输入快照、日志和产物，生成成功、登记、导入和质量验收分开。`tools/validate_records.py --project <实际路径> --markdown` 检查 schema 定义的结构化记录及本地引用；它不核实专业结论。分项真实验证顺序见工具包 `tests/README.md`。
 
-数值表雏形、用户调参或表格回传从 game-design 的 `references/numeric-authoring.md` 进入，工程写回使用 game-technical-design 的 `references/numeric-exchange.md`。工具包的 `tools/numeric_workflow.py` 提供绑定 JSON 的 CSV 导出、CSV/XLSX 纯数值读取、差异检查与可恢复写回，命令见 `tools/README.md`；原生引擎数据继续使用项目导入器。具体字段与表格在游戏项目保存，不放进 Skill 或通用执行 schema。该能力按需嵌入原型、切片或功能修改，不新增一条数值专属顶层 workflow。
+数值表雏形、用户调参或表格回传从 game-numerical-design 的 `references/numeric-authoring.md` 进入，工程写回使用 game-technical-design 的 `references/numeric-exchange.md`。工具包的 `tools/numeric_workflow.py` 提供绑定 JSON 的 CSV 导出、CSV/XLSX 纯数值读取、差异检查与可恢复写回，命令见 `tools/README.md`；原生引擎数据继续使用项目导入器。具体字段与表格在游戏项目保存，不放进 Skill 或通用执行 schema。该能力按需嵌入原型、切片或功能修改，不新增一条数值专属顶层 workflow。
 
 主流程：目标/阶段 → 相关专业输入 → 可执行任务 → 工程实现 → 实际运行/观察 → 回写结果与下一步。用户要可运行原型时，不能仅填文档结束；关键规则未定时先完成独立准备，澄清真正阻塞实验的问题。新作调用 init 或直接开始引擎专用制作前，先解析具体引擎或有效选型委托；“Unity / Unreal 工程”仍需细问，本机可用项与 CLI 默认参数不能代替选择。具体规则见技术 Skill 的 `references/engine-execution.md`。工具缺失或运行失败时保留日志和未验证状态。
 

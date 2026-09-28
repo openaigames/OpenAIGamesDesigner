@@ -33,6 +33,20 @@ class ProductionReviewTests(unittest.TestCase):
         (self.root/'capture.json').write_text(json.dumps(data),encoding='utf-8')
         observation.register(self.root,'capture.json','O1')
 
+    def test_board_exposes_numerical_owner_and_persists_plan_to_cli(self):
+        code, _, snapshot = self.request('/api/production')
+        self.assertEqual(code, 200)
+        self.assertIn('game-numerical-design', snapshot['professions'])
+        spec={'id':'N1','goal':'Compare growth costs','start_stage':1,'end_stage':1,
+              'objects':[{'id':'growth','title':'Growth'}],'deliverables':['Model comparison']}
+        self.assertEqual(self.request('/api/production-task',{'action':'create','spec':spec})[0],200)
+        steps=[{'id':'model','stage':1,'owner':'game-numerical-design','objects':['growth'],
+                'description':'Compute cumulative costs','depends_on':[]}]
+        payload={'action':'update','id':'N1','revision':1,'operation':{'action':'plan','steps':steps}}
+        self.assertEqual(self.request('/api/production-task',payload)[0],200)
+        self.assertEqual(task_state.read(self.root,'N1')['steps'][0]['owner'],'game-numerical-design')
+        self.assertEqual(self.request('/api/production-task?id=N1')[0],200)
+
     def test_time_position_notes_and_changed_media_keep_version_identity(self):
         self.register()
         note={'id':'N1','observation':'O1','object':'hero','author':'reviewer','text':'late cleanup',

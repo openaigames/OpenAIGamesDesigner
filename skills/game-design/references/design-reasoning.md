@@ -18,6 +18,7 @@
 | 玩家知道什么、为什么愿意承担不确定性 | [信息、选择与风险](shared/information-and-risk.md) |
 | 结果如何积累、转化、消耗并改变后续选择 | [资源、成长与选择](shared/resources-and-progression.md) |
 | 节奏割裂、体验问题或改动效果怎样分析 | [节奏与迭代](shared/pacing-and-iteration.md) |
+| 成长曲线、收益成本、概率、供需与定量平衡 | [数值策划](../../game-numerical-design/SKILL.md) |
 | 攻防、受击、对抗与敌人应对 | [战斗参考](../../game-combat-design/references/combat-design.md) |
 | 瞄准、发射、轨迹、武器操控或射击反馈 | [射击参考](../../game-combat-design/references/shooting-design.md) |
 | 导航、发现、通行、探索活动与冒险接续 | [探索与冒险参考](exploration-adventure-design.md) |

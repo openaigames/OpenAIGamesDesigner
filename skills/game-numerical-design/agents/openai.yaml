@@ -1,0 +1,4 @@
+interface:
+  display_name: "数值策划"
+  short_description: "建立公式、曲线、概率与供需模型，比较参数收益并对照实际运行调校"
+  default_prompt: "使用 $game-numerical-design 分析这个项目的数值问题，给出模型、候选参数及验证依据。"

@@ -70,6 +70,24 @@ class StageTaskTests(unittest.TestCase):
         with self.assertRaises(FileExistsError): self.create()
         self.assertEqual(tasks.path_for(self.root,'T001').read_bytes(),before)
 
+    def test_numerical_owner_can_plan_in_any_stage_without_changing_scope(self):
+        self.assertEqual(tasks.PROFESSIONS, {p.parent.name for p in (ROOT/'skills').glob('*/SKILL.md')})
+        for stage in range(1, 6):
+            task = tasks.create(self.root, self.spec(stage, stage, id=f'N{stage}'))
+            steps = [{'id':'model','stage':stage,'owner':'game-numerical-design','objects':['hero'],
+                      'description':'Compare model and actual inputs','depends_on':[]}]
+            tasks.update(self.root, task['id'], task['revision'], {'action':'plan','steps':steps})
+            saved = tasks.read(self.root, task['id'])
+            self.assertEqual(saved['steps'][0]['owner'], 'game-numerical-design')
+            self.assertEqual([s['number'] for s in saved['stages']], [stage])
+            self.assertEqual(check_record('task', saved, self.root, tasks.path_for(self.root,task['id'])), [])
+            before = tasks.path_for(self.root,task['id']).read_bytes()
+            steps[0]['owner'] = 'unknown-profession'
+            with self.assertRaises(ValueError):
+                tasks.update(self.root, task['id'], saved['revision'], {'action':'plan','steps':steps})
+            self.assertEqual(tasks.path_for(self.root,task['id']).read_bytes(), before)
+        self.assertFalse((self.root/'game').exists())
+
     def test_single_stage_closes_without_appending_content_production(self):
         self.create()
         self.ready()

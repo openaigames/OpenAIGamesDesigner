@@ -35,7 +35,7 @@ description: 游戏制作管理：以五阶段任意连续区间组织立项、�
 | 跨专业修改、消费者与证据变化 | [依赖与变更影响](references/dependency-and-change-impact.md) |
 | 原型、切片、功能、资产或交付的流程与实际工具 | [制作流程与执行入口](references/production-workflows.md) |
 
-只读当前任务相关参考。数值表与工程回传也沿用当前变更入口，由策划/技术完成，管理链接主源、差异和验证，不默认立项就生成数值表。
+只读当前任务相关参考。数值表与工程回传也沿用当前变更入口，由数值策划与技术协作完成，管理链接主源、差异和验证，不默认立项就生成数值表。
 
 ## 专业分工与联动
 
@@ -44,6 +44,7 @@ description: 游戏制作管理：以五阶段任意连续区间组织立项、�
 | 项目管理 | game-preproduction | Project Management.md |
 | 定位与体验承诺 | game-concept | Game Concept.md |
 | 系统规则与策划总索引 | game-design | Game Design Document.md |
+| 公式、曲线、概率、供需与定量调校 | game-numerical-design | 原功能规格及按需数值模型/表格 |
 | 战斗与关卡 | game-combat-design / game-level-design | 各自专业规格，由 GDD 链接 |
 | 视觉方向 | game-art-direction | Art Direction.md |
 | 角色/装备与环境制作 | game-character-art / game-environment-art | 同一资产清单及相应源文件 |

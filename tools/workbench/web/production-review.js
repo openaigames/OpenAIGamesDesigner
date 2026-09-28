@@ -3,7 +3,7 @@ import {seconds,rawTime,duration,mediaTime,alignedOffset,extrema,camera2DCorners
 const $=id=>document.getElementById(id);
 const lines=value=>value.split('\n').map(x=>x.trim()).filter(Boolean);
 const title={active:'进行中',paused:'已暂停',complete:'记录已完成',cancelled:'已取消',needs_revalidation:'需要重验',pending:'待开展',working:'正在制作',done:'有完成记录',blocked:'有阻碍',current:'当前版本',stale:'历史版本 / 依赖已变'};
-const professional={ 'game-preproduction':'制作管理','game-concept':'创意与定位','game-design':'系统策划','game-combat-design':'战斗策划','game-level-design':'关卡策划','game-art-direction':'美术指导','game-character-art':'角色美术','game-environment-art':'场景美术','game-animation-pipeline':'动画','game-vfx-design':'特效','game-audio-design':'音频','game-ui-ux':'UI/UX','game-technical-art':'技术美术','game-technical-design':'技术与工程','game-prototype-validation':'验证'};
+const professional={ 'game-preproduction':'制作管理','game-concept':'创意与定位','game-design':'系统策划','game-numerical-design':'数值策划','game-combat-design':'战斗策划','game-level-design':'关卡策划','game-art-direction':'美术指导','game-character-art':'角色美术','game-environment-art':'场景美术','game-animation-pipeline':'动画','game-vfx-design':'特效','game-audio-design':'音频','game-ui-ux':'UI/UX','game-technical-art':'技术美术','game-technical-design':'技术与工程','game-prototype-validation':'验证'};
 
 export function createProductionReview({escape:esc,toast}){
  let snapshot=null,taskId='',taskDetail=null,observation=null,reference=null,clock='game',now=0,offset=null,referenceClock='',projection='xy',selectedObject='',spatialAnchor=null,zoom=1,pan=[0,0],lastMap=null,requestVersion=0,referenceVersion=0;

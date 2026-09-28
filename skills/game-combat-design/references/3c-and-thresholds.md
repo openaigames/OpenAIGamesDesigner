@@ -33,3 +33,5 @@
 震动由招式实际释放/落点或确认命中事件触发，具体语义写清；不要因动画每帧处于下砸阶段而重复重启。提供强度/关闭选项，优先保持预警、UI 和玩家控制可读。
 
 临时接管、状态保存和所有退出路径的恢复交给 [程序接口](../../game-technical-design/references/gameplay-interface-contracts.md)。
+
+通用曲线/离散断点方法见 [数值策划](../../game-numerical-design/references/curves-and-thresholds.md)；此处的射击与空间算例保留作为 3C 联调情境。

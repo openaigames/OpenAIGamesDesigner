@@ -13,7 +13,7 @@ class ProjectContractTests(unittest.TestCase):
     def test_agreed_public_structure(self):
         self.assertEqual(
             {p.parent.name for p in (ROOT / "skills").glob("*/SKILL.md")},
-            {"game-preproduction", "game-concept", "game-design", "game-art-direction",
+            {"game-preproduction", "game-concept", "game-design", "game-numerical-design", "game-art-direction",
              "game-technical-design", "game-prototype-validation", "game-animation-pipeline",
              "game-combat-design", "game-level-design", "game-technical-art", "game-character-art",
              "game-environment-art", "game-vfx-design", "game-audio-design", "game-ui-ux"},

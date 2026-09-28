@@ -37,3 +37,5 @@
 生命伤害、反应请求与抗性分开，见 [受击与资源](combat/damage-and-resources.md)。Boss 按观察、合法筛选、选择、承诺执行、反应处理，见 [敌人职责](combat/enemies-and-encounters.md)。
 
 确定顿帧冻结的敌我对象及骨骼、位移、窗口、二级运动范围；输入缓存、UI、音频、镜头和无关单位是否继续由项目决定。60 Hz 下 6–10 帧（约 100–167 ms）只是有前提的调参示例，不是默认值。成本和参数仍由原配置维护。实例去重、同时接触结算、时钟及取消恢复交给 [程序运行契约](../../game-technical-design/references/combat-runtime-contracts.md)。
+
+涉及跨武器/构筑的定量比较与敏感性时，与 [数值策划](../../game-numerical-design/references/tuning-and-validation.md) 使用同一参数来源和交战条件。前摇、追踪截止和取消窗口由战斗意图与实际动画共同约束，不因理论 DPS 更好就自行缩短。
