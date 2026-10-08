@@ -1,5 +1,6 @@
 """Local test-scene mailbox. Never launches commands or writes gameplay config."""
 import copy
+from pathlib import Path
 import time
 import uuid
 import record_io
@@ -147,6 +148,8 @@ def _heartbeat(root, data):
 
 
 def frame_path(root, key, run, frame):
+    # location() returns resolved paths, including expanded Windows short names.
+    root = Path(root).resolve()
     edit.identifier(run)
     state = status(root, key)
     actual = state.get('state', {})
@@ -162,6 +165,7 @@ def frame_path(root, key, run, frame):
 
 
 def preserve(root, data):
+    root = Path(root).resolve()
     with record_io.project_lock(root, 'action-preview'):
         return _preserve(root, data)
 

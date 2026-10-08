@@ -64,14 +64,19 @@ class PreviewTests(unittest.TestCase):
         with self.assertRaises(ValueError):preview.frame_path(self.root,'test',request['run'],'1')
         edit.write(self.base/'status.json',{'instance':'engine1','action':'test','run':request['run'],'applied':True})
         path=self.base/'runs'/request['run']/'frame-1.png';path.write_bytes(b'fixture')
-        self.assertEqual(preview.frame_path(self.root,'test',request['run'],'1'),path)
+        for root in (self.root, self.root/'..'/self.root.name):
+            with self.subTest(root=root):
+                self.assertEqual(preview.frame_path(root,'test',request['run'],'1'),path.resolve())
         with self.assertRaises(ValueError):preview.frame_path(self.root,'test','different','1')
     def test_completed_capture_preserved_once_and_matches_config(self):
         request=preview.command(self.root,self.data());folder=self.base/'runs'/request['run']
         capture={'schema':'action-events/1','engine':'godot','engine_version':'fixture','action':'test','revision':request['sequence_sha256'],'source':'unit fixture','input_mode':'software','input_description':'one replay','clock':'monotonic_seconds','zero_s':0,'duration_s':2,'complete':True,'dropped_events':0,'events':[],'preview_sequence':self.seq}
         edit.write(folder/'capture.json',capture)
-        data={'id':'test','run':request['run']};first=preview.preserve(self.root,data);second=preview.preserve(self.root,data)
-        self.assertEqual(first['id'],second['id'])
+        data={'id':'test','run':request['run']};first=preview.preserve(self.root,data)
+        for root in (self.root, self.root/'..'/self.root.name):
+            with self.subTest(root=root):
+                second=preview.preserve(root,data)
+                self.assertEqual(first['id'],second['id'])
         capture['revision']='wrong';edit.write(folder/'capture.json',capture)
         with self.assertRaises(ValueError):preview.preserve(self.root,data)
     def test_missing_registration_is_not_a_live_capability(self):
