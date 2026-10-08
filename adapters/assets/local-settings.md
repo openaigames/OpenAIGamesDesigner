@@ -24,11 +24,13 @@ python tools/settings_server.py
 
 ## 用户怎么填写
 
-1. 在 Tripo AI 或混元 3D 卡片粘贴对应服务的 API Key。
+1. 在 Tripo AI、混元 3D、ElevenLabs、Seedream 或 Seedance 卡片粘贴对应服务的 API Key。
 2. 点击“保存密钥”，看到“本机已保存”。
 3. 后续直接告诉助手使用哪个服务、生成什么资产；不必把密钥发到聊天中。
 
-混元卡片对应腾讯官方的 **OpenAI 兼容 API Key 接口**，不是 OpenAI 官网密钥。页面自动使用 `mode: api`、`auth: api_key`，用户无需填写这两个字段。SecretId/SecretKey、地域和其他 Hunyuan 托管服务按 [生成 API](generation-api.md) 的项目配置方式使用。
+Seedream 和 Seedance 共用一份 `ARK_API_KEY`，在任一卡片保存一次即可；更新或移除时同时影响两者。使用 [方舟密钥管理](https://ark.volcengine.com/region:cn-beijing/apiKey) 获取密钥，并开通对应模型。详见 [图像与视频生成](ark-generation.md)。
+
+混元卡片从腾讯云 [混元生3D API Key 管理页](https://console.cloud.tencent.com/ai3d/api-key) 获取密钥，对应腾讯官方的 **OpenAI 兼容 API Key 接口**，不是 OpenAI 官网密钥。此控制台网址用于获取密钥；生成与查询分别调用 `https://api.ai3d.cloud.tencent.com/v1/ai3d/submit` 和 `/v1/ai3d/query`，不向控制台页面发送生成请求。页面自动使用 `mode: api`、`auth: api_key`，用户无需填写这两个字段。SecretId/SecretKey、地域和其他 Hunyuan 托管服务按 [生成 API](generation-api.md) 的项目配置方式使用。
 
 页面支持更新、删除及刷新本机配置状态。保存不会向生成平台验证密钥，不会提交任务或消耗生成额度；“已保存”只表示本机成功加密存储。真实服务权限和生成结果通过一项实际任务验证。点击“完成并关闭服务”停止页面服务，或关闭启动终端；闲置 60 分钟也会自动停止。关闭浏览器标签不会立即停止服务。
 
@@ -46,7 +48,7 @@ python tools/settings_server.py --project "MyGame" --approve-job A实际任务�
 
 若已打开页面的勾选框不可用，先看“确认这一次生成”里的具体原因：授权已生效时无需重复确认；缺少凭据或任务不再等待执行时检查对应项；提示无法读写授权记录时检查服务的用户身份与目录权限，再刷新或重启服务。多份确认页的会话各自独立，关闭一份不会注销其他页面。点击确认遇到临时错误后可再次点击；后端仍重新校验同一任务和账户，不会自行提交生成。
 
-授权绑定请求和账户，有效一小时并只可消费一次。没有授权，asset_workflow 的 run 不启动新生成；API worker 在向服务提交之前再次检查并消费授权。修改请求、换密钥或创建重试任务后需要新的确认。已有有效授权直接沿用，查询/下载既有云任务不重新申请生成授权。
+授权绑定请求和账户，有效一小时并只可消费一次。没有授权，asset_workflow 的 run 不启动新生成；API worker 在向服务提交之前再次检查并消费授权。修改请求、换密钥或创建重试任务后需要新的确认。已有有效授权直接沿用，Tripo/Hunyuan/Seedance 查询或下载既有云任务不重新申请生成授权；Seedream 同步图片按 [方舟恢复说明](ark-generation.md#中断下载与验收) 处理；ElevenLabs 返回同步音频，按 [音频恢复说明](elevenlabs-audio.md#产物校准与恢复) 检查已保存原件，不按请求 ID 恢复或自动重发。
 
 Windows 授权凭据同样使用 DPAPI；其他系统继续使用环境变量保存服务密钥，非敏感的单次授权记录保存在用户私有目录。页面及任务检查不提供服务端费用上限；需要预算硬限制时在生成平台设置额度。正常工具入口的授权检查不等于隔离任意本机代码。
 
@@ -58,12 +60,12 @@ Windows 授权凭据同样使用 DPAPI；其他系统继续使用环境变量保
 | --- | --- |
 | 密钥保存位置 | Windows 当前用户的 `%LOCALAPPDATA%/OpenAIGamesDesigner/credentials.dpapi.json` |
 | 保存方式 | Windows DPAPI 用户级加密；不保存明文到项目、工具包或版本库 |
-| 项目服务配置 | 项目 `.openaigame/asset-providers.json` 的对应项优先；没有对应项时，从本机密钥配置得到 Tripo/混元兼容接口默认设置 |
+| 项目服务配置 | 项目 `.openaigame/asset-providers.json` 的对应项优先；没有对应项时，从本机密钥配置得到 Tripo/混元兼容接口/ElevenLabs 默认设置 |
 | 密钥选择 | 显式/默认环境变量优先；默认变量名缺失时读取本机密钥。自定义环境变量名不会回退到其他账户 |
 | 生效时机 | 下一次工具调用立即读取；无需为设置页保存重启助手 |
 | 模型可查看的信息 | 服务是否配置、读取来源、缺失项；页面状态接口和 doctor 不返回密钥原文 |
 
-助手调用 `asset_workflow.py submit --provider tripo` 或 `--provider hunyuan3d` 时仍需明确选择服务，不能根据哪个账户有密钥自行改变用户选定的服务。队列只保存非敏感设置及环境变量名称；实际执行时在本机读取最新密钥。如果任务排队后切换账户，应确认新账户能访问其已有云任务编号。
+助手调用 `asset_workflow.py submit --provider tripo` 、`--provider hunyuan3d` 或 `--provider elevenlabs` 时仍需明确选择服务，不能根据哪个账户有密钥自行改变用户选定的服务。队列只保存非敏感设置及环境变量名称；实际执行时在本机读取最新密钥。如果任务排队后切换账户，应确认新账户能访问其已有云任务编号。
 
 无需项目即可检查本机状态：
 
@@ -80,3 +82,22 @@ python tools/settings_server.py --status
 ## 游戏项目中的统一入口
 
 有游戏项目时优先使用 `python tools/project_workbench.py --project <游戏根> --view services`，或携带 `--approve-job <ID>` 打开制作页核对对应任务。此入口的服务保存与确认复用本文同一套存储和单次授权，任务确认后仍由助手执行，不会自动生成。没有项目时继续使用独立设置页。更多见 [项目看板](../../tools/README.md#项目看板与资产核查)。
+
+## 跟随主机代理
+
+Tripo、混元 3D、ElevenLabs 及统一资产下载入口共用网络层。Windows 会在每次请求时读取当前用户的系统代理，并按目标网址解析 PAC 自动配置脚本或 WPAD 自动检测；也支持系统手动代理和绕过规则。更改系统代理后，下一次请求重新读取，正在进行的传输保持原连接。
+
+显式设置的 `HTTPS_PROXY` / `https_proxy` 优先，其次是 `ALL_PROXY` / `all_proxy`；空值表示直连。`NO_PROXY` / `no_proxy` 中匹配的目标直连，未匹配的目标仍按上述配置或系统设置访问。macOS、Linux 使用环境变量和 Python 能读取的主机代理设置，本工具不额外解析这两个平台的 PAC。
+
+代理连接使用 curl，以支持 HTTP、HTTPS 和 SOCKS 代理及流式音频/模型响应。当前 Windows 自带 curl；其他系统需在 PATH 中提供 curl。系统代理解析失败会报告连接问题，不会悄悄改成直连。没有配置代理时直接连接服务。工具不修改主机设置，不把代理地址或密钥写进游戏项目；浏览器扩展内的代理配置不属于系统配置，不能自动继承。
+
+请求保持证书验证；密钥通过进程内存传递，不进入命令行参数或日志。上传请求体使用临时文件，结束或取消时清理。连接失败不自动重发生成请求，带密钥的 API 请求不跟随重定向；普通资产下载跳转时重新解析目标的代理并检查网址。
+
+“密钥已保存”不代表网络已连通。遇到网页可访问但 API 超时时，先检查运行工具的主机、系统代理和环境变量，再用只读接口验证连接与认证；验证代理无需提交生成任务。实现依据：[Windows 自动代理解析](https://learn.microsoft.com/en-us/windows/win32/api/winhttp/nf-winhttp-winhttpgetproxyforurl)、[Python 代理配置](https://docs.python.org/3/library/urllib.request.html)。
+
+
+## 查看当前项目实际使用的设置
+
+项目看板中，Tripo 和混元服务卡片的“检查当前设置”会列出设置来源、认证方式、密钥来源和请求地址。项目可能使用独立设置，环境变量也可能优先于刚保存的本机密钥；先核对这里，再判断密钥是否需要更新。
+
+“本机已保存”“本机设置完整”和“服务已接受任务”是不同状态。检查设置不发起生成，也不消耗生成额度。能力说明见 [本地已接入的生成方式](generation-capabilities.md)。

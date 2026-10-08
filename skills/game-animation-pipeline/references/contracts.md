@@ -17,7 +17,7 @@
 
 bones 按父骨在前排列，记录 name、parent 索引与 canonical 参考变换。clips.frames 记录严格递增的秒时钟、同序骨骼全局（角色地面空间）变换和武器变换。骨骼/武器必须在同一帧实际求值完成后取样，不能当前时间配上一帧姿态。weapon_id 支持连段换武器。stage 为 runtime_baseline、blender_source 或 unreal_roundtrip，分别来自真实运行和真实 DCC 求值，不能把分析器合成轨迹当作引擎采样。
 
-p 单位厘米，q 顺序 x/y/z/w 且归一，s 为缩放。采样者记录构建、骨架和动画层；有角色整体运动时另存 actor 轨迹，不能归零掩盖位移问题。关闭整体位移或 AI 的采样只能说明对应局部动作，历史适配器的限制见 [采样范围说明](legacy-rift-capture.md)。
+p 单位厘米，q 顺序 x/y/z/w 且归一，s 为缩放。采样者记录构建、骨架和动画层；有角色整体运动时另存 actor 轨迹，不能归零掩盖位移问题。关闭整体位移或 AI 的采样只能说明对应局部动作，历史适配器的限制见 [采样范围说明](legacy-capture.md)。
 
 ## audit / review / handoff
 

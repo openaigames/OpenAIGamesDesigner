@@ -10,3 +10,5 @@
 
 
 结束本轮实施时回写涉及的专业事实、任务/里程碑状态、证据与管理下一步；失败或中断也要保存。新项目按管理文件约定运行 `validate_records.py --layout --production --closeout --markdown` 并处理结果；只涉及局部资产/功能、已有或自定义结构时检查等价记录，不强制补新作里程碑。检查结构通过不代表验收通过。
+
+涉及实际资产的交付，还须按 [资产生产登记与交付检查](../skills/game-preproduction/references/asset-handoff.md) 核对本轮范围；validate_records.py --asset-scope 可独立用于旧工程。区分 recorded/integrated/verified，按本轮约定终点检查。登记或证据缺失时保留可运行事实并修复交接，不以隐藏看板提示宣告完成。

@@ -7,6 +7,8 @@ import socket
 import urllib.error
 import urllib.parse
 import urllib.request
+from . import host_proxy, proxy_transport
+from .api_errors import HTTPAPIError
 
 
 def public_url(url):
@@ -26,10 +28,27 @@ def public_url(url):
 
 class Redirects(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        public_url(newurl)
-        if req.has_header('Authorization'):
-            raise ValueError('Authenticated API redirects are not supported')
-        return super().redirect_request(req, fp, code, msg, headers, newurl)
+        try:
+            public_url(newurl)
+            if req.has_header('Authorization') or req.has_header('Xi-api-key'):
+                raise ValueError('Authenticated API redirects are not supported')
+            if req.get_method() not in ('GET', 'HEAD'):
+                raise ValueError('Redirecting write requests is not supported')
+            return super().redirect_request(req, fp, code, msg, headers, newurl)
+        finally:
+            if fp is not None:
+                fp.close()
+
+
+class HostProxy(urllib.request.ProxyHandler):
+    def __init__(self):
+        super().__init__({'https': 'host-settings'})
+
+    def proxy_open(self, req, proxy, type):
+        selected = host_proxy.proxy_for(req.full_url)
+        if selected:
+            return proxy_transport.Response(req, selected, req.timeout)
+        return None
 
 
 def open_url(url, data=None, headers=None, method=None, timeout=45):
@@ -37,10 +56,19 @@ def open_url(url, data=None, headers=None, method=None, timeout=45):
     request = urllib.request.Request(url, data=data, headers={
         'User-Agent': 'OpenAIGamesDesigner/1.0', **(headers or {})}, method=method)
     try:
-        return urllib.request.build_opener(Redirects()).open(request, timeout=timeout)
+        return urllib.request.build_opener(HostProxy(), Redirects()).open(request, timeout=timeout)
     except urllib.error.HTTPError as error:
-        # API bodies and signed URLs may contain secrets; retain the HTTP code only.
-        raise ValueError(f'HTTP {error.code}; check provider console or refresh the download link') from None
+        # Parse bounded JSON only; HTTPAPIError retains safe fields, never raw messages.
+        result = None
+        try:
+            body = error.read(65537)
+            if len(body) <= 65536:
+                result = json.loads(body)
+        except (OSError, ValueError, UnicodeError):
+            pass
+        finally:
+            error.close()
+        raise HTTPAPIError(error.code, result) from None
     except (urllib.error.URLError, TimeoutError, OSError):
         raise ValueError('HTTPS transfer failed; verify connectivity and resume rather than resubmit') from None
 

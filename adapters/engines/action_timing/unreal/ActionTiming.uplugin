@@ -1,0 +1,10 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0",
+  "FriendlyName": "Action Timing Recorder",
+  "Description": "Record actual gameplay and animation events for the project workbench.",
+  "Category": "Debugging",
+  "CanContainContent": false,
+  "Modules": [{"Name": "ActionTiming", "Type": "Runtime", "LoadingPhase": "Default"}]
+}

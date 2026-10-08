@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {serviceDetails,failureDetails} from '../tools/workbench/web/service-details.js';
+import {transmissionReview} from '../tools/workbench/web/hunyuan-brief.js';
+const esc=x=>String(x).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+const html=serviceDetails({configuration_source:'project',credentials:[{environment_variable:'CUSTOM_KEY',source:'environment'}],connection:{authentication:'API Key',key_page:'https://example.com/keys',submit_url:'https://example.com/submit',query_url:'https://example.com/query'},message:'未联网',capabilities:[{label:'多视图生成模型',model:'<script>bad</script>',min_images:2,max_images:4,prompt:'none'}]},esc);
+assert(html.includes('当前项目设置'));
+assert(html.includes('环境变量'));
+assert(html.includes('不发送约束文字'));
+assert(!html.includes('<script>'));
+const error=failureDetails({message:'返回结果格式不符',next_step:'查询已有任务',remote_id:'task-1',code:'<img>',http_status:400},esc);
+assert(error.includes('task-1'));
+assert(!error.includes('<img>'));
+assert.equal(failureDetails(null,esc),'');
+const review=transmissionReview({transmission:{mode:'image_to_multiview',images:[{view:'front'}]},capability:{label:'单图生成多视图图片',model:'未指定',output:'images'},promptEvidence:{status:'accepted',prompt_recorded:false}},esc);
+assert(review.includes('输出：多视图图片'));
+assert(review.includes('提交记录中不包含 Prompt'));
+console.log('Service settings, failure details and generation output display passed.');

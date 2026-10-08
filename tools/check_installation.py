@@ -25,7 +25,20 @@ def check(root):
             raise ValueError('Manifest path escapes installation: ' + relative)
         if not path.is_file(): missing.append(relative)
         elif hashlib.sha256(path.read_bytes()).hexdigest() != expected: changed.append(relative)
-    return {'bundle_id': manifest['bundle_id'], 'files_checked':len(files), 'missing':missing, 'changed':changed}
+    # Only inspect this bundle's Skill directories. Other installed Skills and
+    # personal files at the installation root belong to the user.
+    managed = {Path(name).parts[0] for name in files if len(Path(name).parts) > 1}
+    extra = []
+    for name in sorted(managed):
+        for path in (root / name).rglob('*'):
+            relative = path.relative_to(root)
+            if '__pycache__' in relative.parts or path.suffix in {'.pyc', '.pyo'}:
+                continue
+            key = relative.as_posix()
+            if path.is_file() and key != MANIFEST and key not in files:
+                extra.append(key)
+    return {'bundle_id': manifest['bundle_id'], 'files_checked':len(files),
+            'missing':missing, 'changed':changed, 'extra':sorted(extra)}
 
 
 def main():
@@ -35,7 +48,7 @@ def main():
     try:
         result = check(args.skills_root)
         print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 1 if result['missing'] or result['changed'] else 0
+        return 1 if result['missing'] or result['changed'] or result['extra'] else 0
     except (OSError, ValueError, TypeError) as error:
         print(json.dumps({'error':str(error)}, ensure_ascii=False))
         return 2

@@ -1,5 +1,5 @@
 .project-context{min-height:57px}
-.art-audit-summary{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:0 20px 12px;color:var(--muted);font-size:13px}
+.art-audit-summary{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:0 var(--library-gutter,26px) 12px;color:var(--muted);font-size:13px}
 .art-audit-summary button{padding:4px 8px;background:var(--selected);color:var(--blue);border-radius:5px;font-size:13px}
 .art-editor-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:14px}
 .art-editor-actions .text-button{font-size:14px}
@@ -30,10 +30,10 @@
 #active-tag-filter{font-size:13px;padding:3px 8px;background:var(--selected);color:var(--blue);border:1px solid var(--selected-line);border-radius:5px}
 .card-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
 .card-tags span{font-size:12px;line-height:1.6;padding:2px 6px;border-radius:4px;background:var(--selected);color:var(--blue);overflow-wrap:anywhere}
-.tag-editor{padding:0 6px 19px}
+.tag-editor{padding:0 22px 19px}
 .inspector.expanded #inspector-content{grid-template-columns:minmax(0,1fr) minmax(280px,320px)}
 .inspector.expanded .tag-editor{grid-column:2;grid-row:2;padding:0 18px 18px}
-.tag-editor-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.tag-editor-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:9px}
 .tag-editor-heading strong{font-size:14px;font-weight:600}
 .tag-editor-heading>span,.tag-save-status{font-size:12px;color:var(--muted)}
 .editable-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}

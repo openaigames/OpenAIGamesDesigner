@@ -25,7 +25,11 @@ class AnimationPackageTests(unittest.TestCase):
                 if not source.is_file() or '__pycache__' in source.parts or source.suffix == '.pyc':
                     continue
                 packaged = skill / source.relative_to(ROOT / 'skills/game-animation-pipeline')
-                self.assertEqual(packaged.read_bytes(), source.read_bytes())
+                # Markdown links are relocated from source layout into runtime.
+                # The complete packaged link graph is validated separately.
+                if source.suffix != '.md':
+                    self.assertEqual(packaged.read_bytes(), source.read_bytes())
+                self.assertTrue(packaged.is_file(), str(packaged))
                 self.assertIn(packaged.relative_to(bundle).as_posix(), manifest['files'])
             entry = subprocess.run([sys.executable, '-B', '-I', str(skill / 'scripts/anim_pipeline.py'), '--help'],
                                    cwd=temp, capture_output=True, text=True, timeout=30)

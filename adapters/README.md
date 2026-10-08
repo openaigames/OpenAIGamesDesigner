@@ -44,3 +44,7 @@ schema 文件是记录格式的维护来源。`validate_records.py` 使用标准
 源码的 `tests/adapters/` 保存适配器合同样例；根级测试入口统一运行它们。新增能力先用可控本地进程检查缺配置、非零退出、错误输出、超时和产物缺失，再按 [验证计划](../tests/README.md) 接真实工具。打包后在无源码依赖的目录再次调用 CLI。
 
 依据：[Unity 编辑器命令行](https://docs.unity.com/en-us/engine/6000.7/manual/unity-editor/command-line-arguments/editor)、[Unity 项目构建方法](https://docs.unity.com/en-us/engine/6000.6/manual/building-and-publishing/build-customize-build-pipeline/build-command-line)、[Unreal 构建与打包](https://dev.epicgames.com/documentation/unreal-engine/build-operations-cooking-packaging-deploying-and-running-projects-in-unreal-engine)。实际命令以项目安装版本为准。
+
+音频云生成使用 [ElevenLabs 接入](assets/elevenlabs-audio.md)，支持游戏窗口来源绑定、原件保留和时长校准；与本地音频包装共存。
+
+图像与视频云生成使用 [Seedream / Seedance 接入](assets/ark-generation.md)，共用火山方舟密钥，分别处理同步图片响应与异步视频任务。

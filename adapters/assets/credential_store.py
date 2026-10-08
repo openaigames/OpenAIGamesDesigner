@@ -9,7 +9,8 @@ from pathlib import Path
 import tempfile
 import threading
 
-NAMES = {'tripo': 'TRIPO_API_KEY', 'hunyuan3d': 'HUNYUAN3D_API_KEY'}
+NAMES = {'tripo': 'TRIPO_API_KEY', 'hunyuan3d': 'HUNYUAN3D_API_KEY', 'elevenlabs': 'ELEVENLABS_API_KEY',
+         'seedream': 'ARK_API_KEY', 'seedance': 'ARK_API_KEY'}
 _mutex = threading.RLock()
 
 

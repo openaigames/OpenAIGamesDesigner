@@ -16,6 +16,7 @@ from urllib.parse import urlsplit, urlunsplit
 from adapters.assets.archive_io import relative_path, extract_zip
 from game_workflow import atomic_json, now, sha
 from validate_records import contained, check_record
+from workbench import asset_handoff
 
 CATALOG = Path(__file__).resolve().parents[1] / 'adapters/assets/sources.json'
 KINDS = ('2d', '3d', 'ui', 'texture', 'hdri', 'vfx', 'animation', 'audio', 'font', 'module')
@@ -88,6 +89,7 @@ def check_files(root, record):
 
 def acquire(root, request, job=None):
     info = metadata(request)
+    art_context = asset_handoff.request_context(request.get('art_record'))
     requested = request.get('files', [])
     if job is None and (not isinstance(requested, list) or not requested):
         raise ValueError('Acquisition requires files with name and url or local')
@@ -115,6 +117,7 @@ def acquire(root, request, job=None):
         'local_inputs': [sha(contained(root, e['local'])) for e in requested if 'local' in e]}, sort_keys=True).encode()).hexdigest()
     for record in records(root):
         if record.get('request_sha256') == identity and record.get('status') == 'acquired' and not check_files(root, record):
+            sync_art(root, record, art_context)
             return {**record, 'reused': True}
     asset_id = 'AS' + uuid.uuid4().hex
     ledger = contained(root, '.openaigame/asset-library/' + asset_id)
@@ -179,7 +182,21 @@ def acquire(root, request, job=None):
         atomic_json(ledger / 'record.json', record)
         raise
     atomic_json(ledger / 'record.json', record)
+    sync_art(root, record, art_context)
     return record
+
+
+def sync_art(root, record, context):
+    path=contained(root,'.openaigame/asset-library/'+record['asset_id']+'/record.json')
+    try:
+        context={**context, 'source':record['author']+'；'+record['source_url'],
+                 'license':record['license']['name']+' ('+record['license'].get('status','unverified')+')'}
+        record['art_registration']=asset_handoff.automatic(root,record['files'],context,
+            path.relative_to(root).as_posix(),'acquired',context['source'])
+        record.pop('art_registration_error',None)
+    except (OSError,ValueError,KeyError,TypeError) as error:
+        record['art_registration_error']=str(error)
+    atomic_json(path,record)
 
 
 def index(root, out):
@@ -261,6 +278,7 @@ def main(argv=None):
             else:
                 result = index(root, args.out)
         print(json.dumps(result, ensure_ascii=False, indent=2))
+        if args.action in ('acquire','from-job') and result.get('art_registration_error'):return 1
         return 1 if args.action == 'verify' and any(r['errors'] for r in result) else 0
     except (OSError, ValueError, KeyError, TypeError, zipfile.BadZipFile):
         print(json.dumps({'error': 'Asset operation failed. Check request fields, source access, filenames and retained acquisition records.'}))

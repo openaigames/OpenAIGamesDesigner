@@ -5,9 +5,10 @@ import hashlib
 import hmac
 import json
 import time
-from . import api_common, http_io
+from . import api_common, http_io, hunyuan_inputs, generation_capabilities
+from .api_errors import ProviderAPIError
 
-HOST = 'ai3d.tencentcloudapi.com'
+HOST = generation_capabilities.HUNYUAN_HOST
 VERSION = '2025-05-13'
 
 
@@ -45,7 +46,7 @@ class Client:
     def call(self, action, payload):
         if self.auth == 'api_key':
             endpoint = 'submit' if action.startswith('Submit') else 'query'
-            data = http_io.json_request('https://api.ai3d.cloud.tencent.com/v1/ai3d/' + endpoint,
+            data = http_io.json_request(generation_capabilities.HUNYUAN_KEY_BASE + '/' + endpoint,
                                         payload, {'Authorization': self.key})
         else:
             body = json.dumps(payload, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
@@ -54,24 +55,11 @@ class Client:
             data = http_io.json_bytes('https://' + HOST + '/', body, headers)
         result = data.get('Response', data)
         if not isinstance(result, dict) or result.get('Error') or result.get('error'):
-            raise ValueError('Tencent API rejected the request; check account, region and parameters')
+            raise ProviderAPIError(result)
         return result
 
     def submit(self, request):
-        payload = dict(request['parameters'])
-        if request.get('inputs'):
-            if any(key in payload for key in ('Prompt', 'ImageUrl', 'ImageBase64', 'MultiViewImages')):
-                raise ValueError('Use one inputs image without additional image/prompt fields')
-            image, kind = api_common.image_input(request, 4 * 1024**2)
-            encoded = base64.b64encode(image).decode('ascii')
-            if self.auth == 'api_key':
-                payload['ImageUrl'] = {'Url': f'data:image/{kind};base64,{encoded}'}
-            else:
-                payload['ImageBase64'] = encoded
-        elif not isinstance(payload.get('Prompt'), str) or not payload['Prompt'].strip():
-            raise ValueError('Supply Prompt or one local inputs image')
-        elif any(key in payload for key in ('ImageUrl', 'ImageBase64', 'MultiViewImages')):
-            raise ValueError('Use project image snapshots rather than remote image fields')
+        payload = hunyuan_inputs.build_payload(request)
         return api_common.task_id(self.call('SubmitHunyuanTo3DProJob', payload).get('JobId'))
 
     def query(self, remote_id):

@@ -34,6 +34,21 @@ class EnginePackageTests(unittest.TestCase):
                 (source/'RELEASE-archive.md').write_text('private historical notes',encoding='utf-8')
                 (source/'tests/evidence').mkdir()
                 (source/'tests/evidence/internal.txt').write_text('private test receipt',encoding='utf-8')
+                # Git ignore rules are not a packaging filter. These files can
+                # exist in a maintainer's checkout without being tracked.
+                for parent in ('skills/game-design', 'templates', 'workflows',
+                               'adapters', 'schemas', 'licenses', 'tools/settings-ui',
+                               'tools/workbench', 'tests/fixtures'):
+                    for name in ('.env', '.env.local', 'credentials.json', 'secrets.json',
+                                 'account.pem', 'account.key', 'server.ready.json', 'server.log',
+                                 '.openaigame/asset-jobs/local.json', '.asset-browser/review.json',
+                                 'work/receipt.txt', 'outputs/private.txt', '__pycache__/local.pyc'):
+                        private = source/parent/name
+                        private.parent.mkdir(parents=True, exist_ok=True)
+                        private.write_text('synthetic private file', encoding='utf-8')
+                demo = source/'tools/workbench/web/demo/private.png'
+                demo.parent.mkdir(exist_ok=True)
+                demo.write_bytes(b'synthetic unreviewed sample')
                 local_bundle=package_skills.package(Path(temp)/'local-bundle')
             public=json.loads((bundle/check_installation.MANIFEST).read_text(encoding='utf-8'))
             local=json.loads((local_bundle/check_installation.MANIFEST).read_text(encoding='utf-8'))
@@ -42,6 +57,7 @@ class EnginePackageTests(unittest.TestCase):
             report=check_installation.check(bundle)
             self.assertEqual(report['missing'],[])
             self.assertEqual(report['changed'],[])
+            self.assertEqual(report['extra'],[])
 
     def test_complete_fresh_install_and_packaged_documentation(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -98,6 +114,24 @@ class EnginePackageTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 module.inspect({'engine': other}, ROOT)
 
+    def test_manifest_reports_extra_managed_files_without_touching_other_skills(self):
+        with tempfile.TemporaryDirectory() as temp:
+            bundle = package_skills.package(Path(temp)/'bundle')
+            extra = bundle/'game-design/unreviewed.json'
+            extra.write_text('{"example": true}', encoding='utf-8')
+            (bundle/'my-personal-skill').mkdir()
+            (bundle/'my-personal-skill/SKILL.md').write_text('Personal skill')
+            (bundle/'notes.md').write_text('Personal notes')
+            cache = bundle/'game-design/__pycache__'
+            cache.mkdir()
+            (cache/'example.pyc').write_bytes(b'cache')
+            self.assertEqual(check_installation.check(bundle)['extra'], ['game-design/unreviewed.json'])
+            result = subprocess.run([sys.executable, '-B',
+                str(bundle/'game-preproduction/runtime/tools/check_installation.py'),
+                '--skills-root', str(bundle)], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 1, result.stderr)
+            self.assertTrue(extra.is_file())
+
     def test_relocated_bundle_imports_and_real_cli_commands(self):
         with tempfile.TemporaryDirectory() as temp:
             bundle = package_skills.package(Path(temp) / 'bundle')
@@ -107,6 +141,9 @@ import json, sys
 from pathlib import Path
 sys.path.insert(0, sys.argv[1])
 from adapters.engines import godot, unity, unreal, threejs, phaser, web_common
+sys.path.insert(0, str(Path(sys.argv[1]) / 'tools'))
+from workbench import action_review
+assert callable(action_review.analyzer().analyze)
 root = Path.cwd()
 engine = root / 'game'
 engine.mkdir()
@@ -130,6 +167,12 @@ print(json.dumps({'engines': 5}))
                                    cwd=temp, capture_output=True, text=True, timeout=30)
             self.assertEqual(entry.returncode, 0, entry.stderr)
             self.assertIn('recover', entry.stdout)
+            for name in ('asset_handoff.py', 'action_workflow.py', 'generation_capabilities.py'):
+                arguments = [] if name == 'generation_capabilities.py' else ['--help']
+                result = subprocess.run([sys.executable, '-B', '-I', str(runtime/'tools'/name), *arguments],
+                                        cwd=temp, capture_output=True, text=True, timeout=30)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertTrue(result.stdout.strip())
             for name in ('godot', 'unity', 'unreal', 'threejs', 'phaser'):
                 self.assertTrue((runtime / 'adapters/engines' / name / 'README.md').is_file())
             self.assertTrue((runtime / 'adapters/engines/mcp.md').is_file())

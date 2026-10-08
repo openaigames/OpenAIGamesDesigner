@@ -4,8 +4,9 @@ import re
 from .. import sessions as p
 from ..request_contract import validate, playback_result
 from .cli import inspect
+from . import mesh_contract
 
-TOP_FIELDS = {'engine','mode','scene','operations','seconds','capture_interval','max_p95_ms','actions','observe','camera_target','observation_camera','readonly_preview','native_reads','character_exports','inspect_targets'}
+TOP_FIELDS = {'engine','mode','scene','operations','seconds','capture_interval','max_p95_ms','actions','observe','camera_target','observation_camera','readonly_preview','native_reads','character_exports','inspect_targets','mesh_audit'}
 
 
 def input_files(request):
@@ -36,7 +37,8 @@ FIELDS={
  'import':{'op','path','source','replace','skeletal','animations','skeleton'},
  'animation':{'op','target','mesh','component','animation','anim_blueprint','loop'},
  'data_asset':{'op','path','class'},
- 'native_patch':{'op','path','expected','values','read_method','write_method'}
+ 'native_patch':{'op','path','expected','values','read_method','write_method'},
+ 'static_mesh_configure':mesh_contract.CONFIG_FIELDS
 }
 REQUIRED={'scene':['path'],'blueprint':['path'],'actor':['target'],'import':['path','source'],'animation':['target','mesh'],'native_patch':['path','expected','values'],'data_asset':['path','class']}
 ACTIONS={'position':{'op','at','target','position'},'method':{'op','at','target','method','arguments'}}
@@ -44,6 +46,7 @@ ACTIONS={'position':{'op','at','target','position'},'method':{'op','at','target'
 
 def validate_request(request):
     validate(request,ENGINE,FIELDS,REQUIRED,ACTIONS,TOP_FIELDS)
+    mesh_contract.validate_request(request)
     validate_observation(request)
     validate_native_data(request)
     targets=request.get('inspect_targets',[])
@@ -65,7 +68,7 @@ def validate_request(request):
 
 
 def worker_files():
-    return [Path(__file__).resolve()]+[Path(__file__).with_name(name+'.py') for name in ['production_worker','observation_worker','native_data','spatial_worker','character_export','pose_worker']]
+    return [Path(__file__).resolve()]+[Path(__file__).with_name(name+'.py') for name in ['production_worker','observation_worker','native_data','spatial_worker','character_export','pose_worker','mesh_contract','static_meshes']]
 
 
 def validate_native_data(request):

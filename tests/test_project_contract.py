@@ -65,7 +65,7 @@ class ProjectContractTests(unittest.TestCase):
             self.assertTrue((ROOT / name).is_file(), name)
         self.assertEqual({p.name for p in (ROOT / "schemas").glob("*.json")},
                          {"project.schema.json", "run.schema.json", "asset-job.schema.json", "artifact.schema.json", "engine-session.schema.json", "asset-library.schema.json",
-                          "task.schema.json","evidence.schema.json","observation.schema.json","observation-record.schema.json","project-links.schema.json"})
+                          "task.schema.json","evidence.schema.json","observation.schema.json","observation-record.schema.json","project-links.schema.json","asset-taxonomy.schema.json","asset-versions.schema.json"})
 
 
 if __name__ == "__main__":

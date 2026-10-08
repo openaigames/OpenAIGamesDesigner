@@ -5,7 +5,10 @@
 | 需求 | 入口 |
 | --- | --- |
 | 填写、更新、删除本机 API Key | [独立设置页](local-settings.md) |
+| 系统手动代理、Windows PAC/WPAD 与代理环境变量 | [跟随主机代理](local-settings.md#跟随主机代理) |
 | Tripo / Hunyuan3D 文生或单图生模型 | [生成 API 配置与恢复](generation-api.md) |
+| Seedream 图像 / Seedance 视频 | [火山方舟生成、参数与恢复](ark-generation.md) |
+| ElevenLabs 音效、配乐、台词与游戏窗口校准 | [音频生成与校准](elevenlabs-audio.md) |
 | 免费与付费资产搜索、获取、许可和来源登记 | [素材来源与资产库工具](asset-sources.md) |
 | 其他图像/音频/本地 Hunyuan3D 工具 | 下文的可配置本地命令协议 |
 | Blender 模型转换 | 下文 Blender 处理 |
@@ -73,7 +76,7 @@ python tools/asset_workflow.py --project "MyGame" cancel --job A编号
 python tools/asset_workflow.py --project "MyGame" retry --job A编号
 ```
 
-以下恢复说明针对本地命令；云 API 使用上方的 resume 规则。submit 只建立 queued 记录；run 前台等待本地进程，另一个终端可查询或取消。取消运行中的任务是发出信号，执行者终止进程树后写 cancelled；因此查询时可能短暂仍为 running。超时记 failed 并注明 timeout。失败保留日志和部分文件，但不当成合格产物；retry 复制原输入快照和配置形成新编号，不覆盖旧任务，不自动运行。要换参数或工具配置应重新 submit。
+以下恢复说明针对本地命令；Tripo/Hunyuan 云 API 按生成 API 文档恢复，ElevenLabs 按音频文档处理同步响应，Seedream / Seedance 按 [方舟接入](ark-generation.md) 处理同步图像和异步视频。submit 只建立 queued 记录；run 前台等待本地进程，另一个终端可查询或取消。取消运行中的任务是发出信号，执行者终止进程树后写 cancelled；因此查询时可能短暂仍为 running。超时记 failed 并注明 timeout。失败保留日志和部分文件，但不当成合格产物；retry 复制原输入快照和配置形成新编号，不覆盖旧任务，不自动运行。要换参数或工具配置应重新 submit。
 
 若系统关机等导致记录滞留 running，确认实际工作进程已停止后使用 `mark-interrupted --job A编号 --confirm-stopped`，再 retry。它是人工确认后的记录恢复，不负责检测外部服务，也不能恢复丢失工程。
 
@@ -86,3 +89,6 @@ python tools/asset_workflow.py --project "MyGame" retry --job A编号
 生成 → 处理 → 工程导入是三个可追踪步骤。每个后续任务使用明确选定的上游文件，资产规格记录来源链和许可；产物登记不替代资产库搜索、缩略图或引擎引用扫描。
 
 API 依据：[Blender 导入](https://docs.blender.org/api/5.2/bpy.ops.import_scene.html)、[导出](https://docs.blender.org/api/main/bpy.ops.export_scene.html)、[OBJ 接口迁移](https://developer.blender.org/docs/release_notes/4.0/python_api/)。
+
+
+普通栅格图像优先使用当前宿主可用的内置生图，按用户指定或项目流程采用 Seedream；密钥配置不改变默认路由。看板 image / mode=host 任务由助手调用实际工具，再通过 `tools/asset_versions.py record-native` 登记，`asset_workflow.py run` 不会代为执行或切换云 API。生成输出与手工资产共用不可覆盖的版本记录，输入固定到实际参考文件；具体格式见 [资产版本与内置工具结果](../../tools/README.md#资产版本与内置工具结果)。

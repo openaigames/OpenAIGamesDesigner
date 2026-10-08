@@ -24,7 +24,7 @@
 
 把 `assets/unreal/AnimationLab.h/.cpp` 放入实验工程模块。Build.cs 添加 `Json`、`JsonUtilities`、`ProceduralMeshComponent`、`InputCore`、`Engine` 依赖，uproject 启用 ProceduralMeshComponent。`ANIMLAB_MODULE` 必须显式指定实际编译模块；创建地图前会检查该模块的 AnimationLabMode 类是否可加载。测试 Pawn 的 Mesh 朝向为 Manny 的相对 yaw -90°，其他骨架必须校准，不可照抄。
 
-已有程序驱动动作：从实际消费者采样，输出对应协议。专属旧示例的依赖和测量边界见 [历史采样适配器](legacy-rift-capture.md)；新工程使用自己的采样入口。已有 FBX/艺术源文件：沿用其作者工程，用目标骨架试传，不必先人为合成一份游戏采样。
+已有程序驱动动作：从实际消费者采样，输出对应协议。旧版协议的测量边界见 [旧版采样协议](legacy-capture.md)；新工程使用自己的采样入口。已有 FBX/艺术源文件：沿用其作者工程，用目标骨架试传，不必先人为合成一份游戏采样。
 
 ## 旧协议命令示例
 

@@ -1,0 +1,84 @@
+{
+  "schema": "action-sequence/1",
+  "id": "landing",
+  "title": "Landing",
+  "duration_s": 1.5,
+  "tracks": [
+    {
+      "id": "body",
+      "label": "Body",
+      "kind": "animation"
+    },
+    {
+      "id": "sound",
+      "label": "Sound",
+      "kind": "audio"
+    },
+    {
+      "id": "logic",
+      "label": "Logic",
+      "kind": "logic"
+    }
+  ],
+  "assets": [
+    {
+      "id": "pose",
+      "label": "Landing pose",
+      "kind": "animation",
+      "binding": "landing_animation",
+      "duration_s": 1
+    },
+    {
+      "id": "sound",
+      "label": "Landing sound",
+      "kind": "audio",
+      "binding": "landing_sound",
+      "duration_s": 0.3
+    }
+  ],
+  "clips": [
+    {
+      "id": "body",
+      "label": "Land",
+      "track": "body",
+      "asset": "pose",
+      "start_s": 0,
+      "source_in_s": 0.1,
+      "source_out_s": 0.9,
+      "rate": 2,
+      "blend_in_s": 0.03,
+      "blend_out_s": 0.1,
+      "volume": 1
+    },
+    {
+      "id": "sound",
+      "label": "Footstep",
+      "track": "sound",
+      "asset": "sound",
+      "start_s": 0.15,
+      "source_in_s": 0,
+      "source_out_s": 0.3,
+      "rate": 1,
+      "blend_in_s": 0,
+      "blend_out_s": 0.03,
+      "volume": 0.5
+    }
+  ],
+  "events": [
+    {
+      "id": "contact",
+      "label": "Ground contact",
+      "track": "logic",
+      "time_s": 0.15
+    }
+  ],
+  "windows": [
+    {
+      "id": "land_lock",
+      "label": "Landing lock",
+      "track": "logic",
+      "start_s": 0,
+      "end_s": 0.4
+    }
+  ]
+}

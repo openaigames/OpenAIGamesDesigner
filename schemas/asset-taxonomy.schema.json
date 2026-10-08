@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-taxonomy",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "assignments"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "assignments": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "category",
+          "audioKind",
+          "topics"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "category": {
+                  "not": {
+                    "const": "audio"
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "audioKind": {
+                  "const": ""
+                }
+              }
+            }
+          }
+        ],
+        "properties": {
+          "category": {
+            "enum": [
+              "character",
+              "weapon",
+              "prop",
+              "environment",
+              "animation",
+              "vfx",
+              "material",
+              "audio",
+              "ui",
+              "code",
+              "template",
+              "unclassified"
+            ]
+          },
+          "audioKind": {
+            "enum": [
+              "",
+              "music",
+              "sfx",
+              "speech"
+            ]
+          },
+          "topics": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "archviz"
+              ]
+            }
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "分类所核对的文件内容版本；缺少此字段的旧记录需重新核对"
+          }
+        }
+      }
+    }
+  }
+}

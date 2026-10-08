@@ -11,14 +11,14 @@ from . import credential_store, api_common
 
 def identity(project, job_id, provider, settings, request):
     # Bind the actual credential, without persisting or exposing its value/hash separately.
-    fields = [('api_key_env', 'TRIPO_API_KEY')] if provider == 'tripo' else (
-        [('api_key_env', 'HUNYUAN3D_API_KEY')] if settings.get('auth') == 'api_key' else
-        [('secret_id_env', 'TENCENTCLOUD_SECRET_ID'), ('secret_key_env', 'TENCENTCLOUD_SECRET_KEY')])
+    fields = api_common.credential_fields(provider, settings)
     keys = [api_common.credential(settings, field, default) for field, default in fields]
     value = {'project': os.path.normcase(str(Path(project).resolve())), 'job_id': job_id, 'provider': provider,
              'settings': settings, 'parameters': request['parameters'],
-             'inputs': [{k: entry[k] for k in ('path', 'sha256')} for entry in request.get('inputs', [])],
+             'inputs': [{k: entry[k] for k in ('path', 'sha256', 'view') if k in entry} for entry in request.get('inputs', [])],
              'credentials': keys}
+    if 'brief' in request:value['brief']=request['brief']
+    if request.get('lineage'):value['lineage']=request['lineage']
     return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True).encode('utf-8')).hexdigest()
 
 
@@ -104,6 +104,15 @@ def require(fingerprint, consume=False):
 
 
 def for_job(project, job):
-    if job['provider'] not in ('tripo', 'hunyuan3d') or job['settings'].get('mode') != 'api' or job['status'] != 'queued':
-        raise ValueError('Approval is for a queued Tripo/Hunyuan API generation')
+    from . import model_prompt_policy
+    if job.get('status') == 'queued':
+        model_prompt_policy.require(job['provider'], job['request'], job['settings'], project)
+    if job['provider'] not in ('tripo', 'hunyuan3d', 'elevenlabs', 'seedream', 'seedance') or job['settings'].get('mode') != 'api' or job['status'] != 'queued':
+        raise ValueError('Approval is for a queued API generation')
+    if job['provider'] in ('seedream', 'seedance', 'hunyuan3d', 'tripo'):
+        api_common.validate_request(job['provider'], job['request'], job['settings'])
+    if job['provider'] == 'elevenlabs':
+        from . import audio_timing
+        api_common.validate_request('elevenlabs', job['request'], job['settings'])
+        audio_timing.check_source(project, job['request'])
     return identity(project, job['job_id'], job['provider'], job['settings'], job['request'])

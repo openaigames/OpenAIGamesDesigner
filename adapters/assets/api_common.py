@@ -1,4 +1,4 @@
-"""Configuration and worker entry for cloud 3D jobs."""
+"""Configuration and worker entry for cloud asset jobs."""
 import json
 import hashlib
 import os
@@ -34,19 +34,38 @@ def credential(settings, field, default, optional=False):
     return value
 
 
+def credential_fields(provider, settings):
+    if provider in ('seedream', 'seedance'): return [('api_key_env', 'ARK_API_KEY')]
+    if provider == 'elevenlabs': return [('api_key_env', 'ELEVENLABS_API_KEY')]
+    if provider == 'tripo': return [('api_key_env', 'TRIPO_API_KEY')]
+    if provider == 'hunyuan3d':
+        return ([('api_key_env', 'HUNYUAN3D_API_KEY')] if settings.get('auth') == 'api_key' else
+                [('secret_id_env', 'TENCENTCLOUD_SECRET_ID'), ('secret_key_env', 'TENCENTCLOUD_SECRET_KEY')])
+    raise ValueError('Unsupported API provider')
+
+
 def doctor(provider, settings):
     settings_check(settings)
-    fields = [('api_key_env', 'TRIPO_API_KEY')] if provider == 'tripo' else (
-        [('api_key_env', 'HUNYUAN3D_API_KEY')] if settings.get('auth') == 'api_key' else
-        [('secret_id_env', 'TENCENTCLOUD_SECRET_ID'), ('secret_key_env', 'TENCENTCLOUD_SECRET_KEY')])
+    fields = credential_fields(provider, settings)
     credentials = [{'environment_variable': settings.get(field, default),
                     'present': bool(credential(settings, field, default, optional=True)),
                     'source': 'environment' if os.environ.get(settings.get(field, default)) else
                               'local_store' if credential_store.get(settings.get(field, default)) else 'missing'} for field, default in fields]
-    region_ok = provider == 'tripo' or settings.get('auth') == 'api_key' or bool(settings.get('region'))
-    return {'provider': provider, 'credentials': credentials, 'region_configured': region_ok,
+    region_ok = provider in ('tripo', 'elevenlabs', 'seedream', 'seedance') or settings.get('auth') == 'api_key' or bool(settings.get('region'))
+    result = {'provider': provider, 'credentials': credentials, 'region_configured': region_ok,
             'ready_to_attempt': region_ok and all(c['present'] for c in credentials),
             'network_checked': False, 'generation_submitted': False}
+    if provider in ('tripo', 'hunyuan3d'):
+        from . import generation_capabilities
+        result['connection'] = generation_capabilities.connection(provider, settings)
+        result['capabilities'] = generation_capabilities.catalog(provider, settings)
+    if provider == 'elevenlabs':
+        from . import audio_timing
+        try:
+            audio_timing.ffmpeg_executable(); result['audio_decoder_available'] = True
+        except ValueError:
+            result['audio_decoder_available'] = False; result['ready_to_attempt'] = False
+    return result
 
 
 def command(provider, settings, request, output, result):
@@ -64,6 +83,12 @@ def task_id(value):
 
 def validate_request(provider, request, settings):
     settings_check(settings)
+    if provider in ('seedream', 'seedance'):
+        from . import ark
+        return ark.validate_request(provider, request)
+    if provider == 'elevenlabs':
+        from . import elevenlabs
+        return elevenlabs.validate_request(request)
     params = request.get('parameters', {})
     # Only generation parameters are persisted. Authentication belongs in the environment.
     allowed = ({'type', 'prompt', 'model_version', 'negative_prompt', 'text_seed', 'model_seed',
@@ -74,6 +99,12 @@ def validate_request(provider, request, settings):
                {'Model', 'Prompt', 'EnablePBR', 'FaceCount', 'GenerateType', 'PolygonType', 'ResultFormat'})
     if set(params) - allowed:
         raise ValueError('Unsupported API parameters; use documented generation fields and environment credentials')
+    if provider == 'tripo':
+        from . import tripo_inputs
+        tripo_inputs.validate(request)
+    if provider == 'hunyuan3d':
+        from . import hunyuan_inputs
+        hunyuan_inputs.validate(request)
 
 
 def image_input(request, max_bytes):

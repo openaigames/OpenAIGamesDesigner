@@ -33,7 +33,8 @@ function render(state) {
   if (approval) {
     document.querySelector('#approval-summary').textContent = approval.error || (approval.approved ? '本次请求已授权，等待助手执行。' : '请核对服务、提示词与输入文件。未确认前，工具不能提交生成。');
     document.querySelector('#approval-details').textContent = JSON.stringify({project: approval.project, job_id: approval.job_id,
-      provider: approval.provider, parameters: approval.parameters, inputs: approval.inputs}, null, 2);
+      provider: approval.provider, parameters: approval.parameters, inputs: approval.inputs,
+      ...(approval.transmission?{actual_transmission:approval.transmission,local_brief_not_sent:approval.brief}: {})}, null, 2);
   }
 }
 document.querySelector('#accept-charge').addEventListener('change', (event) => {
@@ -60,7 +61,7 @@ for (const card of document.querySelectorAll('.card')) {
     catch (error) { message(error.message, true); button.disabled = !active; }
   });
   card.querySelector('.remove').addEventListener('click', async () => {
-    if (!window.confirm('删除这个服务的本机密钥？环境变量和服务平台上的密钥不会被删除。')) return;
+    if (!window.confirm(['seedream','seedance'].includes(card.dataset.provider)?'移除 Seedream 和 Seedance 共用的本机密钥？两者的本机配置会同时清除。':'删除这个服务的本机密钥？环境变量和服务平台上的密钥不会被删除。')) return;
     try { render(await request('/api/remove', {provider: card.dataset.provider})); card.querySelector('input').value = ''; message('本机保存的密钥已删除。'); }
     catch (error) { message(error.message, true); }
   });

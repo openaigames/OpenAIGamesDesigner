@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {audioParameters,audioReview} from '../tools/workbench/web/audio-brief.js';
+const values={kind:'sound_effect',mode:'manual',event:' sword.swing ',start:'.12',end:'.36',rate:'1.2',tail:'.04',trim:'0'};
+assert.deepEqual(audioParameters(values),{kind:'sound_effect',timing:{event:'sword.swing',tail_seconds:.04,trim_start_seconds:0,fit:true,window:{start_seconds:.12,end_seconds:.36,play_rate:1.2}}});
+assert.deepEqual(audioParameters({...values,mode:'source',path:'Config/combat.json',pointer:'/swing'}).timing.source,{path:'Config/combat.json',pointer:'/swing'});
+assert.equal('window' in audioParameters({...values,mode:'source',path:'Config/combat.json',pointer:'/swing'}).timing,false);
+assert.deepEqual(audioParameters({kind:'music',musicSeconds:'30.25',instrumental:true}),{kind:'music',music_length_ms:30250,force_instrumental:true});
+assert.deepEqual(audioParameters({kind:'speech',voice:' voice123 '}),{kind:'speech',voice_id:'voice123'});
+const esc=x=>String(x).replaceAll('<','&lt;');
+const html=audioReview({kind:'sound_effect',plan:{event:'<script>',body_seconds:.2,tail_seconds:.04,generation_seconds:.5,target_seconds:.24,fit:true},source_status:'changed_or_missing'},esc);
+assert(!html.includes('<script>'));assert(html.includes('0.240'));assert(html.includes('已变化'));
+console.log('Audio form contracts and stale-source review passed');

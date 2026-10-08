@@ -21,10 +21,13 @@ python tools/engine_workflow.py create --project "D:/Games/MyUEGame" --engine un
 | actor | `target` 精确且唯一的 Actor Label；新建选 `class` 或 Blueprint/资源的 `source`，显式 `create: true` |
 | import | 源文件绝对 `source`、目标 `/Game/...` 的 path；覆盖必须 `replace: true` |
 | animation | target、mesh，以及 animation 或 anim_blueprint；component 可进一步指定名称 |
+| static_mesh_configure | source、新 path、asset_role、strategy；自动 LOD 或 Nanite 派生副本，见 [网格资源接口](mesh-resources.md) |
 
 actor 的 position/rotation/scale 分别为世界坐标 XYZ（UE 厘米）、Pitch/Yaw/Roll（度）、缩放。已有组件在 actor.components 中按 type 和可选 name 精确定位。新增持久化组件通过 SubobjectDataSubsystem 写入新的 Blueprint，再实例化；不把临时 new_object 组件当成保存后仍存在的组件。已有蓝图路径拒绝覆盖，避免清除手工图表。
 
 properties 使用实际 `set_editor_property` 名称。值可以是 JSON 标量，以及 `{"asset":"/Game/..."}`、`{"vector":[x,y,z]}`、`{"enum":"ComponentMobility.MOVABLE"}`、`{"class":"/Game/..._C"}`。复杂结构、数组或特殊属性请按项目扩展，不能将未支持类型静默忽略。保存后读回对象、组件、常用网格/材质/动画引用。
+
+`mode: inspect` 可使用 `mesh_audit` 获取静态网格、LOD、Nanite、碰撞、材质/贴图及已加载场景的实例化候选。配置接口只创建派生资源，保存后另起 inspect 会话复核；不自动替换地图或将资源读回当作性能验收。
 
 导入走 AssetTools / AssetImportTask，检查真实 imported_object_paths；FBX 可显式给 skeletal、animations、skeleton。具体格式与 UE 的已安装导入插件有关，导入成功不代表单位、材质、骨骼和视觉已经验收。资源重新命名和文件依赖要以真实返回路径为准。
 

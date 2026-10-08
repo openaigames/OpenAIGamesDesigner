@@ -25,7 +25,7 @@ demuxer_mp4.js 随 Three.js 分发，源自 [W3C WebCodecs video-decode-display 
 ## 图标与界面示例
 
 - OpenAIGamesDesigner 标识由项目所有者提供。软件的 MIT 授权不授予对项目名称或标识的商标权，也不表示对衍生产品的背书。
-- Tripo 与腾讯混元图标用于标识可配置的第三方服务，品牌权利归各自所有者；原始地址见 [图标来源](tools/settings-ui/logos/README.md)。这些图标不按本项目 MIT 许可证重新授权。
+- Tripo、腾讯混元、ElevenLabs 与 ByteDance Seed 图标用于标识可配置的第三方服务，品牌权利归各自所有者；原始地址见 [图标来源](tools/settings-ui/logos/README.md)。这些图标不按本项目 MIT 许可证重新授权。
 - README 中的游戏界面示例用于演示工具。截图里的第三方角色和素材权利仍归各自权利人；仓库和安装包不分发截图对应的游戏模型或音频。
 
 ## 外部服务与用户资产

@@ -9,6 +9,7 @@
 | 目标怎样转为空间、路线与尺度 | [空间与路线](level-design/space-and-routes.md) |
 | 活动、遭遇、教学和休息怎样排列 | [体验编排](level-design/beats-and-encounters.md) |
 | 检查点、重访、灰盒与修改验证 | [状态与灰盒验证](level-design/state-and-blockout.md) |
+| 怎样选择空间草图、试验范围与制作交接 | [地图规划与迭代](map-planning-and-iteration.md) |
 
 探索参考解释 [发现与导航](../../game-design/references/exploration-adventure-design.md)；本专题负责将这些目标落实到区域关系和整段流程。战斗参考定义敌人应对关系，本专题决定交锋出现的位置、进入方式和前后情境。移动能力引用 [移动与交互](../../game-design/references/movement-interaction.md)，不要在关卡里偷偷改变角色规则来满足距离。
 

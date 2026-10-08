@@ -1,6 +1,6 @@
 # 开始使用
 
-项目工作台提供两类素材看板：`python tools/project_workbench.py --project "MyGame" --view review`。扫描到的文件按配置的游戏内容根归为候补或游戏应用；角色按实际绑定关联模型与可选动画，可直接预览并保存动作选择。预览与角色清单接口见 [看板说明](workbench/README.md)，操作流程见 game-preproduction Skill 的 `references/project-workbench.md`。
+项目工作台提供资产库、生成服务和生成任务三个页面：`python tools/project_workbench.py --project "MyGame" --view assets`。资产库先按候补／游戏应用范围筛选，再按资产分类、用途标签和文件类型查找；每个文件显示主分类标签，分类与对象共享标签分别维护。模型详情可切换实际绑定的角色动作并使用播放控件；看板不提供动作取舍或动作检查界面。“素材方案”展示组合能力、缺口与来源。项目阶段和运行观察仍使用既有 CLI、记录及报告，不依赖独立看板页面。预览与角色清单接口见 [看板说明](workbench/README.md)，操作流程见 game-preproduction Skill 的 `references/project-workbench.md`。
 
 不确定需要安装哪些软件、在哪配置时，先看 [按功能配置环境](../adapters/environment-setup.md)。
 
@@ -143,9 +143,13 @@ apply 重新比对表格、基线与计划，保存原文件备份和 `.openaiga
 
 ## 安装一致性与维护测试
 
-每个新分发包在 `game-preproduction/runtime/bundle-manifest.json` 保存内容版本及文件哈希。安装后运行 `python <runtime>/tools/check_installation.py --skills-root <已安装Skill的父目录>`，检查缺失或修改的文件。检查只报告差异，不覆盖本地定制，也不删除用户额外文件；更新前比较、备份并合并实际差异。旧安装没有 manifest 时重新打包并同步，不把缺清单当作安装正确。
+每个新分发包在 `game-preproduction/runtime/bundle-manifest.json` 保存内容版本及文件哈希。安装后运行 `python <runtime>/tools/check_installation.py --skills-root <已安装Skill的父目录>`，检查缺失、修改及工具包 Skill 目录内额外的文件（`missing`、`changed`、`extra`）。其他 Skill 和根目录个人文件不参与检查。检查只报告差异，不覆盖本地定制，也不删除用户额外文件；更新前比较、备份并合并实际差异。旧安装没有 manifest 时重新打包并同步，不把缺清单当作安装正确。
 
 维护仓库运行 `python tools/run_tests.py` 执行根测试和 Skill 内脚本测试，包括 `game-animation-pipeline` 的协议检查；`--group game-animation-pipeline` 可单独运行该组。此入口及 CI 属于源码维护工具，不随游戏运行包分发。
+
+发布时从源码仓库重新运行 `tools/package_skills.py`，不要把个人安装目录整体上传。打包器独立排除本地密钥、环境配置、运行日志、项目记录、缓存和工作输出；`.gitignore` 同时防止这些文件被常规 Git 添加操作选中。`.env.example` 与 `.env.template` 仅用于不含真实凭据的配置示例。维护者自己的发布草稿和验证回执留在仓库外或已忽略的本地目录。
+
+协议／Schema 版本用于数据兼容，依赖版本与许可证用于追溯，`bundle_id` 标识包的实际内容，均应保留。当前文件排除规则不会移除已经提交的 Git 历史；发布前须另行检查准备推送的历史。
 
 ### 素材来源与资产登记
 
@@ -153,7 +157,7 @@ apply 重新比对表格、基线与计划，保存原文件备份和 `.openaiga
 
 ### 本机密钥设置页
 
-运行 `python tools/settings_server.py` 打开独立页面，保存 Tripo / 腾讯混元兼容接口 API Key；无需游戏项目。`--status` 只查看配置是否存在，`--no-open` 供宿主自行打开返回的启动链接。详见 [本机设置](../adapters/assets/local-settings.md)。
+运行 `python tools/settings_server.py` 打开独立页面，保存 Tripo / 腾讯混元兼容接口 / ElevenLabs / 火山方舟 API Key（Seedream 与 Seedance 共用）；无需游戏项目。`--status` 只查看配置是否存在，`--no-open` 供宿主自行打开返回的启动链接。详见 [本机设置](../adapters/assets/local-settings.md)。
 
 ## 项目看板与资产核查
 
@@ -170,10 +174,58 @@ python tools/asset_audit.py --project "MyGame"
 
 引擎角色使用实际消费者导出及 `engine_characters.py` 同步到现有 `.asset-browser/characters.json` / `previews.json`。选择角色即可选择工程关联动作，并区分组件直接绑定、AnimBP 静态引用和工程声明可用集合。导出预览支持 FBX 和 GLB；原文件、派生文件及所列依赖均冻结 SHA256，变更后旧预览失效。项目配置的内容根决定候补/游戏应用归属，运行备份和派生预览不再作为候补重新扫描。浏览器动作与游戏最终表现分开，原生导出接口的限制见 [Unreal 原生动画](../adapters/engines/unreal/native-animation.md)。
 
-资产归属的内容根、排除目录和配置示例见 [游戏内容根](workbench/README.md#游戏内容根)。在实际预览下记录动作的待定/保留/不采用，按角色与用途分别保存；导出与历史迁移见 [动作取舍](workbench/motion-review.md)。这些选择不移动文件，也不替代引擎验证。
+资产归属的内容根、排除目录和配置示例见 [游戏内容根](workbench/README.md#游戏内容根)。模型预览保留动画播放控件。旧片段判断的查询、保存与导出协议见 [历史动作取舍接口](workbench/motion-review.md)，当前看板不提供该表单。历史判断不移动文件，也不替代引擎验证。
 
-数值预测调用 `numeric_workflow.py --project <项目> model --request <相对请求.json> --out production/numeric-models/<版本>.json`。支持明确算式树、分段线性曲线和阶梯阈值；参数与实测引用实际 JSON pointer、权威文件和执行记录。输出 JSON/HTML 比较以及共享看板图表；`model-check --report <相对报告>` 检查依赖新鲜度。模型不覆盖游戏权威参数，不把预测当实测或最优手感。
+数值预测调用 `numeric_workflow.py --project <项目> model --request <相对请求.json> --out production/numeric-models/<版本>.json`。支持明确算式树、分段线性曲线和阶梯阈值；参数与实测引用实际 JSON pointer、权威文件和执行记录。输出 JSON 数据和可独立打开的 HTML 比较报告；`model-check --report <相对报告>` 检查依赖新鲜度。模型不覆盖游戏权威参数，不把预测当实测或最优手感。
 
 旧项目初次建立记录区使用 `asset_audit.py --project "MyGame" --init-art`，保留原文；`--register-missing` 只登记文件事实。模型再依据原清单补齐对象和标签，沿用稳定 ID，未知用途保留待补齐。自定义美术入口用项目 `.openaigame/workbench.json` 的 `art_document` 相对路径。固定标记区格式与旧记录映射由专业 Skill 的项目看板参考说明。
 
 服务页复用本机加密存储，保存不发起生成；制作页读取实际 asset-jobs，可建立 API 文本请求并核对已有请求。用户确认后由助手运行现有 asset_workflow，界面不模拟进度、不自行调用生成平台。独立设置页仍适用于无游戏项目的配置。
+
+## 图像与视频生成
+
+`asset_workflow.py --provider seedream` 支持文生单图及单参考图改绘；`--provider seedance` 支持文生视频及首帧生视频，查询任务 ID 后下载到本地。看板支持相应参数、参考图选择及逐次授权。Seedance 可恢复原任务；Seedream 不自动重发同步请求。配置、模型范围及示例见 [方舟图像与视频接入](../adapters/assets/ark-generation.md)。
+
+## 音频生成与时序校准
+
+`asset_workflow.py --provider elevenlabs` 使用同一密钥设置、任务授权与资产登记流程；看板新建任务支持音效、配乐及角色台词。`audio_workflow.py` 提供本地 WAV 测量、MP3 解码与游戏窗口裁剪，保留原件并输出新修订及配方。具体输入与命令见 [ElevenLabs 游戏音频](../adapters/assets/elevenlabs-audio.md)。解码依赖 FFmpeg；不把文件时长匹配当作听感或引擎验证通过。
+
+
+### 按用途浏览资产
+
+资产库以“全部资产”为入口，按人物角色、武器装备、道具模型、地图场景、动画资源、特效美术、材质贴图、音乐音效、二维美术与 UI、插件代码、蓝图与玩法模板分类，并保留未分类资产。音乐音效可筛选配乐、音效、配音。侧栏先选资产范围，再按资产分类与用途标签筛选，目录、搜索和收藏继续独立使用。旧专题仅保留历史数据兼容。
+
+分类优先采用与当前文件版本匹配的已保存记录，其次使用已有角色绑定、已登记引擎类型、文件内容／格式和目录建议。普通 FBX 或 `.uasset` 不会仅凭扩展名被认作角色或蓝图模板；信息不足时保留未分类。含动作片段的模型也可从动画资源中找到，分类统计可能有交叉，不复制文件、不推断动作适配或品质通过。
+
+卡片与详情显示独立分类标签。在详情中展开“修改分类”，可以保存主分类和音频细分；“恢复自动”清除手动覆盖。顶部“批量分类”作用于当前筛选结果，包含其他分页，保存前显示数量，每次最多 500 项。手动分类保存在项目 `.openaigame/asset-taxonomy.json`，刷新保留，并记录当前文件 SHA-256；替换或移动需要核对，并发修改或损坏记录不会被静默覆盖。此记录只保存分类，共享用途标签和对象归属继续由 Art Direction 管理，使用范围仍由实际内容目录决定。
+
+插件描述文件、常用代码和着色器文件可以列出并分类，不执行或自动安装代码。浏览预览能力仍取决于原文件格式；分类不会让原本不能浏览的引擎资产自动获得预览。
+
+
+## 资产版本与内置工具结果
+
+`asset_versions.py --project <项目> list` 读取历史；`apply --request request.json` 执行显式版本操作。请求路径相对项目，文件必须在项目内。通用操作为 create（title、kind、files）、add（group、files）、select（group、version、reason）、archive（group、version、archived）。文件数组接受路径或 `{ "path": "...", "sha256": "...", "role": "正面" }`；父版本 parent、参考 references 和说明 note 可选。相同交付物不同方案各保存一版，多视图／贴图依赖放入同版 files。revision 可用于乐观并发校验。
+
+`record-native --request native-result.json` 登记助手内置工具已经实际完成并保存的文件；不会调用模型或云服务。例如：
+
+```json
+{
+  "prompt": "保持盔甲结构，调整配色",
+  "tool": "builtin:imagegen",
+  "inputs": ["concepts/hero-base.png"],
+  "outputs": ["concepts/hero-front.png", "concepts/hero-side.png", "concepts/hero-alternative.png"],
+  "output_sets": [["concepts/hero-front.png", "concepts/hero-side.png"], ["concepts/hero-alternative.png"]]
+}
+```
+
+`tool` 填实际使用工具，示例名不能代替执行证据。已有看板内置任务时传 `job`，沿用其输入快照与参数；执行前读取快照并使用实际工具，完成后再登记输出。图像多个输出默认各自成版；同方案多文件明确用 output_sets 分组，每个输出恰好出现一次。不同方案共用原底稿，不会自动串成修改链。
+
+修改或参考已登记版本时加入 `lineage: { "group": "实际组ID或null", "parent": "实际版本ID或null", "note": "修改说明", "references": [{ "group": "参考组ID", "version": "参考版本ID", "role": "配色参考" }] }`。ID 从 list 返回读取，不自行编造。图像任务自动把关联的主图加入真实输入快照；使用手动输入时也必须与真正传给工具的文件一致。当前内置任务最多准备五张图；超限或不支持的格式返回错误。非图像生成的参考关联只提供生产依据，不宣称自动上传图像。
+
+API／本地命令任务 succeeded 或外部注册 registered 后自动保存版本，结果从 job 的 asset_version 查看。登记失败保留实际输出并写 version_registration_error；`link-job --job <任务ID>` 可恢复登记，不重新生成。相同任务输出的重复登记不产生重复版本。
+
+版本记录与不可覆盖的副本保存在 `.openaigame/asset-versions`；已有 Art Direction 的摘要区链接当前选用和最新结果。重新选用只修改记录，游戏文件不改变；保存快照、可打开、选用、工程接入和品质验收分别判断。额外副本会占用磁盘，归档只折叠显示，不删除原件。
+
+## 动作时间检查
+
+`action_workflow.py` 安装当前引擎的记录器、导入实际事件、列出和比较历史记录。工作台不提供动作检查页面，旧 `--view actions` 参数转到资产库。输入路径须位于当前游戏项目内；动作设定可选，缺少时只显示实测。详细方法见 [跨引擎动作记录](../adapters/engines/action_timing/README.md)。

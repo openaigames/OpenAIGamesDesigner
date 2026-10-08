@@ -5,12 +5,18 @@ from pathlib import Path
 from urllib.parse import urlsplit, parse_qs, unquote, quote
 from socketserver import ThreadingMixIn
 import settings_server, asset_workflow
-from adapters.assets import credential_store, generation_approval
+from adapters.assets import credential_store, generation_approval, model_prompt_policy, generation_capabilities, service_diagnostics
 from workbench import asset_browser as browser, art_registry as registry, asset_review
-from workbench import production_review, motion_review
+from workbench import production_review, motion_review, action_review, action_edit, action_preview
+from workbench import asset_taxonomy, asset_versions
 import task_state
 
 WEB=Path(__file__).with_name('workbench')/'web'
+
+
+def normalize_view(value):
+    # Accept saved launch commands while exposing only the remaining pages.
+    return 'assets' if value in ('review','production','observation','actions') else value
 
 
 class WorkbenchServer(ThreadingMixIn, settings_server.SettingsServer):
@@ -20,7 +26,7 @@ class WorkbenchServer(ThreadingMixIn, settings_server.SettingsServer):
         if not project.is_dir():raise ValueError('游戏项目目录不存在')
         super().__init__(port,project,job_id,handler=Handler)
         self.cookie_name='oagd_workbench_'+str(self.server_port)
-        self.view='tasks' if job_id else view
+        self.view='tasks' if job_id else normalize_view(view)
         self.art_lock=threading.Lock()
         self.review_lock=threading.Lock()
         self.session_lock=threading.Lock()
@@ -31,7 +37,7 @@ class WorkbenchServer(ThreadingMixIn, settings_server.SettingsServer):
         return self.origin+'/'+query+'#'+self.view
     def snapshot(self):
         result=browser.scan(self.project)
-        result.update(projectKey='current',assetBase='/asset/current/')
+        result.update(projectKey='current',assetBase='/asset/current/', generationPolicy=model_prompt_policy.policy(self.project))
         for asset in result['assets']:
             asset['url']=result['assetBase']+quote(asset['path'],safe='/')
             asset['assetRoot']=result['assetBase']
@@ -42,16 +48,61 @@ class WorkbenchServer(ThreadingMixIn, settings_server.SettingsServer):
 
 def job_summary(root,job):
     parameters=job['request']['parameters']
-    prompt=parameters.get('prompt',parameters.get('Prompt',''))
-    return {'id':job['job_id'],'title':str(prompt).splitlines()[0][:50] if prompt else job['job_id'],
+    prompt=parameters.get('prompt',parameters.get('Prompt',parameters.get('text','')))
+    audio=None
+    if job['provider']=='elevenlabs':
+        from adapters.assets import audio_timing
+        audio={'kind':parameters['kind'],'listening_validation':'not_checked'}
+        if parameters.get('timing'):
+            audio['plan']=audio_timing.timing_plan(parameters['timing'])
+            try: audio['source_status']=audio_timing.check_source(root,job['request'])
+            except (OSError,ValueError,KeyError,TypeError): audio['source_status']='changed_or_missing'
+        if job['attempts'] and job['attempts'][-1].get('result'):
+            attempt=job['attempts'][-1]
+            path=audio_timing.local_path(root,attempt['result'])
+            if path.is_file() and path.stat().st_size<1024*1024 and audio_timing.digest(path)==attempt.get('result_sha256'):
+                audio['observations']=json.loads(path.read_text(encoding='utf-8')).get('observations',{})
+    from adapters.assets import hunyuan_inputs, tripo_inputs
+    brief=job['request'].get('brief','')
+    title=prompt or brief
+    return {'id':job['job_id'],'title':str(title).splitlines()[0][:50] if title else job['job_id'],
             'provider':job['provider'],'status':job['status'],'createdAt':job['created_at'],
-            'parameters':parameters,'inputs':[{k:x[k] for k in ('path','sha256')} for x in job['request']['inputs']],
+            'parameters':parameters,'brief':brief,
+            'capability':generation_capabilities.describe(job['provider'],job['request'],job['settings']) if job['provider'] in ('tripo','hunyuan3d') and job['settings'].get('mode')=='api' else None,
+            'failure':service_diagnostics.job_failure(root,job) if job['provider'] in ('tripo','hunyuan3d') else None,
+            'promptPolicy':model_prompt_policy.assess(job['provider'],job['request'],job['settings'],root),
+            'promptEvidence':model_prompt_policy.submission_evidence(root,job),
+            'transmission':({'hunyuan3d':hunyuan_inputs,'tripo':tripo_inputs}[job['provider']].summary(job['request'])
+                if job['provider'] in ('hunyuan3d','tripo') and job['settings'].get('mode')=='api' else None),
+            'inputs':[{**{k:x[k] for k in ('path','sha256','view') if k in x},
+                **({'previewUrl':'/api/job-input?job='+quote(job['job_id'])+'&index='+str(i)}
+                   if Path(x['snapshot']).suffix.lower() in ('.png','.jpg','.jpeg','.webp') else {})}
+                for i,x in enumerate(job['request']['inputs'])],
             'artifacts':[{'path':x['path'],'sha256':x['sha256']} for x in job['artifacts']],
             'attempts':len(job['attempts']),'remoteId':job.get('provider_job_id'),
-            'api':job['settings'].get('mode')=='api'}
+            'api':job['settings'].get('mode')=='api','audio':audio,'lineage':job['request'].get('lineage'),
+            'assetVersion':job.get('asset_version'),'versionError':job.get('version_registration_error'),
+            'artRegistration':job.get('art_registration'),'artRegistrationError':job.get('art_registration_error'),
+            'executionSource':job.get('execution_source'),'host':job['settings'].get('mode')=='host'}
 
 
 class Handler(settings_server.Handler):
+    def _reply(self,status,body,kind='application/json; charset=utf-8',cookie=None):
+        # A rejected POST can still have a body in flight. Closing immediately
+        # with unread bytes intermittently resets the Windows client connection
+        # before it receives the 400/403 response. Discard only a bounded body;
+        # never parse or authorize it, and never wait on an unbounded sender.
+        if self.command=='POST' and status>=400 and not getattr(self,'_body_consumed',False):
+            previous=self.connection.gettimeout()
+            try:
+                size=int(self.headers.get('Content-Length','0'))
+                if not self.headers.get('Transfer-Encoding') and 0<size<=65536:
+                    self.connection.settimeout(.2)
+                    self.rfile.read(size)
+            except (OSError,ValueError):pass
+            finally:self.connection.settimeout(previous)
+            self._body_consumed=True
+        return super()._reply(status,body,kind,cookie)
     def authorized(self,write=False):
         if not self._host() or self.headers.get('Sec-Fetch-Site')=='cross-site':
             self._reply(403,{'error':'请使用当前项目的本机启动地址。'});return False
@@ -63,6 +114,7 @@ class Handler(settings_server.Handler):
     def body(self):
         size=int(self.headers.get('Content-Length','0'))
         if self.headers.get('Content-Type')!='application/json' or self.headers.get('Transfer-Encoding') or not 0<size<=65536:raise ValueError('请求格式或大小无效')
+        self._body_consumed=True
         data=json.loads(self.rfile.read(size))
         if not isinstance(data,dict):raise ValueError('需要 JSON 对象')
         return data
@@ -75,8 +127,20 @@ class Handler(settings_server.Handler):
         try:
             if route=='/api/session':return self._reply(200,{'csrf':self.server.csrf,'project':str(root),'connectionMode':'local-browser'})
             if route=='/api/state':return self._reply(200,self.server.state())
+            if route=='/api/service-diagnostics':return self._reply(200,service_diagnostics.configuration(root,query.get('provider',[''])[0]))
             if route=='/api/projects':return self._reply(200,{'projects':[{'key':'current','name':browser.game_name({'root':root,'name':root.name}),'root':str(root)}]})
             if route=='/api/assets':return self._reply(200,self.server.snapshot())
+            if route=='/api/asset-versions':return self._reply(200,browser.scan(root)['versions'])
+            if route=='/api/action-preview-status':return self._reply(200,action_preview.status(root,query.get('id',[''])[0]))
+            if route=='/api/action-preview-frame':return self.file(action_preview.frame_path(root,query.get('id',[''])[0],query.get('run',[''])[0],query.get('frame',[''])[0]),asset=True)
+            if route=='/api/action-editor':return self._reply(200,action_edit.snapshot(root))
+            if route=='/api/action-sequence':return self._reply(200,action_edit.detail(root,query.get('id',[''])[0]))
+            if route=='/api/action-waveform':return self._reply(200,action_edit.waveform(root,query.get('id',[''])[0],query.get('asset',[''])[0]))
+            if route=='/api/action-audio':return self.file(action_edit.audio_path(root,query.get('id',[''])[0],query.get('asset',[''])[0]),asset=True)
+            if route=='/api/action-runs':return self._reply(200,action_review.snapshot(root))
+            if route=='/api/action-run':return self._reply(200,action_review.detail(root,query.get('id',[''])[0]))
+            if route=='/api/action-compare':return self._reply(200,action_review.compare(root,query.get('a',[''])[0],query.get('b',[''])[0]))
+            if route=='/api/action-video':return self.file(action_review.media_path(root,query.get('id',[''])[0]),asset=True)
             if route=='/api/motion-review':return self._reply(200,motion_review.snapshot(root))
             if route=='/api/motion-handoff':return self._reply(200,motion_review.handoff(root,query.get('character',[None])[0]))
             if route=='/api/production':return self._reply(200,production_review.snapshot(root))
@@ -109,9 +173,24 @@ class Handler(settings_server.Handler):
                 job=asset_workflow.read_job(root,job_id)[1]
                 approval=self.server.state(job_id)['approval'] if job['status']=='queued' and job['settings'].get('mode')=='api' else None
                 return self._reply(200,{'job':job_summary(root,job),'approval':approval})
+            if route=='/api/job-input':
+                job_id=query.get('job',[''])[0]
+                folder,job=asset_workflow.read_job(root,job_id)
+                index=int(query.get('index',['-1'])[0])
+                if not 0<=index<len(job['request']['inputs']):raise ValueError('输入不存在')
+                item=job['request']['inputs'][index]
+                path=asset_workflow.contained(root,item['snapshot'])
+                if not path.is_relative_to((folder.parent/'inputs').resolve()):raise ValueError('输入路径无效')
+                if path.suffix.lower() not in ('.png','.jpg','.jpeg','.webp') or not 0<path.stat().st_size<=20*1024**2:raise ValueError('不支持的参考图')
+                if asset_workflow.sha(path)!=item['sha256']:raise ValueError('输入版本已变化')
+                from adapters.assets.ark import image_kind
+                kind=image_kind(path.read_bytes()[:16])
+                if kind!=('jpeg' if path.suffix.lower() in ('.jpg','.jpeg') else path.suffix.lower()[1:]):raise ValueError('参考图格式不符')
+                return self.file(path,asset=True)
             if route.startswith('/api/'):return self._reply(404,{'error':'接口不存在'})
             if route.startswith('/asset/current/'):
                 relative=route[len('/asset/current/'):];path=registry.asset_path(root,relative)
+                if relative.startswith(asset_versions.PREFIX):path=asset_versions.file_path(root,relative)
                 if path.suffix.lower() not in {*browser.KINDS,'.bin','.mtl'} and not path.name.endswith('.vfx.json'):raise ValueError('不支持的文件')
                 if relative.startswith('.openaigame/'):
                     known=browser.library_metadata(root)
@@ -152,6 +231,33 @@ class Handler(settings_server.Handler):
         try:
             data=self.body()
             if data.get('project','current')!='current':raise ValueError('项目不存在')
+            if route in ('/api/action-preview-command','/api/action-preview-heartbeat','/api/action-preview-record'):
+                try:
+                    with self.server.review_lock:
+                        result={'/api/action-preview-command':action_preview.command,'/api/action-preview-heartbeat':action_preview.heartbeat,'/api/action-preview-record':action_preview.preserve}[route](root,data)
+                    return self._reply(200,result)
+                except (ValueError,KeyError,TypeError,OSError) as error:return self._reply(400,{'error':str(error)})
+            if route in ('/api/action-draft','/api/action-apply','/api/action-restore'):
+                try:
+                    with self.server.review_lock:
+                        result={'/api/action-draft':action_edit.save,'/api/action-apply':action_edit.apply,'/api/action-restore':action_edit.restore}[route](root,data)
+                    return self._reply(200,result)
+                except (ValueError,KeyError,TypeError,OSError) as error:return self._reply(400,{'error':str(error)})
+            if route=='/api/action-import':
+                try:return self._reply(201,action_review.register(root,data))
+                except (ValueError,KeyError,TypeError,OSError) as error:return self._reply(400,{'error':str(error)})
+            if route=='/api/asset-versions':
+                try:
+                    with self.server.art_lock:result=asset_versions.mutate(root,data)
+                    return self._reply(200,result)
+                except registry.RevisionConflict as error:return self._reply(409,{'error':str(error)})
+                except (ValueError,KeyError,TypeError) as error:return self._reply(400,{'error':str(error)})
+            if route=='/api/asset-classification':
+                try:
+                    result=asset_taxonomy.save(root,data,browser.scan(root)['assets'])
+                    return self._reply(200,result)
+                except registry.RevisionConflict as error:return self._reply(409,{'error':str(error)})
+                except (OSError,ValueError,KeyError,TypeError) as error:return self._reply(400,{'error':str(error)})
             if route in ('/api/motion-context','/api/motion-review'):
                 try:
                     with self.server.review_lock:
@@ -174,14 +280,46 @@ class Handler(settings_server.Handler):
                 return self._reply(200,result)
             if route=='/api/jobs':
                 provider=data.get('provider');prompt=data.get('prompt')
-                if provider not in ('tripo','hunyuan3d') or not isinstance(prompt,str) or not 1<=len(prompt.strip())<=1200:raise ValueError('请填写服务与制作需求')
+                image3d=provider=='hunyuan3d' and isinstance(data.get('hunyuan'),dict) and data['hunyuan'].get('mode')=='image'
+                if provider not in ('image','tripo','hunyuan3d','elevenlabs','seedream','seedance') or not isinstance(prompt,str) or not (0 if image3d else 1)<=len(prompt.strip())<=(4100 if provider=='elevenlabs' else 4000 if provider in ('image','seedream','seedance') else 1200):raise ValueError('请填写服务与制作需求')
                 config_path=root/'.openaigame/asset-providers.json'
                 if not config_path.resolve().is_relative_to(root):raise ValueError('配置路径无效')
                 config=json.loads(config_path.read_text(encoding='utf-8-sig')) if config_path.exists() else {}
-                settings=config[provider] if provider in config else credential_store.default_settings(provider)
-                if not isinstance(settings,dict) or settings.get('mode')!='api':raise ValueError('先配置生成服务；本页面新建任务仅支持 API 模式')
+                settings={'mode':'host'} if provider=='image' else config[provider] if provider in config else credential_store.default_settings(provider)
+                if not isinstance(settings,dict) or settings.get('mode') not in ('api','host'):raise ValueError('请先配置所选生成服务')
                 parameters={'prompt':prompt.strip(),'type':'text_to_model'} if provider=='tripo' else {'Prompt':prompt.strip()}
-                job=asset_workflow.new_job(root,provider,{'parameters':parameters,'inputs':[]},settings)
+                if provider=='elevenlabs':
+                    if not isinstance(data.get('audio'),dict) or 'text' in data['audio']:raise ValueError('请填写音频类型和参数')
+                    parameters={**data['audio'],'text':prompt.strip()}
+                inputs=[]
+                if provider=='image':
+                    parameters={'prompt':prompt.strip()};inputs=data.get('inputs',[])
+                    if not isinstance(inputs,list) or len(inputs)>5 or any(not isinstance(x,str) for x in inputs):raise ValueError('内置生图每次可准备至多五张参考图')
+                if provider in ('seedream','seedance'):
+                    media=data.get('media')
+                    if not isinstance(media,dict) or 'prompt' in media:raise ValueError('请填写图像或视频参数')
+                    parameters={**media,'prompt':prompt.strip()}
+                    inputs=data.get('inputs',[])
+                    if not isinstance(inputs,list) or len(inputs)>1 or any(not isinstance(x,str) for x in inputs):raise ValueError('请选择一张项目内参考图')
+                request={'parameters':parameters,'inputs':inputs}
+                if provider=='hunyuan3d' and 'hunyuan' in data:
+                    h=data['hunyuan']
+                    if not isinstance(h,dict) or set(h)!={'mode','parameters'} or h['mode'] not in ('text','image','sketch') or not isinstance(h['parameters'],dict):raise ValueError('混元生成方式或参数无效')
+                    if 'Prompt' in h['parameters']:raise ValueError('Prompt 请填写在文生需求中')
+                    if h['mode']=='sketch':
+                        if h['parameters'].get('Model')!='3.0' or h['parameters'].get('GenerateType')!='Sketch' or len(data.get('inputs',[]))!=1:
+                            raise ValueError('Sketch 必须明确选择 3.0、Sketch 模式和一张草图')
+                        request={'parameters':{**h['parameters'],'Prompt':prompt.strip()},'inputs':data['inputs']}
+                    elif h['mode']=='image':
+                        if not data.get('inputs'):raise ValueError('图生模式至少需要正面图')
+                        request={'parameters':h['parameters'],'inputs':data['inputs'],'brief':prompt.strip()}
+                    else:
+                        if data.get('inputs'):raise ValueError('文生模式不同时上传图片')
+                        request={'parameters':{**h['parameters'],'Prompt':prompt.strip()},'inputs':[]}
+                if data.get('lineage'):request['lineage']=data['lineage']
+                if provider=='seedance' and data.get('lineage') and '-2-5-' in parameters.get('model','doubao-seedance-2-5-260628'):parameters['ratio']='adaptive'
+                try:job=asset_workflow.new_job(root,provider,request,settings)
+                except ValueError as error:return self._reply(400,{'error':str(error)})
                 return self._reply(201,{'job':job_summary(root,job)})
             if route=='/api/job-approve':
                 if set(data)!={'job','fingerprint','accept_charge'} or data['accept_charge'] is not True:raise ValueError('请明确确认本次请求及可能费用')
@@ -257,7 +395,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--project',required=True,type=Path)
     parser.add_argument('--port',type=int,default=0)
-    parser.add_argument('--view',choices=('assets','review','tasks','services','production','observation'),default='assets')
+    parser.add_argument('--view',type=normalize_view,choices=('assets','tasks','services'),default='assets')
     parser.add_argument('--approve-job')
     parser.add_argument('--no-open',action='store_true')
     parser.add_argument('--ready-file',type=Path)

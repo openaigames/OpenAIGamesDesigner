@@ -39,6 +39,7 @@
 | AI 通过 MCP 操作编辑器 | 对应 MCP 服务及其依赖；提供方要求的引擎插件 | 引擎侧安装插件（若需要）＋本机服务环境＋AI 助手连接配置 | 工具可发现、目标工程正确、读写与保存重开通过；见 [MCP 三端配置](#mcp-三端配置) |
 | UE 动作/动画接入 | 本轮选定或授权选材的资源/模块，目标版本兼容 | 工程 Content 导入动画，第三方代码按提供方安装到项目；检查骨架、控制接口和依赖 | 动画预览、工程中播放、规则时序、取消/恢复与试玩分别验证；不限定某个动作包 |
 | Tripo / Hunyuan3D API 生成 | Python、网络、服务账户与凭据 | Tripo/混元 API Key 可在[本机设置页](assets/local-settings.md)保存；TC3 使用环境变量，项目可覆盖默认配置 | doctor 检查存在，再生成一个小任务；见 [API 配置](assets/generation-api.md) |
+| 通过主机代理访问资产 API 或下载 | curl；Windows 自动代理使用系统 WinHTTP | 当前 Windows 自带 curl；其他系统在 PATH 提供 curl；使用系统代理或代理环境变量 | 先用官方只读接口验证连接与认证；见 [跟随主机代理](assets/local-settings.md#跟随主机代理) |
 | 免费与付费资产检索与获取 | Python、网络；部分来源需要浏览器登录 | [素材目录](assets/asset-sources.md)；无需本地生成模型 | 实际搜索 → 获取文件 → verify → 导入检查 |
 | 其他图像、3D、音频生成 | 用户选定的实际生成工具 / 服务及包装脚本 | 工具自己的环境；游戏项目 `.openaigame/asset-providers.json` | 先完成一次小任务，检查真实文件和日志；见 [资产接入](assets/README.md) |
 | 动画制作与武器校准 | `game-animation-pipeline`；按所选路径配置 Blender、UE 与 C++ 工具链 | 已有 UE 资源直接检查；需外部修改时配置源工具并按技能执行回传 | 独立动作测试与实际游戏验证分别记录；随包适配器的骨架/事件约束见该技能说明 |
@@ -90,3 +91,7 @@ Codex 的配置可位于用户级 `~/.codex/config.toml` 或受信任项目的 `
 检查结果分为“未安装 / 未配置 / 已配置未验证 / 已验证 / 验证失败”，每项带下一步。当前 `doctor` 只覆盖对应适配器的检查范围，不会自动完成上述全部检查或安装；尤其 Unity / UE 的文件检查不证明 MCP、编译、打包已经可用。
 
 环境配置通常在第一次接入时完成；引擎升级、插件更新、换机器或目标平台变化后，复查受影响的部分。
+
+### ElevenLabs 音频
+
+使用音效、配乐或台词云生成时配置本机 ElevenLabs API Key，并为执行工具的 Python 准备 FFmpeg（PATH、`OAGD_FFMPEG` 或 `imageio-ffmpeg`）。`asset_workflow.py --project <项目> doctor --provider elevenlabs` 检查存在性，不提交生成；生成前在现有任务页核对请求与费用。参见 [音频接入](assets/elevenlabs-audio.md)。

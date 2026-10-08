@@ -12,6 +12,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parent))
 from observation_worker import Observer, actor_detail
 import native_data
 import character_export
+import static_meshes
 
 
 def save_json(path, data):
@@ -91,6 +92,7 @@ def apply(op):
     kind = op['op']
     level = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
     if kind=='native_patch':return native_data.patch(op,asset,package)
+    if kind=='static_mesh_configure':return static_meshes.configure(op,asset,package)
     if kind=='data_asset':
         path=package(op['path'])
         if unreal.EditorAssetLibrary.does_asset_exist(path):raise ValueError('Native asset exists; use guarded native_patch')
@@ -433,6 +435,8 @@ def main():
             raise ValueError('Failed to load requested scene')
         result['native_data']=[native_data.read(spec,asset) for spec in request.get('native_reads',[])]
         result['characters']=character_export.collect(request,find_actor)
+        if 'mesh_audit' in request:
+            result['mesh_audit']=static_meshes.collect(request['mesh_audit'],asset)
         if request['mode'] == 'playback':
             if not request.get('scene'):
                 raise ValueError('Playback requires an explicit scene')

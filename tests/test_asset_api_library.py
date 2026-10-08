@@ -11,12 +11,18 @@ import tempfile
 import unittest
 from unittest.mock import patch, Mock
 import zipfile
+import base64
+import struct
+import zlib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 import asset_library as library
 import asset_workflow as workflow
-import package_skills
+try:
+    import package_skills
+except ModuleNotFoundError:
+    package_skills = None  # The installed runtime intentionally omits the repository packager.
 from adapters.assets import api_common, api_worker, http_io, hunyuan_api, tripo, polyhaven
 from adapters.assets import credential_store
 from adapters.assets import generation_approval
@@ -76,11 +82,15 @@ class AssetAPITests(unittest.TestCase):
             self.assertEqual(headers['X-TC-Action'], 'SubmitHunyuanTo3DProJob')
             self.assertTrue(headers['Authorization'].startswith('TC3-HMAC-SHA256 '))
             self.assertNotIn('fixture-secret', str(headers))
-        image = self.root / 'image.png'; image.write_bytes(b'abc')
+        def chunk(name,data):return struct.pack('>I',len(data))+name+data+struct.pack('>I',zlib.crc32(name+data)&0xffffffff)
+        pixels=b''.join(b'\0'+b'\x10\x20\x30'*256 for _ in range(256))
+        image = self.root / 'image.png'
+        image.write_bytes(b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',256,256,8,2,0,0,0))+chunk(b'IDAT',zlib.compress(pixels))+chunk(b'IEND',b''))
         with patch.object(http_io, 'json_request', return_value={'JobId': '124'}) as call:
             key.submit({'parameters': {}, 'inputs': [{'snapshot': str(image)}]})
             self.assertEqual(call.call_args.args[2]['Authorization'], 'fixture-key')
-            self.assertEqual(call.call_args.args[1]['ImageUrl']['Url'], 'data:image/png;base64,YWJj')
+            self.assertEqual(base64.b64decode(call.call_args.args[1]['ImageBase64']), image.read_bytes())
+            self.assertNotIn('ImageUrl',call.call_args.args[1])
         for status, done, pending in [('WAIT', False, True), ('RUN', False, True), ('FAIL', False, False), ('DONE', True, False)]:
             with patch.object(tc, 'call', return_value={'Status': status, 'ResultFile3Ds': [{'Type': 'GLB', 'Url': 'https://example.com/a.glb'}]}):
                 report = tc.query('123')
@@ -215,6 +225,7 @@ class AssetAPITests(unittest.TestCase):
             self.assertEqual(found['assets'][0]['source'], 'Poly Haven')
         with self.assertRaises(ValueError): polyhaven.files('../escape')
 
+    @unittest.skipIf(package_skills is None, 'Repository packaging tool is not shipped in the installed runtime')
     def test_packaged_entrypoints_run_outside_repository(self):
         bundle = package_skills.package(self.root / 'bundle')
         runtime = bundle / 'game-preproduction/runtime'

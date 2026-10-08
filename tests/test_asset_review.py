@@ -178,7 +178,7 @@ class ReviewTests(unittest.TestCase):
                 connection.close()
                 return result
             try:
-                self.assertTrue(server.launch_url.endswith('#review'))
+                self.assertTrue(server.launch_url.endswith('#assets'))
                 self.assertEqual(request('/api/asset-review')[0], 401)
                 _, headers, _ = request('/session', {}, {'X-Workbench-Connect': '1'})
                 auth = {'Cookie': headers['Set-Cookie'].split(';')[0], 'X-CSRF-Token': server.csrf}

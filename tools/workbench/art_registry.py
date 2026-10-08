@@ -25,6 +25,9 @@ def document_path(root):
 def asset_path(root,relative):
     if not isinstance(relative,str) or not relative or Path(relative).is_absolute() or '\\' in relative or ':' in relative or any(ord(c)<32 for c in relative):raise RegistryError('资产路径无效')
     parts=Path(relative).parts
+    if len(parts)>=6 and parts[:2]==('.openaigame','asset-versions') and parts[4]=='files':
+        from .asset_versions import safe
+        return safe(root,relative)
     if any(p.startswith('.') for p in parts):
         if len(parts)<5 or parts[:2] not in (('.openaigame','asset-library'),('.openaigame','asset-jobs')) or any(p.startswith('.') for p in parts[1:]):raise RegistryError('资产路径无效')
         if parts[1]=='asset-library' and parts[3]!='files':raise RegistryError('资产路径无效')
@@ -47,6 +50,11 @@ def can_initialize(root):
 
 
 def initialize(root):
+    from record_io import project_lock
+    with project_lock(root, 'art-registry'):
+        return _initialize(root)
+
+def _initialize(root):
     """Explicit opt-in: append empty tables, preserving legacy narrative and records."""
     path=document_path(root)
     if not can_initialize(root):
@@ -114,13 +122,24 @@ def load(root):
         ids.add(key);assets[relative]={'id':key,'objectId':object_id,'kind':row['类型'],'title':row['名称'],'path':relative,'sha256':row['SHA-256'],'stage':row['制作/导入状态'],'source':row['来源与许可']}
     title=next((line[2:].strip() for line in text.splitlines() if line.startswith('# ')),root.name)
     title=re.sub(r'\s*·\s*(美术方向|Art Direction)\s*$','',title)
-    return {'text':text,'revision':hashlib.sha256(raw).hexdigest(),'objects':objects,'assets':assets,'game':title}
+    lifecycle={}
+    if '<!-- art-lifecycle:' in text:
+        content=block(text,'art-lifecycle').group(1).strip().replace('\r\n','\n')
+        if not content.startswith('```json\n') or not content.endswith('\n```'):raise RegistryError('生产记录区格式无效')
+        lifecycle=json.loads(content[8:-4])
+        if not isinstance(lifecycle,dict) or set(lifecycle)-ids:raise RegistryError('生产记录引用了未知资产 ID')
+    return {'text':text,'revision':hashlib.sha256(raw).hexdigest(),'objects':objects,'assets':assets,'game':title,'lifecycle':lifecycle}
 
 def cell(value):return html.escape(str(value),quote=False).replace('|','&#124;').replace('\r',' ').replace('\n',' ') or '—'
 def table(columns,rows):
     return '\n'.join(['| '+' | '.join(columns)+' |','| '+' | '.join('---' for _ in columns)+' |']+['| '+' | '.join(cell(v) for v in row)+' |' for row in rows])
 
 def write(root,data,revision):
+    from record_io import project_lock
+    with project_lock(root, 'art-registry'):
+        return _write(root,data,revision)
+
+def _write(root,data,revision):
     current=load(root)
     if current['revision']!=revision:raise RevisionConflict('Art Direction 已被修改，请刷新后再保存')
     text=current['text']
@@ -130,6 +149,13 @@ def write(root,data,revision):
     }
     for name,value in content.items():
         match=block(text,name);text=text[:match.start(1)]+value+text[match.end(1):]
+    if data.get('lifecycle') or '<!-- art-lifecycle:' in text:
+        value='```json\n'+json.dumps(data.get('lifecycle',{}),ensure_ascii=False,indent=2,allow_nan=False).replace('<','\\u003c')+'\n```'
+        if '<!-- art-lifecycle:' in text:
+            match=block(text,'art-lifecycle');text=text[:match.start(1)]+value+text[match.end(1):]
+        else:
+            text+='\n\n## 资产生产记录\n\n此区与上方文件映射共同维护；生产状态由共享登记工具更新，历史依据链接原记录。\n\n<!-- art-lifecycle:start -->\n'+value+'\n<!-- art-lifecycle:end -->\n'
+    if text==current['text']:return
     path=document_path(root);temporary=path.with_name('.art-direction-'+uuid.uuid4().hex+'.tmp')
     if len(text.encode('utf-8'))>2*1024*1024:raise RegistryError('美术记录超过 2 MB，请整理记录后再保存')
     try:
@@ -156,7 +182,7 @@ def classify(root,asset,data):
     if not obj or not obj['tags']:missing.append('标签')
     changed=digest(root/asset['path'])!=record['sha256']
     return {'id':record['id'],'objectId':record['objectId'],'object':obj['label'] if obj else '',
-            'tags':obj['tags'] if obj and not changed else [],'stage':record['stage'],
+            'tags':obj['tags'] if obj and not changed else [],'stage':record['stage'],'source':record['source'],
             'state':'version-changed' if changed else 'incomplete' if missing else 'linked','missingFields':missing}
 
 def audit(assets,data,error=None):

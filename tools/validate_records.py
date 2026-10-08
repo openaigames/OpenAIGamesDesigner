@@ -323,6 +323,7 @@ def main(argv=None):
     parser.add_argument("--production", action="store_true", help="With --layout, check minimum implementation handoff files and links")
     parser.add_argument("--closeout", action="store_true", help="With --layout --production, check saved state and evidence links after implementation, even when incomplete")
     parser.add_argument('--report-root', action='append', default=[], help='Additional project-relative directory for closeout reports')
+    parser.add_argument('--asset-scope',type=Path,help='Check a scoped asset handoff for existing or new projects')
     args = parser.parse_args(argv)
     project = args.project.resolve()
     records = []
@@ -346,6 +347,11 @@ def main(argv=None):
                                   ("asset-job", ".openaigame/asset-jobs/*/job.json")):
                 records.extend((kind, p) for p in project.glob(pattern))
         errors = []
+        if args.asset_scope:
+            from workbench.asset_handoff import check
+            from record_io import read_json
+            asset_report=check(project,read_json(args.asset_scope))
+            errors.extend('Asset handoff: '+issue for issue in asset_report['issues'])
         if args.layout:
             errors.extend(layout_errors(project, args.production))
         if args.closeout:
@@ -364,6 +370,7 @@ def main(argv=None):
         print(json.dumps({"records_checked": len(records), "errors": errors,
                           "layout_checked": args.layout, "production_handoff_checked": args.production,
                           "closeout_checked": args.closeout,
+                          "asset_handoff": asset_report if args.asset_scope else None,
                           "document_content_validation": "not_performed",
                           "quality_validation": "not_performed"}, ensure_ascii=False, indent=2))
         return 1 if errors else 0

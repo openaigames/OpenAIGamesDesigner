@@ -6,7 +6,6 @@
 python tools/observation.py --project MyGame register --capture runs/R001/observation.json --id O001 --dependency game/Content/Map.umap
 python tools/observation.py --project MyGame show --id O001
 python tools/observation.py --project MyGame elapsed --id O001 --start hero:cancel-1 --end hero:cleanup-1
-python tools/project_workbench.py --project MyGame --view observation
 ```
 
 依赖包括真正消费的规则、资源、配置和运行回执。不会根据同名文件推断消费者；登记时应覆盖影响本次结论的源。引擎记录精确的来源时钟、对象、输入方式、辅助条件和采样成本。通用记录不包含所有引擎内部状态，不是确定性回放系统。
@@ -50,10 +49,12 @@ UE 的启动日志若含错误，会保留 needs_review，不能忽略退出码�
 
 相关 API 以当前引擎为准：[SceneComponent](https://dev.epicgames.com/documentation/en-us/unreal-engine/python-api/class/SceneComponent)、[AutomationLibrary](https://dev.epicgames.com/documentation/en-us/unreal-engine/python-api/class/AutomationLibrary)。
 
-## 看板评审
+## 记录评审
+
+工作台不再提供独立运行评审页。使用 `observation.py show/elapsed` 读取记录与事件间隔，并按实际问题查看原始媒体或生成对照报告；观察采集、版本检查及批注数据接口继续保留。
 
 当前记录与对照记录保留独立时钟。通过两条已观测事件选择对齐锚点，明确这是人工选定的一次时间平移，不假设不同设备时钟相同。视频只在提供的锚点区间内插值，暂停或变速片段应分段登记；图片对应请求/取帧时间，不证明亚帧延迟。
 
-空间提供 XY 俯视、XZ/YZ 剖面、路线及位置批注。三维位置批注未投影轴沿用选中对象的实测位置，必须核对再保存。两个空间只有在同一坐标约定、单位和范围下才可比较；相同单位本身不证明坐标原点相同。
+需要空间分析时，根据实际采样生成 XY 俯视、XZ/YZ 剖面或路线对照图。位置批注应记录完整的三维实测坐标，不能从二维图推测未投影轴，保存前核对对应对象与时间。两个空间只有在同一坐标约定、单位和范围下才可比较；相同单位本身不证明坐标原点相同。
 
-批注只保存观察与锚点，不自动批准阶段或关闭问题。任务记录仍由同一个 `game_workflow task` 入口和看板读写，专业判断有实际依据后再关联证据。
+批注只保存观察与锚点，不自动批准阶段或关闭问题。任务记录仍由同一个 `game_workflow task` 入口和兼容 API 读写，专业判断有实际依据后再关联证据。

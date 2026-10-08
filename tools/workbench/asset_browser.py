@@ -1,7 +1,7 @@
 """Local asset browser with Art Direction as the sole tag and registration source."""
 import argparse, hashlib, json, mimetypes, os, struct, time, threading, uuid
 import content_roots
-from . import art_registry, model_previews, asset_usage, character_bindings
+from . import art_registry, model_previews, asset_usage, character_bindings, asset_taxonomy, asset_versions
 import asset_fit
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -12,6 +12,8 @@ WEB=HERE/'web'
 SKIP={'.git','.svn','.asset-browser','.openaigame','node_modules','Intermediate','Binaries','DerivedDataCache','Saved','.idea','.vscode','dist','Library','Temp','obj','builds','Licenses'}
 KINDS={'.glb':'model','.gltf':'model','.obj':'model','.fbx':'model','.stl':'model','.png':'image','.jpg':'image','.jpeg':'image','.webp':'image','.gif':'image','.svg':'image','.wav':'audio','.ogg':'audio','.mp3':'audio','.flac':'audio','.m4a':'audio','.mp4':'video','.webm':'video','.uasset':'engine','.umap':'engine','.tscn':'engine','.tres':'engine','.prefab':'engine','.controller':'engine','.anim':'animation','.bvh':'animation','.unity':'engine','.vfx':'engine','.efkefc':'engine','.blend':'engine','.dds':'texture','.tga':'texture','.exr':'texture','.hdr':'texture','.ktx2':'texture','.ttf':'other','.otf':'other'}
 MIME={'.glb':'model/gltf-binary','.gltf':'model/gltf+json','.js':'text/javascript','.ogg':'audio/ogg','.json':'application/json','.bin':'application/octet-stream'}
+KINDS.update({ext:'code' for ext in ('.uplugin','.unitypackage','.cs','.cpp','.h','.hpp','.gd','.py','.js','.ts')})
+KINDS.update({ext:'texture' for ext in ('.shader','.gdshader','.hlsl','.usf')})
 TAG_LOCK=threading.Lock()
 
 def metadata_path(root, name):
@@ -71,13 +73,19 @@ def library_metadata(root):
                     relative=entry.get('path','');target=art_registry.asset_path(root,relative)
                     if not target.is_file():continue
                     info={}
+                    if field=='artifacts' and data.get('provider')=='elevenlabs':
+                        audio_kind=data.get('request',{}).get('parameters',{}).get('kind')
+                        if audio_kind in ('sound_effect','music','speech'):info['sourceAudioKind']={'sound_effect':'sfx','music':'music','speech':'speech'}[audio_kind]
                     if field=='files':
+                        if isinstance(data.get('kind'),str):info['sourceKind']=data['kind']
                         for original,key in [('title','title'),('author','author'),('source_url','source')]:
                             if isinstance(data.get(original),str):info[key]=data[original]
                         license=data.get('license',{})
                         if isinstance(license,dict) and isinstance(license.get('name'),str):info['license']=license['name']
                     rows[relative]=info
             except (OSError,ValueError,TypeError,AttributeError):continue
+    try:rows.update(asset_versions.metadata(root))
+    except (OSError,ValueError,KeyError,TypeError):pass
     return rows
 
 
@@ -133,7 +141,7 @@ def scan(root):
                  'ext':('VFX' if kind=='vfx' else ext[1:]).upper(),'bytes':stat.st_size,'modified':stat.st_mtime,
                  'url':'/asset/'+quote(rel,safe='/'),'folder':p.parent.relative_to(root).as_posix(),'tags':[],
                  'source':None,'author':'未登记','license':'未登记'}
-            row.update({k:v for k,v in (catalog.get(rel,{}) if isinstance(catalog.get(rel,{}),dict) else {}).items() if k in {'title','source','author','license','note','texture','color','rank'}})
+            row.update({k:v for k,v in (catalog.get(rel,{}) if isinstance(catalog.get(rel,{}),dict) else {}).items() if k in {'title','source','author','license','note','texture','color','rank','sourceKind','assetClass','sourceAudioKind'}})
             ownership=content_roots.classify(root,rel,content_layout)
             row['location']=ownership['location']
             row['locationReason']=ownership['reason']
@@ -155,5 +163,7 @@ def scan(root):
     items.sort(key=lambda a:(a.get('rank',100),0 if a.get('animations') else 1 if a['kind']=='model' else 2 if a['kind']=='vfx' else 3,a['path']))
     audit_registry={**registry,'assets':{k:v for k,v in registry['assets'].items() if not any(k.startswith(prefix) for prefix in excluded)}} if registry else None
     characters,character_error=character_bindings.read(root,items)
+    taxonomy=asset_taxonomy.attach(root,items,characters)
+    version_report=asset_versions.attach(root,items)
     return {**asset_fit.snapshot(root),'contentLayout':content_layout,'characters':characters,'characterBindingError':character_error,'project':game_name({'root':root,'name':root.name}),'root':str(root),'projectId':hashlib.sha256(str(root).encode()).hexdigest()[:16],'previewMappingError':preview_error,
-            'assets':items,'usageAudit':usage_audit,'artAudit':{**art_registry.audit(items,audit_registry,registry_error),'canInitialize':art_registry.can_initialize(root)},'artObjects':list(registry['objects'].values()) if registry else [],'artRevision':registry['revision'] if registry else None,'scannedAt':time.time(),'totalBytes':sum(x['bytes'] for x in items),'demo':False}
+            'assets':items,'versions':version_report,'taxonomy':taxonomy,'usageAudit':usage_audit,'artAudit':{**art_registry.audit([a for a in items if not a['path'].startswith(asset_versions.PREFIX)],audit_registry,registry_error),'canInitialize':art_registry.can_initialize(root)},'artObjects':list(registry['objects'].values()) if registry else [],'artRevision':registry['revision'] if registry else None,'scannedAt':time.time(),'totalBytes':sum(x['bytes'] for x in items),'demo':False}

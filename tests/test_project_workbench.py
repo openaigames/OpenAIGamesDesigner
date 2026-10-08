@@ -1,6 +1,7 @@
 """Project scope, Art Direction authority and real settings/approval integration."""
 import hashlib, http.client, json, os, shutil, struct, subprocess, sys, threading, unittest, uuid
 from pathlib import Path
+from html.parser import HTMLParser
 from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'tools'))
@@ -42,6 +43,34 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(status,200);self.headers={'Cookie':headers['Set-Cookie'].split(';')[0],'X-CSRF-Token':self.server.csrf}
     def art(self,route,payload):
         return self.request('/api/art-'+route,{'project':'current','revision':registry.load(self.root)['revision'],**payload})
+    def test_three_pages_keep_asset_details_and_record_apis(self):
+        class Page(HTMLParser):
+            def __init__(self):
+                super().__init__();self.views=[];self.ids=set()
+            def handle_starttag(self,tag,attrs):
+                attrs=dict(attrs);self.ids.add(attrs.get('id'))
+                if tag=='button' and 'workspace-tab' in attrs.get('class','').split():
+                    self.views.append(attrs['data-view'])
+        status,_,html=self.request('/')
+        self.assertEqual(status,200)
+        page=Page();page.feed(html.decode('utf-8'))
+        self.assertEqual(page.views,['assets','services','tasks'])
+        self.assertTrue({'character-controls','asset-fits','asset-category-editor','usage-navigation'}<=page.ids)
+        self.assertFalse({'review-view','production-view','observation-view','back-to-board'}&page.ids)
+        for name in ('asset-review.js','asset-review.css','production-review.js','production-review.css'):
+            self.assertEqual(self.request('/'+name)[0],404,name)
+        for name in ('asset-fits.js','asset-details.css','motion-review.js','motion-review.css'):
+            self.assertEqual(self.request('/'+name)[0],200,name)
+        for route in ('/api/production','/api/asset-review','/api/motion-review'):
+            self.assertEqual(self.request(route)[0],200,route)
+        self.assertEqual(self.doc.read_bytes(),self.initial)
+    def test_legacy_launch_views_land_on_assets(self):
+        for view in ('review','production','observation'):
+            self.assertEqual(wb.normalize_view(view),'assets')
+            with wb.WorkbenchServer(self.root,view=view) as server:
+                self.assertEqual(server.launch_url,server.origin+'/#assets')
+        for view in ('assets','tasks','services','invalid'):
+            self.assertEqual(wb.normalize_view(view),view)
     def test_multiple_browsers_connect_from_the_same_plain_url(self):
         self.assertEqual(self.server.launch_url,self.server.origin+'/#assets')
         self.assertNotIn(self.server.launch_token,self.server.launch_url)
@@ -60,6 +89,79 @@ class WorkbenchTests(unittest.TestCase):
             self.assertEqual(self.request('/api/assets',headers=first_browser,auth=False)[0],200)
             self.assertEqual(self.request('/api/art-initialize',{},headers={**second_browser,'X-CSRF-Token':'bad'},auth=False)[0],403)
         self.assertEqual(self.doc.read_bytes(),self.initial)
+    def test_elevenlabs_service_job_review_approval_and_source_change(self):
+        with patch.dict(os.environ,{'ELEVENLABS_API_KEY':'synthetic-audio-workbench'}):
+            state=self.request('/api/state')[2]
+            self.assertIn('elevenlabs',state['providers'])
+            self.assertNotIn('synthetic-audio-workbench',json.dumps(state))
+            (self.root/'combat.json').write_text(json.dumps({'swing':{'start_seconds':.1,'end_seconds':.4,'play_rate':1.5}}))
+            audio={'kind':'sound_effect','timing':{'event':'sword.swing','source':{'path':'combat.json','pointer':'/swing'},'tail_seconds':.04}}
+            status,_,created=self.request('/api/jobs',{'provider':'elevenlabs','prompt':'single sword whoosh','audio':audio})
+            self.assertEqual(status,201,created);job=created['job']['id']
+            review=self.request('/api/job-review?job='+job)[2]
+            self.assertAlmostEqual(review['job']['audio']['plan']['target_seconds'],.24)
+            self.assertEqual(review['job']['audio']['source_status'],'current')
+            self.assertFalse(review['approval']['approved'])
+            self.assertEqual(self.request('/api/job-approve',{'job':job,'fingerprint':review['approval']['fingerprint'],'accept_charge':True})[0],200)
+            self.assertTrue(self.request('/api/job-review?job='+job)[2]['approval']['approved'])
+            (self.root/'combat.json').write_text('{}')
+            review=self.request('/api/job-review?job='+job)[2]
+            self.assertEqual(review['job']['audio']['source_status'],'changed_or_missing')
+            self.assertIn('error',review['approval'])
+            self.assertEqual(wb.asset_workflow.read_job(self.root,job)[1]['status'],'queued')
+            for params in ({'kind':'music','music_length_ms':30000,'force_instrumental':True},{'kind':'speech','voice_id':'voice123'}):
+                self.assertEqual(self.request('/api/jobs',{'provider':'elevenlabs','prompt':'music or speech','audio':params})[0],201)
+            self.assertEqual(self.request('/api/jobs',{'provider':'elevenlabs','prompt':'bad','audio':{'kind':'sound_effect','duration_seconds':0}})[0],400)
+
+    def test_ark_services_jobs_and_shared_credentials(self):
+        with patch.dict(os.environ,{'ARK_API_KEY':'synthetic-ark-workbench'}):
+            state=self.request('/api/state')[2]
+            self.assertTrue(state['providers']['seedream']['environment_present'])
+            self.assertTrue(state['providers']['seedance']['environment_present'])
+            self.assertNotIn('synthetic-ark-workbench',json.dumps(state))
+            for provider,media in [('seedream',{'size':'2K'}),('seedance',{'duration':6,'resolution':'720p','ratio':'16:9'})]:
+                status,_,created=self.request('/api/jobs',{'provider':provider,'prompt':'test scene','media':media})
+                self.assertEqual(status,201,created)
+                job=created['job']['id'];review=self.request('/api/job-review?job='+job)[2]
+                self.assertEqual(review['job']['provider'],provider)
+                self.assertIn('model',review['job']['parameters'])
+                self.assertFalse(review['approval']['approved'])
+                self.assertEqual(self.request('/api/job-approve',{'job':job,'fingerprint':review['approval']['fingerprint'],'accept_charge':True})[0],200)
+                self.assertTrue(self.request('/api/job-review?job='+job)[2]['approval']['approved'])
+            self.assertEqual(self.request('/api/jobs',{'provider':'seedance','prompt':'test','media':{'duration':99}})[0],400)
+            self.assertEqual(self.request('/api/jobs',{'provider':'kling','prompt':'test','media':{}})[0],400)
+            self.assertEqual(self.request('/logos/bytedance-seed.ico')[0],200)
+        if os.name=='nt':
+            with patch.dict(os.environ,{'ARK_API_KEY':''}):
+                self.assertEqual(self.request('/api/save',{'provider':'seedream','key':'synthetic-ark-save-key'})[0],200)
+                state=self.request('/api/state')[2]
+                self.assertTrue(state['providers']['seedance']['saved'])
+                self.assertEqual(self.request('/api/remove',{'provider':'seedance'})[0],200)
+                self.assertFalse(self.request('/api/state')[2]['providers']['seedream']['saved'])
+    @patch.dict(os.environ,{'ARK_API_KEY':'synthetic-reference-preview'})
+    def test_task_reference_preview_uses_exact_snapshot_and_rejects_changed_or_foreign_inputs(self):
+        image=b'\x89PNG\r\n\x1a\n'+b'snapshot image'
+        source=self.root/'reference.png';source.write_bytes(image)
+        status,_,created=self.request('/api/jobs',{'provider':'seedream','prompt':'weathered stone',
+            'media':{'size':'2K'},'inputs':['reference.png']})
+        self.assertEqual(status,201,created)
+        job=created['job'];url=job['inputs'][0]['previewUrl']
+        self.assertEqual(self.request(url)[2],image)
+        self.assertEqual(self.request(url,auth=False)[0],401)
+        self.assertEqual(self.request(url,headers={'Sec-Fetch-Site':'cross-site'})[0],403)
+        source.write_bytes(b'changed original')
+        self.assertEqual(self.request(url)[2],image)
+        self.assertEqual(self.request(url.replace('index=0','index=-1'))[0],404)
+        path,record=wb.asset_workflow.read_job(self.root,job['id'])
+        snapshot=self.root/record['request']['inputs'][0]['snapshot']
+        snapshot.write_bytes(image+b'tampered')
+        self.assertEqual(self.request(url)[0],404)
+        # A modified record cannot turn this endpoint into a general file server.
+        source.write_bytes(image)
+        record['request']['inputs'][0]['snapshot']='reference.png'
+        path.write_text(json.dumps(record),encoding='utf-8')
+        self.assertEqual(self.request(url)[0],404)
+
     def test_connection_rejects_foreign_websites_and_simple_requests(self):
         for override in ({'Origin':'https://other.test'}, {'Origin':'null'}, {'Origin':''},
                          {'Host':'other.test'}, {'Sec-Fetch-Site':'cross-site'},

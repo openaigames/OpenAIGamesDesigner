@@ -91,9 +91,9 @@ cd OpenAIGamesDesigner
 python tools/package_skills.py --output dist/skills-bundle
 ```
 
-Codex 个人安装：将生成包的完整内容（十六个 Skill 目录和包根目录 `LICENSE`）合入 `~/.agents/skills/`（Windows 默认是 `C:/Users/<用户名>/.agents/skills/`）。仅供某个游戏项目使用时，可放入该项目的 `.agents/skills/`；通常选择一种范围，避免同名副本混淆。保留 `game-preproduction/runtime/` 等全部子文件。首次安装到空目录时复制包内全部内容；更新已有安装时逐文件比较并备份本地修改，保留其他 Skill 和个人文件，不整体替换安装根目录。复制完成后运行下方完整性检查，`missing` 和 `changed` 应为空；有意保留的本地定制需逐项说明。
+Codex 个人安装：将生成包的完整内容（十六个 Skill 目录和包根目录 `LICENSE`）合入 `~/.agents/skills/`（Windows 默认是 `C:/Users/<用户名>/.agents/skills/`）。仅供某个游戏项目使用时，可放入该项目的 `.agents/skills/`；通常选择一种范围，避免同名副本混淆。保留 `game-preproduction/runtime/` 等全部子文件。首次安装到空目录时复制包内全部内容；更新已有安装时逐文件比较并备份本地修改，保留其他 Skill 和个人文件，不整体替换安装根目录。复制完成后运行下方完整性检查，`missing`、`changed` 和 `extra` 应为空；有意保留的本地定制需逐项说明。
 
-打包目标需为新目录；更新后重新打包并同步安装副本。包内 `game-preproduction/runtime/bundle-manifest.json` 记录内容版本，使用该 runtime 下的 `tools/check_installation.py --skills-root <Skill 安装根目录>` 检查缺失或修改的文件；差异需比较并保留本地定制。分发包不包含引擎、生成模型或游戏资产。
+打包目标需为新目录；更新后重新打包并同步安装副本。包内 `game-preproduction/runtime/bundle-manifest.json` 记录内容版本，使用该 runtime 下的 `tools/check_installation.py --skills-root <Skill 安装根目录>` 检查缺失、修改及工具包目录内额外的文件；其他 Skill 不参与检查。差异需比较并保留本地定制。分发包不包含引擎、生成模型或游戏资产。
 
 </details>
 
@@ -126,7 +126,7 @@ Codex 个人安装：将生成包的完整内容（十六个 Skill 目录和包�
 
 ## 项目看板
 
-**在同一看板查看阶段任务、角色与动作、空间和运行证据；按需管理资产生成服务。**
+**在同一看板浏览项目资产、预览模型及内置动画、查看生成任务并配置生成服务。**
 
 ![项目看板示例：资产分类与标签筛选、模型和音频列表，以及主角模型的 3D 预览](.github/assets/project-workbench-example.png)
 
@@ -177,7 +177,7 @@ python tools/project_workbench.py --project "游戏项目绝对路径"
 | **Unity** | [adapters/engines/unity/README.md](adapters/engines/unity/README.md) |
 | **Unreal Engine** | [adapters/engines/unreal/README.md](adapters/engines/unreal/README.md) |
 
-资产制作支持 [Tripo / Hunyuan3D API](adapters/assets/generation-api.md)（[本机密钥设置页](adapters/assets/local-settings.md)）、[资产检索与登记](adapters/assets/asset-sources.md)，以及图像、音频与 Blender 的本地命令；数值协作支持已绑定 JSON 配置与 CSV / Excel 数值页之间的交换。
+资产制作支持 [Seedream 图像与 Seedance 视频](adapters/assets/ark-generation.md)、[Tripo / Hunyuan3D API](adapters/assets/generation-api.md)、[ElevenLabs 音效与配乐](adapters/assets/elevenlabs-audio.md)（[本机密钥设置页](adapters/assets/local-settings.md)）、[资产检索与登记](adapters/assets/asset-sources.md)，以及图像、音频与 Blender 的本地命令；数值协作支持已绑定 JSON 配置与 CSV / Excel 数值页之间的交换。
 
 [引擎接入说明](adapters/README.md) · [资产工具接入](adapters/assets/README.md) · [数值表往返](tools/README.md#数值表往返) · [验证方法](tests/README.md)
 

@@ -39,3 +39,7 @@
 各引擎的默认动作、明确配置和证据要求统一见 [引擎执行配置](execution.md)。
 
 Unity / Unreal 的工程创建、场景与组件、资源导入、角色动画、自动操作录制和会话恢复见 [会话管理与引擎入口](sessions.md)。它与现有 run/build/export 和 MCP 入口并存，运行证据分开记录。
+
+## 动作时间与事件
+
+[跨引擎动作记录](action_timing/README.md) 提供 Unreal、Unity、Godot、Three.js、Phaser 和通用网页记录接口，支持 CLI 记录与比较。记录组件是引擎内的真实事件采集，不替代引擎动画编辑器，也不要求创建新的进程通信服务。

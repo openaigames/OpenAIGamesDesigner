@@ -44,6 +44,9 @@ def validate(value):
     if errors:
         raise ValueError('; '.join(errors))
     identifier(value['id'])
+    if 'asset_scope' in value:
+        from workbench.asset_handoff import validate_scope
+        validate_scope(value['asset_scope'])
     numbers = interval(value['start_stage'], value['end_stage'])
     if [s['number'] for s in value['stages']] != numbers:
         raise ValueError('Stage state must cover exactly the selected contiguous interval.')
@@ -92,7 +95,7 @@ def read(root, task_id):
 
 def create(root, spec):
     check_fields(spec, {'id','goal','start_stage','end_stage','objects','deliverables','inputs',
-                       'constraints','authorization','objective','user_decision_stages'}, 'task specification')
+                       'constraints','authorization','objective','user_decision_stages','asset_scope'}, 'task specification')
     numbers = interval(spec.get('start_stage'), spec.get('end_stage'))
     task_id = identifier(spec.get('id'))
     decisions = spec.get('user_decision_stages', [])
@@ -114,6 +117,7 @@ def create(root, spec):
              'constraints':spec.get('constraints', []), 'authorization':spec.get('authorization', []),
              'objective':spec.get('objective', 'deliver'), 'inputs':snapshot_files(root, spec.get('inputs', [])),
              'stages':states, 'steps':[], 'issues':[], 'state':'active', 'history':[]}
+    if 'asset_scope' in spec:value['asset_scope']=deepcopy(spec['asset_scope'])
     validate(value)
     with project_lock(root):
         write_json(path_for(root, task_id), value, create=True)
@@ -139,9 +143,15 @@ def evidence_status(root, references, objects):
 def status(root, task):
     value = read(root, task) if isinstance(task, str) else validate(task)
     objects = [o['id'] for o in value['objects']]
+    asset_report=None
+    if 'asset_scope' in value:
+        from workbench.asset_handoff import check
+        asset_report=check(root,value['asset_scope'])
     stage_states, earlier_ready = [], True
     for stage in value['stages']:
         problems = []
+        if asset_report and stage['number']==value['end_stage']:
+            problems.extend('Asset handoff: '+issue for issue in asset_report['issues'])
         if stage['readiness'] != 'ready':
             problems.append('Readiness has not been established: ' + stage['readiness_reason'])
         _, prerequisite_errors = evidence_status(root, stage['prerequisites'], objects)
@@ -190,7 +200,7 @@ def status(root, task):
             'deliverables':value['deliverables'], 'state':value['state'],
             'effective_state':('needs_revalidation' if value['state'] == 'complete' and not complete else value['state']),
             'stages':stage_states, 'can_close':complete, 'outside_scope':[n for n in range(1,6) if n not in interval(value['start_stage'],value['end_stage'])],
-            'changed_inputs':changed_files(root,value['inputs']), 'quality_validation':'recorded_reviews_only'}
+            'changed_inputs':changed_files(root,value['inputs']), 'asset_handoff':asset_report, 'quality_validation':'recorded_reviews_only'}
 
 
 def update(root, task_id, expected_revision, operation):
@@ -223,7 +233,13 @@ def apply_operation(root, value, op):
     action = op['action']
     object_ids = [o['id'] for o in value['objects']]
     by_stage = {s['number']:s for s in value['stages']}
-    if action == 'readiness':
+    if action == 'asset-scope':
+        check_fields(op, {'action','scope','reason'}, action)
+        if not op.get('reason'):raise ValueError('Asset scope needs an actual delivery reason')
+        from workbench.asset_handoff import validate_scope
+        value['asset_scope']=deepcopy(validate_scope(op.get('scope')))
+        value['state']='active'
+    elif action == 'readiness':
         check_fields(op, {'action','stage','status','reason','evidence'}, action)
         if op.get('status') not in {'ready','pending','blocked'} or not op.get('reason'):
             raise ValueError('Readiness needs status and a concrete reason.')

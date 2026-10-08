@@ -8,6 +8,20 @@ import { TGALoader } from 'three/addons/loaders/TGALoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import {loadingCompletion} from './loading-completion.js';
 import {animationBounds,clipPoseBounds,poseBounds} from './animation-bounds.js';
+import {describeRig,compatibleRig} from './rig-compatibility.js';
+
+const rigProfiles=new Map();
+const rigProfileKey=a=>JSON.stringify([a.previewUrl||a.url,a.modified,a.bytes,a.classification?.version,a.previewVersion]);
+function rememberRig(asset,model){
+ const profile=describeRig(model);rigProfiles.set(rigProfileKey(asset),profile);
+ if(rigProfiles.size>256)rigProfiles.delete(rigProfiles.keys().next().value);
+ return profile;
+}
+export async function inspectPreviewRig(asset){
+ const cached=rigProfiles.get(rigProfileKey(asset));if(cached)return cached;
+ const loaded=await loadModel({...asset,rig:null});
+ try{return rememberRig(asset,loaded.scene);}finally{disposeModel(loaded.scene);}
+}
 
 export const canPreviewModel=asset=>['GLB','GLTF','OBJ','FBX'].includes(asset.previewExt||asset.ext)&&['native','derived'].includes(asset.preview);
 async function loadModel(asset){
@@ -35,13 +49,14 @@ async function loadModel(asset){
     textures.forEach(t=>t.dispose());materials.forEach(m=>m.dispose());
    }
    const animations=model.animations||[];let note=missing.size?'部分贴图缺失或无法解码；当前使用缺省材质，骨架与动作来自原 FBX。':'直接读取 FBX；显示比例自动适配预览窗口，未改变源文件或引擎单位。';
+   rememberRig(asset,model);
    if(asset.rig){
     const rig=await loadModel({...asset.rig,rig:null});
     try{
      assertCompatibleRig(model,rig.scene);
     }catch(error){disposeModel(model);disposeModel(rig.scene);throw error;}
     disposeModel(model);model=rig.scene;
-    note=`动作：${asset.name}；预览角色：${asset.rig.name}。同名骨架直接播放，不执行重定向，不修改源文件。${rig.note||''}`;
+    note=`动作：${asset.name}；预览模型：${asset.rig.name}。按匹配骨架直接播放，不执行重定向；独立附件及其他对象的动作需另行配套。${rig.note||''}`;
    }
    if(asset.previewMaterial==='neutral')note='使用中性预览材质，便于观察姿态；不是游戏最终材质。'+(asset.previewNote||'');
    return {scene:model,animations,note};
@@ -68,10 +83,9 @@ async function loadModel(asset){
  return {scene:model,animations:[],note};
 }
 function assertCompatibleRig(source,target){
- const describe=root=>{const bones=new Map();let meshes=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isBone)bones.set(o.name,o.parent?.isBone?o.parent.name:null);});return {bones,meshes};};
- const a=describe(source),b=describe(target);
- if(!b.meshes)throw new Error('所选角色文件没有蒙皮网格，请选择带模型的 FBX');
- if(!a.bones.size||a.bones.size!==b.bones.size||[...a.bones].some(([name,parent])=>!b.bones.has(name)||b.bones.get(name)!==parent))throw new Error('角色与动作的骨骼名称或层级不匹配；需要先在外部工具完成重定向');
+ const a=describeRig(source),b=describeRig(target);
+ if(!b.skinnedMeshes)throw new Error('所选模型没有有效蒙皮网格，不能用于骨骼动画预览');
+ if(!compatibleRig(a,b))throw new Error('模型与动作的骨骼名称或层级不匹配；需要先在外部工具完成重定向');
 }
 function disposeModel(model){const textures=new Set(),materials=new Set(),geometries=new Set();model?.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of [].concat(o.material||[])){materials.add(m);for(const v of Object.values(m))if(v?.isTexture)textures.add(v);}});textures.forEach(t=>{t.dispose();t.source?.data?.close?.();});materials.forEach(m=>m.dispose());geometries.forEach(g=>g.dispose());}
 function normalize(model,envelope){model.updateMatrixWorld(true);const box=envelope||new THREE.Box3().setFromObject(model);if(box.isEmpty())model.traverse(o=>{if(o.isBone)box.expandByPoint(o.getWorldPosition(new THREE.Vector3()));});if(box.isEmpty())throw new Error('文件没有可显示的模型或骨架');const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());const scale=2.6/Math.max(size.x,size.y,size.z,.001);const root=new THREE.Group();root.add(model);root.scale.setScalar(scale);root.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);root.updateMatrixWorld(true);return {root,height:size.y*scale};}

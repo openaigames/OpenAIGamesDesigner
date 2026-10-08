@@ -1,0 +1,7 @@
+{
+  "engine": "unreal",
+  "mode": "inspect",
+  "mesh_audit": {
+    "paths": ["/Engine/BasicShapes/Sphere"]
+  }
+}

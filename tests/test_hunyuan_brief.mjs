@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {hunyuanRequest,transmissionReview} from '../tools/workbench/web/hunyuan-brief.js';
+const inputs=[{path:'front.png',view:'front'},{path:'left.png',view:'left'},{path:'back.png',view:'back'}];
+const r=hunyuanRequest('image',{Model:'3.1'},'本地说明',inputs);
+assert.deepEqual(r.inputs,inputs);assert.equal(r.hunyuan.mode,'image');assert.equal(r.prompt,'本地说明');
+assert.throws(()=>hunyuanRequest('text',{},'文字',inputs));
+assert.throws(()=>hunyuanRequest('image',{},'',inputs.slice(1)));
+assert.throws(()=>hunyuanRequest('image',{},'',[...inputs,{path:'front.png',view:'right'}]));
+const escape=s=>String(s).replaceAll('<','&lt;').replaceAll('>','&gt;');
+const markup=transmissionReview({transmission:{mode:'multiview',images:inputs,prompt_sent:false},brief:'<script>bad</script>'},escape);
+assert.ok(markup.includes('不发送'));assert.ok(markup.includes('人物左侧'));assert.ok(markup.includes('不传给云端'));assert.ok(!markup.includes('<script>'));
+console.log('Hunyuan form and review checks passed (7 assertions).');

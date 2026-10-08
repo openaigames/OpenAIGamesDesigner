@@ -12,7 +12,7 @@ import time
 import webbrowser
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from adapters.assets import credential_store
+from adapters.assets import credential_store, model_prompt_policy
 from adapters.assets import generation_approval
 
 UI = Path(__file__).with_name('settings-ui')
@@ -43,7 +43,11 @@ class SettingsServer(HTTPServer):
                 fingerprint = generation_approval.for_job(self.project, job)
                 details = {'project': str(self.project), 'job_id': job_id,
                     'provider': job['provider'], 'parameters': job['request']['parameters'],
-                    'inputs': [{k: item[k] for k in ('path', 'sha256')} for item in job['request']['inputs']]}
+                    'inputs': [{k: item[k] for k in ('path', 'sha256', 'view') if k in item} for item in job['request']['inputs']],
+                    'brief': job['request'].get('brief','')}
+                if job['provider'] in ('hunyuan3d','tripo'):
+                    from adapters.assets import hunyuan_inputs, tripo_inputs
+                    details['transmission']={'hunyuan3d':hunyuan_inputs,'tripo':tripo_inputs}[job['provider']].summary(job['request'])
                 try:
                     generation_approval.check_storage()
                 except (OSError, ValueError):
@@ -60,6 +64,8 @@ class SettingsServer(HTTPServer):
                                          'error': APPROVAL_STORAGE_ERROR}
                     return state
                 state['approval'] = {**details, 'fingerprint': fingerprint, 'approved': approved}
+            except model_prompt_policy.PromptPolicyError as error:
+                state['approval'] = {'job_id': job_id, 'error_code': 'prompt_policy', 'error': str(error)}
             except (OSError, ValueError, KeyError, TypeError):
                 state['approval'] = {'job_id': job_id, 'error': '请先配置此任务的凭据，并确认任务仍在等待执行。'}
         return state
@@ -111,7 +117,9 @@ class Handler(BaseHTTPRequestHandler):
                  '/style.css': ('style.css', 'text/css; charset=utf-8'),
                  '/logos/openaigamesdesigner.png': ('logos/openaigamesdesigner.png', 'image/png'),
                  '/logos/tripo.png': ('logos/tripo.png', 'image/png'),
-                 '/logos/hunyuan3d.png': ('logos/hunyuan3d.png', 'image/png')}
+                 '/logos/hunyuan3d.png': ('logos/hunyuan3d.png', 'image/png'),
+                 '/logos/elevenlabs.svg': ('logos/elevenlabs.svg', 'image/svg+xml'),
+                 '/logos/bytedance-seed.ico': ('logos/bytedance-seed.ico', 'image/x-icon')}
         if self.path in files:
             name, kind = files[self.path]
             return self._reply(200, (UI / name).read_bytes(), kind)

@@ -142,7 +142,9 @@ class IntakeTests(unittest.TestCase):
                          "adapters/engines/godot/README.md", "adapters/assets/README.md", "tests/README.md"):
             self.assertTrue((runtime / relative).is_file(), relative)
         runtime_markdown = list(runtime.rglob("*.md"))
-        self.assertEqual(records.markdown_errors(runtime, runtime_markdown), [])
+        # Shared runtime documents can link to sibling Skill references.
+        # The containment boundary is the complete bundle, not runtime alone.
+        self.assertEqual(records.markdown_errors(bundle, runtime_markdown), [])
         def cli(script, *args):
             return subprocess.run([sys.executable, "-B", str(runtime / "tools" / script),
                                    *args], cwd=self.temp.name, capture_output=True, text=True, encoding="utf-8", timeout=20,

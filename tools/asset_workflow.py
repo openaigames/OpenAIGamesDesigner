@@ -10,14 +10,15 @@ import sys
 import uuid
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from adapters.assets import hunyuan3d, image_provider, audio_provider, tripo, api_common
+from adapters.assets import hunyuan3d, image_provider, audio_provider, tripo, api_common, elevenlabs, audio_timing, ark, seedream, seedance
 from adapters.assets import credential_store
-from adapters.assets import generation_approval
+from adapters.assets import generation_approval, model_prompt_policy
 from adapters.processing import blender
 from game_workflow import atomic_json, identifier, now, sha, stop_process
 from validate_records import contained, contract
+from workbench import asset_versions, asset_handoff
 
-PROVIDERS = {"hunyuan3d": hunyuan3d, "tripo": tripo, "image": image_provider, "audio": audio_provider, "blender": blender}
+PROVIDERS = {"hunyuan3d": hunyuan3d, "tripo": tripo, "image": image_provider, "audio": audio_provider, "blender": blender, "elevenlabs": elevenlabs, "seedream": seedream, "seedance": seedance}
 TERMINAL = {"succeeded", "registered", "failed", "blocked", "cancelled", "interrupted"}
 
 def location(root, job_id):
@@ -36,35 +37,75 @@ def new_job(root, provider, request, settings, retry_of=None):
         raise ValueError("Provider and settings must match a supported local adapter")
     if not isinstance(request, dict) or not isinstance(request.get("parameters", {}), dict):
         raise ValueError("Request must contain object parameters and an input path list")
-    if provider == 'tripo' or settings.get('mode') == 'api':
-        if provider not in ('tripo', 'hunyuan3d'):
-            raise ValueError('API mode is available for tripo and hunyuan3d')
+    if not isinstance(request.get('inputs', []), list): raise ValueError('inputs must be an array')
+    art_context = asset_handoff.request_context(request.get('art_record'))
+    model_prompt_policy.require(provider, request, settings, root)
+    context=asset_versions.lineage(root,request['lineage']) if request.get('lineage') else None
+    if context and provider in ('image','seedream','seedance'):
+        refs=([{'group':context['group'],'version':context['parent']}] if context['parent'] else [])+context['references']
+        inputs=list(request.get('inputs',[]))
+        for ref in refs:
+            _,v=asset_versions.version(asset_versions.load(root),ref['group'],ref['version'])
+            path=v['files'][0]['path']
+            if Path(path).suffix.lower() not in ('.png','.jpg','.jpeg','.webp'):raise ValueError('图像生成参考须为 PNG/JPEG/WebP 图片')
+            if path not in [x.get('path') if isinstance(x,dict) else x for x in inputs]:inputs.append(path)
+        request={**request,'inputs':inputs}
+    if provider=='image' and settings.get('mode')=='host':
+        paths=request.get('inputs',[])
+        if len(paths)>5:raise ValueError('内置生图最多关联五张实际参考图')
+        for item in paths:
+            relative=item.get('snapshot',item.get('path')) if isinstance(item,dict) else item
+            if not isinstance(relative,str) or Path(relative).suffix.lower() not in ('.png','.jpg','.jpeg','.webp'):
+                raise ValueError('内置生图参考须为 PNG/JPEG/WebP 图片')
+    if provider == 'elevenlabs':
+        request = audio_timing.prepare(root, request)
+    if provider in ('seedream', 'seedance'):
+        request = ark.prepare(provider, request)
+    if provider in ('tripo', 'elevenlabs', 'seedream', 'seedance') or settings.get('mode') == 'api':
+        if provider not in ('tripo', 'hunyuan3d', 'elevenlabs', 'seedream', 'seedance'):
+            raise ValueError('API mode is available for tripo, hunyuan3d, elevenlabs, seedream and seedance')
         api_common.validate_request(provider, request, settings)
     paths = request.get("inputs", [])
     if not isinstance(paths, list): raise ValueError("inputs must be an array")
     sources = []
     for item in paths:
         original = item["path"] if isinstance(item, dict) else item
-        source = contained(root, item["snapshot"] if isinstance(item, dict) else item)
+        source = contained(root, item.get("snapshot", original) if isinstance(item, dict) else item)
         contained(root, original)
         if not source.is_file(): raise ValueError(f"Missing input: {original}")
-        if isinstance(item, dict) and sha(source) != item["sha256"]:
+        if isinstance(item, dict) and "sha256" in item and sha(source) != item["sha256"]:
             raise ValueError("Retry input snapshot changed")
-        sources.append((original, source))
+        metadata = {'view': item['view']} if isinstance(item, dict) and 'view' in item else {}
+        if metadata and provider not in ('hunyuan3d','tripo'):raise ValueError('当前 view 方向字段只适用于混元或 Tripo 多视图')
+        sources.append((original, source, sha(source), metadata))
+    if provider == 'hunyuan3d' and settings.get('mode') == 'api':
+        from adapters.assets import hunyuan_inputs
+        hunyuan_inputs.build_payload({**request, 'inputs': [
+            {'path': original, 'snapshot': str(source), 'sha256': expected, **metadata}
+            for original, source, expected, metadata in sources]})
+    if provider == 'tripo':
+        from adapters.assets import tripo_inputs
+        tripo_inputs.read_images({**request, 'inputs': [
+            {'path': original, 'snapshot': str(source), 'sha256': expected, **metadata}
+            for original, source, expected, metadata in sources]})
     job_id = "A" + uuid.uuid4().hex
     folder = location(root, job_id)
     folder.mkdir(parents=True)
     snapshots = []
-    for original, source in sources:
+    for original, source, expected, metadata in sources:
         target = contained(folder / "inputs", original)
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
-        snapshots.append({"path": original, "snapshot": target.relative_to(root).as_posix(), "sha256": sha(target)})
+        if sha(target)!=expected or sha(source)!=expected:raise ValueError("Input changed while saving task snapshot")
+        snapshots.append({"path": original, "snapshot": target.relative_to(root).as_posix(), "sha256": sha(target), **metadata})
     job = {"schema_version": 1, "job_id": job_id, "provider": provider, "provider_job_id": None,
            "created_at": now(), "status": "queued", "settings": settings,
            "request": {"parameters": request.get("parameters", {}), "inputs": snapshots},
            "attempts": [], "artifacts": [], "notes": []}
     if retry_of: job["retry_of"] = retry_of
+    if context:job['request']['lineage']=context
+    if 'brief' in request:job['request']['brief']=request['brief']
+    if art_context:job['request']['art_record']=art_context
     atomic_json(folder / "job.json", job)
     return job
 
@@ -97,8 +138,11 @@ def execute_job(root, job_id, timeout, resume=False, remote_id=None):
     process = None
     try:
         _, job = read_job(root, job_id)
+        if job['settings'].get('mode')=='host':raise ValueError('宿主生图由助手调用当前内置工具执行，再登记实际输出；此命令不会改用云 API')
         is_api = job['settings'].get('mode') == 'api'
         if resume:
+            if job['provider'] in ('elevenlabs', 'seedream'):
+                raise ValueError('This provider has no resumable task ID. Inspect saved files locally; a new generation needs explicit retry --new-generation and approval.')
             if not is_api or job['status'] not in {'failed', 'blocked', 'cancelled', 'interrupted'}:
                 raise ValueError('Resume requires a stopped API job')
             if not job.get('provider_job_id') and job['attempts']:
@@ -113,6 +157,8 @@ def execute_job(root, job_id, timeout, resume=False, remote_id=None):
             (path.parent / 'cancel.request').unlink(missing_ok=True)
         elif job["status"] != "queued":
             raise ValueError("Only queued jobs can run; resume an API task or retry explicitly")
+        if not resume:
+            model_prompt_policy.require(job['provider'], job['request'], job['settings'], root)
         if is_api and not resume:
             generation_approval.require(generation_approval.for_job(root, job))
         attempt = path.parent / ('attempt-' + str(len(job['attempts']) + 1))
@@ -189,12 +235,32 @@ def execute_job(root, job_id, timeout, resume=False, remote_id=None):
                 except (OSError, ValueError, TypeError):
                     job['notes'].append('Remote recovery state could not be read')
             if is_api and job['status'] != 'succeeded':
-                job['notes'].append('Local stop does not cancel cloud generation. Resume the recorded ID; do not automatically submit again.')
+                job['notes'].append('Local stop does not cancel cloud generation. ' + (
+                    'This provider cannot resume by request ID; inspect saved response before explicitly preparing another generation.'
+                    if job['provider'] in ('elevenlabs', 'seedream') else 'Resume the recorded ID; do not automatically submit again.'))
             record["finished_at"] = now()
             atomic_json(path, job)
+        if job['status']=='succeeded':register_version(root,path,job)
         return job
     finally:
         lock.unlink(missing_ok=True)
+
+def register_version(root,path,job):
+    try:
+        inputs=[item['snapshot'] for item in job['request']['inputs']]
+        method='converted' if job['provider']=='blender' and inputs else 'generated'
+        if job['status']=='registered':method='existing'
+        job['art_registration']=asset_handoff.automatic(root,job['artifacts'],job['request'].get('art_record'),
+            path.relative_to(root).as_posix(),method,'资产任务 '+job['job_id']+'；工具 '+job['provider'],derived=inputs)
+        job.pop('art_registration_error',None)
+    except (OSError,ValueError,KeyError,TypeError) as error:
+        job['art_registration_error']=str(error)
+    try:
+        job['asset_version']=asset_versions.complete_job(root,job)
+        job.pop('version_registration_error',None)
+    except (OSError,ValueError,KeyError,TypeError) as error:
+        job['version_registration_error']=str(error)
+    atomic_json(path,job)
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
@@ -204,8 +270,8 @@ def main(argv=None):
     submit.add_argument("--provider", required=True, choices=tuple(PROVIDERS))
     submit.add_argument("--request", required=True)
     doctor = sub.add_parser('doctor', help='Check API configuration and credential presence without contacting the service')
-    doctor.add_argument('--provider', required=True, choices=('tripo', 'hunyuan3d'))
-    for name in ("run", "resume", "status", "cancel", "retry", "register", "mark-interrupted"):
+    doctor.add_argument('--provider', required=True, choices=('tripo', 'hunyuan3d', 'elevenlabs', 'seedream', 'seedance'))
+    for name in ("run", "resume", "status", "cancel", "retry", "register", "mark-interrupted", "sync-records"):
         command = sub.add_parser(name)
         command.add_argument("--job", required=True)
         if name in ("run", "resume"): command.add_argument("--timeout", type=int, default=600)
@@ -226,6 +292,7 @@ def main(argv=None):
             if not isinstance(settings, dict): raise ValueError("Provider is not configured")
             if args.action == 'doctor':
                 result = api_common.doctor(args.provider, settings)
+                result['configuration_source'] = 'project' if args.provider in config else 'local_default'
             else:
                 request = json.loads(contained(root, args.request).read_text(encoding="utf-8-sig"))
                 result = new_job(root, args.provider, request, settings)
@@ -241,6 +308,13 @@ def main(argv=None):
             checkpoint = path.parent / ('attempt-' + str(len(result['attempts']))) / 'remote.json'
             if result['settings'].get('mode') == 'api' and checkpoint.is_file():
                 result['remote_observation'] = json.loads(checkpoint.read_text(encoding='utf-8'))
+        elif args.action == 'sync-records':
+            path,result=read_job(root,args.job)
+            lock=claim(path.parent)
+            try:
+                if result['status'] not in ('succeeded','registered'):raise ValueError('Only completed files can be reconciled')
+                register_version(root,path,result)
+            finally:lock.unlink(missing_ok=True)
         elif args.action == "mark-interrupted":
             path, result = read_job(root, args.job)
             if not args.confirm_stopped: raise ValueError("Confirm the external worker has stopped before recovery")
@@ -280,8 +354,10 @@ def main(argv=None):
                     result["status"] = "registered"
                     result["notes"].append("External files registered; no provider execution or quality check claimed")
                     atomic_json(path, result)
+                    register_version(root,path,result)
             finally: lock.unlink(missing_ok=True)
         print(json.dumps(result, ensure_ascii=False, indent=2))
+        if args.action in ('run','resume','register','sync-records') and (result.get('art_registration_error') or result.get('version_registration_error')):return 1
         return 1 if args.action in ("run", "resume") and result["status"] != "succeeded" else 0
     except (OSError, ValueError, KeyError, TypeError) as error:
         print(json.dumps({"error": str(error)}, ensure_ascii=False)); return 2
