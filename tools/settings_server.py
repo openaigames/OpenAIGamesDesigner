@@ -84,6 +84,21 @@ class Handler(BaseHTTPRequestHandler):
         pass  # No URL, body, request header or exception logging.
 
     def _reply(self, status, body, kind='application/json; charset=utf-8', cookie=None):
+        # Unread POST bytes can reset a Windows client connection before it
+        # receives our response. Discard only a bounded body, without parsing
+        # or authorizing it; session and close requests also leave one unread.
+        if self.command == 'POST' and not getattr(self, '_body_consumed', False):
+            previous = self.connection.gettimeout()
+            try:
+                size = int(self.headers.get('Content-Length', '0'))
+                if not self.headers.get('Transfer-Encoding') and 0 < size <= 65536:
+                    self.connection.settimeout(.2)
+                    self.rfile.read(size)
+            except (OSError, ValueError):
+                pass
+            finally:
+                self.connection.settimeout(previous)
+            self._body_consumed = True
         data = json.dumps(body, ensure_ascii=False).encode() if isinstance(body, dict) else body
         self.send_response(status)
         self.send_header('Content-Type', kind)
@@ -153,6 +168,7 @@ class Handler(BaseHTTPRequestHandler):
             size = int(self.headers.get('Content-Length', '0'))
             if not 0 < size <= 16 * 1024 or self.headers.get('Content-Type') != 'application/json' or self.headers.get('Transfer-Encoding'):
                 return self._reply(400, {'error': '请求格式或长度不正确。'})
+            self._body_consumed = True
             data = json.loads(self.rfile.read(size))
             if self.path == '/api/approve':
                 if not isinstance(data, dict) or set(data) != {'fingerprint', 'accept_charge'} or data['accept_charge'] is not True:

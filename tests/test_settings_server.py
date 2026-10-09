@@ -88,8 +88,8 @@ class SettingsTests(unittest.TestCase):
         with self.assertRaises(ValueError): store.save('tripo', 'replacement-key')
         self.assertEqual(self.path.read_text(), 'corrupt fixture')
 
-    def start_server(self):
-        server = settings_server.SettingsServer()
+    def start_server(self, handler=None):
+        server = settings_server.SettingsServer(handler=handler)
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
         def stop():
@@ -126,6 +126,50 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(self.request('POST', '/api/save', {'provider': 'tripo', 'key': 'synthetic'}, {**headers, 'Origin': 'https://attacker.test'})[0], 403)
         self.assertEqual(self.request('POST', '/api/save', {}, {**headers, 'X-CSRF-Token': 'wrong'})[0], 403)
         self.assertFalse(self.path.exists())
+
+    def test_rejected_post_discards_body_before_closing_without_saving(self):
+        headers_received = threading.Event()
+        body_sent = threading.Event()
+        discarded = []
+
+        class TrackedHandler(settings_server.Handler):
+            def _reply(self, status, body, *args, **kwargs):
+                if self.command == 'POST' and status == 403:
+                    reader = self.rfile
+
+                    class TrackedReader:
+                        def read(self, size=-1):
+                            data = reader.read(size)
+                            discarded.append(data)
+                            return data
+
+                        def __getattr__(self, name):
+                            return getattr(reader, name)
+
+                    self.rfile = TrackedReader()
+                    headers_received.set()
+                    if not body_sent.wait(3):
+                        raise AssertionError('Client did not send the rejected request body')
+                return super()._reply(status, body, *args, **kwargs)
+
+        server = self.start_server(handler=TrackedHandler)
+        payload = json.dumps({'provider': 'tripo', 'key': 'rejected-fixture-key'}).encode()
+        connection = http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=3)
+        self.addCleanup(connection.close)
+        connection.putrequest('POST', '/api/save')
+        connection.putheader('Origin', 'https://attacker.test')
+        connection.putheader('Content-Type', 'application/json')
+        connection.putheader('Content-Length', str(len(payload)))
+        connection.endheaders()
+        self.assertTrue(headers_received.wait(3))
+        connection.send(payload)
+        body_sent.set()
+        response = connection.getresponse()
+        self.assertEqual(response.status, 403)
+        self.assertNotIn(b'rejected-fixture-key', response.read())
+        self.assertEqual(b''.join(discarded), payload)
+        self.assertFalse(self.path.exists())
+        self.assertEqual(self.request('GET', '/api/state')[0], 401)
 
     @unittest.skipUnless(os.name == 'nt', 'Windows DPAPI')
     def test_http_save_status_delete_never_returns_key(self):

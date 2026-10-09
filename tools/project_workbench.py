@@ -87,22 +87,6 @@ def job_summary(root,job):
 
 
 class Handler(settings_server.Handler):
-    def _reply(self,status,body,kind='application/json; charset=utf-8',cookie=None):
-        # A rejected POST can still have a body in flight. Closing immediately
-        # with unread bytes intermittently resets the Windows client connection
-        # before it receives the 400/403 response. Discard only a bounded body;
-        # never parse or authorize it, and never wait on an unbounded sender.
-        if self.command=='POST' and status>=400 and not getattr(self,'_body_consumed',False):
-            previous=self.connection.gettimeout()
-            try:
-                size=int(self.headers.get('Content-Length','0'))
-                if not self.headers.get('Transfer-Encoding') and 0<size<=65536:
-                    self.connection.settimeout(.2)
-                    self.rfile.read(size)
-            except (OSError,ValueError):pass
-            finally:self.connection.settimeout(previous)
-            self._body_consumed=True
-        return super()._reply(status,body,kind,cookie)
     def authorized(self,write=False):
         if not self._host() or self.headers.get('Sec-Fetch-Site')=='cross-site':
             self._reply(403,{'error':'请使用当前项目的本机启动地址。'});return False
