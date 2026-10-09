@@ -26,7 +26,7 @@
 <tr>
 <td width="50%" valign="top" align="center">
 <h3>FPS Game</h3>
-<video src="https://github.com/user-attachments/assets/9df88b3b-ddc0-4260-8081-19738f218e9c" poster=".github/assets/game-demo-fps-poster.jpg" controls="controls" width="100%" preload="metadata" aria-label="FPS Game 实机演示"></video>
+<video src="https://github.com/user-attachments/assets/b3628e26-4362-44e8-acb1-4952fce3c58e" poster=".github/assets/game-demo-fps-poster.jpg" controls="controls" width="100%" preload="metadata" aria-label="FPS Game 实机演示"></video>
 </td>
 <td width="50%" valign="top" align="center">
 <h3>Action Game</h3>
