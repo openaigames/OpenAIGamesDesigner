@@ -22,11 +22,11 @@
 <tr>
 <td width="50%" valign="top" align="center">
 <h3>FPS Game</h3>
-<a href=".github/assets/game-demo-fps.mp4"><img src=".github/assets/game-demo-fps-poster.jpg" alt="FPS Game 实机演示" width="100%"></a>
+<video src="https://github.com/user-attachments/assets/9df88b3b-ddc0-4260-8081-19738f218e9c" poster=".github/assets/game-demo-fps-poster.jpg" controls="controls" width="100%" preload="metadata" aria-label="FPS Game 实机演示"></video>
 </td>
 <td width="50%" valign="top" align="center">
 <h3>Action Game</h3>
-<a href=".github/assets/game-demo-action.mp4"><img src=".github/assets/game-demo-action-poster.jpg" alt="Action Game 实机演示" width="100%"></a>
+<video src="https://github.com/user-attachments/assets/d2d18179-4d2d-4d18-ae5a-00f5e7950c8f" poster=".github/assets/game-demo-action-poster.jpg" controls="controls" width="100%" preload="metadata" aria-label="Action Game 实机演示"></video>
 </td>
 </tr>
 </table>
