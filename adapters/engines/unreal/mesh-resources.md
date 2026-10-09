@@ -10,7 +10,7 @@
 
 - 每个网格各级 render triangles、顶点、sections、屏幕切换值、Nanite 设置、材质槽和碰撞。
 - 材质的有效混合模式、双面属性、基础材质纹理及实例覆盖纹理尺寸。纹理依赖可能包含当前着色分支未使用项；不是驻留显存测量。
-- 加载场景中的消费者、实例数量，以及相同网格/材质/移动性/阴影/碰撞设置的实例化候选。候选不证明可安全合并；交互与独立状态仍需检查。
+- 加载场景中的使用方、实例数量，以及相同网格/材质/移动性/阴影/碰撞设置的实例化候选。候选不证明可安全合并；交互与独立状态仍需检查。
 - 可选 `warning_limits: {"triangles":50000,"material_slots":8,"texture_dimension":2048}` 仅是项目筛选示例；不传则不套通用数字。单 LOD 提示不把 Nanite 模型误判为缺失 LOD。
 
 Nanite 模型的普通 LOD 三角面明确标为 fallback render data；Nanite source triangles 保留未知。与 DCC 原始数据、每帧可见几何分别报告。可选字段不可读取时返回 `null` 和具体 `unavailable_fields`，不填零。

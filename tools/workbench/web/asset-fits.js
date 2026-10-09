@@ -16,7 +16,7 @@ export function createAssetFits({getLibraryData,escape:esc,toast,preview}){
   }
   function showList(){
     selected=null;const data=getLibraryData()||{},fits=data.fits||[];
-    frame('素材方案',`<p class="fit-note">查看素材组合的实际能力、目标覆盖与缺口。方案可以先于下载建立，进入游戏目录不代表品质通过。</p>${(data.fit_errors||[]).map(e=>`<p class="fit-warning">${esc(e.path)}：${esc(e.error)}</p>`).join('')}<div class="fit-list">${fits.map(f=>`<button data-fit="${esc(f.id)}"><strong>${esc(f.spec.title)}</strong><span>${esc(f.spec.object)} · ${esc(roles[f.spec.role]||f.spec.role)}</span><span>${esc(note(f))}</span></button>`).join('')||'<p class="fit-note">尚未记录素材方案。与助手确定组合后，可在这里查看能力与缺口。</p>'}</div>`);
+    frame('素材方案',`<p class="fit-note">查看素材组合的实际能力、目标覆盖与缺口。方案可以先于下载建立，进入游戏目录不代表品质通过。</p>${(data.fit_errors||[]).map(e=>`<p class="fit-warning">${esc(e.path)}：${esc(e.error)}</p>`).join('')}<div class="fit-list">${fits.map(f=>`<button data-fit="${esc(f.id)}"><strong>${esc(f.spec.title)}</strong><span>${esc(f.spec.object)} · ${esc(roles[f.spec.role]||f.spec.role)}</span><span>${esc(note(f))}</span></button>`).join('')||'<p class="fit-note">尚未记录素材方案。与 Agent 确定组合后，可在这里查看能力与缺口。</p>'}</div>`);
     dialog.querySelectorAll('[data-fit]').forEach(b=>b.onclick=()=>showFit(b.dataset.fit));
   }
   function showFit(id){

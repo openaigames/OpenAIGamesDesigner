@@ -10,8 +10,8 @@ from urllib.parse import unquote, urlsplit, quote, parse_qs
 HERE=Path(__file__).resolve().parent
 WEB=HERE/'web'
 SKIP={'.git','.svn','.asset-browser','.openaigame','node_modules','Intermediate','Binaries','DerivedDataCache','Saved','.idea','.vscode','dist','Library','Temp','obj','builds','Licenses'}
-KINDS={'.glb':'model','.gltf':'model','.obj':'model','.fbx':'model','.stl':'model','.png':'image','.jpg':'image','.jpeg':'image','.webp':'image','.gif':'image','.svg':'image','.wav':'audio','.ogg':'audio','.mp3':'audio','.flac':'audio','.m4a':'audio','.mp4':'video','.webm':'video','.uasset':'engine','.umap':'engine','.tscn':'engine','.tres':'engine','.prefab':'engine','.controller':'engine','.anim':'animation','.bvh':'animation','.unity':'engine','.vfx':'engine','.efkefc':'engine','.blend':'engine','.dds':'texture','.tga':'texture','.exr':'texture','.hdr':'texture','.ktx2':'texture','.ttf':'other','.otf':'other'}
-MIME={'.glb':'model/gltf-binary','.gltf':'model/gltf+json','.js':'text/javascript','.ogg':'audio/ogg','.json':'application/json','.bin':'application/octet-stream'}
+KINDS={'.glb':'model','.gltf':'model','.obj':'model','.fbx':'model','.stl':'model','.png':'image','.jpg':'image','.jpeg':'image','.webp':'image','.gif':'image','.svg':'image','.wav':'audio','.ogg':'audio','.mp3':'audio','.flac':'audio','.m4a':'audio','.mp4':'video','.webm':'video','.ogv':'video','.uasset':'engine','.umap':'engine','.tscn':'engine','.tres':'engine','.prefab':'engine','.controller':'engine','.anim':'animation','.bvh':'animation','.unity':'engine','.vfx':'engine','.efkefc':'engine','.blend':'engine','.dds':'texture','.tga':'texture','.exr':'texture','.hdr':'texture','.ktx2':'texture','.ttf':'other','.otf':'other'}
+MIME={'.glb':'model/gltf-binary','.gltf':'model/gltf+json','.js':'text/javascript','.ogg':'audio/ogg','.json':'application/json','.ogv':'video/ogg','.bin':'application/octet-stream'}
 KINDS.update({ext:'code' for ext in ('.uplugin','.unitypackage','.cs','.cpp','.h','.hpp','.gd','.py','.js','.ts')})
 KINDS.update({ext:'texture' for ext in ('.shader','.gdshader','.hlsl','.usf')})
 TAG_LOCK=threading.Lock()
@@ -110,13 +110,27 @@ def asset_files(root,registered):
             except (OSError,ValueError):continue
 
 
+def catalog_scope(root):
+    """Optional explicit project catalog. This never moves or changes engine files."""
+    path=root/'.asset-browser'/'catalog-config.json'
+    if not path.exists():return None,[]
+    config=json.loads(path.read_text(encoding='utf-8-sig'))
+    if not isinstance(config,dict):raise ValueError('资产展示配置必须是对象')
+    included=config.get('includePaths')
+    if included is not None:
+        if not isinstance(included,list) or len(included)>4096:raise ValueError('includePaths 必须是项目内文件路径列表')
+        for relative in included:art_registry.asset_path(root,relative)
+        included=set(included)
+    excluded=[p.rstrip('/')+'/' for p in config.get('excludePrefixes',[]) if isinstance(p,str) and p and not p.startswith('/') and '..' not in p.split('/')]
+    return included,excluded
+
+
 def scan(root):
     usage,usage_audit=asset_usage.read(root)
     content_layout=content_roots.layout(root)
-    try:
-        config=json.loads((root/'.asset-browser'/'catalog-config.json').read_text(encoding='utf-8'))
-        excluded=[p.rstrip('/')+'/' for p in config.get('excludePrefixes',[]) if isinstance(p,str) and p and not p.startswith('/') and '..' not in p.split('/')]
-    except (OSError,ValueError,TypeError,AttributeError):excluded=[]
+    included,excluded=catalog_scope(root)
+    def displayed(relative):
+        return (included is None or relative in included) and not any(relative.startswith(prefix) for prefix in excluded)
     preview_records,preview_error=model_previews.read(root)
     preview_copies={r.get('path') for r in preview_records.values() if isinstance(r,dict) and isinstance(r.get('path'),str)}
     registry=None;registry_error=None
@@ -131,7 +145,7 @@ def scan(root):
     items=[]
     for p in asset_files(root,library):
         name=p.name
-        if any(p.relative_to(root).as_posix().startswith(prefix) for prefix in excluded):continue
+        if not displayed(p.relative_to(root).as_posix()):continue
         if p.is_symlink() or name.startswith('.'):continue
         ext=p.suffix.lower(); kind='vfx' if name.endswith('.vfx.json') else KINDS.get(ext)
         if not kind:continue
@@ -149,7 +163,7 @@ def scan(root):
             row['usage']=usage.get(rel,{'status':'local','roles':[],'clips':[]})
             row['art']=art_registry.classify(root,row,registry) if registry else None
             row['tags']=row['art']['tags'] if row['art'] else []
-            row['preview']='native' if ext in {'.glb','.gltf','.obj','.fbx','.png','.jpg','.jpeg','.webp','.gif','.svg','.wav','.ogg','.mp3','.mp4','.webm','.m4a'} or kind=='vfx' else 'unavailable'
+            row['preview']='native' if ext in {'.glb','.gltf','.obj','.fbx','.png','.jpg','.jpeg','.webp','.gif','.svg','.wav','.ogg','.mp3','.mp4','.webm','.ogv','.m4a'} or kind=='vfx' else 'unavailable'
             row['assetRoot']='/asset/'
             if rel in preview_records:
                 row.update(model_previews.resolve(root,rel,preview_records[rel],gltf_info))
@@ -161,7 +175,7 @@ def scan(root):
             items.append(row)
         except (OSError,ValueError,struct.error):continue
     items.sort(key=lambda a:(a.get('rank',100),0 if a.get('animations') else 1 if a['kind']=='model' else 2 if a['kind']=='vfx' else 3,a['path']))
-    audit_registry={**registry,'assets':{k:v for k,v in registry['assets'].items() if not any(k.startswith(prefix) for prefix in excluded)}} if registry else None
+    audit_registry={**registry,'assets':{k:v for k,v in registry['assets'].items() if displayed(k)}} if registry else None
     characters,character_error=character_bindings.read(root,items)
     taxonomy=asset_taxonomy.attach(root,items,characters)
     version_report=asset_versions.attach(root,items)

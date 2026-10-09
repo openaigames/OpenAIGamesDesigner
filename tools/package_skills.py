@@ -74,6 +74,8 @@ def package(destination):
     shutil.copy2(source / 'tools/audio_workflow.py',runtime / 'tools/audio_workflow.py')
     shutil.copy2(source / 'tools/asset_versions.py',runtime / 'tools/asset_versions.py')
     shutil.copytree(source / 'tools/workbench', runtime / 'tools/workbench', ignore=ignore)
+    shutil.copy2(source / 'tools/environment_workflow.py', runtime / 'tools/environment_workflow.py')
+    shutil.copytree(source / 'tools/environment', runtime / 'tools/environment', ignore=ignore)
     shutil.copy2(source / "tools/README.md", runtime / "tools/README.md")
     (runtime / "tests").mkdir()
     shutil.copy2(source / "tests/README.md", runtime / "tests/README.md")

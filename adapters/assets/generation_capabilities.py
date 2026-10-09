@@ -1,5 +1,6 @@
 """Generation modes implemented by this installation. No network or credentials."""
 from copy import deepcopy
+from . import model_defaults
 
 TRIPO_BASE = 'https://api.tripo3d.ai/v2/openapi'
 TRIPO_IMAGE_BASE = 'https://openapi.tripo3d.ai/v3'
@@ -34,7 +35,7 @@ def connection(provider, settings, image_views=False):
             'submit_action': 'SubmitHunyuanTo3DProJob', 'query_action': 'QueryHunyuanTo3DProJob'}
 
 
-def describe(provider, request, settings=None):
+def describe(provider, request, settings=None, historical=False):
     p, images = request.get('parameters', {}), request.get('inputs', [])
     settings = settings or {}
     if provider == 'tripo':
@@ -42,12 +43,12 @@ def describe(provider, request, settings=None):
         if mode not in TRIPO_MODES:
             raise ValueError('此安装版本未接入所选 Tripo 生成方式。')
         result = deepcopy(TRIPO_MODES[mode])
-        result.update(mode=mode, model=p.get('model_version', '由服务选择'),
+        result.update(mode=mode, model=p.get('model_version', model_defaults.TRIPO),
                       views=list(TRIPO_VIEWS if mode == 'multiview_to_model' else ('front',)))
         if mode == 'generate_multiview_image':
             result['model'] = '此接口不接收模型版本'
     elif provider == 'hunyuan3d':
-        model, mode = p.get('Model', '3.0'), p.get('GenerateType', 'Normal')
+        model, mode = p.get('Model', '3.0' if historical else model_defaults.HUNYUAN), p.get('GenerateType', 'Normal')
         if model not in HUNYUAN_MODELS or mode not in HUNYUAN_MODELS[model]:
             raise ValueError('所选混元模型版本与生成方式不匹配。')
         sketch = mode == 'Sketch'
@@ -60,6 +61,10 @@ def describe(provider, request, settings=None):
                   'output': 'model'}
     else:
         raise ValueError('这里只列出 Tripo 与混元 3D 的生成方式。')
+    if historical and provider == 'tripo' and result['output'] == 'model' and 'model_version' not in p:
+        result['model'] = '未固定版本（历史服务默认）'
+    if historical and provider == 'hunyuan3d' and 'Model' not in p:
+        result['model'] = '3.0（历史默认，任务未固定）'
     result.update(provider=provider, prompt_with_images=result['prompt'] == 'optional_with_image',
                   **connection(provider, settings, result['output'] == 'images'))
     return result

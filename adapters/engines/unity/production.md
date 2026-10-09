@@ -5,7 +5,7 @@
 [production.py](production.py) 独立维护 Unity 的请求规则、工程创建、辅助文件安装和命令。需要 Windows、有效 Unity 许可证，以及制作独立 Player 时的 Windows Build Support。
 
 ```powershell
-python tools/engine_workflow.py create --project "D:/Games/MyGame" --engine unity --editor "D:/Unity/Editor/Unity.exe" --name MyGame --brief "已确认的本轮范围"
+python tools/engine_workflow.py create --project "D:/Games/MyGame" --engine unity --editor "D:/Unity/Editor/Unity.exe" --name MyGame --brief "已确认的当前任务范围"
 ```
 
 调用 Editor 的 createProject 创建空工程，并加载核实实际版本。edit/inspect 使用 C# executeMethod；playback 构建独立 Development Player，再运行脚本操作。辅助文件通过安装哈希识别用户修改，仅在已有检查点且旧文件未被修改时升级。

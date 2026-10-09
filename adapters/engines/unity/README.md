@@ -12,7 +12,7 @@
 | 目标平台构建模块 | Unity Hub 中对应编辑器的模块管理入口 | 编辑器能选择目标平台并实际生成构建；额外 SDK 按目标平台要求配置 |
 | 工程包依赖 | Unity 的 Package Manager，沿用工程的 Packages 配置 | 所需包恢复成功，进入 Play 验证 |
 | MCP 编辑器包（按需） | 按所选提供方说明在 Package Manager 安装匹配版本 | MCP 包加载成功并能识别目标编辑器实例 |
-| MCP 服务与助手连接（按需） | 提供方的 Python / uv 环境及 [助手端配置](../../environment-setup.md#mcp-三端配置) | 实际工具可用，并完成测试对象保存重开 |
+| MCP 服务与 Agent 连接（按需） | 提供方的 Python / uv 环境及 [Agent 端配置](../../environment-setup.md#mcp-三端配置) | 实际工具可用，并完成测试对象保存重开 |
 
 安装说明：[Unity Hub](https://docs.unity.com/en-us/hub)、[MCP 候选提供方](https://github.com/CoplayDev/unity-mcp)。MCP 包、服务和项目依赖分别安装，不随本工具包分发；菜单名称以实际 Hub / Editor 版本为准。
 

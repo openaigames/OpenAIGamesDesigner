@@ -2,66 +2,60 @@
 
 <div align="center">
 
-# OpenAIGamesDesigner
+# OpenAIGamesDesigner：AI游戏开发工具包
 
-AI 游戏开发工具包，覆盖游戏策划、美术制作、程序开发与测试验证，提供 16 个职业 Skill、五阶段开发流程和共享项目看板。你可以从任一开发阶段开始，按需完成单个阶段或连续多个阶段的工作。
+**OpenAIGamesDesigner 为 Agent 提供游戏制作的方法与工具，帮助你从想法推进到可玩的游戏。**
 
-[快速开始](#快速开始) · [开发流程](#开发流程) · [项目看板](#项目看板) · [游戏资产合集](#游戏资产合集) · [引擎与工具](#引擎与工具) · [项目文件](#项目文件)
+> **OpenAIGamesDesigner** 包含 **16 个游戏制作 Skill**，覆盖策划、美术、动画、音频、程序与测试，并提供 **五阶段推荐流程、素材检索、资产登记与版本管理、项目看板**。配有 **Godot、Unity、Unreal Engine、Three.js 和 Phaser** 的工程接入与运行验证工具，可结合 **Blender** 处理资产，并通过外部生成服务制作 **图像、3D 模型、视频和音频**。
+
+**[Game Demos](#game-demos) · [推荐开发流程](#推荐开发流程) · [快速开始](#快速开始) · [项目看板](#项目看板) · [游戏资产合集](#游戏资产合集) · [引擎与工具](#引擎与工具) · [项目文件](#项目文件)**
 
 </div>
 
 <br>
 
-## 用AI辅助游戏制作
+## Game Demos
+
+使用工具包制作的游戏实机演示
 
 <table>
 <tr>
-<td width="50%" valign="top">
-<h3>💡 游戏创意与策划</h3>
-<p>从游戏创意或参考作品出发，梳理核心玩法、美术风格和制作需求，形成可用于后续开发的策划方案。</p>
+<td width="50%" valign="top" align="center">
+<h3>FPS Game</h3>
+<a href=".github/assets/game-demo-fps.mp4"><img src=".github/assets/game-demo-fps-poster.jpg" alt="FPS Game 实机演示" width="100%"></a>
 </td>
-<td width="50%" valign="top">
-<h3>🎮 原型与垂直切片制作</h3>
-<p>在引擎中制作可玩的原型或垂直切片，通过测试和试玩验证核心玩法、操作手感与视听表现。</p>
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-<h3>🔧 现有项目迭代</h3>
-<p>在现有工程上增加功能、调整规则或优化关卡，并同步更新相关设计文档、资产与代码。</p>
-</td>
-<td width="50%" valign="top">
-<h3>🎨 资产制作与数值调校</h3>
-<p>确定美术风格，整理参考图板，搜索或制作所需素材并接入工程；通过数值表测算和调整参数，在游戏中验证实际效果。</p>
+<td width="50%" valign="top" align="center">
+<h3>Action Game</h3>
+<a href=".github/assets/game-demo-action.mp4"><img src=".github/assets/game-demo-action-poster.jpg" alt="Action Game 实机演示" width="100%"></a>
 </td>
 </tr>
 </table>
 
 <br>
 
-## 开发流程
+## 推荐开发流程
 
-![五阶段：立项、玩法验证、制作验证、内容制作、最终交付；任意连续区间与定向回退](.github/assets/workflow-overview.svg)
+![五个开发阶段：可从任一阶段开始，遇到问题只返工受影响的部分](.github/assets/workflow-overview.svg)
 
-五个阶段为 **立项 → 玩法验证 → 制作验证 → 内容制作 → 最终交付**。可以选择其中任意连续区间（共十五种），从已有工程、素材、设计稿或新想法进入；先核对所选起点的必要输入，在请求的终点交接。遇到问题只回退受影响的对象和检查，同一原生工程持续演进。
+五个阶段为 **立项 → 玩法验证 → 制作验证 → 内容制作 → 最终交付**。你可以从已有工程、素材、设计稿或新想法出发，从任一阶段开始，按需要完成一个或多个连续阶段。开始前确认所需资料和工具，完成约定范围后交付成果。遇到问题时，只返工受影响的部分，继续使用现有游戏工程。
 
-重要创作取舍由你决定，AI 在已确定的范围内推进。设计、工程改动和实际验证分别记录，后续对话可以沿着项目文件继续工作。
+重要的创作选择由你决定，Agent 在已确定的范围内推进。设计决定、工程改动和测试结果保存在项目文件中，方便后续继续开发。
 
 <details>
-<summary>查看阶段约定、可复用工作流与职业入口</summary>
+<summary>查看各阶段的工作流程与专业 Skill</summary>
 
 | 这次想完成什么 | 工作流 |
 | --- | --- |
 | 立项 / 接手已有项目 | [项目接入](workflows/project-intake.md) |
 | 验证核心机制 | [原型构建](workflows/prototype-build.md) |
-| 集成代表性体验与品质 | [垂直切片](workflows/vertical-slice.md) |
+| 制作展示核心玩法和目标品质的可玩片段 | [垂直切片](workflows/vertical-slice.md) |
 | 新增、修改或移除功能 | [功能变更](workflows/feature-change.md) |
 | 制作、处理与导入资产 | [资产制作](workflows/asset-production.md) |
-| 打包交付与反馈接续 | [交付](workflows/delivery.md) |
-| 选择开发区间与检查出口 | [五阶段定义](workflows/development-stages.md) · [阶段任务执行](workflows/stage-execution.md) |
-| 从代表样例扩展到完整体验 | [内容制作](workflows/content-production.md) |
+| 打包交付，并根据反馈继续改进 | [交付](workflows/delivery.md) |
+| 选择开发阶段与完成标准 | [五阶段定义](workflows/development-stages.md) · [阶段任务执行](workflows/stage-execution.md) |
+| 从可玩片段扩展到完整游戏内容 | [内容制作](workflows/content-production.md) |
 
-职业入口：[制作管理](skills/game-preproduction/SKILL.md) · [创意与定位](skills/game-concept/SKILL.md) · [系统策划](skills/game-design/SKILL.md) · [数值策划](skills/game-numerical-design/SKILL.md) · [战斗策划](skills/game-combat-design/SKILL.md) · [关卡策划](skills/game-level-design/SKILL.md) · [美术指导](skills/game-art-direction/SKILL.md) · [角色美术](skills/game-character-art/SKILL.md) · [场景美术](skills/game-environment-art/SKILL.md) · [动画](skills/game-animation-pipeline/SKILL.md) · [特效](skills/game-vfx-design/SKILL.md) · [音频](skills/game-audio-design/SKILL.md) · [UI/UX](skills/game-ui-ux/SKILL.md) · [技术美术](skills/game-technical-art/SKILL.md) · [技术与工程](skills/game-technical-design/SKILL.md) · [验证](skills/game-prototype-validation/SKILL.md)。每项可独立调用，按实际任务组合；不要求每个职业单独启动代理或建立根文档。
+各专业 Skill：[制作管理](skills/game-preproduction/SKILL.md) · [创意与定位](skills/game-concept/SKILL.md) · [系统策划](skills/game-design/SKILL.md) · [数值策划](skills/game-numerical-design/SKILL.md) · [战斗策划](skills/game-combat-design/SKILL.md) · [关卡策划](skills/game-level-design/SKILL.md) · [美术指导](skills/game-art-direction/SKILL.md) · [角色美术](skills/game-character-art/SKILL.md) · [场景美术](skills/game-environment-art/SKILL.md) · [动画](skills/game-animation-pipeline/SKILL.md) · [特效](skills/game-vfx-design/SKILL.md) · [音频](skills/game-audio-design/SKILL.md) · [UI/UX](skills/game-ui-ux/SKILL.md) · [技术美术](skills/game-technical-art/SKILL.md) · [技术与工程](skills/game-technical-design/SKILL.md) · [验证](skills/game-prototype-validation/SKILL.md)。每项可单独使用，也可以按任务组合使用，无需为每个专业单独启动 Agent 或创建一套文档。
 
 </details>
 
@@ -69,58 +63,39 @@ AI 游戏开发工具包，覆盖游戏策划、美术制作、程序开发与�
 
 ## 快速开始
 
-本指南提供 **Codex** 的安装与使用方法。准备 Python 3.10+ 运行工具；实际制作时，再接入项目需要的引擎和资产工具。
-
-先查 [按功能配置环境](adapters/environment-setup.md)：列出需要安装什么、在电脑 / 引擎 / AI 助手的哪里配置，以及怎样确认可用。
-
-### 1 · 获取并安装
-
-使用有仓库访问权限的账号获取本仓库，在 Codex 中打开，然后输入：
-
-```text
-把这个仓库的十六个 Skill 和必要运行资源安装到本机。
-如果已有同名版本，先比较差异并保留我的修改。
-```
-
-<details>
-<summary>手动获取、打包与安装</summary>
+下载并解压本仓库，或使用以下命令获取工具包：
 
 ```sh
 git clone https://github.com/openaigames/OpenAIGamesDesigner.git
 cd OpenAIGamesDesigner
+```
+
+准备 Python 3.10+，游戏引擎和资产制作工具按项目需要配置；Skill 安装方式以所用 Agent 的要求为准。
+
+<details>
+<summary>可选：打包并安装到支持 Skill 的 Agent</summary>
+
+在工具包根目录运行：
+
+```sh
 python tools/package_skills.py --output dist/skills-bundle
 ```
 
-Codex 个人安装：将生成包的完整内容（十六个 Skill 目录和包根目录 `LICENSE`）合入 `~/.agents/skills/`（Windows 默认是 `C:/Users/<用户名>/.agents/skills/`）。仅供某个游戏项目使用时，可放入该项目的 `.agents/skills/`；通常选择一种范围，避免同名副本混淆。保留 `game-preproduction/runtime/` 等全部子文件。首次安装到空目录时复制包内全部内容；更新已有安装时逐文件比较并备份本地修改，保留其他 Skill 和个人文件，不整体替换安装根目录。复制完成后运行下方完整性检查，`missing`、`changed` 和 `extra` 应为空；有意保留的本地定制需逐项说明。
+将分发包的完整内容（十六个 Skill 目录和包根目录 `LICENSE`）放入所用 Agent 支持的个人或项目 Skill 目录，保留 `game-preproduction/runtime/` 等全部子文件。安装后按该 Agent 的方式重新加载 Skill。
 
-打包目标需为新目录；更新后重新打包并同步安装副本。包内 `game-preproduction/runtime/bundle-manifest.json` 记录内容版本，使用该 runtime 下的 `tools/check_installation.py --skills-root <Skill 安装根目录>` 检查缺失、修改及工具包目录内额外的文件；其他 Skill 不参与检查。差异需比较并保留本地定制。分发包不包含引擎、生成模型或游戏资产。
+打包目标需为新目录。更新已有安装时，先逐文件比较并备份本地修改，保留其他 Skill 和个人文件，不整体替换安装根目录。包内 `game-preproduction/runtime/bundle-manifest.json` 记录内容版本。
+
+从安装后的 `game-preproduction/runtime/` 目录运行完整性检查：
+
+```sh
+python tools/check_installation.py --skills-root "Skill 安装根目录的绝对路径"
+```
+
+`missing`、`changed` 和 `extra` 应为空；有意保留的本地定制需逐项说明。检查只覆盖工具包内容，其他 Skill 不参与检查。分发包不包含引擎、生成模型或游戏资产。
 
 </details>
 
-### 2 · 打开你的游戏项目
-
-安装后在 Codex 新开一个任务，以游戏项目目录为工作目录，或提供已有工程的实际路径。已有项目沿用自己的结构。Skill 安装位置、MCP 配置与游戏项目文件是不同位置，见 [Codex 路径速查](adapters/environment-setup.md#codex-路径速查)。
-
-### 3 · 用自然语言描述目标
-
-**开始一个新游戏**
-
-```text
-我想做一个网页 2D 探索游戏，使用 Phaser。
-玩家可以收集零件、修复设施，逐步进入新的区域。
-先帮我确定核心体验和第一版原型的范围。
-```
-
-**继续一个已有项目**
-
-```text
-给这个游戏增加装备升级系统，使用探索获得的资源。
-先讨论规则和对现有系统的影响，再推进实现。
-```
-
-直接描述目标即可。助手根据资料澄清关键未知，选择适用的 Skill，在项目文件中保存决定并继续工作。
-
-[完整使用说明 →](tools/README.md)
+[工具使用说明 →](tools/README.md) · [引擎与工具接入 →](adapters/README.md)
 
 <br>
 
@@ -128,9 +103,24 @@ Codex 个人安装：将生成包的完整内容（十六个 Skill 目录和包�
 
 **在同一看板浏览项目资产、预览模型及内置动画、查看生成任务并配置生成服务。**
 
-![项目看板示例：资产分类与标签筛选、模型和音频列表，以及主角模型的 3D 预览](.github/assets/project-workbench-example.png)
+<table>
+<tr>
+<td width="50%" valign="top">
+<h3>资产库</h3>
+<a href=".github/assets/project-workbench-assets.png"><img src=".github/assets/project-workbench-assets.png" alt="项目看板 · 资产库与模型预览" width="100%"></a>
+<p>按分类和标签浏览模型、动画、音频等资产，查看项目用途、来源与许可，并在右侧预览模型及内置动画。</p>
+</td>
+<td width="50%" valign="top">
+<h3>生成服务</h3>
+<a href=".github/assets/project-workbench-generation-services.png"><img src=".github/assets/project-workbench-generation-services.png" alt="项目看板 · 生成服务配置" width="100%"></a>
+<p>集中配置图像、3D、视频和音频生成服务的本地密钥，检查配置状态，并从生成任务中查看制作进度。</p>
+</td>
+</tr>
+</table>
 
-直接告诉助手：
+### 打开看板
+
+直接告诉 Agent：
 
 ```text
 打开这个游戏项目的看板，我要浏览本地资产。
@@ -167,9 +157,9 @@ python tools/project_workbench.py --project "游戏项目绝对路径"
 
 ## 引擎与工具
 
-按项目目标选择制作路线，已有工程优先沿用。
+按项目目标选择引擎或框架，已有项目优先沿用现有工具。需要让 Agent 连接编辑器或外部服务时，可按接入说明配置 MCP（Model Context Protocol，一种连接外部工具的协议）。
 
-| 制作路线 | 接入文件 |
+| 引擎或框架 | 使用说明 |
 | --- | --- |
 | **Three.js · 网页 3D** | [adapters/engines/threejs/README.md](adapters/engines/threejs/README.md) |
 | **Phaser · 网页 2D** | [adapters/engines/phaser/README.md](adapters/engines/phaser/README.md) |
@@ -177,9 +167,9 @@ python tools/project_workbench.py --project "游戏项目绝对路径"
 | **Unity** | [adapters/engines/unity/README.md](adapters/engines/unity/README.md) |
 | **Unreal Engine** | [adapters/engines/unreal/README.md](adapters/engines/unreal/README.md) |
 
-资产制作支持 [Seedream 图像与 Seedance 视频](adapters/assets/ark-generation.md)、[Tripo / Hunyuan3D API](adapters/assets/generation-api.md)、[ElevenLabs 音效与配乐](adapters/assets/elevenlabs-audio.md)（[本机密钥设置页](adapters/assets/local-settings.md)）、[资产检索与登记](adapters/assets/asset-sources.md)，以及图像、音频与 Blender 的本地命令；数值协作支持已绑定 JSON 配置与 CSV / Excel 数值页之间的交换。
+资产制作支持 [Seedream 图像与 Seedance 视频](adapters/assets/ark-generation.md)、[Tripo / Hunyuan3D API](adapters/assets/generation-api.md)、[ElevenLabs 音效与配乐](adapters/assets/elevenlabs-audio.md)（[本机密钥设置页](adapters/assets/local-settings.md)）、[资产检索与登记](adapters/assets/asset-sources.md)，以及图像、音频与 Blender 的本地命令；数值工具可以在已关联的游戏 JSON 配置与 CSV / Excel 表格之间同步参数。
 
-[引擎接入说明](adapters/README.md) · [资产工具接入](adapters/assets/README.md) · [数值表往返](tools/README.md#数值表往返) · [验证方法](tests/README.md)
+[引擎接入说明](adapters/README.md) · [资产工具接入](adapters/assets/README.md) · [数值表与游戏配置同步](tools/README.md#数值表往返) · [验证方法](tests/README.md)
 
 <br>
 
@@ -189,10 +179,10 @@ python tools/project_workbench.py --project "游戏项目绝对路径"
 
 ```text
 OpenAIGamesDesigner/
-├── skills/     # AI 专业工作方法与按需参考
+├── skills/     # 各专业 Skill 及参考资料
 │   ├── game-preproduction/         # 项目管理、阶段推进与变更协调
 │   ├── game-concept/               # 游戏定位、核心体验与设计支柱
-│   ├── game-design/                # 系统规则、成长经济机制与 GDD 索引
+│   ├── game-design/                # 系统规则、成长与经济机制、游戏设计文档目录
 │   ├── game-numerical-design/      # 公式、曲线、概率、供需与定量平衡
 │   ├── game-combat-design/         # 操作、招式、敌人决策与战斗调校
 │   ├── game-level-design/          # 空间、路线、遭遇与可玩布局
@@ -210,7 +200,7 @@ OpenAIGamesDesigner/
 ├── templates/  # 项目管理、里程碑、任务和规格等交付模板
 ├── tools/      # 项目看板、项目执行、资产任务、数值交换与检查
 ├── adapters/   # 具体引擎及外部工具的接入实现
-│   ├── engines/                    # 引擎运行、制作、会话恢复与 MCP 接入约定
+│   ├── engines/                    # 引擎操作、继续开发与 MCP 连接说明
 │   │   ├── godot/                      # Godot 命令与接入说明
 │   │   ├── unity/                      # Unity 运行、制作驱动与 C# 辅助工具
 │   │   ├── unreal/                     # UE 运行、制作驱动与 Python 辅助工具
@@ -218,22 +208,22 @@ OpenAIGamesDesigner/
 │   │   └── phaser/                     # 网页 2D
 │   ├── assets/                     # 生成 API、素材检索下载与本地处理
 │   └── processing/                 # Blender 等资产处理接入
-├── schemas/    # 项目、运行、引擎会话、资产任务与产物记录约定
-├── tests/      # 自动检查、行为场景与联调样例
+├── schemas/    # 项目配置、任务和生成文件的记录格式
+├── tests/      # 自动检查、测试场景与工具连接示例
 └── dist/       # 本地打包生成的 Skill 分发包
 ```
 
 ### 新游戏项目目录
 
-**讨论记录、设计文档和游戏工程统一保存在你的项目目录中。** 六份方向文档作为入口，详细规格、任务、资产和运行证据按需建立，通过链接关联。
+**讨论记录、设计文档和游戏工程统一保存在你的项目目录中。** 用六份文档记录项目的主要设计和开发信息；详细设计、任务、资产和测试记录按需补充，并通过链接关联。
 
 ```text
 MyGame/
-├── Project Management.md       # 阶段、索引、变更汇总与下一步
+├── Project Management.md       # 开发阶段、文档目录、变更汇总与下一步
 ├── Game Concept.md             # 定位、核心体验与设计支柱
-├── Game Design Document.md     # 玩法、系统与数值设计入口
+├── Game Design Document.md     # 玩法、系统与数值设计
 ├── Art Direction.md            # 美术方向、表现与资产记录
-├── Technical Design.md         # 技术方案、接口与工程入口
+├── Technical Design.md         # 技术方案、接口与工程位置
 ├── Risk & Assumption List.md   # 风险、验证计划与实际结果
 ├── design/                     # 详细功能、资产规格与数值设计
 ├── production/                 # 任务、里程碑与重要决定
@@ -241,15 +231,15 @@ MyGame/
 ├── game/                       # 可持续编辑的游戏工程
 ├── tests/                      # 测试与试玩报告
 ├── .openaigame/                # 工具配置与任务记录
-├── runs/                       # 执行日志、输入快照与证据
+├── runs/                       # 执行日志、当次使用的资料与测试结果
 └── builds/                     # 构建产物
 ```
 
-初次立项保存已知信息，未确定的记录为待讨论。后续只修改当前任务涉及的专业内容，关联变更汇总到项目管理；定位发生变化时再更新概览。
+初次立项保存已知信息，未确定的记录为待讨论。后续只更新当前任务涉及的内容，并在项目管理文档中汇总改动；游戏定位变化时，再更新游戏概览。
 
-具体资产、来源、许可与交付进度由美术记录或现有资产清单统一维护，概览只保留影响定位的制作策略摘要。
+资产名称、来源、使用许可和制作进度统一记录在美术文档或现有资产清单中。游戏概览只保留影响整体方向的信息。
 
-已有项目保留自己的目录和等价文档。游戏资料保存在项目中，Skill 安装目录保存通用方法与工具。
+已有项目可以继续使用原有目录和承担相同用途的文档。游戏资料保存在项目中，Skill 安装目录保存通用方法与工具。
 
 <br>
 

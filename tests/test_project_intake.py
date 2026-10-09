@@ -110,7 +110,7 @@ class IntakeTests(unittest.TestCase):
         management = self.root/'Project Management.md'
         text = management.read_text(encoding='utf-8')
         text = text.replace('项目阶段：待依据现有工程和用户目标判断', '项目阶段：原型验证中断')
-        text = text.replace('本轮目标：澄清并推进用户提出的游戏需求，原话见概览', '本轮目标：记录本次中断与下一步')
+        text = text.replace('当前任务目标：澄清并推进用户提出的游戏需求，原话见概览', '当前任务目标：记录本次中断与下一步')
         text = text.replace('工程入口：待按实际项目定位', '工程入口：[工程](game/Probe.uproject)')
         text += '\n[任务](production/tasks/T001.md)\n[原型](production/milestones/P001.md)\n[报告](tests/reports/V001.md)\n'
         management.write_text(text, encoding='utf-8')
@@ -119,6 +119,12 @@ class IntakeTests(unittest.TestCase):
             relative = 'tests/reports/V001.md' if path.parent==self.root else '../../tests/reports/V001.md'
             with path.open('a',encoding='utf-8') as f: f.write(f'\n[中断证据]({relative})\n')
         self.assertEqual(records.closeout_errors(self.root), [])
+        for label in ('本轮目标', '当前任务目标'):
+            with self.subTest(initial_goal_label=label):
+                management.write_text(text.replace('当前任务目标：记录本次中断与下一步',
+                    f'{label}：澄清并推进用户提出的游戏需求，原话见概览'), encoding='utf-8')
+                self.assertTrue(any('initial management text' in e for e in records.closeout_errors(self.root)))
+        management.write_text(text, encoding='utf-8')
         report.unlink()
         self.assertTrue(records.closeout_errors(self.root))
 

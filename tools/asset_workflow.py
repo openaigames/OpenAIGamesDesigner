@@ -11,7 +11,7 @@ import uuid
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from adapters.assets import hunyuan3d, image_provider, audio_provider, tripo, api_common, elevenlabs, audio_timing, ark, seedream, seedance
-from adapters.assets import credential_store
+from adapters.assets import credential_store, model_defaults
 from adapters.assets import generation_approval, model_prompt_policy
 from adapters.processing import blender
 from game_workflow import atomic_json, identifier, now, sha, stop_process
@@ -38,6 +38,8 @@ def new_job(root, provider, request, settings, retry_of=None):
     if not isinstance(request, dict) or not isinstance(request.get("parameters", {}), dict):
         raise ValueError("Request must contain object parameters and an input path list")
     if not isinstance(request.get('inputs', []), list): raise ValueError('inputs must be an array')
+    # Freeze the chosen default in the job and its approval fingerprint.
+    request = model_defaults.prepare(provider, request, settings)
     art_context = asset_handoff.request_context(request.get('art_record'))
     model_prompt_policy.require(provider, request, settings, root)
     context=asset_versions.lineage(root,request['lineage']) if request.get('lineage') else None
@@ -138,7 +140,7 @@ def execute_job(root, job_id, timeout, resume=False, remote_id=None):
     process = None
     try:
         _, job = read_job(root, job_id)
-        if job['settings'].get('mode')=='host':raise ValueError('宿主生图由助手调用当前内置工具执行，再登记实际输出；此命令不会改用云 API')
+        if job['settings'].get('mode')=='host':raise ValueError('宿主生图由 Agent 调用当前内置工具执行，再登记实际输出；此命令不会改用云 API')
         is_api = job['settings'].get('mode') == 'api'
         if resume:
             if job['provider'] in ('elevenlabs', 'seedream'):

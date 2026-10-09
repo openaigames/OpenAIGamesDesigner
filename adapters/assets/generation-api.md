@@ -8,6 +8,8 @@
 
 需要动画的新模型，先沿用或确认用户的制作路线：先定模型再绑骨配动作，或按已有动画/骨架比例制作。具体方法见 game-technical-art 的 `references/rig-aware-asset-production.md`。尺寸可以写入文生提示或用于构造图片参考，但是否真正传入以当前接口为准；按所选方式核对是否支持图片和约束文字共同输入。用户要求共同输入时，不能自行删掉文字或图片；已明确选用只发送图片的任务沿用该选择。没有发送的长度记录用于生成后校准，不宣称服务已读取。路线确认沿用已有决定，不代替本节后续的收费任务授权。
 
+未指定模型的新任务默认使用 Tripo H3.1 / `v3.1-20260211` 和混元 `3.1`。模型在创建任务时写入请求并参与授权摘要；具体来源与更新规则见 [旗舰模型策略](model-defaults.md)。Sketch / LowPoly 仍须显式指定兼容的 `3.0`，不会为兼容模式自动降级。
+
 ## 配置
 
 推荐先打开 [本机服务与密钥设置页](local-settings.md)：`python tools/settings_server.py`。在页面保存 Tripo / 腾讯混元兼容接口 API Key 后，项目可直接使用默认 API 配置，无需手填 mode/auth。工具读取本机配置，密钥不经过模型。
@@ -35,7 +37,7 @@ Tripo 在 [API 平台](https://platform.tripo3d.ai/) 创建密钥。通过密钥
 
 这一路径针对腾讯官方 `api.ai3d.cloud.tencent.com/v1/ai3d`，不代表所有第三方 Hunyuan 托管服务都兼容。腾讯已说明该平台逐步迁移，新账户应核对实际开通的接口；TokenHub 或其他提供方使用不同协议时需要另外接入。
 
-Tripo / 混元 API Key 可在设置页加密保存；也可将密钥值放在运行工具的进程环境中。Windows 环境变量方式需要重启运行工具的终端或宿主，设置页保存则即时供后续调用读取。TC3 凭据继续使用环境变量。配置文件只存变量名，环境变量优先于本机存储。不要把密钥放进聊天、请求参数、版本库或命令参数。只检查本地配置、不发起收费任务：
+Tripo / 混元 API Key 可在设置页加密保存；也可将密钥值放在运行工具的进程环境中。Windows 环境变量方式需要重启运行工具的终端或 Agent 运行环境，设置页保存则即时供后续调用读取。TC3 凭据继续使用环境变量。配置文件只存变量名，环境变量优先于本机存储。不要把密钥放进聊天、请求参数、版本库或命令参数。只检查本地配置、不发起收费任务：
 
 ```sh
 python tools/asset_workflow.py --project "MyGame" doctor --provider tripo
@@ -49,13 +51,13 @@ python tools/asset_workflow.py --project "MyGame" doctor --provider hunyuan3d
 先保存游戏项目中的 `production/asset-request.json`。Tripo 文生模型：
 
 ```json
-{"parameters": {"prompt": "A stylized wooden supply crate", "pbr": true}, "inputs": []}
+{"parameters": {"prompt": "A stylized wooden supply crate", "model_version": "v3.1-20260211", "pbr": true}, "inputs": []}
 ```
 
 混元文生模型：
 
 ```json
-{"parameters": {"Prompt": "风格化木质补给箱", "EnablePBR": true}, "inputs": []}
+{"parameters": {"Prompt": "风格化木质补给箱", "Model": "3.1", "EnablePBR": true}, "inputs": []}
 ```
 
 已选用只发送图片的模型生成方式时，不添加不支持的 prompt/Prompt，使用 `"inputs": ["assets-source/reference.png"]`。只读输入快照；Tripo 接受最多 20 MiB 单图。混元单图接受 PNG/JPEG/WebP，多视图接受 PNG/JPEG，每边大于 128、小于 5000，单文件至多 6 MiB，所有图片 Base64 编码后的总量至多 8 MiB。超限会在排队前报错，不自动缩图或省略输入。模型版本等参数在 `parameters` 指定，以所选服务实际支持范围为准，不自动替换服务或模型。
@@ -87,7 +89,7 @@ python tools/asset_workflow.py --project "MyGame" submit --provider tripo --requ
 python tools/settings_server.py --project "MyGame" --approve-job A实际编号
 ```
 
-用户在浏览器核对服务、提示词、输入文件以及可能的费用后，亲自确认本次生成。授权有效一小时，仅绑定这一个请求和当前账户，使用一次后失效。已有有效授权不再重复确认；保存密钥、任务排队或助手写下“已同意”都不等于生成授权。用户确认后执行：
+用户在浏览器核对服务、提示词、输入文件以及可能的费用后，亲自确认本次生成。授权有效一小时，仅绑定这一个请求和当前账户，使用一次后失效。已有有效授权不再重复确认；保存密钥、任务排队或 Agent 写下“已同意”都不等于生成授权。用户确认后执行：
 
 ```sh
 python tools/asset_workflow.py --project "MyGame" run --job A实际编号 --timeout 900
@@ -138,7 +140,7 @@ resume 查询同一个云任务，下载到新的 attempt 目录，不重新提�
 
 目前本地支持的明确联合输入路线是混元 `Model=3.0, GenerateType=Sketch` 加一张正面草图和 `Prompt`。看板有独立 Sketch 选项，用户必须明确选择 3.0；不自动把多视图改成草图。当前 Tripo v2 多视图、混元 Normal/Geometry 图片路线没有确认的图片＋Prompt 支持，因此在严格要求下不可提交。新版本 SDK 的任意字段透传不证明云端会消费 Prompt；增加模式需要官方接口依据、实际 payload 测试及输出检查。
 
-看板显示 Prompt 原文、图片、接口兼容原因及已保存的 transmission 状态。待发送、请求获接受和结果遵守约束是不同证据；保留实际发送记录，输出先做前后结构、姿态、体积检查，再加工绑定。直接绕过工具包调用 SDK 不在提交门槛覆盖范围，助手仍须遵守同一用户要求。
+看板显示 Prompt 原文、图片、接口兼容原因及已保存的 transmission 状态。待发送、请求获接受和结果遵守约束是不同证据；保留实际发送记录，输出先做前后结构、姿态、体积检查，再加工绑定。直接绕过工具包调用 SDK 不在提交门槛覆盖范围，Agent 仍须遵守同一用户要求。
 
 
 ## 检查当前设置和未完成原因

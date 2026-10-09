@@ -5,7 +5,12 @@ export function groupAssets(assets){
   const result=[],groups=new Map();
   for(const a of assets){
     if(!a.versionGroup){result.push(a);continue;}
-    if(a.versionPart)continue;
+    // Explicit catalogs and category/search filters may omit a group's primary.
+    // Keep actual companion files visible instead of silently dropping them.
+    if(a.versionPart){
+      if(!assets.some(x=>x.versionGroup===a.versionGroup&&!x.versionPart))result.push(a);
+      continue;
+    }
     const current=groups.get(a.versionGroup);
     const score=x=>(!x.versionHidden?10:0)+(x.versionSelected?4:0)+(x.location==='game'?1:0);
     if(!current||score(a)>score(current))groups.set(a.versionGroup,a);

@@ -4,19 +4,21 @@
 
 不确定需要安装哪些软件、在哪配置时，先看 [按功能配置环境](../adapters/environment-setup.md)。
 
-当前宿主说明以 Codex 为准，安装目录和配置范围见 [Codex 路径速查](../adapters/environment-setup.md#codex-路径速查)。下文 CLI 通过本地 Python 执行，游戏项目通过 `--project` 指定，不把安装目录当作游戏输出目录。
+不同 Agent 可共用这些 Python 命令；Skill 安装与工具连接方式见 [Agent 接入步骤](../adapters/environment-setup.md#agent-接入步骤)。游戏项目通过 `--project` 指定，安装目录与游戏输出目录分别维护。
 
 准备 Python 3.10+。下面命令在工具包根运行；安装的 Skill 使用 `game-preproduction/runtime/` 作为工具包根。示例 `MyGame` 请替换为实际游戏项目的绝对路径。文件工具无需引擎；引擎操作需要真实可执行文件和项目配置。
 
+场景材质与参数来源、实际布景净空、固定机位对照及跨引擎打包使用 `environment_workflow.py`；Blender 表面测量、烘焙和静态导出使用专门配方。按当前任务需要选择，入口与数据说明见 [场景制作工具](../skills/game-environment-art/references/environment-tools.md)。
+
 ## 从自然需求开始
 
-在游戏项目目录打开 AI 助手，直接描述目标，例如“我想做一个探索解谜游戏”，或“在这个 UE 工程里增加蓄力攻击”。助手根据当前资料澄清关键未知、选择专业方法并维护项目文件；已有工程从当前目标继续，无需重新立项或指定文档流程；项目看板按需启动。
+在游戏项目目录打开 Agent，直接描述目标，例如“我想做一个探索解谜游戏”，或“在这个 UE 工程里增加蓄力攻击”。Agent 根据当前资料澄清关键未知、选择专业方法并维护项目文件；已有工程从当前目标继续，无需重新立项或指定文档流程；项目看板按需启动。
 
 仅需文档时可直接使用模板，或生成一个具体任务：
 
 新作的默认布局见 [架构](../workflows/README.md)：专业总入口在游戏根，原生工程在 `game/`，其余目录按需建立。先建立六个非空入口并链接，内容按已知/待定逐步完善，不等主要代码写完才补记录；用户明确只讨论不保存时例外。
 
-以下是助手使用的入口，普通用户无需输入命令或指定 Skill：
+以下是 Agent 使用的入口，普通用户无需输入命令或指定 Skill：
 
 ```sh
 python tools/game_workflow.py scaffold --project "MyGame" --brief "用户的实际游戏需求"
@@ -30,7 +32,7 @@ python tools/game_workflow.py document --project "MyGame" --kind task --id T001 
 python tools/game_workflow.py document --project "MyGame" --kind feature-spec --id F001 --title "蓄力攻击"
 ```
 
-支持 prototype、vertical-slice、content-production、task、feature-spec、asset-spec、validation-report、decision 八种 document 类型；content-production 用于内容制作里程碑。管理由 scaffold、init 或人工建立。新资产规格在 `design/assets/`，已有 `assets/specs/` 沿用。目标文件已存在时拒绝覆盖，已有文档由助手原位修改。
+支持 prototype、vertical-slice、content-production、task、feature-spec、asset-spec、validation-report、decision 八种 document 类型；content-production 用于内容制作里程碑。管理由 scaffold、init 或人工建立。新资产规格在 `design/assets/`，已有 `assets/specs/` 沿用。目标文件已存在时拒绝覆盖，已有文档由 Agent 原位修改。
 
 ## 阶段任务与证据
 
@@ -46,9 +48,9 @@ python tools/record_evidence.py --project "MyGame" --register production/evidenc
 
 ## 在已有项目上修改
 
-直接描述目标，例如“给这个项目增加经济系统”。助手读取当前设计和工程，按需要澄清；在现有 GDD 章节或 design/features 下保存规则，在同一变更/任务记录关联美术表现、技术接口与验证。已有格式优先，各方向只改受影响部分；设计、实现和验证分别记录，尚未确定的标待决。
+直接描述目标，例如“给这个项目增加经济系统”。Agent 读取当前设计和工程，按需要澄清；在现有 GDD 章节或 design/features 下保存规则，在同一变更/任务记录关联美术表现、技术接口与验证。已有格式优先，各方向只改受影响部分；设计、实现和验证分别记录，尚未确定的标待决。
 
-管理入口链接本轮变更并汇总进展；概览只在定位或核心体验变化时更新。只讨论设计时不执行工程制作，已授权实现则继续修改与验证。工具可检查链接和记录结构，不能自动保证跨专业含义一致。
+管理入口链接当前任务变更并汇总进展；概览只在定位或核心体验变化时更新。只讨论设计时不执行工程制作，已授权实现则继续修改与验证。工具可检查链接和记录结构，不能自动保证跨专业含义一致。
 
 ## 配置引擎执行
 
@@ -90,9 +92,9 @@ python tools/validate_records.py --project "MyGame" --markdown
 
 模型与表格由 `game-numerical-design` 维护方法，规则仍归系统/战斗等对应专业，技术负责实际写回；旧 `game-design` 数值表路径保留导航。
 
-自然语言即可进入，例如“把武器参数整理成我能编辑的表”“把重击伤害改成 60，比较影响”“我改好了这个 Excel，把差异应用到工程并验证”。助手按任务读取策划/技术参考，完成对应操作；以下 CLI 是可重复执行的文件工具，不要求用户手动调用。
+自然语言即可进入，例如“把武器参数整理成我能编辑的表”“把重击伤害改成 60，比较影响”“我改好了这个 Excel，把差异应用到工程并验证”。Agent 按任务读取策划/技术参考，完成对应操作；以下 CLI 是可重复执行的文件工具，不要求用户手动调用。
 
-`numeric_workflow.py` 支持已存在、已明确绑定的 JSON 记录数组，导出 CSV 工作副本，读取 CSV 或 XLSX 的纯数值页，生成差异后更新已有记录的指定字段。没有引擎工程时由助手先生成候选表与规格；此工具不会从玩法描述自动生成合理数值，也不会自动建立引擎加载器。已有 UE/Unity/Godot 原生数据和项目导入器优先，不为本工具强制改成 JSON。
+`numeric_workflow.py` 支持已存在、已明确绑定的 JSON 记录数组，导出 CSV 工作副本，读取 CSV 或 XLSX 的纯数值页，生成差异后更新已有记录的指定字段。没有引擎工程时由 Agent 先生成候选表与规格；此工具不会从玩法描述自动生成合理数值，也不会自动建立引擎加载器。已有 UE/Unity/Godot 原生数据和项目导入器优先，不为本工具强制改成 JSON。
 
 绑定保存于游戏项目，例如 `design/numerics/combat-binding.json`：
 
@@ -117,20 +119,20 @@ python tools/numeric_workflow.py --project "MyGame" plan --session design/numeri
 python tools/numeric_workflow.py --project "MyGame" apply --plan design/numerics/exchange-01/plan.json
 ```
 
-export 创建 parameters.csv 和 baseline.json，不覆盖已有会话。用户或助手修改 CSV 后运行 plan，输出 ID、字段、旧值、新值、单位，不写工程。检查差异与项目规则后，在用户已授权应用的范围执行 apply；plan 不是新增人工审批要求。表格再次编辑时用新的 --out 生成计划。
+export 创建 parameters.csv 和 baseline.json，不覆盖已有会话。用户或 Agent 修改 CSV 后运行 plan，输出 ID、字段、旧值、新值、单位，不写工程。检查差异与项目规则后，在用户已授权应用的范围执行 apply；plan 不是新增人工审批要求。表格再次编辑时用新的 --out 生成计划。
 
-读取用户回传的 Excel，将 --table 指向项目内 `.xlsx`，并使用 `--sheet Parameters` 或实际页名。该页第一行为与 CSV 一致的字段名，只包含 ID 和绑定字段，不含标题装饰、说明列或汇总行；其他页可以保留公式、曲线和说明。XLSX 读取可选依赖 openpyxl，不需要该依赖即可使用 CSV。工具不制作 XLSX；由助手使用宿主可用的表格能力制作。外部文件先以新文件名复制到游戏项目保留原件，不导入聊天里转述的值。
+读取用户回传的 Excel，将 --table 指向项目内 `.xlsx`，并使用 `--sheet Parameters` 或实际页名。该页第一行为与 CSV 一致的字段名，只包含 ID 和绑定字段，不含标题装饰、说明列或汇总行；其他页可以保留公式、曲线和说明。XLSX 读取可选依赖 openpyxl，不需要该依赖即可使用 CSV。工具不制作 XLSX；由 Agent 使用 Agent 可用的表格能力制作。外部文件先以新文件名复制到游戏项目保留原件，不导入聊天里转述的值。
 
 工具拒绝空数值、非法数字、重复/未知 ID、漏行、越界值、字段变化、公式/错误单元格，以及导出后被改动的绑定/配置。不会以 0 填补空白，也不删除或添加记录。用户换行顺序不影响 ID 匹配。公式结果要在可信计算工具中重算并检查后导出纯数值页或 CSV，不能读取旧缓存后直接应用。项目特有的跨字段约束和引用检查需另行执行。
 
 apply 重新比对表格、基线与计划，保存原文件备份和 `.openaigame/numeric-imports/<id>/receipt.json`，再原子替换目标。执行期间暂停竞争写同一文件的其他任务/编辑器导出。检测到工程变化时先重新导出并合并用户修改；工具没有自动三方合并、文件监视或并发锁。状态 configuration_written 仅表示文件已写入，engine_validation 仍是 not_run；之后使用真实工程的导入/重载、配置检查和玩法测试，单独记录证据。
 
-中断时检查 receipt 的 prepared/failed 状态、目标与前后哈希，确认是否已写入。恢复前确认目标没有后续改动，再从 before.json 恢复并另存恢复记录；有后续变更时合并，不能整份覆盖。详细方法在技术 Skill 的数值交换参考。数值导入回执是专项记录，不冒充通用运行或引擎会话记录；通过运行工具执行引擎验证时再生成对应记录。当前结构约定见 [schemas](../schemas/)。
+中断时检查 receipt 的 prepared/failed 状态、目标与前后哈希，确认是否已写入。恢复前确认目标没有后续改动，再从 before.json 恢复并另存恢复记录；有后续变更时合并，不能整份覆盖。详细方法在技术 Skill 的数值交换参考。数值导入执行记录是专项记录，不冒充通用运行或引擎会话记录；通过运行工具执行引擎验证时再生成对应记录。当前结构约定见 [schemas](../schemas/)。
 
 
-## 实施后的记录回写
+## 实施后的记录更新
 
-交付回复前同步已发生的事实：技术记录实际引擎、架构、工程与运行入口；美术记录已用占位素材、来源及限制；验证记录实际结果、未验证项与中断原因；任务/里程碑更新本轮状态和证据；管理入口更新阶段、目标、工程入口、索引和下一步。阶段可以未完成，不能仍保留“尚未建立”而实际已有工程/里程碑。未来选型待用户决定，已发生事实不等待批准。
+交付回复前同步已发生的事实：技术记录实际引擎、架构、工程与运行入口；美术记录已用占位素材、来源及限制；验证记录实际结果、未验证项与中断原因；任务/里程碑更新当前任务状态和证据；管理入口更新阶段、目标、工程入口、索引和下一步。阶段可以未完成，不能仍保留“尚未建立”而实际已有工程/里程碑。未来选型待用户决定，已发生事实不等待批准。
 
 新作实施结束（包括失败或被中断）后运行 `validate_records.py --project <项目根> --layout --production --closeout --markdown`；检查报告必须读取并处理，结构不合格不能称项目管理已完成。未能修复时如实保留失败项与下一步，不为了通过修改状态成成功。已有/自定义项目不强套目录，人工核对同等内容。
 
@@ -147,7 +149,7 @@ apply 重新比对表格、基线与计划，保存原文件备份和 `.openaiga
 
 维护仓库运行 `python tools/run_tests.py` 执行根测试和 Skill 内脚本测试，包括 `game-animation-pipeline` 的协议检查；`--group game-animation-pipeline` 可单独运行该组。此入口及 CI 属于源码维护工具，不随游戏运行包分发。
 
-发布时从源码仓库重新运行 `tools/package_skills.py`，不要把个人安装目录整体上传。打包器独立排除本地密钥、环境配置、运行日志、项目记录、缓存和工作输出；`.gitignore` 同时防止这些文件被常规 Git 添加操作选中。`.env.example` 与 `.env.template` 仅用于不含真实凭据的配置示例。维护者自己的发布草稿和验证回执留在仓库外或已忽略的本地目录。
+发布时从源码仓库重新运行 `tools/package_skills.py`，不要把个人安装目录整体上传。打包器独立排除本地密钥、环境配置、运行日志、项目记录、缓存和工作输出；`.gitignore` 同时防止这些文件被常规 Git 添加操作选中。`.env.example` 与 `.env.template` 仅用于不含真实凭据的配置示例。维护者自己的发布草稿和验证执行记录留在仓库外或已忽略的本地目录。
 
 协议／Schema 版本用于数据兼容，依赖版本与许可证用于追溯，`bundle_id` 标识包的实际内容，均应保留。当前文件排除规则不会移除已经提交的 Git 历史；发布前须另行检查准备推送的历史。
 
@@ -157,7 +159,7 @@ apply 重新比对表格、基线与计划，保存原文件备份和 `.openaiga
 
 ### 本机密钥设置页
 
-运行 `python tools/settings_server.py` 打开独立页面，保存 Tripo / 腾讯混元兼容接口 / ElevenLabs / 火山方舟 API Key（Seedream 与 Seedance 共用）；无需游戏项目。`--status` 只查看配置是否存在，`--no-open` 供宿主自行打开返回的启动链接。详见 [本机设置](../adapters/assets/local-settings.md)。
+运行 `python tools/settings_server.py` 打开独立页面，保存 Tripo / 腾讯混元兼容接口 / ElevenLabs / 火山方舟 API Key（Seedream 与 Seedance 共用）；无需游戏项目。`--status` 只查看配置是否存在，`--no-open` 供 Agent 运行环境自行打开返回的启动链接。详见 [本机设置](../adapters/assets/local-settings.md)。
 
 ## 项目看板与资产核查
 
@@ -168,11 +170,11 @@ python tools/project_workbench.py --project "MyGame" --approve-job A实际任务
 python tools/asset_audit.py --project "MyGame"
 ```
 
-`MyGame` 换成游戏根目录的绝对路径。看板使用同一套界面，绑定当前项目，在自动分配的本机端口启动；`--no-open --ready-file <新临时文件>` 可交给宿主打开返回地址。同一台电脑的不同浏览器可以直接使用相同地址，页面自动建立连接，无需一次性链接；服务仍只监听 `127.0.0.1`，写入保留 Origin 与 CSRF 校验。默认闲置 120 分钟退出，关闭页面不立即停止服务。用户游戏资产留在游戏项目，网页和 Three.js 在共享 runtime。分发包包含可再分发的自制验证夹具，位于 runtime 的 `tests/fixtures/`；用户真实工程与素材不随包分发。完整维护测试和打包脚本只在源码仓库。
+`MyGame` 换成游戏根目录的绝对路径。看板使用同一套界面，绑定当前项目，在自动分配的本机端口启动；`--no-open --ready-file <新临时文件>` 可交给 Agent 运行环境打开返回地址。同一台电脑的不同浏览器可以直接使用相同地址，页面自动建立连接，无需一次性链接；服务仍只监听 `127.0.0.1`，写入保留 Origin 与 CSRF 校验。默认闲置 120 分钟退出，关闭页面不立即停止服务。用户游戏资产留在游戏项目，网页和 Three.js 在共享 runtime。分发包包含可再分发的自制验证夹具，位于 runtime 的 `tests/fixtures/`；用户真实工程与素材不随包分发。完整维护测试和打包脚本只在源码仓库。
 
 支持本地 3D、图片、音频、视频、粒子演示和引擎文件索引。实时 3D 支持 GLB/glTF、OBJ（含项目内 MTL/贴图）和 FBX 模型/骨架/动作。缺贴图和不兼容骨架会显示具体限制；浏览器不执行 Niagara、AnimBP、碰撞或引擎最终材质。动作预览可跟随角色或查看完整位移轨迹，不修改源资产。标签来自现有美术记录，未登记资产仍可浏览。
 
-引擎角色使用实际消费者导出及 `engine_characters.py` 同步到现有 `.asset-browser/characters.json` / `previews.json`。选择角色即可选择工程关联动作，并区分组件直接绑定、AnimBP 静态引用和工程声明可用集合。导出预览支持 FBX 和 GLB；原文件、派生文件及所列依赖均冻结 SHA256，变更后旧预览失效。项目配置的内容根决定候补/游戏应用归属，运行备份和派生预览不再作为候补重新扫描。浏览器动作与游戏最终表现分开，原生导出接口的限制见 [Unreal 原生动画](../adapters/engines/unreal/native-animation.md)。
+引擎角色使用实际使用方导出及 `engine_characters.py` 同步到现有 `.asset-browser/characters.json` / `previews.json`。选择角色即可选择工程关联动作，并区分组件直接绑定、AnimBP 静态引用和工程声明可用集合。导出预览支持 FBX 和 GLB；原文件、派生文件及所列依赖均冻结 SHA256，变更后旧预览失效。项目配置的内容根决定候补/游戏应用归属，运行备份和派生预览不再作为候补重新扫描。浏览器动作与游戏最终表现分开，原生导出接口的限制见 [Unreal 原生动画](../adapters/engines/unreal/native-animation.md)。
 
 资产归属的内容根、排除目录和配置示例见 [游戏内容根](workbench/README.md#游戏内容根)。模型预览保留动画播放控件。旧片段判断的查询、保存与导出协议见 [历史动作取舍接口](workbench/motion-review.md)，当前看板不提供该表单。历史判断不移动文件，也不替代引擎验证。
 
@@ -180,7 +182,7 @@ python tools/asset_audit.py --project "MyGame"
 
 旧项目初次建立记录区使用 `asset_audit.py --project "MyGame" --init-art`，保留原文；`--register-missing` 只登记文件事实。模型再依据原清单补齐对象和标签，沿用稳定 ID，未知用途保留待补齐。自定义美术入口用项目 `.openaigame/workbench.json` 的 `art_document` 相对路径。固定标记区格式与旧记录映射由专业 Skill 的项目看板参考说明。
 
-服务页复用本机加密存储，保存不发起生成；制作页读取实际 asset-jobs，可建立 API 文本请求并核对已有请求。用户确认后由助手运行现有 asset_workflow，界面不模拟进度、不自行调用生成平台。独立设置页仍适用于无游戏项目的配置。
+服务页复用本机加密存储，保存不发起生成；制作页读取实际 asset-jobs，可建立 API 文本请求并核对已有请求。用户确认后由 Agent 运行现有 asset_workflow，界面不模拟进度、不自行调用生成平台。独立设置页仍适用于无游戏项目的配置。
 
 ## 图像与视频生成
 
@@ -206,7 +208,7 @@ python tools/asset_audit.py --project "MyGame"
 
 `asset_versions.py --project <项目> list` 读取历史；`apply --request request.json` 执行显式版本操作。请求路径相对项目，文件必须在项目内。通用操作为 create（title、kind、files）、add（group、files）、select（group、version、reason）、archive（group、version、archived）。文件数组接受路径或 `{ "path": "...", "sha256": "...", "role": "正面" }`；父版本 parent、参考 references 和说明 note 可选。相同交付物不同方案各保存一版，多视图／贴图依赖放入同版 files。revision 可用于乐观并发校验。
 
-`record-native --request native-result.json` 登记助手内置工具已经实际完成并保存的文件；不会调用模型或云服务。例如：
+`record-native --request native-result.json` 登记 Agent 内置工具已经实际完成并保存的文件；不会调用模型或云服务。例如：
 
 ```json
 {

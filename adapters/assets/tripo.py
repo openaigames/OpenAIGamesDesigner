@@ -1,6 +1,6 @@
 """Tripo v2 OpenAPI: text/image generation and remote task lookup."""
 import uuid
-from . import api_common, http_io, generation_capabilities
+from . import api_common, http_io, generation_capabilities, model_defaults
 from .api_errors import TaskResultError
 from .hunyuan3d import validate as validate_model
 
@@ -51,7 +51,7 @@ class Client:
     def submit(self, request):
         from . import tripo_inputs
         tripo_inputs.validate(request)
-        payload = dict(request['parameters'])
+        payload = model_defaults.prepare('tripo', request)['parameters']
         kind = tripo_inputs.kind(request)
         payload['type'] = kind
         # Read and hash every input before any upload or charged task submission.

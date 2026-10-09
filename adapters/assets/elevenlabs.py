@@ -5,11 +5,13 @@ import re
 import sys
 from . import api_common, audio_timing, http_io
 from .audio_provider import validate
+from . import model_defaults
 
 BASE = 'https://api.elevenlabs.io/v1'
-MODELS = {'sound_effect': ('eleven_text_to_sound_v2',),
-          'music': ('music_v1', 'music_v2', 'music_v2_5'),
-          'speech': ('eleven_multilingual_v2', 'eleven_flash_v2_5', 'eleven_turbo_v2_5', 'eleven_v3')}
+MODELS = {'sound_effect': (model_defaults.ELEVENLABS['sound_effect'],),
+          'music': (model_defaults.ELEVENLABS['music'], 'music_v2', 'music_v1'),
+          'speech': (model_defaults.ELEVENLABS['speech'], 'eleven_v3',
+                     'eleven_multilingual_v2', 'eleven_flash_v2_5', 'eleven_turbo_v2_5')}
 
 
 def validate_request(request):

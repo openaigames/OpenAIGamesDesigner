@@ -10,7 +10,7 @@
 | Three.js | [threejs/__init__.py](threejs/__init__.py) | [网页 3D](threejs/README.md) |
 | Phaser | [phaser/__init__.py](phaser/__init__.py) | [网页 2D](phaser/README.md) |
 
-编辑器操作优先复用宿主已有且适合当前任务的 MCP；命令执行由本目录适配器负责。两条路线共享项目设计、任务与验证依据，但 MCP 调用不是 `game_workflow.py run` 的隐式功能。当前 CLI 不发现、安装或代理 MCP 服务。接入方法和证据约定见 [MCP 接入](mcp.md)。
+编辑器操作优先复用 Agent 运行环境已有且适合当前任务的 MCP；命令执行由本目录适配器负责。两条路线共享项目设计、任务与验证依据，但 MCP 调用不是 `game_workflow.py run` 的隐式功能。当前 CLI 不发现、安装或代理 MCP 服务。接入方法和证据约定见 [MCP 接入](mcp.md)。
 
 各引擎的公共导入继续使用 `from adapters.engines import unreal` 等形式。运行、测试与交付由各自 `cli.py` 负责；Unity / Unreal 的创建和编辑由各自 `production.py` 负责，两种入口并存。
 
@@ -29,7 +29,7 @@
 | [observations.md](observations.md) | Godot / Unreal 的实际事件、参数、附件和空间采集 |
 | [unreal/native-animation.md](unreal/native-animation.md) | UE 原生角色、动画与关联预览导出 |
 | [unreal/native-data.md](unreal/native-data.md) | UE 原生参数读回与保护性写入 |
-| `mcp.md` | 宿主 MCP 接入及证据约定，不是 MCP 服务实现 |
+| `mcp.md` | Agent 运行环境 MCP 接入及证据约定，不是 MCP 服务实现 |
 | `web.md` | 网页游戏共同使用方式与浏览器检查配置 |
 
 制作接口按引擎读取 `unity/production.py` 或 `unreal/production.py`，公共执行和恢复读取 `sessions.py`。Godot 从 `adapters.engines.godot` 导入；网页框架分别从 `adapters.engines.threejs` 和 `adapters.engines.phaser` 导入。

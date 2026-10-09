@@ -1,8 +1,16 @@
 # 按功能配置开发环境
 
-先选本轮要用的功能，只配置对应环境。已有工程沿用其版本和工具；安装 Skills 不会自动安装游戏引擎、MCP 服务、生成模型或资产。
+先选当前任务要用的功能，只配置对应环境。已有工程沿用其版本和工具；安装 Skills 不会自动安装游戏引擎、MCP 服务、生成模型或资产。
 
-本文当前的宿主操作说明针对 **Codex 本地使用**。Claude Code 等其他 Agent 后续再补安装、连接与验证说明；通用引擎和工具方法继续共用。
+本工具包的项目文件、Python 工具与引擎配置可供不同 Agent 使用。Agent 需要能够读取项目文件并执行命令；Skill 的发现方式和 MCP 连接方式以所用 Agent 的要求为准。
+
+## Agent 接入步骤
+
+1. 将工具包和游戏项目的实际路径提供给 Agent，让它阅读 README，并按任务读取相关 Skill。
+2. 如果 Agent 支持 Skill 安装，按其要求选择安装位置，保留完整 Skill 目录和共享运行资源；不支持自动发现时，可明确指定要读取的 SKILL.md。
+3. 在工具包根目录运行 `python tools/game_workflow.py --help`，再按下表配置当前任务需要的引擎和服务。
+
+下方 Codex 路径表是具体配置示例，不作为其他 Agent 的默认安装位置。
 
 ## Codex 路径速查
 
@@ -10,7 +18,7 @@
 
 | 内容 | Codex 使用的位置 | 如何操作 |
 | --- | --- | --- |
-| 个人 Skills | `~/.agents/skills/<skill-name>/` | 将打包生成的七个完整 Skill 目录放入这里，供本机多个项目使用 |
+| 个人 Skills | `~/.agents/skills/<skill-name>/` | 将打包生成的 16 个完整 Skill 目录放入这里，供本机多个项目使用 |
 | 项目级 Skills（可选） | `<游戏项目>/.agents/skills/<skill-name>/` | 只为当前项目安装时使用；与个人安装通常二选一，避免维护不一致的副本 |
 | 已安装工具包根 | 所选安装位置下的 `game-preproduction/runtime/` | 在此目录调用 `tools/game_workflow.py` 等工具；不能只复制 SKILL.md |
 | Codex 的 Skill 展示信息 | 各 Skill 的 `agents/openai.yaml` | 随技能包保留；这里不是 MCP 配置或游戏设计记录 |
@@ -21,23 +29,23 @@
 | 引擎和执行命令配置 | `<游戏项目>/.openaigame/project.json` | 本工具包使用，记录真实引擎位置、程序路径与项目命令；不会注册 MCP |
 | 资产工具配置 | `<游戏项目>/.openaigame/asset-providers.json` | 登记实际生成或处理工具；不会安装模型或引擎插件 |
 
-安装后在 Codex 新开任务，确认七个 Skill 可被发现；可明确输入“使用 game-preproduction，检查这个游戏项目的当前阶段”验证读取，再测试自然语言自动触发。文件存在、Skill 被读取、CLI 可运行和引擎已连接是不同检查项。
+安装后在 Codex 新开任务，确认 16 个 Skill 可被发现；可明确输入“使用 game-preproduction，检查这个游戏项目的当前阶段”验证读取，再测试自然语言自动触发。文件存在、Skill 被读取、CLI 可运行和引擎已连接是不同检查项。
 
-路径依据：[Codex Skills 官方说明](https://learn.chatgpt.com/docs/build-skills)、[Codex MCP 官方说明](https://learn.chatgpt.com/docs/extend/mcp)。以下通用表中的“助手端”当前指 Codex。
+路径依据：[Codex Skills 官方说明](https://learn.chatgpt.com/docs/build-skills)、[Codex MCP 官方说明](https://learn.chatgpt.com/docs/extend/mcp)。其他 Agent 的安装目录和 MCP 配置格式请参照对应产品说明。
 
 ## 需要准备什么
 
 | 想使用的功能 | 必需环境 | 在哪里安装或配置 | 如何确认可用 |
 | --- | --- | --- | --- |
-| 讨论立项、GDD、美术和技术方案，维护项目文件 | 能读写项目的 AI 助手与本轮需要的 Skills | 助手的 Skill 安装目录；在游戏项目目录开始任务 | 新任务能读取 Skill，并把已知与待定保存到项目文件；不需要先安装引擎 |
+| 讨论立项、GDD、美术和技术方案，维护项目文件 | 能读写项目的 Agent 与当前任务需要的 Skills | Agent 的 Skill 安装目录；在游戏项目目录开始任务 | 新任务能读取 Skill，并把已知与待定保存到项目文件；不需要先安装引擎 |
 | 初始化文档、记录任务、检查文件和运行记录 | Python 3.10+ 与完整运行资源 | 本机 Python；源码 `tools/` 或已安装的 `game-preproduction/runtime/tools/` | 在对应工具包根执行 `python tools/game_workflow.py --help` |
 | Three.js 网页 3D / Phaser 网页 2D | 兼容项目 Vite 的 Node.js、npm 或 pnpm、浏览器 | 本机安装 Node；游戏工程安装依赖；项目配置记录 Node 与包管理器路径 | 依赖安装 → 构建 → HTTP 打开导出版本 → 实际操作；见 [网页说明](engines/web.md) |
 | Godot 原型与试玩 | 项目所需 Godot 4 可执行文件 | 本机安装 / 解压引擎；在项目配置登记路径 | 查询版本、导入并运行真实场景；见 [Godot 配置](engines/godot/README.md#环境配置) |
 | Godot 独立包 | 匹配引擎的导出模板、目标平台所需工具 | Godot 的 Editor → Manage Export Templates；导出窗口添加平台预设 | 导出后单独启动包；仅编辑器能运行还不够 |
 | Unity 工程制作 | 匹配的 Unity Editor、项目包依赖；按目标安装平台模块 | Unity Hub 管理编辑器和模块；Unity Package Manager 管理工程包 | 工程正常导入、编译、进入 Play；见 [Unity 配置](engines/unity/README.md#环境配置) |
 | Unreal 工程制作 | 匹配的 UE；C++ 工程 / 源码插件另需匹配工具链和 SDK | Epic Games Launcher 或既有引擎安装；Windows 编译组件在 Visual Studio Installer 中配置 | 工程可打开；涉及 C++ 时实际构建通过；见 [UE 配置](engines/unreal/README.md#环境配置) |
-| AI 通过 MCP 操作编辑器 | 对应 MCP 服务及其依赖；提供方要求的引擎插件 | 引擎侧安装插件（若需要）＋本机服务环境＋AI 助手连接配置 | 工具可发现、目标工程正确、读写与保存重开通过；见 [MCP 三端配置](#mcp-三端配置) |
-| UE 动作/动画接入 | 本轮选定或授权选材的资源/模块，目标版本兼容 | 工程 Content 导入动画，第三方代码按提供方安装到项目；检查骨架、控制接口和依赖 | 动画预览、工程中播放、规则时序、取消/恢复与试玩分别验证；不限定某个动作包 |
+| AI 通过 MCP 操作编辑器 | 对应 MCP 服务及其依赖；提供方要求的引擎插件 | 引擎侧安装插件（若需要）＋本机服务环境＋Agent 连接配置 | 工具可发现、目标工程正确、读写与保存重开通过；见 [MCP 三端配置](#mcp-三端配置) |
+| UE 动作/动画接入 | 当前任务选定或授权选材的资源/模块，目标版本兼容 | 工程 Content 导入动画，第三方代码按提供方安装到项目；检查骨架、控制接口和依赖 | 动画预览、工程中播放、规则时序、取消/恢复与试玩分别验证；不限定某个动作包 |
 | Tripo / Hunyuan3D API 生成 | Python、网络、服务账户与凭据 | Tripo/混元 API Key 可在[本机设置页](assets/local-settings.md)保存；TC3 使用环境变量，项目可覆盖默认配置 | doctor 检查存在，再生成一个小任务；见 [API 配置](assets/generation-api.md) |
 | 通过主机代理访问资产 API 或下载 | curl；Windows 自动代理使用系统 WinHTTP | 当前 Windows 自带 curl；其他系统在 PATH 提供 curl；使用系统代理或代理环境变量 | 先用官方只读接口验证连接与认证；见 [跟随主机代理](assets/local-settings.md#跟随主机代理) |
 | 免费与付费资产检索与获取 | Python、网络；部分来源需要浏览器登录 | [素材目录](assets/asset-sources.md)；无需本地生成模型 | 实际搜索 → 获取文件 → verify → 导入检查 |
@@ -47,7 +55,7 @@
 | 数值 CSV 往返 | Python、真实 JSON 主源与字段绑定 | 游戏项目中的数值绑定文件；CSV 可用表格软件编辑 | 导出 → 修改 → 比较 → 应用 → 引擎重载确认 |
 | 读取数值 Excel 表 | 上述环境，另加运行工具所用 Python 的 `openpyxl` | 在同一 Python 环境执行 `python -m pip install openpyxl` | 读取指定数值页并检查差异；见 [数值往返](../tools/README.md#数值表往返) |
 
-表格制作、概念图生成等助手能力取决于宿主提供的工具；本项目不自动包含这些服务。GPU、显存、模型权重和服务凭据按实际选定的生成工具要求配置，没有所有用户通用的模型环境清单。
+表格制作、概念图生成等 Agent 能力取决于所用 Agent 提供的工具；本项目不自动包含这些服务。GPU、显存、模型权重和服务凭据按实际选定的生成工具要求配置，没有所有用户通用的模型环境清单。
 
 ## MCP 三端配置
 
@@ -55,11 +63,11 @@
 | --- | --- | --- | --- |
 | 引擎端 | 目标工程的插件目录 / 插件面板 / 包管理器，按提供方说明 | 安装兼容插件并启用；有源码插件时先编译，必要时重启编辑器 | 插件成功加载，工程没有新增编译错误 |
 | 本机服务端 | 提供方的独立目录、Python 虚拟环境或 Node 环境 | 安装并固定服务版本及依赖，设置启动命令 | 服务成功启动并能连接目标编辑器；日志无连接错误 |
-| Codex 端 | 上表中的 Codex 用户级或项目级 config.toml；也可使用 Codex CLI 管理 | 服务命令 / URL、工作目录及必要环境变量 | 当前任务发现真实工具，调用只读查询并核对工程身份 |
+| Agent 端 | 所用 Agent 的 MCP 连接设置；具体配置位置和格式按该 Agent 的要求选择 | 服务命令 / URL、工作目录及必要环境变量 | 当前任务发现真实工具，调用只读查询并核对工程身份 |
 
 并非每套 MCP 都需要引擎插件。引擎插件、独立服务与启动参数由所选提供方决定。使用提供方实际要求，不把 UE 的步骤套到所有引擎上。
 
-Codex 的配置可位于用户级 `~/.codex/config.toml` 或受信任项目的 `.codex/config.toml`；也可使用 `codex mcp add`。服务的命令和参数必须来自实际安装路径，不能把其他客户端的 `mcpServers` JSON 直接当作 Codex TOML。配置后重新连接，并检查当前会话是否看到了工具。操作方式见 [官方 MCP 文档](https://learn.chatgpt.com/docs/extend/mcp)。
+以 Codex 为例，配置可位于用户级 `~/.codex/config.toml` 或受信任项目的 `.codex/config.toml`；也可使用 `codex mcp add`。服务的命令和参数必须来自实际安装路径，不能把其他客户端的 `mcpServers` JSON 直接当作 Codex TOML。配置后重新连接，并检查当前会话是否看到了工具。操作方式见 [官方 MCP 文档](https://learn.chatgpt.com/docs/extend/mcp)。
 
 提供方示例见 [候选清单](engines/mcp.md#候选提供方)。这些是可评估的外部项目，不随本工具包安装；实际兼容性需在目标版本上验证。MCP 不是制作游戏的必选项，项目脚本和命令路线仍可使用。
 
@@ -67,18 +75,18 @@ Codex 的配置可位于用户级 `~/.codex/config.toml` 或受信任项目的 `
 
 | 内容 | 保存位置 | 谁维护 |
 | --- | --- | --- |
-| 引擎、Node 等程序 | 本机软件安装位置 | 用户或助手执行环境安装 |
-| 项目使用哪个引擎、工程在哪里、构建 / 测试怎么执行 | 游戏项目 `.openaigame/project.json` | 初始化工具或助手；已有配置先读取再更新 |
+| 引擎、Node 等程序 | 本机软件安装位置 | 用户或 Agent 执行环境安装 |
+| 项目使用哪个引擎、工程在哪里、构建 / 测试怎么执行 | 游戏项目 `.openaigame/project.json` | 初始化工具或 Agent；已有配置先读取再更新 |
 | 资产生成 / 转换命令 | 游戏项目 `.openaigame/asset-providers.json` | 按实际工具配置；包装脚本需要真实存在 |
-| MCP 服务连接 | 助手的 MCP 配置 | 用户或助手配置；不是写进 `project.json` 就会连通 |
-| 采用的版本、配置依据、当前缺口 | `Technical Design.md`；必要时拆出 `design/technical/engine-connection.md` | 助手根据实际检查更新 |
+| MCP 服务连接 | Agent 的 MCP 配置 | 用户或 Agent 配置；不是写进 `project.json` 就会连通 |
+| 采用的版本、配置依据、当前缺口 | `Technical Design.md`；必要时拆出 `design/technical/engine-connection.md` | Agent 根据实际检查更新 |
 | 安装 / 编译 / 工具调用和复查证据 | 游戏项目 `runs/` 与验证报告 | 执行者记录，项目管理链接摘要 |
 
 机器上的绝对路径由每位使用者按实际情况填写；不要直接采用示例路径作为安装位置。密钥不写入会归档的命令参数和文档，使用工具自身凭据管理或环境变量名引用。
 
-## 用户与助手分别做什么
+## 用户与 Agent 分别做什么
 
-用户提供本轮目标、明确的引擎选择，以及已有工程的位置（若有）；使用账号授权的资源时由用户完成对应登录。助手先检查已有环境，列出缺项及其影响，完成授权范围内的下载、配置和测试。管理员弹窗、账户登录、软件许可确认等需要用户交互的步骤，会说明具体操作位置。
+用户提供当前任务目标、明确的引擎选择，以及已有工程的位置（若有）；使用账号授权的资源时由用户完成对应登录。Agent 先检查已有环境，列出缺项及其影响，完成授权范围内的下载、配置和测试。管理员弹窗、账户登录、软件许可确认等需要用户交互的步骤，会说明具体操作位置。
 
 可以直接说：
 

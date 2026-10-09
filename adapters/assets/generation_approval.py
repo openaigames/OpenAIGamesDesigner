@@ -6,7 +6,7 @@ from pathlib import Path
 import tempfile
 import time
 from contextlib import contextmanager
-from . import credential_store, api_common
+from . import credential_store, api_common, model_defaults
 
 
 def identity(project, job_id, provider, settings, request):
@@ -14,7 +14,7 @@ def identity(project, job_id, provider, settings, request):
     fields = api_common.credential_fields(provider, settings)
     keys = [api_common.credential(settings, field, default) for field, default in fields]
     value = {'project': os.path.normcase(str(Path(project).resolve())), 'job_id': job_id, 'provider': provider,
-             'settings': settings, 'parameters': request['parameters'],
+             'settings': settings, 'parameters': model_defaults.prepare(provider, request, settings)['parameters'],
              'inputs': [{k: entry[k] for k in ('path', 'sha256', 'view') if k in entry} for entry in request.get('inputs', [])],
              'credentials': keys}
     if 'brief' in request:value['brief']=request['brief']

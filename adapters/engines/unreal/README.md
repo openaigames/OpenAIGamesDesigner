@@ -1,6 +1,6 @@
 # Unreal Engine
 
-[命令适配器](cli.py) 负责工程识别、运行、测试、编译与导出；[制作接口](production.md) 负责工程创建及原生 Python 场景、资源、动画配置和 PIE 操作。根据目标工程选择兼容的编辑器版本。宿主已有适合的 MCP 时，可按 [MCP 接入](../mcp.md) 使用编辑器工具。
+[命令适配器](cli.py) 负责工程识别、运行、测试、编译与导出；[制作接口](production.md) 负责工程创建及原生 Python 场景、资源、动画配置和 PIE 操作。根据目标工程选择兼容的编辑器版本。Agent 运行环境已有适合的 MCP 时，可按 [MCP 接入](../mcp.md) 使用编辑器工具。
 
 ## 环境配置
 
@@ -11,7 +11,7 @@
 | Unreal Editor | 打开、制作与运行工程 | Epic Games Launcher 的 Unreal Engine → Library，或已有源码构建 | 用匹配编辑器打开 `.uproject`，核对实际版本 |
 | C++ 工具链与 Windows SDK | C++ 工程、源码插件或目标平台编译 | Visual Studio Installer → Modify → Game development with C++，按目标 UE 兼容要求选择组件 | 构建工程实际的 Editor 或游戏目标；VS Code 不提供编译器 |
 | PythonScriptPlugin / EditorScriptingUtilities | 使用本工具包的 Python 制作接口 | 工程插件配置；具体启用方式见 [制作接口](production.md) | 脚本能加载工程、执行请求并生成原生结果 |
-| 第三方 MCP 及所需引擎插件（可选） | 通过助手直接操作编辑器 | 按提供方说明配置插件、服务及 [助手连接](../../environment-setup.md#mcp-三端配置) | 当前任务发现工具，核对目标工程后执行只读查询 |
+| 第三方 MCP 及所需引擎插件（可选） | 通过 Agent 直接操作编辑器 | 按提供方说明配置插件、服务及 [Agent 连接](../../environment-setup.md#mcp-三端配置) | 当前任务发现工具，核对目标工程后执行只读查询 |
 
 纯内容工程是否需要 C++ 工具链取决于使用的插件与构建目标。查询 Visual Studio 安装时可使用 `vswhere -all -products '*' -format json`，以包含独立 Build Tools；最终兼容性依据实际构建日志和目标 UE 的要求核实。
 
@@ -39,13 +39,13 @@ doctor 检查编辑器文件与工程声明；prepare 加载工程检查，smoke
 | 实际事件、参数、附件与空间读回 | [共享运行观察](../observations.md) |
 | 原生 DataAsset / CurveFloat 的读回与保护性写入 | [原生参数接口](native-data.md) |
 | 静态网格、材质/贴图与实例审计，派生 LOD / Nanite 配置 | [网格资源接口](mesh-resources.md) |
-| 角色消费者、关联动画、派生预览与骨骼采样 | [原生动画接口](native-animation.md) |
+| 角色使用方、关联动画、派生预览与骨骼采样 | [原生动画接口](native-animation.md) |
 
-Python 制作接口、宿主 MCP 和游戏运行逻辑是不同能力。具体操作以接口定义为准；场景保存、引擎运行、游戏行为和性能应分别检查。
+Python 制作接口、Agent 运行环境 MCP 和游戏运行逻辑是不同能力。具体操作以接口定义为准；场景保存、引擎运行、游戏行为和性能应分别检查。
 
 ## MCP 接入验证
 
-根据所选提供方的版本说明配置插件、服务和助手连接，候选入口见 [MCP 提供方](../mcp.md#候选提供方)。本工具包不内置或自动安装第三方 MCP。
+根据所选提供方的版本说明配置插件、服务和 Agent 连接，候选入口见 [MCP 提供方](../mcp.md#候选提供方)。本工具包不内置或自动安装第三方 MCP。
 
 1. 在独立测试工程核对插件编译、加载和服务启动，固定使用的版本与依赖。
 2. 发现真实工具清单，核对编辑器工程路径、实例和当前场景；端口监听不等于工程身份正确。

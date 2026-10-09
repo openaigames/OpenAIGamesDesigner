@@ -111,6 +111,41 @@ class VersionsTests(unittest.TestCase):
         job['output_sets']=[paths[:2],paths[1:]]
         with self.assertRaises(ValueError):v.complete_job(self.root,job)
 
+    def test_catalog_filter_keeps_companion_metadata_and_preserves_project(self):
+        self.file('model.obj',b'o test\nv 0 0 0\n');self.file('maps/color.png')
+        created=v.mutate(self.root,{'action':'create','title':'Prop','kind':'model','files':['model.obj','maps/color.png']})
+        document=art_registry.document_path(self.root)
+        before=document.read_bytes()
+        config=self.root/'.asset-browser/catalog-config.json';config.parent.mkdir(exist_ok=True)
+        config.write_text(json.dumps({'includePaths':['maps/color.png']}),'utf-8')
+        report=asset_browser.scan(self.root)
+        self.assertEqual([a['path'] for a in report['assets']],['maps/color.png'])
+        item=report['assets'][0]
+        self.assertEqual(item['versionGroup'],created['group'])
+        self.assertEqual(item['versionCount'],1);self.assertTrue(item['versionLatest'])
+        self.assertEqual(item['versionPart'],1)
+        self.assertEqual(document.read_bytes(),before)
+        self.assertTrue((self.root/'model.obj').is_file())
+        self.assertEqual((self.root/'maps/color.png').read_bytes(),PNG)
+        config.write_text(json.dumps({'includePaths':[]}),'utf-8')
+        self.assertEqual(asset_browser.scan(self.root)['assets'],[])
+
+    def test_catalog_rejects_outside_paths_and_preserves_default_browsing(self):
+        self.file('a.png');self.file('game/b.png')
+        self.assertEqual(len(asset_browser.scan(self.root)['assets']),2)
+        config=self.root/'.asset-browser/catalog-config.json';config.parent.mkdir(exist_ok=True)
+        for value in ('a.png', ['../outside.png'], ['C:/outside.png'], [42]):
+            config.write_text(json.dumps({'includePaths':value}),'utf-8')
+            with self.subTest(value=value),self.assertRaises(ValueError):asset_browser.scan(self.root)
+        config.write_text(json.dumps({'includePaths':['a.png','game/b.png'],'excludePrefixes':['game']}),'utf-8')
+        self.assertEqual([a['path'] for a in asset_browser.scan(self.root)['assets']],['a.png'])
+
+    def test_ogg_video_is_catalogued_separately_from_ogg_audio(self):
+        self.file('menu.ogv',b'OggS fixture')
+        report=asset_browser.scan(self.root)
+        self.assertEqual([(a['path'],a['kind']) for a in report['assets']],[('menu.ogv','video')])
+        self.assertEqual(asset_browser.MIME['.ogv'],'video/ogg')
+
 class VersionApiTests(unittest.TestCase):
     setUp=wt.WorkbenchTests.setUp
     tearDown=wt.WorkbenchTests.tearDown

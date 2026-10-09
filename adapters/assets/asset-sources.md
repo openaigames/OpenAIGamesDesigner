@@ -10,7 +10,7 @@
 
 ## 可免登录获取的文件示例
 
-以下来源提供无需账号的文件下载入口，助手可通过公共 HTTPS 获取。表中列出具体素材与文件示例；选择其他素材或版本时，需重新核对免费范围、许可、文件格式和依赖。下载记录及检查日期保存在结构化目录中。
+以下来源提供无需账号的文件下载入口，Agent 可通过公共 HTTPS 获取。表中列出具体素材与文件示例；选择其他素材或版本时，需重新核对免费范围、许可、文件格式和依赖。下载记录及检查日期保存在结构化目录中。
 
 | 来源 / 覆盖类型 | 素材示例 / 文件入口 | 账号 | 收费方式与许可 |
 | --- | --- | --- | --- |
@@ -31,7 +31,7 @@ KayKit 示例的三个文件应保留同目录关系。Poly Haven 示例仅包�
 
 ## 需要登录或额外操作
 
-**账号要求与获取流程分别列出。** 标为“按条目/路线”的来源可能允许部分内容免登录，但仍需经过下载页、领取或专用工具。助手可完成已授权的普通浏览器操作；账号登录等需要身份验证的步骤由用户完成。
+**账号要求与获取流程分别列出。** 标为“按条目/路线”的来源可能允许部分内容免登录，但仍需经过下载页、领取或专用工具。Agent 可完成已授权的普通浏览器操作；账号登录等需要身份验证的步骤由用户完成。
 
 | 来源 / 覆盖类型 | 是否需要账号 | 获取路径 / 用户需要补的一步 | 收费方式、使用条件 / 官方说明 |
 | --- | --- | --- | --- |
@@ -45,7 +45,7 @@ KayKit 示例的三个文件应保留同目录关系。Poly Haven 示例仅包�
 | [CraftPix](https://craftpix.net/)<br>2D、UI、VFX、动画 | 需要 | 注册或登录后从 Freebies 下载免费版本；付费包或订阅内容按已取得的权益获取。 | **部分免费 / 含付费** — Freebies 免费；付费素材包和订阅内容另列。 [收费依据](https://craftpix.net/freebies/)。 [UI 素材示例](https://craftpix.net/freebies/free-kids-math-game-ui-kit-numbers-counting/)；使用范围按 [File License](https://craftpix.net/file-licenses/)核对，Premium 内容另行区分。 |
 | [Blendkit（原 BlenderKit）](https://www.blendkit.com/)<br>3D、材质、HDRI、模块 | 按条目/路线 | 通过官方集成取资产；官方说明免费插件可免登录，其他资产的账户要求按所选条目。<br>准备对应集成，按预算选择 Free、Full Plan 或插件；需要账户时用户登录，付费内容按已有购买或订阅权益获取。 | **部分免费 / 含付费** — Free 内容免费；Full Plan 内容和部分插件付费。 [收费依据](https://www.blendkit.com/get-blender-add-ons/)。 [集成说明](https://www.blendkit.com/get-blender-add-ons/)与 [许可说明](https://www.blendkit.com/docs/licenses/)；程序材质用于游戏时可能需要烘焙或转换。 |
 
-免费与付费版本都可以作为候选，按本轮预算和实际授权选择。Mixamo 免费但需要可用的个人 Adobe ID；Quaternius 的 Standard 与 Pro/Source、Blendkit 的 Free 与 Full Plan 分别核对。Freesound 混有 CC0、CC BY 和非商业许可。每站收费依据、许可入口及版本限制见机器目录的 `pricing`、`license_hint`、`evidence_urls` 和 `notes`。
+免费与付费版本都可以作为候选，按当前任务预算和实际授权选择。Mixamo 免费但需要可用的个人 Adobe ID；Quaternius 的 Standard 与 Pro/Source、Blendkit 的 Free 与 Full Plan 分别核对。Freesound 混有 CC0、CC BY 和非商业许可。每站收费依据、许可入口及版本限制见机器目录的 `pricing`、`license_hint`、`evidence_urls` 和 `notes`。
 
 ## 目录字段与维护
 
@@ -69,7 +69,7 @@ python tools/asset_library.py search --kind 3d --query "wood crate" --limit 8
 python tools/asset_library.py files --asset 实际PolyHaven编号
 ```
 
-`sources` 支持按类型、收费类别（`--pricing`）、获取模式和账号要求组合筛选，返回分类目录、核验范围和搜索词，由模型使用宿主的网页搜索/浏览器继续检索，**不是实际资产搜索结果**。`search` 和 `files` 查询 Poly Haven 实时 API，结果明确标注 Poly Haven；关键词匹配名称/标签，不提供自动翻译或语义搜索。文件列表保留分辨率、格式和 include 依赖，模型应选择所需版本并保持相对路径。API 使用要求向用户标明 Poly Haven 来源，见 [官方 API 说明](https://polyhaven.com/our-api)。
+`sources` 支持按类型、收费类别（`--pricing`）、获取模式和账号要求组合筛选，返回分类目录、核验范围和搜索词，由模型使用 Agent 运行环境的网页搜索/浏览器继续检索，**不是实际资产搜索结果**。`search` 和 `files` 查询 Poly Haven 实时 API，结果明确标注 Poly Haven；关键词匹配名称/标签，不提供自动翻译或语义搜索。文件列表保留分辨率、格式和 include 依赖，模型应选择所需版本并保持相对路径。API 使用要求向用户标明 Poly Haven 来源，见 [官方 API 说明](https://polyhaven.com/our-api)。
 
 `--pricing` 精确匹配来源类别：`free` 不包含 `mixed` 网站中的免费包；寻找所有免费候选时可不加收费筛选，再检查 `free_scope` 和具体资产。`paid` 只匹配纯付费来源，不包含混合网站中的付费包；当前没有纯付费来源时返回空列表。
 
@@ -102,7 +102,7 @@ python tools/asset_library.py --project "MyGame" index --out production/asset-in
 
 下载限制可用请求的 `max_download_bytes` 设置，默认单文件 1 GiB，上限 8 GiB。只接受公共 HTTPS 地址，拒绝覆盖目标、HTML 登录页、空文件、哈希不符及不安全 ZIP 路径。失败保留记录和已获取文件，不声明整包成功；相同请求与有效文件可复用，修改本地输入或许可证据产生新版本。
 
-文件写到 `assets-source/AS编号/`，记录和许可副本写到 `.openaigame/asset-library/AS编号/`。记录包括作者、来源页、版本、文件哈希、获取状态，以及去除查询参数的下载来源；临时签名下载地址不进入记录。来源页应填写公开页面。生成 Markdown 索引不会覆盖既有 GDD 或美术文档，由助手把选定资产 ID、用途及索引链接写回 Art Direction.md/资产规格。
+文件写到 `assets-source/AS编号/`，记录和许可副本写到 `.openaigame/asset-library/AS编号/`。记录包括作者、来源页、版本、文件哈希、获取状态，以及去除查询参数的下载来源；临时签名下载地址不进入记录。来源页应填写公开页面。生成 Markdown 索引不会覆盖既有 GDD 或美术文档，由 Agent 把选定资产 ID、用途及索引链接写回 Art Direction.md/资产规格。
 
 ## 登记生成结果
 

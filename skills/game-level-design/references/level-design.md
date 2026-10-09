@@ -4,7 +4,7 @@
 
 从 [设计推理入口](../../game-design/references/design-reasoning.md) 读取项目目标。先辨认玩家在本段需要理解、选择和完成什么，以及进入时的能力、知识和世界状态；不要先画房间再为房间填系统。
 
-| 本轮问题 | 参考 |
+| 当前任务问题 | 参考 |
 | --- | --- |
 | 目标怎样转为空间、路线与尺度 | [空间与路线](level-design/space-and-routes.md) |
 | 活动、遭遇、教学和休息怎样排列 | [体验编排](level-design/beats-and-encounters.md) |

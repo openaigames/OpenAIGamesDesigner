@@ -7,7 +7,7 @@ import hashlib
 from pathlib import Path
 import struct
 
-from . import generation_capabilities
+from . import generation_capabilities, model_defaults
 VIEWS = generation_capabilities.HUNYUAN_VIEWS
 BASE_VIEWS = VIEWS[:4]
 MAX_ENCODED = 8 * 1024**2
@@ -39,7 +39,7 @@ def views(request):
 def validate(request):
     generation_capabilities.validate_mode('hunyuan3d', request)
     params = request.get('parameters', {})
-    model = params.get('Model', '3.0')
+    model = params.get('Model', model_defaults.HUNYUAN)
     mode = params.get('GenerateType', 'Normal')
     if model not in generation_capabilities.HUNYUAN_MODELS:
         raise ValueError('混元模型版本须为 3.0 或 3.1')
@@ -108,7 +108,7 @@ def image_size(data, kind):
 
 def build_payload(request):
     rows = validate(request)
-    payload = dict(request['parameters'])
+    payload = model_defaults.prepare('hunyuan3d', request)['parameters']
     # Never accept caller-supplied URLs/base64 that bypass project snapshots.
     if any(k in payload for k in ('ImageUrl', 'ImageBase64', 'MultiViewImages')):
         raise ValueError('图片必须通过项目 inputs 快照传入')

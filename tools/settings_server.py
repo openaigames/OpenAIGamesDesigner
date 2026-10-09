@@ -16,7 +16,7 @@ from adapters.assets import credential_store, model_prompt_policy
 from adapters.assets import generation_approval
 
 UI = Path(__file__).with_name('settings-ui')
-APPROVAL_STORAGE_ERROR = ('无法读写本机授权记录。请让助手检查确认服务的启动权限：需要以当前登录用户运行，'
+APPROVAL_STORAGE_ERROR = ('无法读写本机授权记录。请让 Agent 检查确认服务的启动权限：需要以当前登录用户运行，'
                           '并允许访问本机配置目录；若有其他设置页正在保存，请稍后刷新。无需重新填写密钥。')
 
 
@@ -167,7 +167,7 @@ class Handler(BaseHTTPRequestHandler):
                 except OSError:
                     return self._reply(409, {'error': APPROVAL_STORAGE_ERROR, 'error_code': 'approval_storage_unavailable'})
                 except ValueError:
-                    return self._reply(409, {'error': '无法保存本次授权。请刷新状态；若请求已执行，请让助手检查已有任务记录。'})
+                    return self._reply(409, {'error': '无法保存本次授权。请刷新状态；若请求已执行，请让 Agent 检查已有任务记录。'})
                 return self._reply(200, self.server.state())
             if not isinstance(data, dict) or set(data) - {'provider', 'key'}:
                 return self._reply(400, {'error': '只接受服务名称和密钥。'})

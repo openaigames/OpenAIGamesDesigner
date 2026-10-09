@@ -99,7 +99,7 @@ class ApprovalTests(unittest.TestCase):
             with patch.object(approval, '_locked', side_effect=PermissionError('private path')):
                 state = server.state()['approval']
             self.assertEqual(state.get('error_code'), 'approval_storage_unavailable')
-            self.assertEqual(state['parameters'], {'prompt': 'crate'})
+            self.assertEqual(state['parameters'], {'prompt': 'crate', 'model_version': 'v3.1-20260211'})
             self.assertNotIn('fingerprint', state)
             self.assertNotIn('private path', json.dumps(state))
             recovered = server.state()['approval']

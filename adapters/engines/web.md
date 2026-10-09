@@ -4,7 +4,7 @@
 
 ## 初始化与接手
 
-先保存六个项目入口并明确本轮目标。以下两种 engine 任选其一，不在同一个项目重复初始化：
+先保存六个项目入口并明确当前任务目标。以下两种 engine 任选其一，不在同一个项目重复初始化：
 
 ```sh
 python tools/game_workflow.py init --project "MyGame" --engine threejs --create-engine --node "C:/Tools/node/node.exe" --package-manager-cli "C:/Tools/node/node_modules/npm/bin/npm-cli.js"
@@ -32,7 +32,7 @@ python tools/game_workflow.py run --project "MyGame" --action export --timeout 1
 
 沿用 [命令配置与报告协议](../README.md)，commands 可覆盖默认动作。测试包装器传播失败并把真实报告摘要写入 `{run}/test-results.json`。浏览器 smoke 已有默认实现，需要配置实际构建目录、Playwright 和浏览器；行为 test 仍需项目提供命令与报告。缺少所需配置会记录 blocked，不能将构建冒充浏览器或行为测试。
 
-实际试玩可由宿主终端管理开发进程，记录工作目录、命令、URL、退出方式；使用浏览器打开输出 URL。CLI play 适合有限时长会话，不是后台服务管理器。不要用 file:// 加载游戏。交付前另以 HTTP 服务打开导出目录，检查子路径、资产请求、控制台异常、输入、重开和目标设备。启动服务不等于公开发布，导出不会部署。
+实际试玩可由 Agent 的终端工具管理开发进程，记录工作目录、命令、URL、退出方式；使用浏览器打开输出 URL。CLI play 适合有限时长会话，不是后台服务管理器。不要用 file:// 加载游戏。交付前另以 HTTP 服务打开导出目录，检查子路径、资产请求、控制台异常、输入、重开和目标设备。启动服务不等于公开发布，导出不会部署。
 
 ## 工程规则
 

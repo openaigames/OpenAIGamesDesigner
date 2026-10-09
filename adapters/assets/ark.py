@@ -4,12 +4,12 @@ import json
 from pathlib import Path
 import re
 import sys
-from . import api_common, http_io
+from . import api_common, http_io, model_defaults
 
 BASE = 'https://ark.cn-beijing.volces.com/api/v3'
 DEFAULTS = {
-    'seedream': {'model': 'doubao-seedream-5-0-pro-260628', 'size': '2K', 'watermark': True},
-    'seedance': {'model': 'doubao-seedance-2-5-260628', 'duration': 5, 'resolution': '720p',
+    'seedream': {'model': model_defaults.SEEDREAM, 'size': '2K', 'watermark': True},
+    'seedance': {'model': model_defaults.SEEDANCE, 'duration': 5, 'resolution': '720p',
                  'ratio': '16:9', 'generate_audio': True, 'watermark': True},
 }
 

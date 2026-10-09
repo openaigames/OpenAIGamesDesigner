@@ -31,7 +31,7 @@ function render(state) {
   document.querySelector('#accept-charge').disabled = !approvalFingerprint;
   document.querySelector('#approve').disabled = true;
   if (approval) {
-    document.querySelector('#approval-summary').textContent = approval.error || (approval.approved ? '本次请求已授权，等待助手执行。' : '请核对服务、提示词与输入文件。未确认前，工具不能提交生成。');
+    document.querySelector('#approval-summary').textContent = approval.error || (approval.approved ? '本次请求已授权，等待 Agent 执行。' : '请核对服务、提示词与输入文件。未确认前，工具不能提交生成。');
     document.querySelector('#approval-details').textContent = JSON.stringify({project: approval.project, job_id: approval.job_id,
       provider: approval.provider, parameters: approval.parameters, inputs: approval.inputs,
       ...(approval.transmission?{actual_transmission:approval.transmission,local_brief_not_sent:approval.brief}: {})}, null, 2);
@@ -45,7 +45,7 @@ document.querySelector('#approve').addEventListener('click', async () => {
   if (!consent.checked || !approvalFingerprint) return;
   const button = document.querySelector('#approve'); button.disabled = true;
   consent.disabled = true;
-  try { render(await request('/api/approve', {fingerprint: approvalFingerprint, accept_charge: true})); message('本次请求已授权，等待助手执行。新的请求仍需单独确认。'); }
+  try { render(await request('/api/approve', {fingerprint: approvalFingerprint, accept_charge: true})); message('本次请求已授权，等待 Agent 执行。新的请求仍需单独确认。'); }
   catch (error) { message(error.message, true); }
   finally {
     consent.disabled = !approvalFingerprint;

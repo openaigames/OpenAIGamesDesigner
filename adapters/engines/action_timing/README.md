@@ -24,7 +24,7 @@ python tools/action_workflow.py install --engine threejs --out <网页工程>/sr
 
 1. 在待测动作开始处启动记录，填写动作名、工程版本、来源、输入方式与输入脚本说明。
 2. 在输入回调、规则真正变化、动画事件、声音播放请求处分别记录。每项调用取当时的单调时钟，包含暂停与时间缩放产生的真实等待。
-3. 正常结束调用 StopAndSave / stop_and_save / stop；取消是否属于正常完成由本轮测试定义。例如“取消换弹测试”可以完成，但意外关闭场景保存为未完成。
+3. 正常结束调用 StopAndSave / stop_and_save / stop；取消是否属于正常完成由当前任务测试定义。例如“取消换弹测试”可以完成，但意外关闭场景保存为未完成。
 4. 导出 JSON，复制进游戏项目，再用下方 CLI 登记。
 
 UE/Unity 接口：`StartRecording(action, revision, source, inputMode, inputDescription)`、`RecordEvent(track, eventName, uncertaintySeconds)`、`StopAndSave(complete)`。Godot 使用同名的小写下划线形式，启动和记录返回 Error，需要检查。所有原生接口在主线程调用。

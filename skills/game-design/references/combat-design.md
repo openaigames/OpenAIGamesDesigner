@@ -5,8 +5,8 @@
 <a id="战斗系统设计入口与使用方法"></a>
 - [战斗系统设计：入口与使用方法](../../game-combat-design/references/combat-design.md#战斗系统设计入口与使用方法)
 
-<a id="先判断本轮设计深度"></a>
-- [先判断本轮设计深度](../../game-combat-design/references/combat-design.md#先判断本轮设计深度)
+<a id="先判断当前任务设计深度"></a>
+- [先判断当前任务设计深度](../../game-combat-design/references/combat-design.md#先判断当前任务设计深度)
 
 <a id="按问题选择专题"></a>
 - [按问题选择专题](../../game-combat-design/references/combat-design.md#按问题选择专题)

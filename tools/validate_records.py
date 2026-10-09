@@ -287,7 +287,9 @@ def closeout_errors(project, report_roots=None):
     errors = []
     management = project / "Project Management.md"
     text = management.read_text(encoding="utf-8-sig") if management.is_file() else ""
+    # Keep recognizing the initial placeholder used by older project templates.
     for initial in ("项目阶段：待依据现有工程和用户目标判断", "本轮目标：澄清并推进用户提出的游戏需求，原话见概览",
+                    "当前任务目标：澄清并推进用户提出的游戏需求，原话见概览",
                     "工程入口：待按实际项目定位"):
         if initial in text:
             errors.append(f"Closeout still contains initial management text: {initial}")

@@ -8,7 +8,7 @@ python tools/observation.py --project MyGame show --id O001
 python tools/observation.py --project MyGame elapsed --id O001 --start hero:cancel-1 --end hero:cleanup-1
 ```
 
-依赖包括真正消费的规则、资源、配置和运行回执。不会根据同名文件推断消费者；登记时应覆盖影响本次结论的源。引擎记录精确的来源时钟、对象、输入方式、辅助条件和采样成本。通用记录不包含所有引擎内部状态，不是确定性回放系统。
+依赖包括真正消费的规则、资源、配置和运行执行记录。不会根据同名文件推断使用方；登记时应覆盖影响本次结论的源。引擎记录精确的来源时钟、对象、输入方式、辅助条件和采样成本。通用记录不包含所有引擎内部状态，不是确定性回放系统。
 
 ## Godot 2D
 
@@ -39,7 +39,7 @@ python tools/observation.py --project MyGame elapsed --id O001 --start hero:canc
 
 动作请求按 **自第一次采样起的游戏秒** 调度；截图开销不算成游戏推进。墙钟 watchdog 仍约束停滞。`actions` 的 position 是传送、method 是组件调用，不能当真人操作。`readonly_preview:true` 拒绝编辑与 actions；游戏本身的启动逻辑仍会正常执行，只读指不修改作者资源，不是冻结游戏。
 
-输出包括 `observation.json`、`runtime-bindings.json`、帧序列、帧时间和已有会话回执。绑定读回包含实际模型/动画引用、父组件、附件名、相对/世界变换、标记是否存在及组件创建方式（API 未开放则注明）。单节点动画、已有 AnimBP 引用可读；某次没有采样到的动作并不等于角色不具备该动作。
+输出包括 `observation.json`、`runtime-bindings.json`、帧序列、帧时间和已有会话执行记录。绑定读回包含实际模型/动画引用、父组件、附件名、相对/世界变换、标记是否存在及组件创建方式（API 未开放则注明）。单节点动画、已有 AnimBP 引用可读；某次没有采样到的动作并不等于角色不具备该动作。
 
 空间记录读取实际 Actor 位置与边界，相机使用实际 CameraComponent 投影参数。Actor 边界不是精确地形或导航网格；通行、遮挡和可达性应结合项目碰撞/导航查询和实际路线。相机不是实体障碍，不用编辑器相机图标的边界充当空间尺寸。旋转请求统一为 `[pitch, yaw, roll]` 度，运行转换使用具名参数。
 

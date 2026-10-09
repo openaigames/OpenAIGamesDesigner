@@ -1,5 +1,7 @@
 # 资产生成与获取接入
 
+生成模型默认按 [最新旗舰模型策略](model-defaults.md) 选择；新任务保存明确版本，旧任务与明确指定的版本保留。
+
 先按 [环境清单](../environment-setup.md#需要准备什么) 选择实际工具。生成服务的安装目录 / Python 环境与游戏项目中的 `asset-providers.json` 是两处配置；写入命令并不自动安装服务、模型或权重。Blender 在本机安装后登记可执行文件即可进入本页的转换路线。
 
 | 需求 | 入口 |
@@ -91,4 +93,4 @@ python tools/asset_workflow.py --project "MyGame" retry --job A编号
 API 依据：[Blender 导入](https://docs.blender.org/api/5.2/bpy.ops.import_scene.html)、[导出](https://docs.blender.org/api/main/bpy.ops.export_scene.html)、[OBJ 接口迁移](https://developer.blender.org/docs/release_notes/4.0/python_api/)。
 
 
-普通栅格图像优先使用当前宿主可用的内置生图，按用户指定或项目流程采用 Seedream；密钥配置不改变默认路由。看板 image / mode=host 任务由助手调用实际工具，再通过 `tools/asset_versions.py record-native` 登记，`asset_workflow.py run` 不会代为执行或切换云 API。生成输出与手工资产共用不可覆盖的版本记录，输入固定到实际参考文件；具体格式见 [资产版本与内置工具结果](../../tools/README.md#资产版本与内置工具结果)。
+普通栅格图像优先使用当前 Agent 可用的内置生图，按用户指定或项目流程采用 Seedream；密钥配置不改变默认路由。看板 image / mode=host 任务由 Agent 调用实际工具，再通过 `tools/asset_versions.py record-native` 登记，`asset_workflow.py run` 不会代为执行或切换云 API。生成输出与手工资产共用不可覆盖的版本记录，输入固定到实际参考文件；具体格式见 [资产版本与内置工具结果](../../tools/README.md#资产版本与内置工具结果)。

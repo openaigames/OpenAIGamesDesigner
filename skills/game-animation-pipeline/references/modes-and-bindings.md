@@ -5,8 +5,8 @@
 | mode | mode_basis.source_type | evidence_dependencies 必要角色 | 实际采样 |
 |---|---|---|---|
 | external | dcc_export | source_export、engine_import、runtime_consumer | 源求值与引擎 unreal_roundtrip 对照 |
-| native_reuse | engine_native | native_source、binding_readback、runtime_consumer | 当前消费者 runtime_consumer，不要求虚构 FBX |
-| local_change | existing_consumer | before_config、after_config、runtime_consumer | 改前/改后与受影响消费者，不要求无关 DCC 往返 |
+| native_reuse | engine_native | native_source、binding_readback、runtime_consumer | 当前使用方 runtime_consumer，不要求虚构 FBX |
+| local_change | existing_consumer | before_config、after_config、runtime_consumer | 改前/改后与受影响使用方，不要求无关 DCC 往返 |
 
 每个依赖角色为实际工作区文件路径数组，包括原生资产、配置、真实会话、绑定采样和播放证据。检查文件身份不能替代评审其内容。mode_basis 另有 reason，说明实际来源和范围。
 
@@ -30,4 +30,4 @@ native_reuse 可省略 compare，其余需要真实对照。review /2 使用新�
 
 升级 /1：根据实际绑定与区间写完整 /2 外部模式计划，运行 `migrate-v1 --manifest old.json --plan migration.json --out manifest-v2.json`。保留原件，新 review 清空为需重验；历史通过不能自动升级。来源或范围变化在任务中明确修订并保留旧失败。
 
-旧 `assets/unreal/AnimationLab` 为 /1 程序武器样例，明确拒绝 /2；缺显式绑定时隐藏武器并拒绝采样。/2 接入实际项目消费者，复用 `engine_workflow.py` 的 Playback、事件与组件读回，不能将样例角色冒充指定角色。
+旧 `assets/unreal/AnimationLab` 为 /1 程序武器样例，明确拒绝 /2；缺显式绑定时隐藏武器并拒绝采样。/2 接入实际项目使用方，复用 `engine_workflow.py` 的 Playback、事件与组件读回，不能将样例角色冒充指定角色。

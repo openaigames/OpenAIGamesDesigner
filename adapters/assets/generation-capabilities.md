@@ -4,9 +4,9 @@
 
 | 服务 | 模型版本 | 方式 | 图片数 | 文字 | 输出 |
 | --- | --- | --- | --- | --- | --- |
-| tripo | 由服务选择 | 文字生成模型 / text_to_model | 0 | 需要 | 模型 |
-| tripo | 由服务选择 | 单图生成模型 / image_to_model | 1 | 不发送 | 模型 |
-| tripo | 由服务选择 | 多视图生成模型 / multiview_to_model | 2–4 | 不发送 | 模型 |
+| tripo | v3.1-20260211 | 文字生成模型 / text_to_model | 0 | 需要 | 模型 |
+| tripo | v3.1-20260211 | 单图生成模型 / image_to_model | 1 | 不发送 | 模型 |
+| tripo | v3.1-20260211 | 多视图生成模型 / multiview_to_model | 2–4 | 不发送 | 模型 |
 | tripo | 此接口不接收模型版本 | 单图生成多视图图片 / generate_multiview_image | 1 | 不发送 | 多视图图片 |
 | hunyuan3d | 3.0 | 文字生成模型 / Normal | 0 | 需要 | 模型 |
 | hunyuan3d | 3.0 | 单图生成模型 / Normal | 1–4 | 不发送 | 模型 |

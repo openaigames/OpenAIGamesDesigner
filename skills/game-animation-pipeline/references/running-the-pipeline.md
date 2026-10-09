@@ -8,7 +8,7 @@
 
 动画协议 `/2` 支持外部制作、原生复用、局部修改、显式骨名/附件、方向和辅助手握持区间，见 [模式和绑定](modes-and-bindings.md)。下列旧攻击样例限制只适用于 `/1`，不可外推到 `/2`。已有 UE 原生动作使用 `/2 native_reuse`，不再通过省略 gate 绕过验收。
 
-当前工程执行统一调用共享会话：`python ue_editor_stage.py --session --project <项目根> --request <实际请求.json> --runtime <工具包根>`。请求沿用 `engine_workflow.py` 的 inspect/edit/playback，角色读取、派生预览、绑定检查和连续帧都复用同一生命周期与回执。独立安装 Skill 时，可明确指定已有的共享运行时；不要求启动其他职业或新建审批。
+当前工程执行统一调用共享会话：`python ue_editor_stage.py --session --project <项目根> --request <实际请求.json> --runtime <工具包根>`。请求沿用 `engine_workflow.py` 的 inspect/edit/playback，角色读取、派生预览、绑定检查和连续帧都复用同一生命周期与执行记录。独立安装 Skill 时，可明确指定已有的共享运行时；不要求启动其他职业或新建审批。
 
 下面直接运行旧编辑脚本的命令仅保留为原有 `/1` 样例复现资料，当前任务不另建进程管理器。
 
@@ -24,7 +24,7 @@
 
 把 `assets/unreal/AnimationLab.h/.cpp` 放入实验工程模块。Build.cs 添加 `Json`、`JsonUtilities`、`ProceduralMeshComponent`、`InputCore`、`Engine` 依赖，uproject 启用 ProceduralMeshComponent。`ANIMLAB_MODULE` 必须显式指定实际编译模块；创建地图前会检查该模块的 AnimationLabMode 类是否可加载。测试 Pawn 的 Mesh 朝向为 Manny 的相对 yaw -90°，其他骨架必须校准，不可照抄。
 
-已有程序驱动动作：从实际消费者采样，输出对应协议。旧版协议的测量边界见 [旧版采样协议](legacy-capture.md)；新工程使用自己的采样入口。已有 FBX/艺术源文件：沿用其作者工程，用目标骨架试传，不必先人为合成一份游戏采样。
+已有程序驱动动作：从实际使用方采样，输出对应协议。旧版协议的测量边界见 [旧版采样协议](legacy-capture.md)；新工程使用自己的采样入口。已有 FBX/艺术源文件：沿用其作者工程，用目标骨架试传，不必先人为合成一份游戏采样。
 
 ## 旧协议命令示例
 
@@ -60,7 +60,7 @@ $env:ANIMLAB_STAGE='build-stage'
 
 保留 baseline-r1 目录与证据。新工作区复制参考 FBX、真实 baseline capture 和 `.blend`；实验 UE 工程可复制或复用同一个专用工程，但必须给候选新的 `/Game/AnimationLab/Clips/<revision>/...` 资源路径。不要改原战斗工程的引用。
 
-新 manifest 更新 revision、选定 clips 的 role=candidate、fbx 路径、ue_asset、事件与时长；未选招式可从本轮清单移出，但保留原始 baseline 数据。`evidence_dependencies` 指向本轮真实 `.blend`、参考与 `.uasset` 文件，不能继续写旧版本。此基础适配器使用 60 Hz；其他速率要同时修改导出、导入和原生采样器。
+新 manifest 更新 revision、选定 clips 的 role=candidate、fbx 路径、ue_asset、事件与时长；未选招式可从当前任务清单移出，但保留原始 baseline 数据。`evidence_dependencies` 指向当前任务真实 `.blend`、参考与 `.uasset` 文件，不能继续写旧版本。此基础适配器使用 60 Hz；其他速率要同时修改导出、导入和原生采样器。
 
 打开源文件编辑 Action。当前样例是密集 FK 骨骼烘焙，保留真实蒙皮和可编辑关键帧，尚无便捷的美术 IK 控制器。可在源端添加非变形控制骨/约束，但输出时只保留验证过的目标骨架；新增控制骨不能无意进入目标层级。先修身体重心和肩肘姿态，再校准辅助手约束与武器握点。
 
@@ -76,7 +76,7 @@ $env:ANIMLAB_STAGE='build-stage'
 
 `-AnimationLabSelfTest=绝对路径.json` 实测原生控制函数和导入资源；不代表操作者完成键盘/手感评价。`-AnimationLabShowcase` 输出数张真实运行帧用于画面检查，不是动画品质通过。
 
-完成当前版本人工/播放评审后，review 填 reviewer、report_sha256、各招 decision、evidence 相对路径、evidence_sha256 路径→哈希、逐项问题豁免理由。`gate` 返回 0 才产生交接计划；返回 2 表示未满足条件。门禁检查证据版本完整性，不能代替视觉判断，也不是防篡改系统。
+完成当前版本人工/播放评审后，review 填 reviewer、report_sha256、各招 decision、evidence 相对路径、evidence_sha256 路径→哈希、逐项问题豁免理由。`gate` 返回 0 才产生交接计划；返回 2 表示未满足条件。交付条件检查检查证据版本完整性，不能代替视觉判断，也不是防篡改系统。
 
 ## 已知坐标经验与来源
 

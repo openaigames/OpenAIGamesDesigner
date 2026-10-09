@@ -1,6 +1,6 @@
 # 文件与数据约定
 
-`source/` 保存可编辑场景与参考，`exports/` 保存 FBX，`capture/` 保存真实采样，`reports/` 保存诊断/录屏，`unreal/` 为独立工程。manifest 是本轮动画/绑定权威数据；原游戏伤害数值仍由原系统负责。
+`source/` 保存可编辑场景与参考，`exports/` 保存 FBX，`capture/` 保存真实采样，`reports/` 保存诊断/录屏，`unreal/` 为独立工程。manifest 是当前任务动画/绑定权威数据；原游戏伤害数值仍由原系统负责。
 
 ## animlab.manifest/1
 

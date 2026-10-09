@@ -289,7 +289,7 @@ def attach(root,items):
                     if not a:continue
                     if p==f['sourcePath'] and (not safe(root,p).is_file() or digest(safe(root,p))!=f['sha256']):continue
                     # Explicit membership only; identical unrelated files are not automatically grouped.
-                    a.update(versionGroup=g['id'],versionId=v['id'],versionPart=i,versionNumber=v['number'],versionSource=f['sourcePath'])
+                    a.update(versionGroup=g['id'],versionId=v['id'],versionPart=i,versionNumber=v['number'],versionSource=f['sourcePath'],versionCount=len(g['versions']),versionSelected=g['selected']==v['id'],versionLatest=g['latest']==v['id'])
                     if i==0:a.update(versionCount=len(g['versions']),versionSelected=g['selected']==v['id'],versionLatest=g['latest']==v['id'])
                     a['versionHidden']=p!=primary or v['id']!=g['current']
                     if a['location']=='game':v['gameFiles'].append(p);a['versionHidden']=False

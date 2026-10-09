@@ -19,7 +19,7 @@ python tools/project_workbench.py --project MyGame --approve-job A编号
 python tools/asset_workflow.py --project MyGame run --job A编号 --timeout 900
 ```
 
-也可在看板「制作任务 → 新建」选择 ElevenLabs，填写需求。保存只建立任务；核对生成内容、时长、来源和可能费用并授权后，由助手执行。`doctor` 只检查凭据与解码器存在，不联网验证权限、额度或音质。
+也可在看板「制作任务 → 新建」选择 ElevenLabs，填写需求。保存只建立任务；核对生成内容、时长、来源和可能费用并授权后，由 Agent 执行。`doctor` 只检查凭据与解码器存在，不联网验证权限、额度或音质。
 
 ## 根据游戏窗口准备音效
 
@@ -64,13 +64,13 @@ python tools/asset_workflow.py --project MyGame run --job A编号 --timeout 900
 {"parameters":{"kind":"music","text":"Tense orchestral boss encounter, low strings and driving percussion","music_length_ms":30000,"force_instrumental":true},"inputs":[]}
 ```
 
-配乐支持明确长度（3000–600000 毫秒）和纯器乐选项；默认 `music_v1`，也可指定 `music_v2` 或 `music_v2_5`。此入口使用描述生成，不接收 composition plan、分轨或克隆声音请求。循环、段落切换和战斗阶段衔接由音频设计及引擎混音实现，不宣称生成一次即可完成自适应音乐。
+配乐支持明确长度（3000–600000 毫秒）和纯器乐选项；默认使用旗舰 `music_v2_5`，旧版 `music_v2`、`music_v1` 可显式指定以复现既有任务。此入口使用描述生成，不接收 composition plan、分轨或克隆声音请求。循环、段落切换和战斗阶段衔接由音频设计及引擎混音实现，不宣称生成一次即可完成自适应音乐。
 
 ```json
-{"parameters":{"kind":"speech","text":"你已经无路可退了。","voice_id":"替换为账户可用的声音ID","model_id":"eleven_multilingual_v2"},"inputs":[]}
+{"parameters":{"kind":"speech","text":"你已经无路可退了。","voice_id":"替换为账户可用的声音ID","model_id":"eleven_v4"},"inputs":[]}
 ```
 
-台词可用 `eleven_multilingual_v2`、`eleven_flash_v2_5`、`eleven_turbo_v2_5` 或 `eleven_v3`。按实测时长调整文本和表演，不自动裁掉字句。访问声音和模型的权限以账户实际响应为准。
+台词默认使用旗舰 `eleven_v4`；仍可显式指定 `eleven_v3`、`eleven_multilingual_v2`、`eleven_flash_v2_5` 或 `eleven_turbo_v2_5`。按实测时长调整文本和表演，不自动裁掉字句。访问声音和模型的权限以账户实际响应为准。
 
 ## 产物、校准与恢复
 

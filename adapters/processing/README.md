@@ -14,6 +14,8 @@
 
 没有自动重拓扑、绑骨、布料、烘焙、纹理缩图、LOD、碰撞或导航生成。已有带手工调整的 `.blend` 不作为输入；需要这类工作时使用专门配方，不能将本接口解释为保留任意已有场景编辑。
 
+已有可编辑场景另有 [blender_environment.py](blender_environment.py) 专门配方：只读表面/UV 测量、明确网格的标准材质烘焙、静态 GLB 导出读回及固定机位渲染。它读取 `.blend` 并输出新目录，不保存源场景。请求与限制见 [场景制作工具](../../skills/game-environment-art/references/environment-tools.md)；这些能力不改变上述 convert/assemble/optimize 的参数与边界。
+
 此限制适用于本 Blender 处理器。UE 原生静态网格可使用 [网格资源接口](../engines/unreal/mesh-resources.md) 只读审计、自动生成多级 LOD 或配置 Nanite 派生副本；仍需重开读回与场景验证。
 
 ## 请求示例

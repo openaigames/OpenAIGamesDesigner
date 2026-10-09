@@ -68,7 +68,7 @@ def job_summary(root,job):
     return {'id':job['job_id'],'title':str(title).splitlines()[0][:50] if title else job['job_id'],
             'provider':job['provider'],'status':job['status'],'createdAt':job['created_at'],
             'parameters':parameters,'brief':brief,
-            'capability':generation_capabilities.describe(job['provider'],job['request'],job['settings']) if job['provider'] in ('tripo','hunyuan3d') and job['settings'].get('mode')=='api' else None,
+            'capability':generation_capabilities.describe(job['provider'],job['request'],job['settings'],historical=True) if job['provider'] in ('tripo','hunyuan3d') and job['settings'].get('mode')=='api' else None,
             'failure':service_diagnostics.job_failure(root,job) if job['provider'] in ('tripo','hunyuan3d') else None,
             'promptPolicy':model_prompt_policy.assess(job['provider'],job['request'],job['settings'],root),
             'promptEvidence':model_prompt_policy.submission_evidence(root,job),
@@ -327,7 +327,7 @@ class Handler(settings_server.Handler):
                 if current.get('error'):return self._reply(409,{'error':current['error']})
                 if not current.get('fingerprint') or current['fingerprint']!=data['fingerprint']:return self._reply(409,{'error':'任务或账户已变化，请刷新后核对'})
                 generation_approval.approve(current['fingerprint'])
-                return self._reply(200,{'approved':True,'message':'本次请求已授权，等待助手执行。'})
+                return self._reply(200,{'approved':True,'message':'本次请求已授权，等待 Agent 执行。'})
             if route.startswith('/api/art-'):
                 with self.server.art_lock:
                     if route=='/api/art-initialize':registry.initialize(root)

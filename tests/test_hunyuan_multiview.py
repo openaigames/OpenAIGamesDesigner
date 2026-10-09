@@ -111,7 +111,7 @@ class MultiViewTests(unittest.TestCase):
         self.request={'parameters':{'Model':'3.1'},'inputs':['front.png']}
         job=self.queued();payload=hi.build_payload(self.wire(job))
         self.assertIn('ImageBase64',payload);self.assertNotIn('MultiViewImages',payload)
-        self.assertEqual(hi.build_payload({'parameters':{'Prompt':'木箱'},'inputs':[]}),{'Prompt':'木箱'})
+        self.assertEqual(hi.build_payload({'parameters':{'Prompt':'木箱'},'inputs':[]}),{'Prompt':'木箱','Model':'3.1'})
 
     def test_front_is_selected_by_label_not_array_position(self):
         self.request['inputs'].reverse()

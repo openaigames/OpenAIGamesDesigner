@@ -2,7 +2,7 @@
 
 仅在用户选定网页路线、已有网页工程或明确委托选型时采用。网页 3D 的工具包路线为 Three.js，2D 为 Phaser；已有其他框架不主动迁移。“Unity / Unreal”仍不能解释为允许浏览器替代。框架选择已明确时不重复询问。
 
-沿用 project-intake、prototype-build、feature-change、vertical-slice 和 delivery。新作先保存六份入口和最小实施交接；渲染库、模型、动作、输入和玩法规则不是同一个决定。实现可见对象前沿用本轮美术选择或选材委托。
+沿用 project-intake、prototype-build、feature-change、vertical-slice 和 delivery。新作先保存六份入口和最小实施交接；渲染库、模型、动作、输入和玩法规则不是同一个决定。实现可见对象前沿用当前任务美术选择或选材委托。
 
 ## 按路线实施
 

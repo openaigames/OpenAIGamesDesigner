@@ -51,7 +51,7 @@ function jobLineage(j){
   return (c?`<section class="job-lineage"><h3>版本与制作依据</h3><p>关联资产：${c.group?describe(c.group):'新资产'}</p><p>修改底稿：${c.parent?describe(c.group,c.parent):'独立方案'}</p>${c.references.map(r=>`<p>${esc(r.role)}：${describe(r.group,r.version)}</p>`).join('')}<p>${esc(c.note)}</p><p class="reference-note">实际传给生成工具的文件列在下方“输入文件”；版本关联本身不会上传额外文件。</p></section>`:'')+
     (j.assetVersion?`<button class="button secondary" id="job-version-history">查看资产版本历史</button>`:'')+
     (j.versionError?`<p role="alert">结果已保留，版本记录尚未同步。</p><details><summary>查看原因</summary><p>${esc(j.versionError)}</p></details>`:'')+
-    (j.artRegistrationError?`<p role="alert">文件已保留，美术清单尚未同步。请让助手修复登记，无需重新生成。</p><details><summary>查看原因</summary><p>${esc(j.artRegistrationError)}</p></details>`:'');
+    (j.artRegistrationError?`<p role="alert">文件已保留，美术清单尚未同步。请让 Agent 修复登记，无需重新生成。</p><details><summary>查看原因</summary><p>${esc(j.artRegistrationError)}</p></details>`:'');
 }
 function referenceInputs(job){
   if(!job.inputs.length)return '';
@@ -62,7 +62,7 @@ function renderJobs(){
   taskNav();$('task-list-title').textContent=({all:'全部任务',queued:'待确认 / 待执行',running:'制作中',succeeded:'已生成',issues:'需要处理'})[filter];const visible=jobs.filter(j=>matches(j));$('task-list-count').textContent=visible.length;
   $('task-overview').innerHTML=`<div class="task-summary"><strong>${jobs.length}</strong><span> 个项目生成任务</span></div><button class="button secondary" id="refresh-tasks">刷新任务</button>`;
   $('refresh-tasks').onclick=()=>refreshJobs(true);
-  $('task-list').innerHTML=visible.map(j=>`<button class="task-row ${j.id===selected?'selected':''}" data-job="${esc(j.id)}"><span class="task-row-main"><strong>${esc(j.title)}</strong><small>${esc(providerName(j))}</small></span><span class="status-pill">${esc(needsAttention(j)?'需要处理':names[j.status]||'状态待核对')}</span></button>`).join('')||'<p class="task-empty">还没有此类任务。可在这里新建，或由助手提交制作需求。</p>';
+  $('task-list').innerHTML=visible.map(j=>`<button class="task-row ${j.id===selected?'selected':''}" data-job="${esc(j.id)}"><span class="task-row-main"><strong>${esc(j.title)}</strong><small>${esc(providerName(j))}</small></span><span class="status-pill">${esc(needsAttention(j)?'需要处理':names[j.status]||'状态待核对')}</span></button>`).join('')||'<p class="task-empty">还没有此类任务。可在这里新建，或由 Agent 提交制作需求。</p>';
   $('task-list').querySelectorAll('[data-job]').forEach(b=>b.onclick=()=>{selected=b.dataset.job;renderJobs();showJob();});
 }
 async function refreshJobs(detail=false){
@@ -76,15 +76,15 @@ async function showJob(){
     const [result,history]=await Promise.all([api('/api/job-review?job='+encodeURIComponent(selected)),api('/api/asset-versions')]);if(version!==reviewVersion)return;if(getLibraryData())getLibraryData().versions=history;
     const j=result.job,a=result.approval;
     $('task-detail').innerHTML=`<div class="detail-heading"><span class="status-pill">${esc(names[j.status]||j.status)}</span><h2>${esc(j.title)}</h2><p>${esc(providerName(j))} · ${esc(j.id)}</p></div>${audioReview(j.audio,esc)}${jobLineage(j)}${transmissionReview(j,esc)}${failureDetails(j.failure,esc)}${referenceInputs(j)}<h3>制作需求</h3><p class="request-prompt">${esc(j.parameters?.prompt||j.parameters?.text||'详细设置见下方参数。')}</p><details><summary>详细参数</summary><pre class="request-details">${esc(JSON.stringify(j.parameters,null,2))}</pre></details>`+
-      (a?`<section class="confirmation-panel"><h3>确认本次制作</h3><p>${esc(a.error||(a.approved?'本次请求已授权，等待助手执行。':'请核对服务、制作需求和输入文件。确认仅授权这一份请求。'))}</p>${!a.error&&!a.approved?'<label class="consent"><input type="checkbox" id="accept-charge">我确认本次请求，并接受生成服务可能产生的费用。</label><button class="button primary" id="approve-job" disabled>确认并授权本次制作</button>':''}${a.error?'<button class="button secondary" id="configure-service">生成服务</button>':''}</section>`:j.status==='running'?'<p>制作进行中，任务状态会自动更新。</p>':j.status==='queued'?(j.host?'<p>由助手调用内置生图工具，完成后登记实际输出。</p>':'<p>本地工具任务由助手按项目配置执行。</p>'):'')+
+      (a?`<section class="confirmation-panel"><h3>确认本次制作</h3><p>${esc(a.error||(a.approved?'本次请求已授权，等待 Agent 执行。':'请核对服务、制作需求和输入文件。确认仅授权这一份请求。'))}</p>${!a.error&&!a.approved?'<label class="consent"><input type="checkbox" id="accept-charge">我确认本次请求，并接受生成服务可能产生的费用。</label><button class="button primary" id="approve-job" disabled>确认并授权本次制作</button>':''}${a.error?'<button class="button secondary" id="configure-service">生成服务</button>':''}</section>`:j.status==='running'?'<p>制作进行中，任务状态会自动更新。</p>':j.status==='queued'?(j.host?'<p>由 Agent 调用内置生图工具，完成后登记实际输出。</p>':'<p>本地工具任务由 Agent 按项目配置执行。</p>'):'')+
       (j.artifacts.length?'<h3>生成结果</h3><div class="art-editor-actions">'+j.artifacts.map(x=>`<button class="button secondary" data-result="${esc(x.path)}">查看 ${esc(x.path.split('/').pop())}</button>`).join('')+'</div><p>生成文件可在资产库中查看；导入游戏后请检查实际效果。</p>':'')+
-      (['failed','blocked','cancelled','interrupted'].includes(j.status)?`<p>请让助手检查此任务的运行记录${j.remoteId?'并恢复已有云端任务':''}，避免重复提交。</p>`:'');
+      (['failed','blocked','cancelled','interrupted'].includes(j.status)?`<p>请让 Agent 检查此任务的运行记录${j.remoteId?'并恢复已有云端任务':''}，避免重复提交。</p>`:'');
     if($('job-version-history'))$('job-version-history').onclick=async()=>{await refreshLibrary(true);await openAssetVersions(j.assetVersion.group);};
     if($('configure-service'))$('configure-service').onclick=()=>setView('services');
     if($('accept-charge')){
       $('accept-charge').onchange=()=>{$('approve-job').disabled=!$('accept-charge').checked;};
       $('approve-job').onclick=async()=>{if(!$('accept-charge').checked)return;const button=$('approve-job');button.disabled=true;$('accept-charge').disabled=true;
-        try{await api('/api/job-approve',{job:j.id,fingerprint:a.fingerprint,accept_charge:true});toast('已授权，等待助手执行');await showJob();}
+        try{await api('/api/job-approve',{job:j.id,fingerprint:a.fingerprint,accept_charge:true});toast('已授权，等待 Agent 执行');await showJob();}
         catch(e){toast(e.message);await showJob();}
       };
     }
@@ -128,7 +128,7 @@ $('brief-form').onsubmit=async e=>{e.preventDefault();const button=e.target.quer
   try{const result=await api('/api/jobs',{provider:$('brief-provider').value,prompt:$('brief-prompt').value,...($('brief-provider').value==='elevenlabs'?{audio:audioBrief.parameters()}:['seedream','seedance'].includes($('brief-provider').value)?arkBrief.request():{}),...versionBrief.request(),...($('brief-provider').value==='hunyuan3d'?hunyuanBrief.request():{})});selected=result.job.id;filter='all';$('brief-dialog').close();setView('tasks');await refreshJobs(true);toast('已保存制作请求，尚未提交生成');}
   catch(error){toast(error.message);}finally{button.disabled=false;}
 };
-$('help').onclick=()=>{$('dialog-body').innerHTML='<ul><li>看板读取当前游戏目录，点击刷新发现新增资产。</li><li>标签来自美术清单；检查美术清单可查找漏登、缺少归属和版本变化。</li><li>在生成任务中核对需求、确认请求和查看结果；确认后由助手执行。</li><li>Windows 可加密保存服务密钥；其他系统使用环境变量。保存配置不会启动任务。</li><li>可预览的图片、粒子配置和音频波形支持拖动与缩放。GLB/glTF、FBX、OBJ 支持旋转、缩放与平移；引擎角色关联导出预览后可切换已绑定动作。</li></ul>';$('info-dialog').showModal();};
+$('help').onclick=()=>{$('dialog-body').innerHTML='<ul><li>看板读取当前游戏目录，点击刷新发现新增资产。</li><li>标签来自美术清单；检查美术清单可查找漏登、缺少归属和版本变化。</li><li>在生成任务中核对需求、确认请求和查看结果；确认后由 Agent 执行。</li><li>Windows 可加密保存服务密钥；其他系统使用环境变量。保存配置不会启动任务。</li><li>可预览的图片、粒子配置和音频波形支持拖动与缩放。GLB/glTF、FBX、OBJ 支持旋转、缩放与平移；引擎角色关联导出预览后可切换已绑定动作。</li></ul>';$('info-dialog').showModal();};
 window.addEventListener('hashchange',()=>setView(location.hash.slice(1),false));
 window.addEventListener('workbench:assets-ready',()=>{document.title=getLibraryData().project+' · 项目工作台';assetFits.refresh();});
 setInterval(()=>{if(view==='tasks'&&!document.hidden)refreshJobs();},4000);

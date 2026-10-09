@@ -18,6 +18,6 @@ C++ 承担项目需要的逻辑与接口；Blueprint、Data Asset 和配置提�
 
 ## 当前工具包能力
 
-这是方法参考。已有工程运行、测试、编译与交付从工具包 `adapters/engines/unreal/execution.md` 进入；创建工程、场景/对象、资源导入、动画配置与自动运行从 `adapters/engines/unreal/production.md` 进入，对应 `tools/engine_workflow.py`。请求字段、依赖与实际验证范围以这些实现旁的说明为准。原生 Python 执行、宿主 MCP 连接和游戏功能实现分别核实；通用制作入口不提供预设玩法逻辑。不要对 UE 调用 Godot 参数或创建 `project.godot`；使用实际可用的 UE/项目工具，并把缺失能力记录到任务。未安装引擎或缺少工程时仍可完成有依据的设计与准备，但不得伪称可运行。
+这是方法参考。已有工程运行、测试、编译与交付从工具包 `adapters/engines/unreal/execution.md` 进入；创建工程、场景/对象、资源导入、动画配置与自动运行从 `adapters/engines/unreal/production.md` 进入，对应 `tools/engine_workflow.py`。请求字段、依赖与实际验证范围以这些实现旁的说明为准。原生 Python 执行、Agent 运行环境 MCP 连接和游戏功能实现分别核实；通用制作入口不提供预设玩法逻辑。不要对 UE 调用 Godot 参数或创建 `project.godot`；使用实际可用的 UE/项目工具，并把缺失能力记录到任务。未安装引擎或缺少工程时仍可完成有依据的设计与准备，但不得伪称可运行。
 
 官方资料：[编辑器脚本](https://dev.epicgames.com/documentation/unreal-engine/scripting-and-automating-the-unreal-editor)、[Python 适用边界](https://dev.epicgames.com/documentation/unreal-engine/scripting-the-unreal-editor-using-python)、[构建与打包](https://dev.epicgames.com/documentation/unreal-engine/build-operations-cooking-packaging-deploying-and-running-projects-in-unreal-engine)。实施时核对项目对应版本。

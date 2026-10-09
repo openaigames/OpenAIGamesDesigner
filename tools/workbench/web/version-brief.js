@@ -2,7 +2,7 @@ export function createVersionBrief({getData,escape:esc,doc=document}){
   const $=id=>doc.getElementById(id),groups=()=>getData()?.versions?.groups||[];
   function update(){
     const native=$('brief-provider').value==='image';$('native-fields').hidden=!native;$('native-fields').disabled=!native;
-    $('brief-execution-note').textContent=native?'保存请求后由助手使用可用的内置工具执行，并登记实际输出。':'保存请求后核对服务、参考文件与参数；云端生成沿用费用授权流程。';
+    $('brief-execution-note').textContent=native?'保存请求后由 Agent 使用可用的内置工具执行，并登记实际输出。':'保存请求后核对服务、参考文件与参数；云端生成沿用费用授权流程。';
     if(native){$('brief-prompt').maxLength=4000;$('brief-prompt').placeholder='描述需要生成或修改的图像…';}
     const g=groups().find(g=>g.id===$('brief-asset-group').value),v=g?.versions.find(v=>v.id===$('brief-parent').value);
     const reference=$('brief-extra-reference').value;

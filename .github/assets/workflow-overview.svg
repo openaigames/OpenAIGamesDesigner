@@ -1,19 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="350" viewBox="0 0 1000 350" role="img" aria-labelledby="title desc">
-<title id="title">五阶段、任意连续区间、同一原生工程</title><desc id="desc">从五阶段任一阶段接手，完成选定的连续区间后交接；只回退受影响的对象与检查。</desc>
+<title id="title">五个开发阶段，按项目需要选择</title><desc id="desc">从任一阶段开始，完成约定范围后交付成果；遇到问题只返工受影响的部分。</desc>
 <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#1950e8"/></marker></defs>
 <rect width="1000" height="350" rx="16" fill="#fff8ed"/><g font-family="Microsoft YaHei,PingFang SC,sans-serif">
-<text x="30" y="40" font-size="21" font-weight="700" fill="#14234b">从你正在做的阶段接手</text>
-<text x="970" y="40" text-anchor="end" font-size="14" fill="#626d83">任意起点 · 连续区间 · 到约定终点交接</text>
-<rect x="30" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="46" y="122" font-size="11" font-weight="700" fill="#ef7525">01 / CONCEPT</text><text x="46" y="156" font-size="22" font-weight="700" fill="#172553">立项</text><text x="46" y="185" font-size="12" fill="#626d83">方向、设计与约束</text>
+<text x="30" y="40" font-size="21" font-weight="700" fill="#14234b">从你需要的阶段开始</text>
+<text x="970" y="40" text-anchor="end" font-size="14" fill="#626d83">按需选择阶段 · 完成约定范围后交付</text>
+<rect x="30" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="46" y="122" font-size="11" font-weight="700" fill="#ef7525">01 / CONCEPT</text><text x="46" y="156" font-size="22" font-weight="700" fill="#172553">立项</text><text x="46" y="185" font-size="12" fill="#626d83">确定方向、设计与制作范围</text>
 <path d="M204 150 H218" stroke="#1950e8" stroke-width="2" marker-end="url(#a)"/>
-<rect x="222" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="238" y="122" font-size="11" font-weight="700" fill="#ef7525">02 / GAMEPLAY</text><text x="238" y="156" font-size="22" font-weight="700" fill="#172553">玩法验证</text><text x="238" y="185" font-size="12" fill="#626d83">机制、控制与实验</text>
+<rect x="222" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="238" y="122" font-size="11" font-weight="700" fill="#ef7525">02 / GAMEPLAY</text><text x="238" y="156" font-size="22" font-weight="700" fill="#172553">玩法验证</text><text x="238" y="185" font-size="12" fill="#626d83">测试核心玩法与操作手感</text>
 <path d="M396 150 H410" stroke="#1950e8" stroke-width="2" marker-end="url(#a)"/>
-<rect x="414" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="430" y="122" font-size="11" font-weight="700" fill="#ef7525">03 / PRODUCTION TEST</text><text x="430" y="156" font-size="22" font-weight="700" fill="#172553">制作验证</text><text x="430" y="185" font-size="12" fill="#626d83">品质样例与制作依据</text>
+<rect x="414" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="430" y="122" font-size="11" font-weight="700" fill="#ef7525">03 / PRODUCTION TEST</text><text x="430" y="156" font-size="22" font-weight="700" fill="#172553">制作验证</text><text x="430" y="185" font-size="12" fill="#626d83">验证视听品质与制作方法</text>
 <path d="M588 150 H602" stroke="#1950e8" stroke-width="2" marker-end="url(#a)"/>
-<rect x="606" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="622" y="122" font-size="11" font-weight="700" fill="#ef7525">04 / CONTENT</text><text x="622" y="156" font-size="22" font-weight="700" fill="#172553">内容制作</text><text x="622" y="185" font-size="12" fill="#626d83">生产、组装与完整体验</text>
+<rect x="606" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="622" y="122" font-size="11" font-weight="700" fill="#ef7525">04 / CONTENT</text><text x="622" y="156" font-size="22" font-weight="700" fill="#172553">内容制作</text><text x="622" y="185" font-size="12" fill="#626d83">制作并整合完整游戏内容</text>
 <path d="M780 150 H794" stroke="#1950e8" stroke-width="2" marker-end="url(#a)"/>
-<rect x="798" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="814" y="122" font-size="11" font-weight="700" fill="#ef7525">05 / DELIVERY</text><text x="814" y="156" font-size="22" font-weight="700" fill="#172553">最终交付</text><text x="814" y="185" font-size="12" fill="#626d83">原生工程、版本与说明</text>
+<rect x="798" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="814" y="122" font-size="11" font-weight="700" fill="#ef7525">05 / DELIVERY</text><text x="814" y="156" font-size="22" font-weight="700" fill="#172553">最终交付</text><text x="814" y="185" font-size="12" fill="#626d83">游戏工程、可玩版本与说明</text>
 <path d="M884 213 V244 H116 V213" fill="none" stroke="#1950e8" stroke-width="2" marker-end="url(#a)"/>
-<rect x="306" y="231" width="390" height="25" rx="12" fill="#fff8ed"/><text x="500" y="249" text-anchor="middle" fill="#1950e8" font-size="14">问题只回退受影响的对象与检查，保留有效工作</text>
-<rect x="30" y="277" width="940" height="50" rx="8" fill="#eaf0ff"/><text x="500" y="298" text-anchor="middle" font-size="14" fill="#244284">十六职业按实际任务组合 · 共享任务、资产、参数与运行证据</text>
-<text x="500" y="318" text-anchor="middle" font-size="13" fill="#626d83">同一个可继续编辑的原生工程 · 候补素材 / 游戏应用 · 真实验证与版本交付</text></g></svg>
+<rect x="306" y="231" width="390" height="25" rx="12" fill="#fff8ed"/><text x="500" y="249" text-anchor="middle" fill="#1950e8" font-size="14">只返工受影响的部分，保留已完成的有效成果</text>
+<rect x="30" y="277" width="940" height="50" rx="8" fill="#eaf0ff"/><text x="500" y="298" text-anchor="middle" font-size="14" fill="#244284">按任务选择专业 Skill · 统一记录任务、资产、参数和测试结果</text>
+<text x="500" y="318" text-anchor="middle" font-size="13" fill="#626d83">持续使用可编辑的游戏工程 · 区分备选素材与已用资产 · 实际运行后交付</text></g></svg>
