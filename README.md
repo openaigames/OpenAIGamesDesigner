@@ -4,13 +4,13 @@
 
 # OpenAIGamesDesigner：AI游戏开发工具包
 
+</div>
+
 **OpenAIGamesDesigner 为 Agent 提供游戏制作的方法与工具，帮助你从想法推进到可玩的游戏。**
 
-> **OpenAIGamesDesigner** 包含 **16 个游戏制作 Skill**，覆盖策划、美术、动画、音频、程序与测试，并提供 **五阶段推荐流程、素材检索、资产登记与版本管理、项目看板**。配有 **Godot、Unity、Unreal Engine、Three.js 和 Phaser** 的工程接入与运行验证工具，可结合 **Blender** 处理资产，并通过外部生成服务制作 **图像、3D 模型、视频和音频**。
+**OpenAIGamesDesigner** 包含 **16 个游戏制作 Skill**，覆盖策划、美术、动画、音频、程序与测试，并提供 **五阶段推荐流程、素材检索、资产登记与版本管理、项目看板**。配有 **Godot、Unity、Unreal Engine、Three.js 和 Phaser** 的工程接入与运行验证工具，可结合 **Blender** 处理资产，并通过外部生成服务制作 **图像、3D 模型、视频和音频**。
 
 **[Game Demos](#game-demos) · [推荐开发流程](#推荐开发流程) · [快速开始](#快速开始) · [项目看板](#项目看板) · [游戏资产合集](#游戏资产合集) · [引擎与工具](#引擎与工具) · [项目文件](#项目文件)**
-
-</div>
 
 <br>
 
