@@ -28,12 +28,12 @@ Gameplay captured from projects built with the toolkit.
 <tr>
 <td width="50%" valign="top" align="center">
 <h3>FPS Game</h3>
-<video src="https://raw.githubusercontent.com/openaigames/OpenAIGamesDesigner/refs/heads/main/.github/assets/game-demo-fps.mp4" poster=".github/assets/game-demo-fps-poster.jpg" controls="controls" width="100%" preload="metadata" aria-label="FPS Game gameplay demo"></video>
+<video src="https://github.com/user-attachments/assets/b3628e26-4362-44e8-acb1-4952fce3c58e" poster=".github/assets/game-demo-fps-poster.jpg" controls="controls" width="100%" preload="metadata" aria-label="FPS Game gameplay demo"></video>
 <p><a href=".github/assets/game-demo-fps.mp4">Open gameplay video</a></p>
 </td>
 <td width="50%" valign="top" align="center">
 <h3>Action Game</h3>
-<video src="https://raw.githubusercontent.com/openaigames/OpenAIGamesDesigner/refs/heads/main/.github/assets/game-demo-action.mp4" poster=".github/assets/game-demo-action-poster.jpg" controls="controls" width="100%" preload="metadata" aria-label="Action Game gameplay demo"></video>
+<video src="https://github.com/user-attachments/assets/d2d18179-4d2d-4d18-ae5a-00f5e7950c8f" poster=".github/assets/game-demo-action-poster.jpg" controls="controls" width="100%" preload="metadata" aria-label="Action Game gameplay demo"></video>
 <p><a href=".github/assets/game-demo-action.mp4">Open gameplay video</a></p>
 </td>
 </tr>
