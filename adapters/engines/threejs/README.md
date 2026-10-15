@@ -1,19 +1,23 @@
-# Three.js · 网页 3D
+# Three.js · Web 3D
 
-## 环境配置
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-| 组件 | 在哪里操作 | 完成检查 |
+This page covers project setup and execution. See [action timing](../action_timing/README.md) for event capture and comparison.
+
+## Environment Setup
+
+| Component | Configure | Check |
 | --- | --- | --- |
-| Node.js 与 npm / pnpm | 本机安装兼容项目 Vite 的 Node；项目配置填写 `node_executable`、`package_manager_cli` | 查询版本并实际安装工程依赖 |
-| Three.js / Vite 依赖 | 游戏工程含 package.json 的目录，沿用锁文件运行安装 | 本地构建完成并产出文件 |
-| 浏览器 | HTTP 打开开发服务或导出目录服务地址 | 无资源加载错误，实际操作与重开符合设计 |
+| Node.js and npm / pnpm | Install Node compatible with the project's Vite; set node_executable and package_manager_cli | Query versions and install project dependencies |
+| Framework and Vite dependencies | Install from the game's package.json directory using its lockfile | Build successfully and load the output in a browser |
+| Browser | Open the development server or serve the exported directory over HTTP | Verify loading, controls, audio, and restart behavior |
 
-Node 版本要求按 [Vite 官方说明](https://vite.dev/guide/) 和现有项目版本核对。无需安装 Unity、UE 或专用 MCP；Agent 的浏览器工具按使用环境配置。
+Check Node compatibility against [Vite documentation](https://vite.dev/guide/) and the project's existing dependencies. No other game engine or dedicated framework MCP is required. Configure browser tools through the agent host.
 
-[框架入口](__init__.py) 将已选定的 `engine=threejs` 接到共享网页执行逻辑。初始化空渲染入口、安装依赖、Vite 服务和构建导出见 [网页执行说明](../web.md)。
+The [framework entry](__init__.py) connects the selected `engine=threejs` to shared web execution. See [web execution](../web.md) for empty-project initialization, dependencies, the Vite server, and builds.
 
-Three.js 提供渲染能力。控制、碰撞、动画状态、玩法与 UI 按当前规格实现；不把能显示画面视为游戏已完成。已有网页工程沿用其工具和锁文件。
+Three.js supplies rendering. Implement controls, collision, animation state, gameplay, and UI for the project. A visible image does not make a finished game. Retain existing web tools and lockfiles.
 
-调试使用 Agent 运行环境实际可用的浏览器工具，检查导出版本的加载、输入、控制台、资源请求及游戏行为。浏览器工具可通过 MCP 暴露，也可由 Agent 运行环境直接提供；不强制另装 Three.js MCP。构建 / 导出证据继续由命令适配器保存。
+Use the host's real browser tools to test exported builds: input, canvas sizing, audio, load failures, console/resource errors, and restart behavior. Browser tools may be provided directly or through MCP. A connection alone does not mean gameplay has been tested. Command adapters preserve build and test reports.
 
-内置 `smoke` 可用 Playwright 对选定构建执行真实浏览器加载检查，保存错误、截图和资源哈希；配置见 [执行配置](../web.md#浏览器检查配置)。玩法行为测试仍需项目实际用例。
+Built-in smoke uses Playwright to load a selected build in a real browser, saving errors, screenshots, and resource hashes. See [browser check configuration](../web.md#browser-check-configuration). Gameplay behavior needs project-specific cases.

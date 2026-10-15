@@ -1,92 +1,94 @@
 # {{id}} — {{title}}
 
-- 类型：资产交付规格
-- 用途、使用资产的角色/场景/系统、关联功能与任务：待填写。
-- 当前状态：待核实；候选取得、选择、制作、导入与运行检查分别记录。
+[English](asset-spec.md) | [简体中文](asset-spec.zh-CN.md)
 
-仅保留当前资产适用内容，沿用项目已有规格与制作流程。
+- Type: asset delivery specification.
+- Use, consuming character/scene/system, feature/task: to fill.
+- State: to verify; acquisition, selection, production, import, and runtime checks are separate.
 
-## 目标与依据
+Retain applicable content only and follow existing project specifications/workflows.
 
-记录需要表达的信息或体验、用户已定边界、实际参考及借鉴点。注明当前任务由需求还是素材探索进入及理由；探索阶段允许用途/职责为候选，不要求先填完规格才能搜索。参考图、可用源文件和授权信息分别记录，未知保留待查。
+## Goals and References
 
-### 角色与动作适配（仅相关资产保留）
+Record intended information/experience, agreed constraints, actual references, and borrowed ideas. State whether requirements or asset exploration led the task. Exploration may retain candidate roles without completing specs before searching. Separate reference images, usable sources, and authorization; unknowns remain open.
 
-| 决策项 | 当前依据与结论 |
+### Character and Motion Fit, If Relevant
+
+| Decision | Evidence and conclusion |
 | --- | --- |
-| 对象职责与必要行为 | 分别说明玩家/敌人等对象支持的交互、信息与应对；区分已定规则、素材启发的候选与待验证假设 |
-| 素材能力与设计推导 | 哪些能力已查证、哪些仍待查；据此采用什么玩法/表现、缺口与补充成本、下一步代表实验 |
-| 需继承与可调整的条件 | 区分明确目标/已定规则、当前委托和暂定占位 |
-| 模型、动作与装备的适配 | 身体/骨架、姿态与持握、位移/接触、可读性的实际证据及未知；仅保留适用项 |
-| 不匹配时的路线 | 保留职责换/改素材，或在有效委托内保留素材调整设计；记录理由与缺口 |
-| 影响与代表验证 | 受影响的规则、资产及使用它们的系统，少量样本结论及后续回归入口 |
+| Roles and required behavior | Player/enemy interactions, information, responses; distinguish rules, asset-inspired candidates, hypotheses |
+| Asset capability and design | Verified and unknown capabilities, intended gameplay and presentation, gaps and costs, next representative test |
+| Fixed and adjustable conditions | Explicit goals/rules, delegated choices, provisional placeholders |
+| Model, motion, equipment fit | Rig/body, pose/grip, movement/contact, readability evidence and unknowns |
+| Mismatch route | Keep role and change assets, or retain assets and adjust design within authority; record reasons/gaps |
+| Impact and representative checks | Affected rules/assets/consumers, sample findings, regression entry |
 
-沿用已有规格或决定记录即可，不再维护另一份状态表。来源可获取或导入成功不证明职责适配；超出既有委托的设计取舍保留待决。
+Reuse existing specs/decisions rather than another status table. Download/import success does not establish role fit. Choices beyond authority stay pending.
 
-## 制作与交付约定
+## Production and Delivery Contract
 
-### 角色或活动物体的模型与骨架路线（仅相关制作保留）
+### Model and Skeleton Route, If Relevant
 
-| 交接项 | 当前依据、文件/版本与决定状态 |
+| Handoff item | Evidence, files/revisions, decision state |
 | --- | --- |
-| 路线与风格 | 先定模型再绑骨配动作，或按已有动画/骨架制作；记录实际用户选择或涵盖路线的委托、适用对象和已定风格 |
-| 动作与骨架基线 | 原骨架、配套网格、代表动作的实际文件/版本与许可；播放质量、根运动和接触要求，缺少什么 |
-| 比例依据 | 单位/坐标/参考姿态、关键关节位置与间距；骨架实测、网格实测、美术设定和未知值分别标明 |
-| 提示与参考 | 比例描述、长度注释或尺寸记录及必要参考图；无需强制尺寸线，记录当前接口实际接收的输入 |
-| 工具与能力边界 | 所选生成/绑骨工具和实际可用接口；是否支持指定骨架、是否真正执行，不能由平台宣传推定本地已接入 |
-| 校准与绑定 | 新网格对目标骨架的尺寸/关节差异、修正范围、蒙皮或刚性附着方法、保留的源文件及版本 |
-| 动态验证 | 代表动作、变形与接触、引擎中实际使用该资产的检查结果及未执行项；输入变化后的复测范围 |
+| Route and style | Model-first rigging or authoring to existing rig/motion; actual choice/delegation, objects, style |
+| Motion/rig baseline | Actual rig, mesh, clips, versions, licenses; playback quality, root/contact requirements, gaps |
+| Proportions | Units, axes, reference pose, joint positions/distances; distinguish rig/mesh measurements, art targets, unknowns |
+| Prompts/references | Proportions, length notes/measurements, necessary references; dimension lines optional; record actual transmitted inputs |
+| Tools and limits | Selected generation/rigging interfaces, skeleton-constraint support, actual execution rather than platform claims |
+| Calibration/binding | Mesh-to-rig differences, changes, skinning/rigid attachment, preserved sources/revisions |
+| Dynamic validation | Representative motion, deformation/contact, actual consumers, unperformed checks, retest scope |
 
-沿用已有决定与资产记录；待定项不能当作用户选择。同高、同名骨骼、文件导入成功分别记录，不代替实际蒙皮与动作适配通过。详见 game-technical-art 的 `references/rig-aware-asset-production.md`。
+Reuse valid decisions/records. Equal height, matching bone names, and import success do not prove skinning/motion fit. See game-technical-art references/rig-aware-asset-production.md.
 
-### 地图从图到模型（仅地图制作保留）
+### Maps from Drawings to Models, If Relevant
 
-| 交接项 | 当前依据、文件/版本与决定状态 |
+| Handoff item | Evidence, files/revisions, decision state |
 | --- | --- |
-| 目标与空间假设 | 玩家活动、空间结构、当前未知项及已有有效方案；当前任务要作出的判断与用户决定 |
-| 草图与原型观察 | 按问题选择的图或原型、区域与初始状态、实际能力和规则、预期与观察差异；估算、软件输入与玩家体验分别记录；未测范围 |
-| 视觉概念与美术体块 | 本项目选用的外观依据、空间功能与风格选择；与有效空间的对应，不能以外观选定代替布局通过 |
-| 制作所需图纸 | 按空间问题选用区域图、平面、分层图、立面或剖面；同版对象标识、轴向、比例、推定内容；无需全套 |
-| 风格 | 题材与写实/风格化等表现分别记录；用户选择或选型委托、排除的表现、占位范围 |
-| 性能条件 | 已选目标设备/平台、引擎版本、分辨率/画质和帧率；未知条件及代表测量范围 |
-| 建模样板与对照 | 代表区域、实际镜头与尺度、几何/材质/光照目标、实际对照与未覆盖范围 |
-| 资源策略与复测 | 各类资产的 LOD/Nanite/实例化选择、碰撞与材质/贴图预算依据；源统计、持久化读回、画面和帧时间分别关联 |
-| 推进状态与回归 | 当前允许范围、草图/图纸审阅与已有反馈；修改影响的空间、状态与玩家活动及复测证据 |
+| Goal/spatial hypothesis | Player activities, structure, unknowns, valid designs, required judgment |
+| Sketch/prototype observations | Chosen representations/areas/initial states, actual abilities/rules, expected versus observed; distinguish estimates, software input, player experience |
+| Visual concept/blockout | Selected appearance, spatial functions/style, correspondence to playable space; visual selection is not layout acceptance |
+| Production drawings | Needed region/plan/layer/elevation/section views with consistent IDs, axes, scale, assumptions; no mandatory complete set |
+| Style | Theme versus representation, selection/delegation, excluded looks, placeholders |
+| Performance conditions | Target device/platform/engine, resolution/quality/frame rate, unknowns, sample coverage |
+| Modeling sample/comparison | Representative region, cameras/scale, geometry/material/light targets, actual comparisons/gaps |
+| Resource strategy/retests | LOD/Nanite/instancing, collision/material/texture budget basis; source counts, persistence, visuals, frame time separately |
+| Progress/regression | Authorized scope, sketch/drawing feedback, affected space/states/activities, retest evidence |
 
-缺失的信息保持待定，不把模板内容当作用户选择。已有地图规格则链接，不另维护一份状态；局部修复只补受影响部分。
+Unknowns remain pending; template examples are not user choices. Link existing map specs and update only affected content for local fixes.
 
-### 资源与交付记录
+### Resources and Delivery Records
 
-| 资源/资产 ID | 对象与用途 | 名称/版本、临时或正式 | 来源/许可依据与实际文件 | 选用状态 | 制作、导入与验证状态 |
+| Resource/asset ID | Object/use | Name/revision, placeholder/final | Provenance/license/files | Selection | Production/import/validation |
 | --- | --- | --- | --- | --- | --- |
 
-分类与文件格式分别记录：主分类沿用看板分类记录，用途标签沿用对象记录；已有清单可引用同一资产条目，避免重复维护分类。带动作模型与独立动作、效果与依赖贴图分别按实际内容判断。
+Categories differ from formats. Use workbench file categories and object usage tags, referencing existing entries rather than duplicating them. Classify animated models versus standalone animation, and effects versus dependent textures, by actual content.
 
-一行一项资源；多个资源共用规格时分别登记，长来源/进度表可按资产 ID 拆分。只有一项资源时可采用属性表。已有权威资产表则链接对应条目，不维护两份状态；缺少文件或证据填待补，不编造链接。选定、制作完成、导入成功和运行验证分别说明。
+One row per resource; split long records by ID or use a property table for one item. Link authoritative inventories. Missing files/evidence stay pending, not invented links. Distinguish selected, produced, imported, and validated.
 
-### 规格约束
+### Specification Constraints
 
-| 项目 | 要求/真实来源 | 状态与待决 |
+| Item | Requirement/source | State/pending decision |
 | --- | --- | --- |
-| 源文件与输出 | 可编辑源文件、导出格式、交付位置与版本关系 | 待填写 |
-| 尺度与结构 | 实际需要的尺寸/单位、原点、朝向、图集/材质/骨架等 | 待填写 |
-| 状态与变体 | 实际使用场景需要的状态、版本、循环或过渡 | 待填写 |
-| 事件与生命周期 | 开始、持续、结束、取消及对应规则/接口 | 待填写 |
-| 显示与性能条件 | 镜头、分辨率、负载及有依据的预算 | 待填写 |
-| 来源与使用依据 | 作者/渠道、来源链接、授权文件及使用限制 | 待填写 |
+| Sources/outputs | Editable source, formats, locations, revision relationships | To fill |
+| Scale/structure | Dimensions, units, origin, orientation, atlases/materials/rigs | To fill |
+| States/variants | Required states, versions, loops/transitions | To fill |
+| Events/lifecycle | Start, sustain, end, cancel, corresponding rules/interfaces | To fill |
+| Presentation/performance | Camera, resolution, load, justified budgets | To fill |
+| Provenance/rights | Author/channel, URLs, authorization, restrictions | To fill |
 
-按专业参考细化 2D、3D、UI、动画、VFX、声音等适用约束；不为填表编造尺寸、数量或预算。
+Use professional references for applicable 2D/3D/UI/animation/VFX/audio constraints. Do not invent dimensions, counts, or budgets.
 
-## 接入、替换与依赖
+## Integration, Replacement, and Dependencies
 
-记录源文件与引擎资源对应、实际引用资源的工程对象、导入设置、标识/挂点/事件兼容及受影响共享引用。保留人工源文件，替换需要的恢复依据要真实可用。
+Record source/native mappings, actual consumers, imports, IDs/attachments/events, and shared references. Preserve editable sources and real recovery baselines.
 
-## 验收与实际交付
+## Acceptance and Actual Delivery
 
-| 检查层次 | 方法与预期 | 文件/版本/证据 | 结果与限制 |
+| Layer | Method/expectation | Files/revisions/evidence | Result/limits |
 | --- | --- | --- | --- |
-| 源资源可用 | 按真实类型确定 | 待关联 | 未验证 |
-| 引擎接入 | 使用该资产的工程对象与导入设置 | 待关联 | 未验证 |
-| 运行表现 | 代表情境、动态/声音及负载中的适用项 | 待关联 | 未验证 |
+| Source usability | According to actual type | To link | Unverified |
+| Engine integration | Actual consumer and imports | To link | Unverified |
+| Runtime presentation | Representative scenarios, dynamics/audio/load | To link | Unverified |
 
-详细检查可引用 validation-report。文件存在、方向选定、导入成功、运行品质通过不可合并为一个结论。
+Link detailed validation reports. File existence, selected direction, import success, and runtime quality are separate conclusions.

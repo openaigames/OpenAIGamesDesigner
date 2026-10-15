@@ -41,4 +41,4 @@
 
 ## 引擎事件接入
 
-[跨引擎动作记录](../../../adapters/engines/action_timing/README.md) 提供 UE5、Unity、Godot 与网页脚本。它记录离散事件，响应采样工具继续处理逐帧运动曲线。事件输入与动画触发可以关联同一次运行，但不得用固定脚本计划时刻替代实际回调时刻。当前通过 CLI 保留录制副本并比较，使用引擎原生工具修改后重新实测。共享看板没有动作检查与片段编辑页面；[编辑与引擎接入](../../../adapters/engines/action_timing/EDITING.md) 面向自定义客户端开发。
+[跨引擎动作记录](../../../adapters/engines/action_timing/README.zh-CN.md) 提供 UE5、Unity、Godot 与网页脚本。它记录离散事件，响应采样工具继续处理逐帧运动曲线。事件输入与动画触发可以关联同一次运行，但不得用固定脚本计划时刻替代实际回调时刻。当前通过 CLI 保留录制副本并比较，使用引擎原生工具修改后重新实测。共享看板没有动作检查与片段编辑页面；[编辑与引擎接入](../../../adapters/engines/action_timing/EDITING.zh-CN.md) 面向自定义客户端开发。

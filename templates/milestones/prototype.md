@@ -1,30 +1,32 @@
 # {{id}} — {{title}}
 
-- 类型：机制试验 / 原型
-- 状态：draft（draft / ready / active / review / accepted / rework / stopped）
-- 所属项目阶段：待核实；本原型不自动改变全项目阶段。
+[English](prototype.md) | [简体中文](prototype.zh-CN.md)
 
-## 要回答的问题
+- Type: mechanic experiment / prototype.
+- State: draft (draft / ready / active / review / accepted / rework / stopped).
+- Project stage: to verify; this prototype does not automatically change it.
 
-写出一个机制假设、失败风险与此次实验将支持的取舍；功能正确和体验成立分开。
+## Question
 
-## 输入与范围
+State a mechanic hypothesis, failure risk, and decision supported by the experiment. Separate functional correctness from experience validity.
 
-关联实际设计文件、已确认规则、版本依据及未知。明确最小因果链、占位资产策略、不做内容、引擎和平台。未决规则只有阻塞实现时才需先澄清。
+## Inputs and Scope
 
-## 实现任务与依赖
+Link designs, confirmed rules, revisions, and unknowns. Define the minimum causal loop, placeholders, exclusions, engine/platform. Clarify unresolved rules only when they block implementation.
 
-引用任务记录、已有工程场景与可复用系统。涉及新资产时关联规格、来源与导入状态。
+## Tasks and Dependencies
 
-## 验证计划
+Link tasks, existing scenes, reusable systems, and new-asset specs/provenance/import state.
 
-| 问题 | 操作与观察 | 判断依据 | 所需环境/参与者 |
+## Validation Plan
+
+| Question | Operation/observation | Criteria | Environment/participants |
 | --- | --- | --- | --- |
 
-## 实际证据与结论
+## Evidence and Conclusions
 
-尚未执行。执行后记录原生工程入口、run-id、代码/资产版本、实际操作、观察和限制。程序通过不等于玩法获得支持。
+Not executed. Record native entries, runs, code/asset revisions, actual actions, observations, and limits. Program success does not establish gameplay validity.
 
-## 取舍与下一步
+## Decision and Next Steps
 
-尚未评审。区分模型建议与用户决定；可继续、调整、补测或停止。结果不足时不自动推进制作验证。
+Not reviewed. Separate recommendations/user decisions. Continue, adjust, retest, or stop. Insufficient evidence does not automatically advance production validation.

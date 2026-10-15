@@ -1,21 +1,23 @@
-# Unreal 原生工程验证内容
+# Unreal Native Project Fixture
 
-自制 C++ 验证模块，许可沿用仓库 LICENSE，只使用 Engine BasicShapes，不包含第三方或私有角色动画资产。它证明原生数据、可操作规则、运行绑定、观察和交付接口；不代表成品角色动画或游戏美术。
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-在隔离项目创建 `ToolkitObservation.uproject`，开启 PythonScriptPlugin、EditorScriptingUtilities，添加 Runtime 模块 ToolkitObservation；将 Source 目录放入工程。UE 5.8.2 / Win64 实际编译与运行；需要兼容的 C++ 工具链。
+Original C++ module under the repository LICENSE using Engine BasicShapes only, without private/third-party character animation. Tests native data, operable rules, bindings, observation, and handoff, not final character animation/art.
 
-编译编辑器目标后依次通过共享 `engine_workflow.py execute` 运行本目录 requests：
+Create isolated ToolkitObservation.uproject with PythonScriptPlugin, EditorScriptingUtilities, and Runtime module ToolkitObservation; copy Source into it. UE 5.8 Win64 needs a compatible C++ toolchain.
 
-1. `create-space.json` 建立真实地面、掩体、尺度参照物、镜头、光源。
-2. `create-native-fixture.json` 建立原生 UObservationSettings 及使用它的 Pawn。
-3. `patch-native.json` 演示显式 read/write 方法、expected 基线检查、保存和角色位置校准。
-4. `read-native.json` 在独立进程读回原生值。
-5. `observe-complete-flow.json` 在实际 PIE 中驱动并记录命中、取消、胜利、恢复与重试。
+Compile the editor target, then execute requests through engine_workflow.py execute:
 
-这些创建请求只运行一次；失败或超时先用既有 session inspect/recover 确认实际副作用，不能盲重建。新引擎保存的浮点读回若与 expected 不同，先检查真实结果，再构造有依据的新基线，不移除冲突保护。
+1. create-space.json creates ground, cover, scale references, camera, and light.
+2. create-native-fixture.json creates UObservationSettings and its Pawn consumer.
+3. patch-native.json demonstrates explicit read/write, expected baseline checks, saving, and position calibration.
+4. read-native.json reads native values in a separate process.
+5. observe-complete-flow.json drives/records hits, cancellation, victory, recovery, and retry in real PIE.
 
-原生控制：W/S 移动，鼠标左键攻击，Space 取消，R 重试。Pawn 的 Capsule/FloatingPawnMovement 实际碰撞；250cm射线决定命中；原生 CurveFloat 在 .5 处给出21伤害，两次清除42HP目标。HUD 分别显示输入、HP/状态与结束提示。武器是 BeginPlay 动态创建的调试几何，绑定项目自定义 GripAnchor；这个挂点不适用于别的角色。
+Creation requests run once. After failure/timeout, inspect/recover sessions before retrying. If native floating-point readback differs from expected, inspect actual values and derive a justified new baseline without removing conflict protection.
 
-`observe-complete-flow` 的动作是定时调用游戏处理函数，不能报成人工按键试玩。截图不含声音；本 UE 夹具没有制作音频，声音观察由 Godot 自制夹具覆盖。阶段交付为可编辑原生工程，在明确的 UE 5.8.2 接收环境打开/编译/运行；未声称完成商店包、跨平台发布或任意游戏类型。
+W/S moves, left mouse attacks, Space cancels, R retries. Capsule/FloatingPawnMovement has actual collision; a 250 cm ray determines hits. CurveFloat at .5 returns 21 damage, clearing a 42 HP target in two hits. HUD shows input, health/state, and end messages. BeginPlay creates debug weapon geometry on custom GripAnchor, not a universal character socket.
 
-Unreal 原包角色与真实动画由 [共享原生动画接口](../../../adapters/engines/unreal/native-animation.md) 处理，与这个无骨架的规则探针分开。旧动画测试场 C++ 可另放入独立实验模块，并启用 ProceduralMeshComponent；实际角色的附件绑定应从对应工程配置读取。
+observe-complete-flow calls timed handlers, not manual keys. Captures have no audio; this fixture authors none. Godot covers synthetic audio observation separately. Delivery is an editable native project for the declared UE environment, not a store build, cross-platform release, or universal game example.
+
+Use [native animation](../../../adapters/engines/unreal/native-animation.md) for real character assets, separately from this skeleton-free rule probe. Animation test code can live in an isolated module with ProceduralMeshComponent. Read real attachment bindings from their project configurations.

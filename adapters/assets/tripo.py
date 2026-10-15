@@ -1,4 +1,4 @@
-"""Tripo v2 OpenAPI: text/image generation and remote task lookup."""
+"""Tripo V3 API: flagship text/image generation and remote task recovery."""
 import uuid
 from . import api_common, http_io, generation_capabilities, model_defaults
 from .api_errors import TaskResultError
@@ -21,6 +21,22 @@ def client_for_request(settings, request):
 BASE = generation_capabilities.TRIPO_BASE
 
 
+def payload(request, tokens):
+    """Build the same token-based body for offline preview and submission."""
+    from . import tripo_inputs
+    kind = tripo_inputs.kind(request)
+    if kind == 'generate_multiview_image':
+        return {'input': tokens['front']}
+    body = model_defaults.prepare('tripo', request)['parameters']
+    body.pop('type', None)
+    body['model'] = body.pop('model_version')
+    if kind == 'image_to_model':
+        body['input'] = tokens['front']
+    elif kind == 'multiview_to_model':
+        body['inputs'] = [{view: tokens[view]} for view in tripo_inputs.VIEWS if view in tokens]
+    return body
+
+
 def command(settings, request, output, result):
     return api_common.command('tripo', settings, request, output, result)
 
@@ -39,36 +55,49 @@ class Client:
         return value['data']
 
     def upload_image(self, image, image_type):
+        if image_type not in ('png', 'jpeg'):
+            raise ValueError('Tripo file upload supports PNG/JPEG; export a reference in that format first')
         boundary = 'OAGD' + uuid.uuid4().hex
         body = (f'--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="input.{image_type}"\r\n'
                 f'Content-Type: image/{image_type}\r\n\r\n').encode() + image + f'\r\n--{boundary}--\r\n'.encode()
-        uploaded = self.call('/upload', data=body, content_type='multipart/form-data; boundary=' + boundary)
-        token = uploaded.get('image_token')
+        uploaded = self.call('/files', data=body, content_type='multipart/form-data; boundary=' + boundary)
+        token = uploaded.get('file_token')
         if not isinstance(token, str) or not token:
-            raise ValueError('Tripo upload returned no image_token')
-        return {'type': image_type, 'file_token': token}
+            raise ValueError('Tripo upload returned no file_token')
+        return token
 
     def submit(self, request):
         from . import tripo_inputs
-        tripo_inputs.validate(request)
-        payload = model_defaults.prepare('tripo', request)['parameters']
+        api_common.validate_request('tripo', request, {'mode': 'api'})
         kind = tripo_inputs.kind(request)
-        payload['type'] = kind
+        if kind == 'generate_multiview_image':
+            raise ValueError('Use the image-to-multiview client for image output')
         # Read and hash every input before any upload or charged task submission.
         images = tripo_inputs.read_images(request)
-        if kind == 'image_to_model':
-            payload['file'] = self.upload_image(*images['front'])
-        elif kind == 'multiview_to_model':
-            payload['files'] = [self.upload_image(*images[view]) if view in images else {}
-                                for view in tripo_inputs.VIEWS]
-        return api_common.task_id(self.call('/task', payload).get('task_id'))
+        tokens = {view: self.upload_image(*images[view]) for view in tripo_inputs.VIEWS if view in images}
+        return api_common.task_id(self.call(generation_capabilities.TRIPO_ENDPOINTS[kind],
+                                           payload(request, tokens)).get('task_id'))
 
     def query(self, remote_id):
-        data = self.call('/task/' + api_common.task_id(remote_id))
+        data = self.call('/tasks/' + api_common.task_id(remote_id))
         if data.get('task_id') != remote_id:
             raise TaskResultError('output_invalid')
         status = data.get('status')
         output = data.get('output') or {}
-        files = [{'label': key, 'url': output[key]} for key in ('model', 'pbr_model', 'base_model') if output.get(key)]
+        if not isinstance(output, dict):
+            raise TaskResultError('output_invalid')
+        # V3 returns model_url; legacy keys allow recovery of tasks created in V2.
+        files = []
+        for key in ('model_url', 'model', 'pbr_model', 'base_model'):
+            url = output.get(key)
+            if url is None:
+                continue
+            if not isinstance(url, str) or not url.strip():
+                raise TaskResultError('output_invalid')
+            if url not in [entry['url'] for entry in files]:
+                files.append({'label': key, 'url': url})
+        if status == 'success' and not files:
+            raise TaskResultError('output_invalid')
         return {'status': status, 'done': status == 'success', 'pending': status in ('queued', 'running'),
-                'files': files, 'credit_consumed': output.get('consumed_credit')}
+                'files': files, 'credit_consumed': data.get('credits_consumed',
+                    data.get('consumed_credit', output.get('consumed_credit')))}

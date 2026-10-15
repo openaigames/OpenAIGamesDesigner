@@ -1,22 +1,24 @@
 # {{id}} — {{title}}
 
-- 对象与内容范围：填写当前任务实际委托；范围外内容不计入完成声明。
-- 当前阶段与任务：关联任务区间及其状态主源。
-- 输入基线：玩法、品质规格、源资产、工程版本和有效证据。
+[English](content-production.md) | [简体中文](content-production.zh-CN.md)
 
-## 内容与依赖
+- Objects/content scope: actual commission; exclude out-of-scope work from completion claims.
+- Stage/task: link the range and authoritative status.
+- Baseline: gameplay, quality specs, source assets, project revision, valid evidence.
 
-| 对象 ID / 内容 | 负责人 | 规格 / 样例 | 实际产物与使用方 | 依赖 | 当前结论 / 证据 |
+## Content and Dependencies
+
+| Object ID/content | Owner | Spec/sample | Actual output/consumer | Dependencies | Conclusion/evidence |
 | --- | --- | --- | --- | --- | --- |
 
-## 集成和完整体验
+## Integration and Complete Experience
 
-记录实际进入、游玩、结束/失败、返回或重试的操作与观察。按项目需要检查输入、界面、存档、加载、视听叠加/中断、平台和性能，不套用无关功能。
+Record actual entry, play, end/failure, return/retry operations and observations. Check input, UI, saves, loading, audiovisual stacking/interruption, platforms, and performance only where relevant.
 
-## 缺口、修复与复测
+## Gaps, Fixes, and Retests
 
-问题绑定对象、版本和时间/位置，说明影响哪个判断；保留未受影响的结果。外部试玩、自测与自动操作分别记录，未执行不填写通过。
+Bind issues to objects, revisions, time/position, and affected conclusions. Preserve unaffected results. Distinguish external playtests, self-tests, and automation. Unperformed checks cannot pass.
 
-## 出口与交付
+## Exit and Delivery
 
-核对约定内容覆盖、专业品质、实际运行和已知问题。完成阶段 4 与完成最终交付分别判断；任务包含阶段 5 才继续对应范围。当前结论与历史证据分开，不能只在旧“已完成”摘要后追加矛盾说明。
+Check agreed coverage, professional quality, real execution, and known issues. Stage 4 completion differs from final delivery; continue stage 5 only when included. Keep current conclusions distinct from history rather than appending contradictory notes after an obsolete completed summary.

@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-input-plan",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "provider": {
+      "enum": [
+        "tripo",
+        "hunyuan3d",
+        "seedream",
+        "seedance",
+        "elevenlabs",
+        "image"
+      ]
+    },
+    "parameters": {
+      "type": "object"
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+          },
+          "send": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "send"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "requirement": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+          },
+          "via": {
+            "enum": [
+              "prompt",
+              "reference",
+              "postprocess",
+              "unresolved"
+            ]
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+            }
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "check": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "requirement",
+          "via"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "rewrite": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "text",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "reviewer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        },
+        "brief_accounted_for": {
+          "type": "boolean"
+        },
+        "requirements_preserved": {
+          "type": "boolean"
+        },
+        "no_unrequested_features": {
+          "type": "boolean"
+        },
+        "reference_roles_checked": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "reviewer",
+        "notes",
+        "brief_accounted_for",
+        "requirements_preserved",
+        "no_unrequested_features",
+        "reference_roles_checked"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "provider",
+    "parameters",
+    "references",
+    "routes"
+  ],
+  "additionalProperties": false
+}

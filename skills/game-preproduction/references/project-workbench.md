@@ -108,7 +108,7 @@ python tools/asset_audit.py --project "游戏项目绝对路径" --register-miss
 
 共享看板不提供动作检查、片段编辑和原生预览回传界面，也不加载其前端模块。旧 `--view actions` / `#actions` 兼容转到资产库。模型自带动画的播放、切换、变速和骨架显示继续使用。
 
-项目中的动作记录、草案、应用历史及引擎适配器保留，不修改游戏配置。需要实际检查时使用引擎原生工具和 [跨引擎动作记录 CLI](../../../adapters/engines/action_timing/README.md)。[编辑协议](../../../adapters/engines/action_timing/EDITING.md) 与 [原生回传协议](../../../adapters/engines/action_timing/PREVIEW.md) 面向自定义客户端开发，不是看板操作指南。
+项目中的动作记录、草案、应用历史及引擎适配器保留，不修改游戏配置。需要实际检查时使用引擎原生工具和 [跨引擎动作记录 CLI](../../../adapters/engines/action_timing/README.zh-CN.md)。[编辑协议](../../../adapters/engines/action_timing/EDITING.zh-CN.md) 与 [原生回传协议](../../../adapters/engines/action_timing/PREVIEW.zh-CN.md) 面向自定义客户端开发，不是看板操作指南。
 
 ## 生产过程与登记联动
 

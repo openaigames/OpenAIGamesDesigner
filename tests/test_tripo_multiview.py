@@ -15,10 +15,15 @@ class TripoMultiviewTests(unittest.TestCase):
         self.r={'parameters':{'type':'multiview_to_model','model_version':'v3.1-20260211','pbr':True},'inputs':self.rows}
     def test_wire_order_and_missing_right(self):
         with patch.object(api_common,'credential',return_value='fixture'):c=tripo.Client({})
-        with patch.object(c,'call',side_effect=[{'image_token':'front-token'},{'image_token':'left-token'},{'image_token':'back-token'},{'task_id':'task-1'}]) as call:
+        with patch.object(c,'call',side_effect=[{'file_token':'front-token'},{'file_token':'left-token'},{'file_token':'back-token'},{'task_id':'task-1'}]) as call:
             self.assertEqual(c.submit(self.r),'task-1')
             p=call.call_args.args[1]
-            self.assertEqual(p['files'],[{'type':'png','file_token':'front-token'},{'type':'png','file_token':'left-token'},{'type':'png','file_token':'back-token'},{}])
+            self.assertEqual(p['inputs'],[{'front':'front-token'},{'left':'left-token'},{'back':'back-token'}])
+            self.assertEqual(call.call_args.args[0],'/generation/multiview-to-model')
+            self.assertEqual(p['model'],'v3.1-20260211')
+            self.assertNotIn('type',p)
+            self.assertNotIn('model_version',p)
+            self.assertEqual([x.args[0] for x in call.call_args_list[:-1]],['/files']*3)
             self.assertNotIn('prompt',p)
             self.assertEqual(call.call_count,4)
     def test_reject_before_network_if_any_image_changed(self):
@@ -37,7 +42,7 @@ class TripoMultiviewTests(unittest.TestCase):
             with self.assertRaises(ValueError):tripo_inputs.validate(r)
     def test_receipt_uses_actual_order_labels(self):
         s=tripo_inputs.summary(self.r)
-        self.assertEqual(s['wire_view_order'],['front','left','back','right'])
+        self.assertEqual(s['wire_view_order'],['front','left','back'])
         self.assertEqual(s['omitted_views'],['right'])
         self.assertFalse(s['prompt_sent'])
 if __name__=='__main__':unittest.main()

@@ -1,60 +1,59 @@
-# 资产制作、处理与接入
+# Asset Production, Processing, and Integration
 
-用于新增、修改或替换图像、模型、动画、特效、声音等资产。沿用项目当前阶段和资产体系；局部替换不重新立项。文件获取方式可以是人工制作、已有素材或已配置生成工具，不预设必须 AI 生成。
+[English](asset-production.md) | [简体中文](asset-production.zh-CN.md)
 
-## 输入与分工
+Create, modify, or replace images, models, animation, VFX, and audio within the existing project workflow. A local replacement does not restart project planning. Choose original production, existing assets, or a configured generation service according to the task.
 
-- 已有需求时说明用途与使用方；开放探索时可先搜索/盘点素材，再由其能力提出用途和玩法候选。正式采用前说明支持的交互、替换版本及场景/材质/动画/代码依赖。
-- 美术 Skill 定义用途、风格、规格、来源和可检查的交付要求；按需使用 `templates/asset-spec.md`。
-- 技术 Skill 核对导入格式、坐标、命名、依赖、引擎设置与替换影响；策划提供碰撞、时序、可读性等功能约束。
-- 管理 Skill 关联任务、资产规格、依赖和目标版本，不复制专业正文。验证 Skill 定义实际检查和回归范围。
+## Inputs and Responsibilities
 
-下载、生成、制作或接入当前任务资产后，按 game-preproduction 的“项目看板与美术清单 → 分类与用途标签”核对分类。范围读实际内容根，主分类针对文件，用途标签可由对象共享；类别明确时使用既有批量接口保存，未知保留未分类。文件移动/替换先核对版本和关联，不通过分类动作改写绑定或验收结果。
+- When requirements are known, identify how and where the asset will be used. During exploration, inspect available assets and propose uses based on their capabilities. Before integration, specify interactions, the revision being replaced, and dependencies on scenes, materials, animation, and code.
+- Art skills define use, style, specs, provenance, and inspectable deliverables; use templates/asset-spec.md as needed.
+- Technical skills verify formats, coordinates, naming, dependencies, imports, and replacement impact. Design supplies collision, timing, and readability constraints.
+- Management links tasks/specs/dependencies/versions without duplicating professional prose. Validation defines real checks/regression.
 
-## 两种规划入口
+After acquisition/creation/integration, follow game-preproduction's workbench classification guidance. Inspect actual content roots. File categories and object usage tags differ; save clear categories through existing batch APIs, leaving unknowns unclassified. Check revisions/links before moves/replacements; classification must not rewrite bindings or acceptance.
 
-- **需求驱动**：目标/职责与必要行为 → 素材检索及组合检查 → 代表小样 → 修订并扩展。
-- **素材驱动**：体验/预算/引擎等已知边界 → 素材探索与实际能力/缺口盘点 → 职责、玩法和表现候选 → 代表小样 → 修订并扩展。
+## Two Planning Routes
 
-按当前任务选择，两者可往返，不要求用户明确说“围绕素材”才允许先搜索；也不把先搜索设为所有工作的必经步骤。素材驱动适用于角色/动作、场景、VFX、声音与其他资产，具体方法由美术 Skill 的素材检索与获取及角色职责与素材适配参考维护。
+- **Requirement-driven:** role/required behavior → asset discovery/composition checks → representative sample → revise/expand.
+- **Asset-driven:** known experience/budget/engine constraints → asset capability/gap inventory → roles/gameplay/presentation candidates → representative sample → revise/expand.
 
-搜索、预览和探索小样无需先完成详细策划；批量校准与正式接入前仍须明确采用的职责/交互及适配依据。用户已定目标和规则继续有效，玩家/敌人装备不自动互相继承。发现根本不匹配时，记录换素材或在有效委托内改设计的决定并关联使用方，不用技术补偿掩盖冲突。没有对应 Skill 时沿用同一判断更新项目记录。
+Choose or alternate according to the task. Exploration need not wait for the phrase asset-driven, and searching is not mandatory for every task. Art references cover discovery and role/adaptation methods across characters, environments, VFX, audio, and other assets.
 
-## 制作与交接
+Searching, previewing, and creating exploratory samples do not require a complete design. Before batch processing or integration, define the selected roles and interactions and record why the assets fit them. Keep existing gameplay goals and rules; an asset suitable for a player character may not suit an enemy. Resolve fundamental mismatches by changing the asset or agreeing on a design adjustment. These responsibilities still apply when no matching skill is installed.
 
-需要动画的新制/替换模型，先确认“先定模型再绑骨配动作”或“先选已有动画/骨架、按其比例反向制作”，已有明确选择或涵盖路线的委托直接沿用。后者依次检查代表动作、提取真实骨架比例、形成提示词/长度注释及必要参考、生成或制作、校准网格并绑定原骨架、回放动作和检查引擎。方法见 game-technical-art 的 `references/rig-aware-asset-production.md`，记录使用现有资产规格；不强制带尺寸线的设计图。未定路线时先做独立盘点与测量；静态资产、现有动画局部修复不重走确认。平台自动绑骨可另行评估，其存在不表示本地适配器已接入或生成骨架能满足选定动作。
+## Production and Handoff
 
-地图制作从当前目标、空间结构和待解决问题选择表达与原型，经观察修订后交接和扩展；视图类型、试验范围和顺序按实际需要决定。game-level-design 的 `references/map-planning-and-iteration.md` 负责空间迭代，game-art-direction 明确视觉风格，game-environment-art 的 `references/map-from-design.md` 负责图纸与制作。已有布局、指定按图制作或只探索外观时沿用有效依据，不强制先做俯视图或全图灰盒。风格未知且无选型委托时在相关制作前询问，已有选择与授权沿用。用户要求先核对草图/图纸时交付对应阶段；局部修复只回归受影响部分。未安装对应 Skill 时保留同样的职责、版本与证据区别，使用项目现有工具。
+For a new animated model, use the chosen production route: build the model before rigging it, or author the model to match an existing rig and animation set. Reuse prior decisions and any authorization to choose a route. The latter inspects clips, measures rigs, prepares prompts/dimension notes/references, authors/generates, calibrates/binds to the original rig, then replays/imports. See game-technical-art references/rig-aware-asset-production.md. Use existing specs; dimension-line drawings are optional. While undecided, inventory/measure independently. Static assets/local motion fixes need not repeat this choice. Platform auto-rigging does not prove local integration or motion fit.
 
-样板前补齐会影响制作的目标设备、分辨率/画质与帧率；沿用已选条件。样板包含代表几何、材质、植物和阴影，检查资源与实际帧时间后再扩展。按资产类别选择自动多级 LOD、Nanite 或重复实例策略，保持视觉风格与玩法边界。UE 原生只读审计及派生配置走 [网格资源接口](../adapters/engines/unreal/mesh-resources.md)，技术美术方法由 `game-technical-art/references/map-performance.md` 维护。生成/设置、保存后读回、画面和性能分别记录。
+Map work chooses representations/prototypes from goals, spatial questions, and evidence. game-level-design references/map-planning-and-iteration.md owns spatial iteration; art direction owns style; environment art references/map-from-design.md owns drawings/production. Preserve existing layouts and explicit requests without forcing top-down drawings or full grayboxes. Clarify missing style only when no selection delegation exists. Honor sketch-review endpoints and retest local impacts. Preserve source/revision/evidence distinctions without installed skills too.
 
-1. 根据当前授权和工具选择制作路径。初次制作或关键资产替换时先明确当前任务模型/动作等素材方案与占位范围，或有效的选材委托；工具可用、素材已安装和要求原型都不代替这一决定。方案与方法由美术 Skill 维护，已有明确方案直接沿用。仅讨论风格时形成规格；已要求生成或处理且素材方向明确时继续执行可用工具，不把写规格当成已交付资产。
-2. 生成/处理任务使用 `tools/asset_workflow.py`。先保存输入、参数与工具配置，提交任务，再执行；命令配置从项目的 `.openaigame/asset-providers.json` 读取，不从设计文档提取 shell 命令。
-   Tripo/混元/ElevenLabs/Seedream/Seedance API 新生成在 run 前通过本地设置页展示该任务，由用户确认后执行。只配好密钥或建立队列不构成授权；详情见 [API 生成与授权](../adapters/assets/generation-api.md)。
-3. 保存原始输入、输出、日志、任务编号和哈希。失败保留证据；云任务先用 resume 查询原编号，明确要求重新生成时才建立新任务。本地命令重试建立关联的新任务。网站素材用 `tools/asset_library.py` 搜索/获取/登记，生成结果用 from-job 关联；保留许可依据和依赖文件。旧产物不覆盖。工具不可用时明确缺口。
-4. 需要转换时建立后续处理任务，输入引用选定的实际文件。生成和 Blender 处理是不同任务，来源通过输入快照关联。
-5. 按规格检查可打开性、尺寸、轮廓、材质、动画或音频等适用项。格式扩展名和哈希检查不能证明质量。
-6. 在已授权工程内接入选定版本，沿用项目的导入工具、配置和引用规则；先保留可恢复的旧版本。CLI 产物登记本身不执行引擎导入。
-7. 在实际使用方中检查显示、播放、功能、性能和替换回归，使用验证报告链接任务、资产和运行版本。更新管理入口中的完成项及剩余问题。
+Before representative production, establish target device, resolution/quality, and frame rate from valid choices. Samples include representative geometry/materials/foliage/shadows; inspect resources/frame times before scaling. Select LOD, Nanite, or instancing per asset class while retaining style/gameplay constraints. UE uses [mesh resources](../adapters/engines/unreal/mesh-resources.md); technical-art references/map-performance.md provides methods. Record generation/settings, persisted readback, visuals, and performance separately.
 
-## 完成依据与反馈
+1. Choose an authorized production route and asset/placeholder plan or selection delegation. Installed tools/assets and prototype requests do not decide that plan. If implementation/generation is requested and direction is clear, execute available tools rather than delivering only a spec.
+2. Use tools/asset_workflow.py with saved inputs/parameters/provider configuration. Read executable commands from .openaigame/asset-providers.json, not design prose. New paid API generation displays the job through local settings for user confirmation before run; credentials/queue alone are insufficient. See [generation authorization](../adapters/assets/generation-api.md).
+3. Preserve inputs, outputs, logs, job IDs, and hashes. Keep failure evidence. Resume existing cloud IDs before considering explicitly requested regeneration. Local retries create linked jobs. Use asset_library.py for source acquisition and from-job for generated provenance; retain licenses/dependencies and old outputs. State unavailable tools accurately.
+4. Conversion uses a separate downstream task consuming selected files, linked by input snapshots.
+5. Inspect applicable openability, dimensions, silhouette, materials, motion, and audio. Extensions/hashes do not prove quality.
+6. Integrate selected revisions in authorized projects with existing imports/references and a recoverable baseline. Registration alone does not import.
+7. Check actual consumers for appearance, playback, function, performance, and replacement regression. Link reports/tasks/assets/runtime revisions and update management.
 
-分别记录“文件已生成/登记”“已检查”“已导入”“游戏内验证”。只有当前任务范围内的要求有证据才完成该任务；生成成功不自动通过切片或发布验收。后续改规格、资产或使用方时，标记受影响的检查需要重做。
+## Completion and Feedback
 
-生成 API、本地命令协议、素材来源与恢复方式见 [资产工具接入](../adapters/assets/README.md)。
+Record generated/registered, inspected, imported, and validated in-game separately. Complete only when scoped requirements have evidence; generation success does not pass slices/releases. Changed specs/assets/consumers invalidate affected checks.
 
+See [asset integration](../adapters/assets/README.md) for APIs, wrappers, sources, and recovery.
 
-结束当前任务实施时更新涉及的专业事实、任务/里程碑状态、证据与管理下一步；失败或中断也要保存。新项目按管理文件约定运行 `validate_records.py --layout --production --closeout --markdown` 并处理结果；只涉及局部资产/功能、已有或自定义结构时检查等价记录，不强制补新作里程碑。检查结构通过不代表验收通过。
+At implementation closeout or interruption, update affected professional facts, task/milestone state, evidence, and next steps. For new projects, run `python tools/validate_records.py --project "GAME_PROJECT" --layout --production --closeout --markdown` and address results. For local changes or existing/custom layouts, check equivalent records without imposing new-project milestones. Structural validity is not acceptance.
 
-声音可由实际游戏事件窗口驱动生成和编辑；保存来源配置版本、原件、时序配方与监听结果。ElevenLabs 的短窗口、台词与配乐区别见 [音频接入](../adapters/assets/elevenlabs-audio.md)，不把时长匹配当作听感通过。
+Audio can follow real event windows. Preserve source-config revisions, originals, timing recipes, and listening results. See [audio integration](../adapters/assets/elevenlabs-audio.md); duration matching is not listening acceptance.
 
+## Generation Routing and Revision History
 
-## 生成路由与修改历史
+Prefer available built-in image generation for ordinary raster work, unless explicit service choice, established workflow, or capability gaps dictate otherwise. Saved keys do not select a route. Follow game-art-direction references/generation-tool-selection.md; use native tools for editable authoring files.
 
-普通栅格图像优先当前 Agent 可用的内置生图；用户明确选定的服务、已采用流程或实际能力缺口可以改变选择。API Key 已保存不意味着默认调用。采用 game-art-direction 的 `references/generation-tool-selection.md`；需要原生编辑文件时继续使用对应制作工具。
+Follow references/asset-versions.md for comparable results, parent revisions, reference roles, and companion files. Manual/built-in outputs use asset_versions.py; successful APIs link automatically. Selecting older revisions preserves newer ones and does not integrate them automatically. Upstream reselection flags downstream review without regenerating. Jobs/version records share actual artifacts; Art Direction links selections.
 
-每次可比较的交付结果按该 Skill 的 `references/asset-versions.md` 保存独立版本、父版本、参考用途和配套文件。人工导入与内置生图使用 `asset_versions.py`，API 实际成功输出自动关联。选回旧版不删除新版，选用不替代工程接入；上游改选只触发下游复核提示，不自动再生成。生成任务与版本库链接同一真实产物，Art Direction 只维护选用入口。
+## Registration Is Part of Delivery
 
-## 登记属于当前任务交付
-
-按 [资产生产登记与交付检查](../skills/game-preproduction/references/asset-handoff.md) 在制作/获取成功后同步文件与来源，接入后补使用方，验证后补实际结果。结构化任务绑定 asset_scope，其他任务运行同一范围检查；遗漏由执行方修复，不等用户打开看板补登记。
+Follow [asset handoff (Chinese)](../skills/game-preproduction/references/asset-handoff.md): register files/provenance after creation/acquisition, consumers after integration, and actual results after validation. Structured tasks bind asset_scope; other tasks use equivalent checks. Complete missing records before delivery so users can inspect the files and their status directly.

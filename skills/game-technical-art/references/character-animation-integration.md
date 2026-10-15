@@ -1,6 +1,6 @@
 # 角色模型与动作资产匹配
 
-用于已有模型、动画和武器的集成或返修。先选一条代表性的「模型 → 动作 → 挂接 → 实际操控」链验证，再批量迁移动作；不要求换引擎或重建控制器。本文是生产配方，不是工具已提供自动重定向、绑骨或布料模拟的承诺。UE 的能力/Montage 接入继续使用 [动作与动画接入](../../game-technical-design/references/action-animation-integration.md)。
+用于已有模型、动画和武器的集成或返修。先选一条代表性的「模型 → 动作 → 挂接 → 实际操控」链验证，再批量迁移动作；不要求换引擎或重建控制器。已有蒙皮角色可使用 [可执行重定向与修复](../../../adapters/processing/MOTION.zh-CN.md)：显式映射、参考姿态旋转校正、明确位移策略，以及受限动作修复。它不提供自动绑骨、权重修复或服装适配。UE 的能力/Montage 接入继续使用 [动作与动画接入](../../game-technical-design/references/action-animation-integration.md)。
 
 ## 分清资产与问题层
 

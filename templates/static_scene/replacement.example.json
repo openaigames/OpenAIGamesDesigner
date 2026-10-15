@@ -1,0 +1,22 @@
+{
+  "schema": "oagd.scene-replacement/1",
+  "id": "DoorUpgrade",
+  "assets": {
+    "door": {"revision": "revisions/door", "plan_id": "REPLACE_WITH_STATIC_SCENE_PLAN_ID"}
+  },
+  "replacements": [
+    {
+      "id": "DoorFilled", "targets": ["GrayDoor"], "asset": "door",
+      "position": [-2, 0, 0], "yaw_degrees": 0, "scale": 1,
+      "collision": {
+        "policy": "boxes",
+        "boxes": [
+          {"node": 1, "center": [0, 1.1, 0], "size": [0.12, 2.2, 0.18]},
+          {"node": 2, "center": [0, 1.1, 0], "size": [0.12, 2.2, 0.18]},
+          {"node": 3, "center": [0, 0, 0], "size": [1.32, 0.12, 0.18]},
+          {"node": 5, "center": [0.55, 1.025, 0], "size": [1.1, 2.05, 0.08]}
+        ]
+      }
+    }
+  ]
+}

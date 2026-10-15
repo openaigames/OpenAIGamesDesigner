@@ -1,45 +1,60 @@
-# 引擎接入
+# Engine Integration
 
-首次配置见 [环境清单与操作位置](../environment-setup.md)，按已选择的引擎进入以下说明。
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-| 引擎 / 框架 | 入口 | 说明 |
+## Capabilities and Guides
+
+| Layer | Implementation and entry |
+| --- | --- |
+| Execution, editing, and observation | Separate entries for five engines/frameworks below; authoring interfaces differ |
+| Shared runtime components | [runtime_components](runtime_components/README.md): input, state, feedback, interaction, navigation, and more for Godot / UE 5.8 |
+| Native sampling of processed animation | [motion](motion/README.md): reads imported bones; does not own a game state machine |
+| Animation runtime | [motion_playback](motion_playback/README.md): locomotion, root motion, and contact constraints for Godot / UE 5.8 |
+| Static scenes | [static_scene](static_scene/README.md): multi-node import, replacement, and relocatable project reception |
+| Event recording | [action_timing](action_timing/README.md): independently usable recording interfaces for all five engines/frameworks |
+
+Runtime components and playback have Godot and UE 5.8 implementations. Unity, Three.js, and Phaser provide their own execution and recording interfaces; consult their guides for scope.
+
+## Project Command Entries
+
+Start with [environment setup](../environment-setup.md), then follow the selected engine:
+
+| Engine/framework | Entry | Guide |
 | --- | --- | --- |
 | Godot | [godot/cli.py](godot/cli.py) | [Godot](godot/README.md) |
 | Unity | [unity/cli.py](unity/cli.py) | [Unity](unity/README.md) |
 | Unreal | [unreal/cli.py](unreal/cli.py) | [Unreal](unreal/README.md) |
-| Three.js | [threejs/__init__.py](threejs/__init__.py) | [网页 3D](threejs/README.md) |
-| Phaser | [phaser/__init__.py](phaser/__init__.py) | [网页 2D](phaser/README.md) |
+| Three.js | [threejs/__init__.py](threejs/__init__.py) | [Web 3D](threejs/README.md) |
+| Phaser | [phaser/__init__.py](phaser/__init__.py) | [Web 2D](phaser/README.md) |
 
-编辑器操作优先复用 Agent 运行环境已有且适合当前任务的 MCP；命令执行由本目录适配器负责。两条路线共享项目设计、任务与验证依据，但 MCP 调用不是 `game_workflow.py run` 的隐式功能。当前 CLI 不发现、安装或代理 MCP 服务。接入方法和证据约定见 [MCP 接入](mcp.md)。
+Prefer an available, suitable MCP connection for editor operations; these adapters execute commands. Both routes share designs, tasks, and evidence, but MCP calls are not implicit in `game_workflow.py run`. The CLI does not discover, install, or proxy MCP services. See [MCP integration](mcp.md).
 
-各引擎的公共导入继续使用 `from adapters.engines import unreal` 等形式。运行、测试与交付由各自 `cli.py` 负责；Unity / Unreal 的创建和编辑由各自 `production.py` 负责，两种入口并存。
+Public imports use forms such as `from adapters.engines import unreal`. Each cli.py handles execution, testing, and delivery. Unity/Unreal production.py handles creation and editing; both entry types coexist.
 
-## 共享文件
+## Shared Files
 
-| 文件 | 职责 |
+| File | Responsibility |
 | --- | --- |
-| `common.py` | 可执行文件检查、自定义命令参数展开 |
-| `native_support.py` | 配置检查、证据登记、统一测试结果写入；具体报告解析在 `unity/reports.py` 和 `unreal/reports.py` |
-| `registry.py` | 明确选择 Unity / Unreal 制作驱动；不是全部引擎能力注册表 |
-| `sessions.py` / `sessions.md` | 执行、检查点、进程归属、中断恢复与说明 |
-| `request_contract.py` | 通用请求结构、数值和执行结果检查 |
-| `web_common.py` | Three.js / Phaser 共用的初始化、依赖、服务与构建逻辑 |
-| `browser_smoke.cjs` | 网页构建的浏览器加载、截图与错误检查 |
-| `execution.md` | 通用运行协议和各引擎配置导航 |
-| [observations.md](observations.md) | Godot / Unreal 的实际事件、参数、附件和空间采集 |
-| [unreal/native-animation.md](unreal/native-animation.md) | UE 原生角色、动画与关联预览导出 |
-| [unreal/native-data.md](unreal/native-data.md) | UE 原生参数读回与保护性写入 |
-| `mcp.md` | Agent 运行环境 MCP 接入及证据约定，不是 MCP 服务实现 |
-| `web.md` | 网页游戏共同使用方式与浏览器检查配置 |
+| common.py | Executable checks and custom command argument expansion |
+| native_support.py | Configuration checks, evidence registration, normalized test reports; engine parsers are unity/reports.py and unreal/reports.py |
+| registry.py | Explicit Unity/Unreal authoring-driver selection, not a universal capability registry |
+| sessions.py / sessions.md | Execution, checkpoints, process ownership, interruption recovery |
+| request_contract.py | Shared request, numeric, and result validation |
+| web_common.py | Three.js/Phaser initialization, dependencies, server, and builds |
+| browser_smoke.cjs | Browser loading, screenshots, and error checks |
+| execution.md | Execution protocol and engine configuration navigation |
+| [observations.md](observations.md) | Godot/UE events, parameters, attachments, and spatial capture |
+| [unreal/native-animation.md](unreal/native-animation.md) | UE characters, animation, and linked preview export |
+| [unreal/native-data.md](unreal/native-data.md) | UE parameter readback and protected writes |
+| mcp.md | Host MCP integration and evidence conventions, not a server implementation |
+| web.md | Shared web-game usage and browser check configuration |
 
-制作接口按引擎读取 `unity/production.py` 或 `unreal/production.py`，公共执行和恢复读取 `sessions.py`。Godot 从 `adapters.engines.godot` 导入；网页框架分别从 `adapters.engines.threejs` 和 `adapters.engines.phaser` 导入。
+Read unity/production.py or unreal/production.py for authoring, and sessions.py for shared execution/recovery. Import Godot from adapters.engines.godot and web frameworks from adapters.engines.threejs or adapters.engines.phaser.
 
-只为实际落地且能测试的能力新增模块，例如 `assets.py`、`animation.py`、`playtest.py`；不建立没有实现的分类目录。不内置第三方 MCP 源码，也不预设每个提供方都有同名工具。
+Add modules only for implemented, testable functions, such as assets, animation, or playtesting. Do not create empty capability directories, bundle third-party MCP source, or assume every provider exposes identical tool names.
 
-各引擎的默认动作、明确配置和证据要求统一见 [引擎执行配置](execution.md)。
+Defaults, configuration, and evidence requirements are in [execution configuration](execution.md). Unity/UE creation, scene/component editing, import, character animation, automated capture, and recovery are covered by [sessions](sessions.md). Keep evidence for these routes separate from run/build/export and MCP.
 
-Unity / Unreal 的工程创建、场景与组件、资源导入、角色动画、自动操作录制和会话恢复见 [会话管理与引擎入口](sessions.md)。它与现有 run/build/export 和 MCP 入口并存，运行证据分开记录。
+## Action Timing and Events
 
-## 动作时间与事件
-
-[跨引擎动作记录](action_timing/README.md) 提供 Unreal、Unity、Godot、Three.js、Phaser 和通用网页记录接口，支持 CLI 记录与比较。记录组件是引擎内的真实事件采集，不替代引擎动画编辑器，也不要求创建新的进程通信服务。
+[Cross-engine recording](action_timing/README.md) provides Unreal, Unity, Godot, Three.js, Phaser, and generic web interfaces, with CLI capture and comparison. Record real engine events; the components do not replace animation editors or require a separate IPC service.

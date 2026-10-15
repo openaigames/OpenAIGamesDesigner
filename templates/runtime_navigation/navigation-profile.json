@@ -1,0 +1,1 @@
+{"schema":1,"speed_mps":3.0,"arrival_m":0.35,"blocked_seconds":1.0,"deadline_seconds":20.0,"repath_seconds":0.5,"detection_m":6.0,"loss_seconds":0.6,"search_seconds":0.5,"patrol_points":[[-5,0,-3],[5,0,-3]]}

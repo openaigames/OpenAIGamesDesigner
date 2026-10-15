@@ -1,0 +1,521 @@
+{
+  "duration_s": 40,
+  "events": [
+    {
+      "t": 1.6,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_wave",
+        1,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 3.2,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_loop",
+        1,
+        0.35,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 4.0,
+      "op": "weight",
+      "args": [
+        "upper",
+        1
+      ]
+    },
+    {
+      "t": 4.7,
+      "op": "rate",
+      "args": [
+        "upper",
+        2
+      ]
+    },
+    {
+      "t": 5.6,
+      "op": "pause",
+      "args": [
+        true
+      ]
+    },
+    {
+      "t": 6.1,
+      "op": "pause",
+      "args": [
+        false
+      ]
+    },
+    {
+      "t": 6.4,
+      "op": "rate",
+      "args": [
+        "upper",
+        0
+      ]
+    },
+    {
+      "t": 6.9,
+      "op": "rate",
+      "args": [
+        "upper",
+        0.5
+      ]
+    },
+    {
+      "t": 7.5,
+      "op": "rate",
+      "args": [
+        "upper",
+        4
+      ]
+    },
+    {
+      "t": 8.3,
+      "op": "cancel",
+      "args": [
+        "upper",
+        0
+      ]
+    },
+    {
+      "t": 8.55,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_wave",
+        1,
+        1,
+        4,
+        true
+      ]
+    },
+    {
+      "t": 9.0,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_alt",
+        1,
+        1,
+        4,
+        true
+      ]
+    },
+    {
+      "t": 9.1,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_alt",
+        1,
+        1,
+        4,
+        false
+      ]
+    },
+    {
+      "t": 9.4,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_wave",
+        3,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 9.43,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_alt",
+        5,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 9.6,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_alt",
+        1,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 9.8,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_alt",
+        4,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 10.8,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_loop",
+        4,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 11.4,
+      "op": "play",
+      "args": [
+        "full",
+        "upper_alt",
+        5,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 11.7,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_wave",
+        20,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 13.0,
+      "op": "play",
+      "args": [
+        "full",
+        "upper_wave",
+        5,
+        1,
+        0.5,
+        true
+      ]
+    },
+    {
+      "t": 13.4,
+      "op": "cancel",
+      "args": [
+        "full",
+        0
+      ]
+    },
+    {
+      "t": 13.45,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_wave",
+        20,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 13.7,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_wave",
+        1,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 14.0,
+      "op": "reset",
+      "args": []
+    },
+    {
+      "t": 14.3,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_wave",
+        1,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 15.2,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_loop",
+        1,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 16.0,
+      "op": "weight",
+      "args": [
+        "upper",
+        0
+      ]
+    },
+    {
+      "t": 16.5,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_loop",
+        1,
+        1,
+        4,
+        true
+      ]
+    },
+    {
+      "t": 18.5,
+      "op": "cancel",
+      "args": [
+        "upper",
+        0
+      ]
+    },
+    {
+      "t": 19.0,
+      "op": "callback",
+      "args": []
+    },
+    {
+      "t": 19.0,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_wave",
+        1,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 21.4,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_wave",
+        1,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 22.0,
+      "op": "play",
+      "args": [
+        "full",
+        "upper_alt",
+        5,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 25.5,
+      "op": "jump",
+      "args": []
+    },
+    {
+      "t": 25.55,
+      "op": "jump_release",
+      "args": []
+    },
+    {
+      "t": 25.7,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_wave",
+        1,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 25.8,
+      "op": "play",
+      "args": [
+        "full",
+        "upper_alt",
+        5,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 27.8,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_loop",
+        1,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 28.0,
+      "op": "reset",
+      "args": []
+    },
+    {
+      "t": 29.0,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_wave",
+        1,
+        0.5,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 30.0,
+      "op": "weight",
+      "args": [
+        "upper",
+        1
+      ]
+    },
+    {
+      "t": 30.4,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_alt",
+        1,
+        1,
+        4,
+        true
+      ]
+    },
+    {
+      "t": 31.2,
+      "op": "play",
+      "args": [
+        "full",
+        "upper_wave",
+        1,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 31.45,
+      "op": "play",
+      "args": [
+        "full",
+        "upper_alt",
+        2,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 31.5,
+      "op": "play",
+      "args": [
+        "full",
+        "upper_wave",
+        1,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 32.7,
+      "op": "cancel",
+      "args": [
+        "full",
+        0
+      ]
+    },
+    {
+      "t": 33.0,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_loop",
+        1,
+        0.35,
+        2,
+        true
+      ]
+    },
+    {
+      "t": 34.0,
+      "op": "reset",
+      "args": []
+    },
+    {
+      "t": 35.0,
+      "op": "play",
+      "args": [
+        "upper",
+        "upper_wave",
+        1,
+        1,
+        1,
+        true
+      ]
+    },
+    {
+      "t": 36.8,
+      "op": "play",
+      "args": [
+        "full",
+        "full_tuck",
+        2,
+        1,
+        0.5,
+        true
+      ]
+    }
+  ]
+}

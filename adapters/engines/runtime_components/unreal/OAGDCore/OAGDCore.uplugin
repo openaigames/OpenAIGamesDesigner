@@ -1,0 +1,24 @@
+{
+  "FileVersion": 3,
+  "Version": 11,
+  "VersionName": "0.9.0",
+  "FriendlyName": "OAGD Optional Runtime Components",
+  "Description": "Optional motor, input, focus, scene staging, settings and local state journal. Game rules remain project owned.",
+  "Category": "Gameplay",
+  "EngineVersion": "5.8.0",
+  "CanContainContent": false,
+  "EnabledByDefault": true,
+  "Modules": [
+    {
+      "Name": "OAGDCore",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "ProceduralMeshComponent",
+      "Enabled": true
+    }
+  ]
+}

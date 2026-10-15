@@ -1,40 +1,42 @@
 # {{name}} — Project Management
 
-## 当前目标与阶段
+[English](project-management.md) | [简体中文](project-management.zh-CN.md)
 
-- 项目阶段：待依据现有工程和用户目标判断。
-- 当前任务目标：待定义。
-- 当前里程碑：尚未建立。
-- 工程入口：待按实际项目定位；尚无工程时记录未建立，不推定引擎或配置文件已存在。
-- 目录约定：新作专业总入口在根，原生工程在 `game/`；设计/制作/源资产/执行/构建分别在 `design/`、`production/`、`assets-source/`、`runs/`、`builds/`，按需建立。已有项目记录真实位置。
+## Goals and Stage
 
-## 专业文件索引
+- Project stage: determine from the existing project and user goal.
+- Task goal: to define.
+- Milestone: not established.
+- Project entry: locate the actual project; record absent projects as not created rather than assuming an engine/configuration exists.
+- Layout: new projects keep professional indexes at root and native code in game/, with design/, production/, assets-source/, runs/, builds/ as needed. Existing projects record their actual locations.
 
-新作链接概览、GDD、美术、技术和风险五个真实入口，内容状态可以待讨论；已有项目沿用已有位置和等价记录，不为局部改动补齐全部文件。
+## Professional Document Index
 
-每项说明当前是初期草案、实现事实已更新、待复核还是仍有具体缺口；文件存在不作为内容完成状态。详细规则、资产和证据仍在各自权威记录。
+Link the five actual concept, GDD, art, technical, and risk entries for new projects; content may be pending. Existing projects use equivalent records without filling every document for local changes.
 
-| 职责 | 真实文件 | 当前任务需处理内容 |
+State whether each is an early draft, updated to implementation, awaiting review, or missing specific content. File existence is not completion. Detailed rules, assets, and evidence retain their authoritative owners.
+
+| Responsibility | Actual file | Content needed for this task |
 | --- | --- | --- |
 
-## 里程碑与任务入口
+## Milestones and Tasks
 
-里程碑和任务按需保存在 `production/`，此处只维护链接与当前优先级，详细状态以各自记录为准。项目阶段与新功能阶段分开。
+Store milestones/tasks under production/ as needed. Maintain links/priorities here, not duplicate detailed state. Project stage and new-feature maturity are separate.
 
-## 当前任务变更与联动摘要
+## Changes and Dependencies
 
-链接同一变更记录或现有任务，概述受影响方向、已完成/未完成、阻塞和下一步；详细状态以该记录为准，不重复维护另一套状态表。记录定位是否受影响及依据；仅影响局部规则或资产时概览保持原状。
+Link one change record/task and summarize affected disciplines, completed/open work, blockers, and next steps. Do not maintain another status table. Record whether positioning changes; local rules/assets do not automatically change the concept.
 
-## 决定、待决与阻塞
+## Decisions and Blockers
 
-记录决定的来源、日期、适用范围；建议不作为用户确认。保留变更历史和受影响记录。
+Record decision source, date, and scope. Suggestions are not user approval. Preserve history and affected records.
 
-## 执行与验证
+## Execution and Validation
 
-关联实际使用的执行与验证记录。采用本工具运行器时可引用 `runs/<run-id>/manifest.json`、`runs/engine-*/session.json`、`runs/create-*/session.json` 和 `.openaigame/project.json`，仅在文件真实存在后添加入口；其他工程沿用自身记录。命令完成、功能测试、体验验证、视觉验证、里程碑取舍分别判断。失败记录不覆盖，源文件哈希不是可恢复备份。
+Link actual records. Toolkit entries may include `runs/<run-id>/manifest.json`, `runs/engine-*/session.json`, `runs/create-*/session.json`, and .openaigame/project.json, only when they exist. Other projects retain native records. Distinguish command completion, function, experience, visuals, and milestone decisions. Preserve failures; hashes are not backups.
 
-## 下一步
+## Next Steps
 
-确定当前任务要解决的问题、必要设计输入和可检查的交付，再执行对应任务。
+Define the question, necessary design inputs, and inspectable deliverable, then execute.
 
-实施结束或中断时更新实际阶段、目标、工程入口、任务/里程碑状态与证据链接；不能仍保留初始占位。记录当前任务核对了哪些专业文档、依据哪些工程/配置/报告、已补或仍缺什么；没有核对不写“全部完整”。新作按管理流程运行收尾检查，已有项目检查等价记录；结构检查结果与内容回读结论分别说明。
+At closeout/interruption, update actual stage/goals/entry/task states/evidence instead of leaving initial placeholders. State which professional records were compared against which project/configuration/report, what was filled, and what remains. Do not claim completeness without review. New projects run closeout checks; existing ones verify equivalents. Report structural checks separately from content review.

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "asset_id": "door",
+  "kind": "model",
+  "brief": "An industrial warehouse door and a separate frame.",
+  "requirements": [
+    {
+      "id": "parts",
+      "text": "Keep the door leaf and frame as distinct structural parts.",
+      "category": "identity",
+      "priority": "must"
+    },
+    {
+      "id": "finish",
+      "text": "Use dull painted steel with moderate edge wear.",
+      "category": "appearance",
+      "priority": "must"
+    },
+    {
+      "id": "opening",
+      "text": "The clear opening must be 1.2 metres wide.",
+      "category": "technical",
+      "priority": "must"
+    },
+    {
+      "id": "pivot",
+      "text": "The door must rotate around its hinge axis.",
+      "category": "technical",
+      "priority": "must"
+    }
+  ],
+  "references": []
+}

@@ -79,6 +79,8 @@ class WorkflowTests(unittest.TestCase):
                 content = path.read_text(encoding="utf-8")
                 self.assertIn("中文标题与空格 Title", content)
                 self.assertNotIn("{{", content)
+                self.assertNotIn('[English]', content)
+                self.assertNotIn('.zh-CN.md', content)
                 path.write_text("Existing user design", encoding="utf-8")
                 self.assertEqual(self.call("document", "--kind", kind, "--id", kind), 2)
                 self.assertEqual(path.read_text(), "Existing user design")
@@ -88,12 +90,10 @@ class WorkflowTests(unittest.TestCase):
     def test_portable_bundle_uses_nested_milestone_templates(self):
         bundle = package_skills.package(self.root / "relocated toolkit")
         runtime = bundle / "game-preproduction/runtime"
-        self.assertEqual(
-            {p.relative_to(runtime / "templates").as_posix()
-             for p in (runtime / "templates").rglob("*") if p.is_file()},
-            {"project-management.md", "milestones/prototype.md", "milestones/vertical-slice.md",
-             "task.md", "feature-spec.md", "asset-spec.md", "validation-report.md", "decision.md", "milestones/content-production.md"},
-        )
+        for name in ("project-management", "milestones/prototype", "milestones/vertical-slice",
+                     "task", "feature-spec", "asset-spec", "validation-report", "decision", "milestones/content-production"):
+            for suffix in ('.md', '.zh-CN.md'):
+                self.assertTrue((runtime / 'templates' / (name + suffix)).is_file())
         target = self.root / "fresh project with spaces"
         for kind in ("prototype", "vertical-slice", "content-production", "task", "feature-spec", "asset-spec",
                      "validation-report", "decision"):
@@ -107,6 +107,7 @@ class WorkflowTests(unittest.TestCase):
                 generated = Path(result.stdout.strip())
                 self.assertTrue(generated.is_file())
                 self.assertTrue(generated.is_relative_to(target))
+                self.assertNotIn('[English]', generated.read_text(encoding='utf-8'))
 
     def test_package_rejects_source_destinations_before_copying(self):
         source = Path(package_skills.__file__).resolve().parents[1]

@@ -1,51 +1,53 @@
-# 网页游戏：Three.js 与 Phaser
+# Web Games: Three.js and Phaser
 
-网页 3D 使用 Three.js，网页 2D 使用 Phaser。已有工程保留其框架和构建方式；单纯提出游戏想法，不代表已选择网页平台。引擎选择、设计、资产方案和试玩目标仍沿用通用 workflow，网页不是自动降级路线。
+[English](web.md) | [简体中文](web.zh-CN.md)
 
-## 初始化与接手
+Use Three.js for 3D web games and Phaser for 2D web games. Keep the framework and build system of an existing project. For new projects, choose the platform with the user before initialization; design, assets, and playtest goals follow the shared workflow.
 
-先保存六个项目入口并明确当前任务目标。以下两种 engine 任选其一，不在同一个项目重复初始化：
+## Initialize or Adopt
+
+Save the six project entry documents and define the task. Choose one engine; do not initialize both in the same project:
 
 ```sh
 python tools/game_workflow.py init --project "MyGame" --engine threejs --create-engine --node "C:/Tools/node/node.exe" --package-manager-cli "C:/Tools/node/node_modules/npm/bin/npm-cli.js"
 ```
 
-2D 将 `threejs` 改成 `phaser`。已有项目省略 `--create-engine`，通过 `--engine-root` 指向包含 package.json 的真实目录。初始化只创建空渲染入口，不生成玩法、资产或已通过的测试。项目根保留六份专业文档，网页源代码在 `game/`。
+For 2D, replace threejs with phaser. Existing projects omit --create-engine and point --engine-root at the actual package.json directory. Initialization creates an empty rendering entry, not gameplay, assets, or passed tests. Keep the six project documents at the project root and the web code in `game/`.
 
-Node 与包管理器路径是本机实际路径，示例不能直接照抄。也支持 `pnpm.cjs`；其他包管理器在 `commands.prepare` 配置。Windows 通过 Node 调用包管理器 JS，避免依赖 shell 的 npm.cmd。新模板锁定 Three.js 0.186.0 / Phaser 4.2.1、Vite 8.3.0；首次安装保存 lockfile，以后使用 npm ci / pnpm frozen-lockfile。现有项目不自动升级。Vite 8 的 Node 要求见官方资料，路径检查不替代真实版本兼容检查。
+Node/package-manager paths must match the local machine. pnpm.cjs is supported; configure other managers through commands.prepare. Windows invokes package-manager JS with Node rather than relying on npm.cmd shell behavior. Generated package.json declares dependencies. Preserve the first lockfile, then use npm ci / pnpm frozen-lockfile. Existing projects are not upgraded automatically. Consult the matching Vite documentation for Node compatibility; path checks alone are insufficient.
 
-## 命令与证据
+## Commands and Evidence
 
-| 动作 | 默认行为 | 通过代表什么 |
+| Action | Default | Meaning |
 | --- | --- | --- |
-| doctor | 检查 Node 路径、package.json 中选定框架声明 | 配置可读；不证明运行环境或网页可用 |
-| prepare | 安装项目依赖，已有锁文件时严格沿用 | 安装命令完成；保存真实日志 |
-| build / export | 调用工程本地 Vite，输出到独立 builds/运行编号 | 检查非空 index.html 并登记产物哈希 |
-| play | Vite 在 127.0.0.1:5173 提供开发服务，端口冲突报错 | 这是持续进程；超时会停止并如实记录 timeout，不能当作试玩通过 |
-| smoke | Playwright 加载明确选择的构建 | HTTP、控制台、资源请求和可见 canvas 检查，保存截图 |
-| test | 项目自己的测试命令 | 必须执行游戏断言并返回实际测试报告 |
+| doctor | Check Node path and selected framework declaration | Readable configuration, not verified runtime/site |
+| prepare | Install dependencies, respecting existing locks | Installation completed with actual logs |
+| build / export | Local Vite into independent builds/run-id | Nonempty index.html and artifact hashes |
+| play | Dev service at 127.0.0.1:5173; port conflicts fail | Long-running process; timeout stops it and remains timeout, not a playtest pass |
+| smoke | Playwright loads an explicitly selected build | HTTP, console, resources, visible canvas, screenshot |
+| test | Project test command | Real game assertions and reports required |
 
 ```sh
 python tools/game_workflow.py run --project "MyGame" --action prepare --timeout 600
 python tools/game_workflow.py run --project "MyGame" --action export --timeout 180
 ```
 
-沿用 [命令配置与报告协议](../README.md)，commands 可覆盖默认动作。测试包装器传播失败并把真实报告摘要写入 `{run}/test-results.json`。浏览器 smoke 已有默认实现，需要配置实际构建目录、Playwright 和浏览器；行为 test 仍需项目提供命令与报告。缺少所需配置会记录 blocked，不能将构建冒充浏览器或行为测试。
+Use the [command/report contract](../README.md); commands override defaults. Test wrappers propagate failure and write summaries of actual results to {run}/test-results.json. Default browser smoke requires a build directory, Playwright, and browser. Behavioral tests require project commands/reports. Missing requirements produce blocked; builds do not substitute for browser/game tests.
 
-实际试玩可由 Agent 的终端工具管理开发进程，记录工作目录、命令、URL、退出方式；使用浏览器打开输出 URL。CLI play 适合有限时长会话，不是后台服务管理器。不要用 file:// 加载游戏。交付前另以 HTTP 服务打开导出目录，检查子路径、资产请求、控制台异常、输入、重开和目标设备。启动服务不等于公开发布，导出不会部署。
+Agents can manage development processes through terminal tools, recording working directory, command, URL, and shutdown, then open the URL in a browser. CLI play is for bounded sessions, not background service management. Do not load games through file://. Before delivery, serve the export over HTTP and check subpaths, asset requests, console, input, restart, and target devices. Starting a server is not public deployment; export does not deploy.
 
-## 工程规则
+## Project Rules
 
-- Three.js 提供渲染；输入、角色控制、碰撞/物理、动画状态、游戏流程按已确认需求实现，不默认添加完整游戏框架。
-- Phaser 采用 Scene、Loader、Input 和需要的物理系统；仅渲染启动不代表关卡或战斗已制作。
-- 在技术文件记录依赖/锁文件、模块职责、构建和测试入口；在美术文件登记真实素材、用途、格式、来源及导入状态。网页需要另检查加载失败、纹理/音频兼容、画布缩放和资源体积。
-- 数值主源可为工程 JSON；通过现有数值交换工具修改后，重新加载并验证实际行为。记录是构建时打包还是运行时 fetch，不能假定改表会自动更新已导出的包。
+- Three.js supplies rendering; implement input, characters, physics, animation state, and flow for agreed requirements without automatically adding a full framework.
+- Phaser uses Scene, Loader, Input, and selected physics. A renderer startup is not a completed level/combat system.
+- Technical documents record dependencies/locks, module responsibilities, and build/test entries. Art documents record actual assets, uses, formats, sources, and imports. Check load failures, texture/audio compatibility, canvas scaling, and download size.
+- Project JSON may be the numerical source of truth. Reload and verify behavior after numerical exchanges. Record whether data is bundled at build time or fetched at runtime; table edits do not automatically update exported builds.
 
-依据：[Three.js 官方手册](https://threejs.org/manual/)、[Phaser 安装](https://docs.phaser.io/phaser/getting-started/installation)、[Vite 入门与环境要求](https://vite.dev/guide/)。
+References: [Three.js manual](https://threejs.org/manual/), [Phaser installation](https://docs.phaser.io/phaser/getting-started/installation), [Vite requirements](https://vite.dev/guide/).
 
-## 浏览器检查配置
+## Browser Check Configuration
 
-先执行 export，再把需要检查的实际构建目录填入 `web.smoke_root`。检查已有产物，不暗中选择最新文件夹：
+Export first, then explicitly set web.smoke_root to the build being checked. The tool does not silently choose the latest directory:
 
 ```json
 {
@@ -58,4 +60,4 @@ python tools/game_workflow.py run --project "MyGame" --action export --timeout 1
 }
 ```
 
-需要 Playwright 和实际 Chromium 系浏览器；本工具不自动下载。smoke 临时绑定 127.0.0.1 随机端口，检查 HTTP、控制台、资源请求和非空可见 canvas，保存 `browser-result.json`、截图及已读取资源哈希，完成后关闭服务和浏览器。它不证明 canvas 中的内容正确，也不代替输入、胜败、重开等游戏测试。自定义渲染入口、需登录服务或非 canvas 游戏使用 `commands.smoke`。
+Playwright and an actual Chromium-family browser are required and are not downloaded automatically. smoke binds a temporary random localhost port, checks HTTP/console/resource requests/nonempty visible canvas, saves browser-result.json, screenshots, and read-resource hashes, then closes browser/server. It does not prove correct canvas content or input/win/loss/restart behavior. Use commands.smoke for custom renderers, authenticated services, or non-canvas games.

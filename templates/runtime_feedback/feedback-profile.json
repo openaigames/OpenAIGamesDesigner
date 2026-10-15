@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "max_active": 8,
+  "cues": {
+    "door": {"domain":"game","duration":0.65,"loop":false,"spatial":true,"limit":2,"overflow":"oldest","audio":"door","visual":"pulse","volume":0.45,"camera":0.4,"color":[1.0,0.6,0.15]},
+    "zone": {"domain":"game","duration":1.0,"loop":true,"spatial":true,"limit":1,"overflow":"reject","audio":"zone","visual":"pulse","volume":0.28,"camera":0.0,"color":[0.1,0.6,1.0]},
+    "ui": {"domain":"ui","duration":0.35,"loop":false,"spatial":false,"limit":2,"overflow":"oldest","audio":"ui","visual":"","volume":0.3,"camera":0.0,"color":[0.4,1.0,0.5]},
+    "action": {"domain":"game","duration":0.8,"loop":false,"spatial":true,"limit":3,"overflow":"oldest","audio":"action","visual":"pulse","volume":0.4,"camera":1.2,"color":[1.0,0.2,0.15]}
+  }
+}

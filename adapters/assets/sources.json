@@ -779,54 +779,6 @@
       }
     },
     {
-      "id": "texturecan",
-      "name": "TextureCan",
-      "url": "https://www.texturecan.com/",
-      "domain": "www.texturecan.com",
-      "kinds": [
-        "texture",
-        "3d"
-      ],
-      "access": "browser_or_direct_link",
-      "free_scope": "公开 PBR 贴图与模型",
-      "license_hint": "公开资产 CC0，保留具体页面及 Terms",
-      "notes": "PBR 通道完整；注意 Normal DirectX/OpenGL 约定及可选 SBSAR 所需工具。",
-      "download": {
-        "mode": "direct",
-        "login": "none",
-        "method": "详情页公开按分辨率列出的下载 ZIP。",
-        "user_step": "无需账号；宿主需允许公共 HTTPS 下载。"
-      },
-      "verification": {
-        "checked_at": "2026-09-23",
-        "status": "sample_download_passed",
-        "sample_page": "https://www.texturecan.com/details/658/",
-        "sample_title": "Paper 0037 / 1K",
-        "formats": "JPG/PNG / ZIP",
-        "files": [
-          {
-            "name": "paper.zip",
-            "url": "https://www.texturecan.com/downloads/paper_0037/paper_0037_1k_kV5kti.zip",
-            "bytes": 634565,
-            "sha256": "0ac58789b3116624e15093471533a186613f61f2d4b954cd6b22c12bbd0b0c8b"
-          }
-        ],
-        "scope": "匿名完整 GET 样例并检查文件结构；仅代表列出文件的获取能力，未验证引擎导入、播放或全站资源。"
-      },
-      "evidence_urls": [
-        "https://www.texturecan.com/details/658/",
-        "https://www.texturecan.com/terms/"
-      ],
-      "pricing": {
-        "model": "free",
-        "summary": "公开 PBR 贴图与模型免费。",
-        "checked_at": "2026-09-24",
-        "evidence_urls": [
-          "https://www.texturecan.com/terms/"
-        ]
-      }
-    },
-    {
       "id": "incompetech",
       "name": "Incompetech",
       "url": "https://incompetech.com/music/royalty-free/music.html",

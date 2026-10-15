@@ -1,22 +1,20 @@
-# 设计 → 原型 → 试玩验证
+# Design → Prototype → Playtest
 
-1. 从用户目标与相关设计抽取本次要验证的问题。只澄清会改变实验的关键未知，不因文档未齐拒绝实现，也不从题材自行确定全部玩法。
-2. 建立或复用原型里程碑，参考 `templates/milestones/prototype.md`；实现任务参考 `templates/task.md`。明确局部规则、占位边界、输入版本、观察方法与实现依赖。
-   新项目在主要玩法实现前保存记录并从管理入口链接，无需写完全部专业文档。引擎选择不作为核心交互确认；明确授权默认方案时记录暂定依据后实施。已有项目使用等价记录。
-   需要可见表现时，先明确当前任务资产方案或选材委托：占位范围、关键对象与动作资源来源及验证局限。最终美术可待定；“做原型”不能自动解释为接受白模。素材未选时继续不依赖该决定的设计与工程工作，方案方法由美术 Skill 提供。
-   能力框架与表现资源分别选择：前者依据规则复杂度、已有工程和维护需求，后者依据当前任务动作与可读性；具体选型交给技术/美术参考，不把启用框架或导入动作包记为可玩闭环完成。
-3. 检查实际工程、引擎和可恢复基线。新作进入引擎专用实现前须有具体引擎选择或有效选型委托；组合候选、已安装环境或默认玩法授权不能替代它。歧义未解决时继续设计、记录和只读检查，暂停依赖引擎选择的初始化与制作；已有目标工程或明确选择直接沿用。代码 Agent 依据任务在原生工程中实现与集成；执行工具本身不把 GDD 自动转换成游戏。无代码/引擎工具时如实报告停在哪一步。
-4. 按实际工程的技术参考和可用工具执行必要的构建/资源检查、启动和相关测试，关联任务、里程碑与输入版本。失败先检查证据，修复后新增执行记录，不覆盖历史。引擎专用命令和测试约定不在此流程中定义。
-5. 对照实验计划真实试玩/观察。自动测试只证明覆盖的行为；命令退出码不证明手感、趣味性或美术品质。没有试玩证据保持未验证。
-6. 将真实工程入口、运行方法、证据与限制写回任务和里程碑，管理入口链接它们；对照实际规则、资产与工程回读并修订受影响专业文档。原型也需达到各专业的实施交接深度，不把初期允许简写理解为可省略已经发生的事实。记录已核对范围和剩余缺口，依据用户已授权的目标继续修改与复测，阶段取舍不得伪造用户确认。
+[English](prototype-build.md) | [简体中文](prototype-build.zh-CN.md)
 
-交付至少包含实际改动、可复现运行步骤和已执行检查。独立导出包与引擎内可运行工程分开记录。验证不支持机制时回到相关设计，不强制从头重做全部文件。
+1. Extract the question to test from user goals/design. Clarify only unknowns changing the experiment; incomplete documentation is not a reason to refuse implementation, and genre alone does not define all gameplay.
+2. Create/reuse a prototype milestone from templates/milestones/prototype.md and tasks from templates/task.md. Specify local rules, placeholder boundaries, input revisions, observation methods, and dependencies. New projects save/link these before major implementation without finishing all design documents. Engine choice does not confirm core interaction. Record authorized provisional defaults. For visible output, establish asset choices or a selection delegation, including key objects/motion sources and limits; prototype does not automatically mean whitebox. Continue independent work while choices remain open. Select frameworks and presentation assets separately according to rules/maintenance and action/readability needs.
+3. Inspect the actual project, engine, and recovery baseline. New engine-specific work needs a concrete choice/delegation; candidate lists, installed software, and default-gameplay authorization are insufficient. Continue independent design/read-only work during ambiguity. Implement in the native project; execution tools do not automatically turn GDDs into games. Report missing tools accurately.
+4. Run appropriate build/resource checks, startup, and tests using actual project tools, linking tasks/milestones/input versions. Inspect failures before fixing and create new execution records rather than overwriting history.
+5. Observe/play according to the experiment. Automation proves only covered behavior. Exit codes do not prove feel, fun, or art; absent playtest evidence remains unverified.
+6. Update tasks/milestones with real entries, run steps, evidence, and limits. Compare rules/assets/implementation and revise affected professional records to handoff depth. Early concise drafts do not justify omitting facts already established. Continue authorized changes/retests and never invent user approval.
 
-实验需要批量参数或曲线时，按需生成数值表雏形并链接功能规格，不为简单原型强制建表。初始参数标明暂定依据；用户/AI 调参后沿用技术侧的数据交换和验证方法，检查工程实际加载的新值。没有完成加载器或导入映射时仅记录候选表，不称为可调参工程。
+Deliver actual changes, reproducible run steps, and executed checks. Distinguish standalone exports from editor-runnable projects. Unsupported mechanics return to relevant design rather than restarting all documents.
 
-共享运行工具可用时将项目命令接入 `game_workflow.py run`，携带 `--task`、`--milestone` 和相关 `--input`。必须直接调用引擎时保留同等输入版本、命令、退出码、日志、产物与状态关联，不能只留 Agent 运行环境临时日志。新项目用 `validate_records.py --layout --production --markdown` 检查交接；已有工程检查等价内容。结构通过不代表玩法或里程碑通过。
+For bulk parameters/curves, create numerical attachments only when useful and link specs. Mark provisional assumptions, use technical exchange/validation, and check actual loaded values. Without loaders/mappings, tables remain candidates, not an integrated tuning system.
 
+Use game_workflow.py run with --task, --milestone, and --input when available. Direct engine calls retain equivalent versions, commands, exit codes, logs, artifacts, and state links beyond temporary agent logs. New-project handoff uses validate_records.py --layout --production --markdown; existing projects use equivalent records. Structure does not validate gameplay/milestones.
 
-结束当前任务实施时更新涉及的专业事实、任务/里程碑状态、证据与管理下一步；失败或中断也要保存。新项目按管理文件约定运行 `validate_records.py --layout --production --closeout --markdown` 并处理结果；只涉及局部资产/功能、已有或自定义结构时检查等价记录，不强制补新作里程碑。检查结构通过不代表验收通过。
+At implementation closeout or interruption, update affected professional facts, task/milestone state, evidence, and next steps. For new projects, run `python tools/validate_records.py --project "GAME_PROJECT" --layout --production --closeout --markdown` and address results. For local changes or existing/custom layouts, check equivalent records without imposing new-project milestones. Structural validity is not acceptance.
 
-定量建模、概率/供需与候选比较可直接调用 `game-numerical-design`；沿用同一功能规格、参数主源与本流程，不新增数值专属阶段。小改动按实际依赖完成，系统/战斗规则由对应专业维护。
+Use game-numerical-design directly for quantitative models, probability/supply-demand, and candidate comparisons. Retain the same specs/sources/workflow without a separate numerical stage. Systems/combat disciplines retain rule ownership.

@@ -22,7 +22,7 @@ class AnimationPackageTests(unittest.TestCase):
             skill = bundle / 'game-animation-pipeline'
             manifest = json.loads((bundle / check_installation.MANIFEST).read_text(encoding='utf-8'))
             for source in (ROOT / 'skills/game-animation-pipeline').rglob('*'):
-                if not source.is_file() or '__pycache__' in source.parts or source.suffix == '.pyc':
+                if not source.is_file() or '__pycache__' in source.parts or 'tests' in source.relative_to(ROOT / 'skills/game-animation-pipeline').parts or source.suffix == '.pyc':
                     continue
                 packaged = skill / source.relative_to(ROOT / 'skills/game-animation-pipeline')
                 # Markdown links are relocated from source layout into runtime.
@@ -34,10 +34,15 @@ class AnimationPackageTests(unittest.TestCase):
             entry = subprocess.run([sys.executable, '-B', '-I', str(skill / 'scripts/anim_pipeline.py'), '--help'],
                                    cwd=temp, capture_output=True, text=True, timeout=30)
             self.assertEqual(entry.returncode, 0, entry.stderr)
-            tests = subprocess.run([sys.executable, '-B', '-I', str(skill / 'scripts/tests/test_pipeline.py'), '-q'],
-                                   cwd=temp, capture_output=True, text=True, timeout=30)
-            self.assertEqual(tests.returncode, 0, tests.stderr)
-            self.assertNotIn('Ran 0 tests', tests.stderr)
+            self.assertFalse((skill / 'scripts/tests').exists())
+            # Input validation must work without importing source tests.
+            invalid = Path(temp) / 'invalid-manifest.json'
+            invalid.write_text('{}', encoding='utf-8')
+            result = subprocess.run([sys.executable, '-B', '-I', str(skill / 'scripts/anim_pipeline.py'),
+                                     'validate', '--manifest', str(invalid)],
+                                    cwd=temp, capture_output=True, text=True, timeout=30)
+            self.assertEqual(result.returncode, 1)
+            self.assertIn('error', json.loads(result.stderr))
             report = check_installation.check(bundle)
             self.assertEqual(report['missing'], [])
             self.assertEqual(report['changed'], [])

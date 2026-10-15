@@ -143,10 +143,15 @@ class IntakeTests(unittest.TestCase):
         self.assertFalse(list(bundle.rglob("browser-dashboard.md")))
         self.assertFalse(list(bundle.rglob("logo.png")))
         runtime = bundle / "game-preproduction/runtime"
-        self.assertFalse((runtime / "docs").exists())
+        self.assertEqual(
+            {p.relative_to(runtime / 'docs').as_posix()
+             for p in (runtime / 'docs').rglob('*') if p.is_file()},
+            set(package_skills.PUBLIC_DOCUMENTS))
         for relative in ("workflows/README.md", "tools/README.md", "adapters/README.md",
-                         "adapters/engines/godot/README.md", "adapters/assets/README.md", "tests/README.md"):
+                         "adapters/engines/godot/README.md", "adapters/assets/README.md", "docs/INSTALLATION.md"):
             self.assertTrue((runtime / relative).is_file(), relative)
+        self.assertFalse((runtime / 'tests').exists())
+        self.assertTrue((Path(__file__).resolve().parent / 'README.md').is_file())
         runtime_markdown = list(runtime.rglob("*.md"))
         # Shared runtime documents can link to sibling Skill references.
         # The containment boundary is the complete bundle, not runtime alone.

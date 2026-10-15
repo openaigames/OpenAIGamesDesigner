@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="350" viewBox="0 0 1000 350" role="img" aria-labelledby="title desc">
+<title id="title">Five development stages, selected for your project</title><desc id="desc">Start at any stage and deliver the agreed scope. Revisit only the affected work.</desc>
+<defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#1950e8"/></marker></defs>
+<rect width="1000" height="350" rx="16" fill="#fff8ed"/><g font-family="Arial,Helvetica,sans-serif">
+<text x="30" y="40" font-size="21" font-weight="700" fill="#14234b">Start where your project needs you</text>
+<text x="970" y="40" text-anchor="end" font-size="14" fill="#626d83">Choose stages · Deliver the agreed scope</text>
+<rect x="30" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="46" y="122" font-size="11" font-weight="700" fill="#ef7525">01 / CONCEPT</text><text x="46" y="156" font-size="13" font-weight="700" fill="#172553">Project Definition</text><text x="46" y="185" font-size="10" fill="#626d83">Set direction and scope</text>
+<path d="M204 150 H218" stroke="#1950e8" stroke-width="2" marker-end="url(#a)"/>
+<rect x="222" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="238" y="122" font-size="11" font-weight="700" fill="#ef7525">02 / GAMEPLAY</text><text x="238" y="156" font-size="13" font-weight="700" fill="#172553">Gameplay Validation</text><text x="238" y="185" font-size="10" fill="#626d83">Test mechanics and game feel</text>
+<path d="M396 150 H410" stroke="#1950e8" stroke-width="2" marker-end="url(#a)"/>
+<rect x="414" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="430" y="122" font-size="11" font-weight="700" fill="#ef7525">03 / PRODUCTION TEST</text><text x="430" y="156" font-size="13" font-weight="700" fill="#172553">Production Validation</text><text x="430" y="185" font-size="10" fill="#626d83">Check quality and methods</text>
+<path d="M588 150 H602" stroke="#1950e8" stroke-width="2" marker-end="url(#a)"/>
+<rect x="606" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="622" y="122" font-size="11" font-weight="700" fill="#ef7525">04 / CONTENT</text><text x="622" y="156" font-size="13" font-weight="700" fill="#172553">Content Production</text><text x="622" y="185" font-size="10" fill="#626d83">Build and integrate content</text>
+<path d="M780 150 H794" stroke="#1950e8" stroke-width="2" marker-end="url(#a)"/>
+<rect x="798" y="96" width="172" height="108" rx="10" fill="#fff" stroke="#dfdfdf"/><text x="814" y="122" font-size="11" font-weight="700" fill="#ef7525">05 / DELIVERY</text><text x="814" y="156" font-size="13" font-weight="700" fill="#172553">Final Delivery</text><text x="814" y="185" font-size="10" fill="#626d83">Project, build, and guidance</text>
+<path d="M884 213 V244 H116 V213" fill="none" stroke="#1950e8" stroke-width="2" marker-end="url(#a)"/>
+<rect x="306" y="231" width="390" height="25" rx="12" fill="#fff8ed"/><text x="500" y="249" text-anchor="middle" fill="#1950e8" font-size="14">Revisit affected work; retain valid results</text>
+<rect x="30" y="277" width="940" height="50" rx="8" fill="#eaf0ff"/><text x="500" y="298" text-anchor="middle" font-size="14" fill="#244284">Choose skills for the task · Track work, assets, parameters, and test results</text>
+<text x="500" y="318" text-anchor="middle" font-size="13" fill="#626d83">Keep an editable project · Distinguish candidates from used assets · Run before delivery</text></g></svg>

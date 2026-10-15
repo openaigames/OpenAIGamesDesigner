@@ -33,6 +33,8 @@ description: 游戏技术设计与工程实施：支持原型/垂直切片构建
 | 字段、配置覆盖、版本与持久化 | [数据配置](references/data-configuration.md) |
 | CSV/Excel 调参回传 | [数值交换](references/numeric-exchange.md)：主源、差异、可恢复写回及运行生效核对 |
 | 资源导入、替换与批次制作 | [资源管线](references/resource-pipeline.md) |
+| 为 Godot 或 UE 5.8 新工程选用基础移动、镜头、交互与重开组件 | [可选运行组件](../../adapters/engines/runtime_components/README.zh-CN.md)：按项目复制并锁定版本；游戏规则留在项目中，已有框架可局部接入 |
+| 规格驱动的静态部件、灰盒地形与场景生成 | [程序化生成](../../adapters/processing/PROCEDURAL.zh-CN.md)：可接入现有资产任务和版本；按稳定对象 ID 合并 JSON 修改 |
 
 只加载当前任务相关方法。专业参考不代表工具已支持任意操作；先查实际能力。共享数值工具支持已绑定 JSON 的往返，原生资源使用工程已有格式与导入器；MCP 联通也不证明项目功能或动画表现已验证。
 
@@ -50,11 +52,11 @@ description: 游戏技术设计与工程实施：支持原型/垂直切片构建
 
 需要比较操作时序与运动响应时，使用 [运行记录比较工具](references/recorded-response-tools.md)。通用动作时间轴与射击配置分开，复用实际运行记录和现有工程调参入口。
 
-操作反馈与动作时序接入时，使用 [跨引擎动作记录](../../adapters/engines/action_timing/README.md)。UE5、Unity、Godot、Three.js、Phaser 和其他网页框架共享记录格式；按当前引擎安装并在真实输入、规则、动画与声音触发位置记录。先验证当前任务事件，再用记录 CLI 比较；不复制维护第二份动作参数。
+操作反馈与动作时序接入时，使用 [跨引擎动作记录](../../adapters/engines/action_timing/README.zh-CN.md)。UE5、Unity、Godot、Three.js、Phaser 和其他网页框架共享记录格式；按当前引擎安装并在真实输入、规则、动画与声音触发位置记录。先验证当前任务事件，再用记录 CLI 比较；不复制维护第二份动作参数。
 
-接入跨引擎动作配置时，参考 [动作配置与调度接口](../../adapters/engines/action_timing/EDITING.md)。用项目实际读取的配置作为生效文件，明确支持的字段，验证开始、结束、中断与限制解除。保存草案、应用、引擎重跑分别记录。
+接入跨引擎动作配置时，参考 [动作配置与调度接口](../../adapters/engines/action_timing/EDITING.zh-CN.md)。用项目实际读取的配置作为生效文件，明确支持的字段，验证开始、结束、中断与限制解除。保存草案、应用、引擎重跑分别记录。
 
-开发自定义客户端与引擎实时调参时，按 [原生测试场景桥接](../../adapters/engines/action_timing/PREVIEW.md) 接入实际使用方。草案只进入测试场景，正式保存沿用原配置及历史；返回实例、配置版本、真实状态、画面与事件。随包原生桥接当前为 Godot，其他引擎不能仅凭通用协议宣称已打通。
+开发自定义客户端与引擎实时调参时，按 [原生测试场景桥接](../../adapters/engines/action_timing/PREVIEW.zh-CN.md) 接入实际使用方。草案只进入测试场景，正式保存沿用原配置及历史；返回实例、配置版本、真实状态、画面与事件。随包原生桥接当前为 Godot，其他引擎不能仅凭通用协议宣称已打通。
 
 资源导入、替换或程序表现实现后，按 [资产生产登记与交付检查](../game-preproduction/references/asset-handoff.md) 同步实际文件、使用方与证据；当前任务资产交接未补齐时，分别报告已运行事实与记录缺口，不宣布完整交付。
 

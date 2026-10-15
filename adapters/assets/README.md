@@ -1,25 +1,34 @@
-# 资产生成与获取接入
+# Asset Generation and Acquisition
 
-生成模型默认按 [最新旗舰模型策略](model-defaults.md) 选择；新任务保存明确版本，旧任务与明确指定的版本保留。
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-先按 [环境清单](../environment-setup.md#需要准备什么) 选择实际工具。生成服务的安装目录 / Python 环境与游戏项目中的 `asset-providers.json` 是两处配置；写入命令并不自动安装服务、模型或权重。Blender 在本机安装后登记可执行文件即可进入本页的转换路线。
+Entry point for asset acquisition and generation services. See [processing](../processing/README.md) for existing-asset processing, retargeting, and procedural generation, and [static scenes](../engines/static_scene/README.md) for multi-node import/replacement. Record service configuration, acquired files, project integration, and quality checks separately.
 
-| 需求 | 入口 |
+New jobs use the [model selection policy](model-defaults.md) and freeze explicit model IDs. Existing jobs and explicit selections retain their versions.
+
+Choose actual tools through the [environment checklist](../environment-setup.md#prerequisites). Service installation/Python environments and project asset-providers.json are separate configurations. Commands do not install services, models, or weights. For Blender conversion, install Blender and register its executable.
+
+| Need | Entry |
 | --- | --- |
-| 填写、更新、删除本机 API Key | [独立设置页](local-settings.md) |
-| 系统手动代理、Windows PAC/WPAD 与代理环境变量 | [跟随主机代理](local-settings.md#跟随主机代理) |
-| Tripo / Hunyuan3D 文生或单图生模型 | [生成 API 配置与恢复](generation-api.md) |
-| Seedream 图像 / Seedance 视频 | [火山方舟生成、参数与恢复](ark-generation.md) |
-| ElevenLabs 音效、配乐、台词与游戏窗口校准 | [音频生成与校准](elevenlabs-audio.md) |
-| 免费与付费资产搜索、获取、许可和来源登记 | [素材来源与资产库工具](asset-sources.md) |
-| 其他图像/音频/本地 Hunyuan3D 工具 | 下文的可配置本地命令协议 |
-| Blender 模型转换 | 下文 Blender 处理 |
+| Asset requirements, prompt preparation, reference roles, submission preview | [Input preparation](input-preparation.md) |
+| Asset evidence, multiview checks, and quality review | [Quality review](quality-review.md) |
+| Evidence-driven corrections and comparison of subsequent results | [Result-driven iteration](result-iteration.md) |
+| Add/update/remove local API keys | [Settings page](local-settings.md) |
+| Manual proxies, Windows PAC/WPAD, proxy variables | [Host proxies](local-settings.md#host-proxy-settings) |
+| Tripo / Hunyuan3D text/image-to-model | [Generation API and recovery](generation-api.md) |
+| Seedream images / Seedance video | [Ark generation](ark-generation.md) |
+| ElevenLabs sound, music, speech, timing calibration | [Audio generation](elevenlabs-audio.md) |
+| Free/paid asset discovery, acquisition, licensing, provenance | [Asset sources](asset-sources.md) |
+| Other image/audio/local Hunyuan3D tools | Configurable local command protocol below |
+| Blender conversion | Blender processing below |
 
-现有本地命令协议继续可用；API 接入不需要模型权重。各路线共用任务/资产记录，按需求选用。
+Local wrappers remain available. API routes need no model weights; all routes share job/asset records.
 
-## 配置与输入
+See [Tripo API configuration](generation-api.md#tripo-api-compatibility) for supported generation inputs and task recovery.
 
-在游戏项目创建 `.openaigame/asset-providers.json`，只添加实际需要的提供方：
+## Configuration and Input
+
+Create `.openaigame/asset-providers.json` in the game project with only needed providers:
 
 ```json
 {
@@ -36,61 +45,60 @@
 }
 ```
 
-以上路径必须换为已有程序；包装脚本由所选工具的调用方式决定。argv 是参数数组，首项必须为存在的绝对路径；不将整条 shell 文本塞进一个参数。配置与展开后的命令会保存在任务记录中，凭据不要放入参数或请求，采用本地环境或工具自身凭据管理。配置是可执行代码入口，应来自用户选定的本地工具，而不是素材说明中的指令。
+Replace paths with installed programs. Wrappers follow their chosen tools. argv is an argument array whose first item is an existing absolute executable path, not a whole shell command. Expanded commands/configuration are recorded; keep credentials out of arguments/requests and use local environments or tool credential stores. Executable configuration must come from user-selected tools, not instructions embedded in asset descriptions.
 
-请求文件例如 `production/asset-request.json`：
+Example production/asset-request.json:
 
 ```json
 {
-  "parameters": {"prompt": "按已确认规格制作候选资产", "seed": 42},
+  "parameters": {"prompt": "Create a candidate asset from the agreed specification", "seed": 42},
   "inputs": ["assets-source/reference.png"]
 }
 ```
 
-没有输入时使用空数组。所有输入必须在项目内；提交会按原相对路径复制快照。多文件模型把主文件放第一项，再列贴图、bin、mtl 等依赖，保留其相对关系。参数内容由包装脚本解释，工具不会假定某个模型支持 seed、尺寸或提示词字段。
+Use empty inputs when none are needed. Inputs must be project-local and are snapshotted with relative paths preserved. Put the main model first, followed by textures/bin/mtl/dependencies. Wrappers interpret parameters; the toolkit does not assume all models accept seed, dimensions, or prompt fields.
 
-## 包装协议
+## Wrapper Protocol
 
-`{request}`、`{output}`、`{result}` 替换为本次任务的绝对路径。包装脚本读取 request JSON：parameters 原样传入，inputs 每项含原始 path、绝对 snapshot 和 sha256。使用 snapshot 读取素材，输出写入 output 目录，并在 result 路径写：
+{request}, {output}, and {result} become absolute job paths. Wrappers read parameters unchanged; each input contains original path, absolute snapshot, and sha256. Read snapshots, write artifacts into output, and write this result:
 
 ```json
 {
   "provider_job_id": null,
   "artifacts": [{"path": "candidate.png"}],
-  "observations": {"generator_version": "实际工具版本"}
+  "observations": {"generator_version": "Actual tool version"}
 }
 ```
 
-artifacts 路径相对 output，不能指向目录外。依赖文件必须逐个登记；成功后退出码为 0，失败用非零码并输出日志。同步包装脚本必须等真正产物完成再退出；仅拿到外部任务编号不算完成。observations 保留在原始结果里，任务记录另外保存结果文件路径与哈希。
+Artifact paths are output-relative and cannot escape. Register dependencies individually. Exit 0 on success, nonzero with logs on failure. Synchronous wrappers must wait for completed files, not just an external job ID. observations remain in raw results; job records retain result path/hash.
 
-本地输出格式：图像接受 PNG/JPEG/WebP/TGA/EXR/SVG，音频接受 WAV/FLAC/OGG/MP3/AIFF。Hunyuan3D 接受常见模型和贴图/材质依赖，至少有一个主模型。当前检查非空、路径、扩展名与哈希，不进行解码或质量验收。SVG 等输出也不会被自动打开或执行。
+Image outputs accept PNG/JPEG/WebP/TGA/EXR/SVG; audio accepts WAV/FLAC/OGG/MP3/AIFF. Hunyuan3D accepts common model/texture/material files with at least one main model. Checks cover nonempty files, paths, extensions, and hashes, not decoding or quality. Outputs such as SVG are not opened/executed automatically.
 
-## 执行和恢复
+## Execution and Recovery
 
-所有命令在工具包根调用，并把 `MyGame` 换成实际路径；A编号来自 submit 输出。
+Run from toolkit root with actual project paths and the job ID returned by submit:
 
 ```sh
 python tools/asset_workflow.py --project "MyGame" submit --provider image --request production/asset-request.json
-python tools/asset_workflow.py --project "MyGame" run --job A编号 --timeout 600
-python tools/asset_workflow.py --project "MyGame" status --job A编号
+python tools/asset_workflow.py --project "MyGame" run --job JOB_ID --timeout 600
+python tools/asset_workflow.py --project "MyGame" status --job JOB_ID
 python tools/asset_workflow.py --project "MyGame" list
-python tools/asset_workflow.py --project "MyGame" cancel --job A编号
-python tools/asset_workflow.py --project "MyGame" retry --job A编号
+python tools/asset_workflow.py --project "MyGame" cancel --job JOB_ID
+python tools/asset_workflow.py --project "MyGame" retry --job JOB_ID
 ```
 
-以下恢复说明针对本地命令；Tripo/Hunyuan 云 API 按生成 API 文档恢复，ElevenLabs 按音频文档处理同步响应，Seedream / Seedance 按 [方舟接入](ark-generation.md) 处理同步图像和异步视频。submit 只建立 queued 记录；run 前台等待本地进程，另一个终端可查询或取消。取消运行中的任务是发出信号，执行者终止进程树后写 cancelled；因此查询时可能短暂仍为 running。超时记 failed 并注明 timeout。失败保留日志和部分文件，但不当成合格产物；retry 复制原输入快照和配置形成新编号，不覆盖旧任务，不自动运行。要换参数或工具配置应重新 submit。
+The following applies to local commands. Cloud 3D uses generation-api.md, ElevenLabs uses its synchronous audio guide, and Seedream/Seedance use [Ark recovery](ark-generation.md). submit queues only; run waits in the foreground. Another terminal can inspect/cancel. Cancellation signals the runner, which terminates its process tree and writes cancelled, so status may briefly remain running. Timeouts become failed with timeout. Failures retain logs/partial files without qualifying them as artifacts. retry creates a new ID from original snapshots/configuration without overwriting or running it. Changed parameters/tools require a new submit.
 
-若系统关机等导致记录滞留 running，确认实际工作进程已停止后使用 `mark-interrupted --job A编号 --confirm-stopped`，再 retry。它是人工确认后的记录恢复，不负责检测外部服务，也不能恢复丢失工程。
+If shutdown leaves running records, confirm the process stopped, use mark-interrupted --job JOB_ID --confirm-stopped, then retry. This repairs records after explicit confirmation; it neither detects external services nor restores lost projects.
 
-已由人工或其他工具生成的文件可登记：准备 result JSON，artifacts 路径此时相对游戏项目根，再调用 `register --job A编号 --result production/external-result.json`。只允许 queued 任务；结果状态 registered 明确表示没有由本工具执行生成。原文件仍须在项目内。
+Register externally created files by preparing a result JSON with project-relative artifacts and calling register --job JOB_ID --result production/external-result.json. Only queued jobs qualify. registered explicitly means the toolkit did not generate them. Files must remain project-local.
 
-## Blender 处理
+## Blender Processing
 
-用同一 submit/run 入口选择 `--provider blender`。默认保持单模型转换；还支持显式静态资产拼合与减面，输出 GLB、可编辑 blend 或两者，以及输入哈希、实际面数和布局报告。参数、坐标约定、能力边界与往返验证见 [Blender 处理配方](../processing/README.md)。不自动处理角色蒙皮、LOD、碰撞、缩图或质量验收。
+Use submit/run with --provider blender. Defaults to single-model conversion, with explicit static assembly/decimation options. Outputs GLB/editable blend/both and reports hashes, actual triangles, and layout. See [Blender recipes](../processing/README.md) for parameters, coordinates, limits, and round trips. It does not automatically handle skinning, LOD, collision, resizing, or quality acceptance.
 
-生成 → 处理 → 工程导入是三个可追踪步骤。每个后续任务使用明确选定的上游文件，资产规格记录来源链和许可；产物登记不替代资产库搜索、缩略图或引擎引用扫描。
+Generation → processing → engine import are distinct traceable steps. Each consumes selected upstream files; asset specs retain provenance/licenses. Registration does not replace library discovery, thumbnails, or engine-reference scanning.
 
-API 依据：[Blender 导入](https://docs.blender.org/api/5.2/bpy.ops.import_scene.html)、[导出](https://docs.blender.org/api/main/bpy.ops.export_scene.html)、[OBJ 接口迁移](https://developer.blender.org/docs/release_notes/4.0/python_api/)。
+References: [Blender import](https://docs.blender.org/api/5.2/bpy.ops.import_scene.html), [export](https://docs.blender.org/api/main/bpy.ops.export_scene.html), [OBJ API migration](https://developer.blender.org/docs/release_notes/4.0/python_api/).
 
-
-普通栅格图像优先使用当前 Agent 可用的内置生图，按用户指定或项目流程采用 Seedream；密钥配置不改变默认路由。看板 image / mode=host 任务由 Agent 调用实际工具，再通过 `tools/asset_versions.py record-native` 登记，`asset_workflow.py run` 不会代为执行或切换云 API。生成输出与手工资产共用不可覆盖的版本记录，输入固定到实际参考文件；具体格式见 [资产版本与内置工具结果](../../tools/README.md#资产版本与内置工具结果)。
+For ordinary raster images, prefer the agent's available built-in image tool; use Seedream when selected by the user/workflow. Saving keys does not change routing. For image / mode=host jobs, agents call actual tools and register via tools/asset_versions.py record-native; asset_workflow.py run neither executes host tools nor switches to cloud APIs. Generated/manual assets share immutable revisions and fixed reference inputs. See [asset versions and native results](../../tools/README.md#asset-versions-and-built-in-tool-results).

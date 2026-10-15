@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "provider": "seedance",
+  "parameters": {
+    "duration": 5,
+    "ratio": "16:9"
+  },
+  "references": [],
+  "routes": [
+    {
+      "requirement": "camera",
+      "via": "prompt"
+    },
+    {
+      "requirement": "lighting",
+      "via": "prompt"
+    },
+    {
+      "requirement": "exclusions",
+      "via": "prompt"
+    }
+  ],
+  "review": {
+    "reviewer": "Set the actual reviewer",
+    "notes": "Review the actual request before marking these checks complete.",
+    "brief_accounted_for": false,
+    "requirements_preserved": false,
+    "no_unrequested_features": false,
+    "reference_roles_checked": false
+  }
+}

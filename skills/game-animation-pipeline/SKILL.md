@@ -41,6 +41,7 @@ description: 制作、校准和验收游戏角色动画资产及武器绑定；�
 | 清单、采样、事件和版本数据 | [数据约定](references/contracts.md) |
 | 原生复用、局部修改、双手释放与方向诊断 | [三种模式和显式绑定](references/modes-and-bindings.md) |
 | Blender ↔ UE 可执行流程、工具与已知边界 | [运行管线](references/running-the-pipeline.md) |
+| 异源骨架重定向、孤立跳帧/触地区间/循环旋转修复，Godot 与 UE 5.8 回传 | [可执行重定向与修复](../../adapters/processing/MOTION.zh-CN.md) |
 | 测试场验收与游戏接入 | [验收和交接](references/review-and-handoff.md) |
 
 `scripts/anim_pipeline.py` 按显式协议版本检查清单、采样和交接：`/2` 支持外部制作、原生复用和局部修改；`/1` 保留旧攻击样例的严格回传检查。骨骼命名、接触事件及测量缺口见 [运行管线的适用范围](references/running-the-pipeline.md#当前入口与-1-兼容范围)。`scripts/blender_stage.py` 提供目标骨架校准、基线烘焙、FBX 导出、外部预览。`scripts/ue_editor_stage.py` 提供参考导出、独立导入和旧测试场生成；原生 `/2` 采样使用共享 Unreal Playback 的实际项目使用方。`assets/unreal` 为旧 `/1` 可移植测试场 C++，需编译到授权实验模块，不是已安装的 Unreal 插件。旧记录的兼容范围见 [旧版采样协议](references/legacy-capture.md)，不用于初始化新工程。
@@ -61,10 +62,10 @@ description: 制作、校准和验收游戏角色动画资产及武器绑定；�
 
 通用动作事件、操作窗口和双视角时序比较使用 [动作时间轴](references/action-timeline.md)。射击、近战、移动与交互的事件由项目定义，原游戏仍负责规则。
 
-需要对照原生动作事件与规则时刻时，按 [跨引擎记录接口](../../adapters/engines/action_timing/README.md) 接入当前工程，用 CLI 对照记录并在引擎原生工具中核对。动画通知、播放请求和实际渲染出来的姿态分别判断；同时记录取消、退出与事件缺失。
+需要对照原生动作事件与规则时刻时，按 [跨引擎记录接口](../../adapters/engines/action_timing/README.zh-CN.md) 接入当前工程，用 CLI 对照记录并在引擎原生工具中核对。动画通知、播放请求和实际渲染出来的姿态分别判断；同时记录取消、退出与事件缺失。
 
-需要编辑动作和声音时，使用 [条形时间轴](../../adapters/engines/action_timing/EDITING.md)。先登记实际素材与引擎使用方，核对片段、过渡、声音和窗口，再应用并重新实录；不以草案试听代替游戏混音验收。
+需要编辑动作和声音时，使用 [条形时间轴](../../adapters/engines/action_timing/EDITING.zh-CN.md)。先登记实际素材与引擎使用方，核对片段、过渡、声音和窗口，再应用并重新实录；不以草案试听代替游戏混音验收。
 
-已接入原生测试场景时，可用 [原生预览桥接](../../adapters/engines/action_timing/PREVIEW.md) 在看板试调、暂停、逐帧、变速和换机位。观察实际骨架与武器求值，区分草案发送、引擎确认及实机结果；完成一轮后保存对应记录。画面回传不是骨骼编辑器，源姿态、蒙皮和 IK 仍按对应层修正。
+已接入原生测试场景时，可用 [原生预览桥接](../../adapters/engines/action_timing/PREVIEW.zh-CN.md) 在看板试调、暂停、逐帧、变速和换机位。观察实际骨架与武器求值，区分草案发送、引擎确认及实机结果；完成一轮后保存对应记录。画面回传不是骨骼编辑器，源姿态、蒙皮和 IK 仍按对应层修正。
 
 当前任务实际制作、转换或接入资产时，按 [资产生产登记与交付检查](../game-preproduction/references/asset-handoff.md) 同步维护既有权威清单：沿用稳定 ID，关联源文件、派生物、用途和实际证据。由执行方补齐当前任务登记，不把补表留给用户；纯讨论与只读检查不写完成状态。

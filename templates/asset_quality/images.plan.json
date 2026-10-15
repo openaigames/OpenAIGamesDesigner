@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "asset_id": "character_views",
+  "kind": "image",
+  "use": "Character reference comparison",
+  "environment": "Source drawing review",
+  "files": [
+    "references/front.png",
+    "references/back.png"
+  ],
+  "views": [
+    {
+      "id": "front",
+      "path": "references/front.png",
+      "set": "reference",
+      "direction": "front",
+      "projection": "unknown",
+      "segmentation": {
+        "alpha": true
+      }
+    },
+    {
+      "id": "back",
+      "path": "references/back.png",
+      "set": "reference",
+      "direction": "back",
+      "projection": "unknown",
+      "segmentation": {
+        "alpha": true
+      }
+    }
+  ],
+  "required_views": [
+    {
+      "set": "reference",
+      "directions": [
+        "front",
+        "back"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "height_consistency",
+      "metric": "height",
+      "priority": "must",
+      "a": "front",
+      "b": "back",
+      "tolerance": 0.03
+    }
+  ],
+  "criteria": [
+    {
+      "id": "identity",
+      "dimension": "multiview",
+      "priority": "must",
+      "description": "Both drawings depict the same character, pose, proportions and asymmetric features."
+    }
+  ]
+}

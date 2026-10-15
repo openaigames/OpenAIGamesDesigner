@@ -1,0 +1,21 @@
+{
+  "FileVersion": 3,
+  "EngineAssociation": "5.8",
+  "Modules": [
+    {
+      "Name": "OAGDExamples",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "PythonScriptPlugin",
+      "Enabled": true
+    },
+    {
+      "Name": "EditorScriptingUtilities",
+      "Enabled": true
+    }
+  ]
+}

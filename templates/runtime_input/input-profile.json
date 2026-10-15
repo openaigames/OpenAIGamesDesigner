@@ -1,0 +1,17 @@
+{
+  "schema": "oagd.input/1",
+  "id": "engineering-example",
+  "deadzone": 0.2,
+  "actions": {
+    "forward": {"context": "game", "keys": ["W", "PadLeftY-"], "rebindable": true},
+    "back": {"context": "game", "keys": ["S", "PadLeftY+"], "rebindable": true},
+    "left": {"context": "game", "keys": ["A", "PadLeftX-"], "rebindable": true},
+    "right": {"context": "game", "keys": ["D", "PadLeftX+"], "rebindable": true},
+    "act": {"context": "game", "keys": ["Space", "PadSouth"], "rebindable": true},
+    "pause": {"context": "global", "keys": ["Escape", "PadStart"], "rebindable": false},
+    "ui_up": {"context": "ui", "keys": ["Up", "PadUp"], "rebindable": false},
+    "ui_down": {"context": "ui", "keys": ["Down", "PadDown"], "rebindable": false},
+    "ui_accept": {"context": "ui", "keys": ["Enter", "PadSouth"], "rebindable": false},
+    "ui_back": {"context": "ui", "keys": ["Backspace", "PadEast"], "rebindable": false}
+  }
+}

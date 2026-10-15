@@ -9,9 +9,13 @@ from mesh_contract import validate_operation
 
 
 def subsystem():
-    if not hasattr(unreal, 'StaticMeshEditorSubsystem'):
-        unreal.load_module('StaticMeshEditor')
-    return unreal.get_editor_subsystem(unreal.StaticMeshEditorSubsystem)
+    # Python reflection can expose the class before its module has initialized
+    # the editor subsystem, particularly in a Python commandlet on UE 5.8.
+    unreal.load_module('StaticMeshEditor')
+    editor = unreal.get_editor_subsystem(unreal.StaticMeshEditorSubsystem)
+    if editor is None:
+        raise ValueError('StaticMeshEditor subsystem unavailable in this editor session')
+    return editor
 
 
 def scalar(value):
@@ -86,6 +90,9 @@ def inspect_mesh(mesh):
                   'fallback_target', 'fallback_percent_triangles', 'fallback_relative_error'):
         optional(nanite, field, lambda f=field: scalar(settings.get_editor_property(f)))
     count = editor.get_lod_count(mesh)
+    # On UE 5.8 this native render-data access waits for an asynchronous mesh
+    # rebuild. Read screen sizes afterwards, otherwise they can be the old ones.
+    mesh.get_num_triangles(0)
     screens = list(editor.get_lod_screen_sizes(mesh))
     lods = []
     for index in range(count):
@@ -206,13 +213,18 @@ def configure(op, load, package):
         if editor.get_lod_count(mesh) != count:
             raise ValueError('LOD generation count differs; derived copy requires review')
     mesh.set_editor_property('lod_for_collision', collision_lod)
+    if op['strategy'] == 'lod':
+        # Use the native screen-size setter as well: a fresh commandlet build
+        # can otherwise leave render-data thresholds zero until initialization.
+        if not editor.set_lod_screen_sizes(mesh, [item['screen_size'] for item in op['lods']]):
+            raise ValueError('Could not set native LOD screen sizes')
     after = inspect_mesh(mesh)
     if after['nanite']['enabled'] != (op['strategy'] == 'nanite'):
         raise ValueError('Nanite enabled state did not persist in memory')
     if op['strategy'] == 'lod':
         for actual, wanted in zip(after['lods'], op['lods']):
             if not math.isclose(actual['screen_size'], wanted['screen_size'], abs_tol=1e-5):
-                raise ValueError('LOD screen size readback mismatch')
+                raise ValueError('LOD screen size readback mismatch: actual='+str(actual['screen_size'])+' wanted='+str(wanted['screen_size']))
         triangles = [lod['render_triangles'] for lod in after['lods']]
         if any(n <= 0 for n in triangles) or any(b > a for a, b in zip(triangles, triangles[1:])):
             raise ValueError('LOD geometry is empty or increases with distance')

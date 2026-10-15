@@ -1,16 +1,33 @@
-# 配置和扩展适配器
+# Configure and Extend Adapters
 
-初次使用先看 [环境准备与操作位置](environment-setup.md)，按要使用的功能选择必要组件，再配置本页的执行命令。
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-优先使用已有项目工具，通过配置接入；只有格式或执行语义不同才新增适配器。workflow 保持通用，具体玩法的设计方法留在相关 Skill 参考里，引擎操作说明与对应实现一同维护。
+## Choose an Integration Layer
 
-引擎与框架分别组织在 [engines/](engines/README.md)。编辑器能力优先复用 Agent 运行环境现有且经过核实的 MCP；原生命令保留构建、测试与打包职责。连接、能力发现、保存重开和证据归档见 [MCP 接入约定](engines/mcp.md)。没有连接的提供方只记录为候选，不计为已实现能力。
+| What to connect | Entry |
+| --- | --- |
+| Project execution, editor authoring, MCP, and observation | [Engine integration](engines/README.md) |
+| Reusable in-game behavior | [Core components](engines/runtime_components/README.md), Godot / UE 5.8 |
+| Native animation import, sampling, and playback | [Sampling](engines/motion/README.md), [playback](engines/motion_playback/README.md) |
+| Multi-node scenes, replacement, and reception | [Static scenes](engines/static_scene/README.md) |
+| Blender, procedural models, and animation processing | [Processing](processing/README.md) |
+| Asset sources and generation services | [Asset integration](assets/README.md) |
 
-## 引擎命令
+Each directory documents its prerequisites, entry points, and limitations. Combine project commands, runtime components, and external services as needed.
 
-网页游戏使用 Three.js（3D）或 Phaser（2D），支持空工程初始化、依赖安装、本地 Vite 服务与构建导出；接入、测试和持续进程说明见 [网页游戏](engines/web.md)。默认 smoke 支持 Playwright 实机加载检查；游戏规则仍需实际项目测试和试玩，构建不会自动批准体验。
+## Environment and Command Configuration
 
-各引擎默认执行能力与参数见 [引擎执行配置](engines/execution.md)。Unity/Unreal 也可通过 `.openaigame/project.json` 的 commands 覆盖默认动作，接入项目实际脚本。例如已初始化的 Unity 项目可以补充：
+Start with [environment setup](environment-setup.md), select the required components, then configure commands here.
+
+Prefer connecting existing project tools through configuration. Add an adapter only when formats or execution semantics differ. Keep workflows general, gameplay methods in the relevant skill references, and engine instructions alongside their implementation.
+
+Engine and framework adapters live under [engines](engines/README.md). Reuse verified MCP connections available in the agent host for editor operations; native commands handle builds, tests, and packaging. See [MCP integration](engines/mcp.md) for discovery, save/reopen checks, and evidence. A provider that has not been connected is only a candidate.
+
+## Engine Commands
+
+Web games use Three.js for 3D or Phaser for 2D. Both support empty-project initialization, dependency installation, a local Vite server, and build export. See [web games](engines/web.md) for setup, testing, and persistent processes. The default smoke check can load a build in a real Playwright browser; gameplay still requires project-specific tests and playtesting.
+
+See [execution configuration](engines/execution.md) for defaults. Unity and Unreal can override actions through `commands` in `.openaigame/project.json`. For example, an initialized Unity project can add:
 
 ```json
 {
@@ -25,26 +42,26 @@
 }
 ```
 
-包装脚本需由项目实际提供；示例不是可直接运行的 Unity 构建器。Unreal 配置 engine 为 unreal，并加相对 engine_root 的 `project_file`，如 `MyGame.uproject`。`expected_version` 可检查工程声明的版本，Unity/UE 不由此证明编辑器实际版本一致。
+The project must supply these wrappers; the example is not a ready-to-run Unity builder. For Unreal, set engine to `unreal` and add `project_file`, relative to `engine_root`, such as `MyGame.uproject`. `expected_version` checks the project's declaration; it does not prove the installed Unity/UE editor matches.
 
-只展开 `{project}`（原生工程根）、`{run}`（本次记录目录）、`{output}`（本次导出目录），其他参数原样保留。首项是绝对可执行文件，进程 cwd 是原生工程根，shell=False。传入 .uproject 时使用真实文件名，不把 `{project}` 当文件路径。命令来自已配置的项目，不解析 Markdown 来执行。
+Only `{project}` (native project root), `{run}` (run record directory), and `{output}` (export directory) are expanded. Other arguments are unchanged. The first argument is an absolute executable path; cwd is the native project root and execution uses `shell=False`. Pass the actual `.uproject` filename rather than treating `{project}` as a file. Commands come from project configuration, not Markdown parsing.
 
-统一能力矩阵见 [执行配置](engines/execution.md)。默认引擎动作缺少必要配置时输出 blocked；实际进程、报告或产物出错时输出 failed。build 的含义随引擎不同：UE 为编译目标，其余为可交付构建；export 登记完整交付文件。
+See the [execution matrix](engines/execution.md). Missing prerequisites produce `blocked`; process, report, or output failures produce `failed`. `build` compiles a target in UE and produces a deliverable in the other adapters. `export` registers complete delivery files.
 
-test 包装脚本应执行实际测试、保留引擎原始报告，并在 `{run}/test-results.json` 写 `{"tests":3,"failed":0,"errors":0}`。三个值必须是整数，tests > 0、失败和错误都为 0 才通过技术检查。退出码为 0 但没有结果、零测试或格式错误都不通过。不能为了通过运行器手写一个虚构结果。
+A test wrapper must execute real tests, preserve the original engine report, and write `{"tests":3,"failed":0,"errors":0}` to `{run}/test-results.json`. All three values must be integers, with tests > 0 and no failures or errors. Exit code zero with no report, zero tests, or invalid data does not pass. Never manufacture a report to satisfy the runner.
 
-export 必须在 output 内真正生成非空交付文件；运行器登记文件哈希。项目包装脚本负责完整性检查和将引擎失败转换为非零码，日志识别只是补充。所有动作有超时和日志；玩法与视觉验证始终另记，不因 exit 0 自动通过。
+Export must create nonempty deliverables under output; the runner records their hashes. Wrappers check completeness and convert engine failures to nonzero exits; log matching is supplementary. All actions have timeouts and logs. Record gameplay and visual results separately from process success.
 
-## 新的提供方与记录
+## New Providers and Records
 
-资产命令协议见 [资产接入](assets/README.md)。新增原生服务适配器时实现 command/validate，注册到工具中，并更新 provider 枚举、能力文档和失败场景测试；不要只加一个不能调用的空文件。Blender 处理器同样走资产任务记录。
+See [asset integration](assets/README.md) for the command protocol. A native provider implements command/validate, registers with the tools, and updates provider enums, documentation, and failure-case tests. An empty module is not an integration. Blender processors use the same asset-job records.
 
-schema 文件是记录格式的维护来源。`validate_records.py` 使用标准库解释这些 schema 用到的有限关键字，遇到不支持的关键字报错；它不是通用 JSON Schema 实现。扩展契约时同时更新解释器和测试，保留版本兼容与迁移说明。记录检查覆盖文件存在性、路径范围和已有哈希，不执行工具或核实专业结论。
+Schema files define record formats. `validate_records.py` uses the standard library to interpret their supported keywords and rejects unsupported keywords; it is not a general JSON Schema implementation. Update its interpreter and tests when extending contracts, preserving compatibility and migration instructions. Record checks inspect files, path boundaries, and hashes; they do not run tools or verify specialist judgments.
 
-源码的 `tests/adapters/` 保存适配器合同样例；根级测试入口统一运行它们。新增能力先用可控本地进程检查缺配置、非零退出、错误输出、超时和产物缺失，再按 [验证计划](../tests/README.md) 接真实工具。打包后在无源码依赖的目录再次调用 CLI。
+Source `tests/adapters/` contains contract fixtures run by the root test entry. Test missing configuration, nonzero exits, invalid output, timeout, and absent artifacts with controlled local processes, then connect real tools following the [validation guide](../tests/README.md). Also execute packaged CLIs from a directory without access to source imports.
 
-依据：[Unity 编辑器命令行](https://docs.unity.com/en-us/engine/6000.7/manual/unity-editor/command-line-arguments/editor)、[Unity 项目构建方法](https://docs.unity.com/en-us/engine/6000.6/manual/building-and-publishing/build-customize-build-pipeline/build-command-line)、[Unreal 构建与打包](https://dev.epicgames.com/documentation/unreal-engine/build-operations-cooking-packaging-deploying-and-running-projects-in-unreal-engine)。实际命令以项目安装版本为准。
+References: [Unity editor CLI](https://docs.unity.com/en-us/engine/6000.7/manual/unity-editor/command-line-arguments/editor), [Unity command-line builds](https://docs.unity3d.com/6000.0/Documentation/Manual/build-command-line.html), [Unreal build and packaging](https://dev.epicgames.com/documentation/unreal-engine/build-operations-cooking-packaging-deploying-and-running-projects-in-unreal-engine). Match commands to the project's installed engine.
 
-音频云生成使用 [ElevenLabs 接入](assets/elevenlabs-audio.md)，支持游戏窗口来源绑定、原件保留和时长校准；与本地音频包装共存。
+Cloud audio uses [ElevenLabs](assets/elevenlabs-audio.md), with source-window binding, original-file preservation, and duration calibration alongside local audio wrappers.
 
-图像与视频云生成使用 [Seedream / Seedance 接入](assets/ark-generation.md)，共用火山方舟密钥，分别处理同步图片响应与异步视频任务。
+Cloud images and video use [Seedream / Seedance](assets/ark-generation.md), sharing an Ark credential while handling synchronous image responses and asynchronous video jobs separately.

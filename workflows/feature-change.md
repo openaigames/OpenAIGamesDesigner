@@ -1,20 +1,21 @@
-# 已有项目新增、修改与修复
+# Add, Change, or Repair an Existing Project
 
-首次立项建立的六个入口持续沿用；当前任务从负责方向进入，修改其正文或详细规格，再检查下游使用方。跨专业时依管理 Skill 的变更影响参考，在一个现有任务/issue/变更记录中关联来源、受影响文件、动作、设计/实现/验证状态和证据。资料足够且属于授权范围的联动修改直接完成；未知选择记录待决并按需澄清，不把识别影响写成已完成。
+[English](feature-change.md) | [简体中文](feature-change.zh-CN.md)
 
-概览仅在定位、核心体验、目标玩家或设计支柱改变时修订；管理入口每轮链接变更，摘要完成与未完成、阻塞和下一步。价格微调等局部修改无需改概览，资产替换也无需强制修改全部专业。保存和验证后复查关联状态，恢复工作时从同一入口继续。
+Retain the six entry documents. Start with the responsible discipline, revise its content/specs, and inspect downstream consumers. Cross-disciplinary changes use one existing task/issue/change record linking source, affected files, actions, independent design/implementation/validation states, and evidence. Complete authorized, supported linked edits directly; clarify material unknown choices without labeling identified impacts as completed work.
 
-读取当前任务相关的设计、资源和实际实现，识别变更影响；小改动无需五份文档或新里程碑。较大功能建立任务，关联现有阶段，必要时有自己的实验里程碑。全项目不会因为新功能被重置为立项。
+Revise the concept only for positioning, core experience, audience, or pillar changes. Management links each change and summarizes completed/open work, blockers, and next steps. Small price adjustments need no concept rewrite; asset replacements need not touch every discipline. Recheck linked state after saving/testing and resume from the same entry.
 
-先沿用用户要求的交付范围。只讨论、研究或整理规格时完成对应交付，不修改工程、不运行游戏，也不把所有修订都创建为制作任务；已要求实施时继续完成授权内的实际修改和检查。
+Read relevant designs, assets, and implementation. Small edits do not require a new document set or milestone. Larger features get tasks linked to the current stage and their own experiments if needed. Adding a feature does not restart planning for the whole project.
 
-依次明确规则/规格的变化、兼容与依赖、实现位置、回归范围。美术替换记录源文件与引擎资源；配置改动保持唯一来源；存档/接口变更明确迁移和恢复策略。
+Honor requested delivery scope. Discussion/research/spec-only requests do not authorize project edits or game runs; implementation requests continue through authorized changes/checks.
 
-涉及数值表或用户回传参数时，沿用策划的数值表方法和技术的数据交换方法：按需生成雏形或导出现有值、修改/重算、比较基线、校验、按授权导入、检查实际生效。表格只是工作副本或已声明的作者源，不能自动覆盖工程中的更新；新建记录、改单位等结构变化另按本流程处理。设计已更新、配置已写入、运行已验证分别更新，同一变更关联受影响表现和技术文件。
+Define rule/spec differences, compatibility/dependencies, implementation locations, and regression scope. Asset changes link source/native resources; configuration keeps one source of truth. Save/interface changes need migration/recovery plans.
 
-实施任务在已有工程执行改动，调用实际可用的命令并记录证据；采用本工具时关联 run，其他引擎沿用工程现有日志/测试记录。比较改前依据与改后结果；旧证据不删除，受到影响的结论标为需复核。更新实际改动、完成依据、剩余问题及下一步，不为小改动生成新项目结构。
+For numerical tables/returned parameters, use design modeling and technical exchange: create/export, edit/recalculate, compare baseline, validate, import within authority, then check effective values. Tables are working copies or explicitly designated source data, never automatic overwrites of newer project edits. Structural changes follow this same workflow. Track design revised, configuration written, and runtime verified separately with linked presentation/technical effects.
 
+Implement in the existing project with actual tools/evidence. Link toolkit runs or equivalent native records. Compare before/after; preserve history and mark affected conclusions for review. Record changes, completion evidence, issues, and next actions without scaffolding a new project for a small edit.
 
-结束当前任务实施时更新涉及的专业事实、任务/里程碑状态、证据与管理下一步；失败或中断也要保存。新项目按管理文件约定运行 `validate_records.py --layout --production --closeout --markdown` 并处理结果；只涉及局部资产/功能、已有或自定义结构时检查等价记录，不强制补新作里程碑。检查结构通过不代表验收通过。
+At implementation closeout or interruption, update affected professional facts, task/milestone state, evidence, and next steps. For new projects, run `python tools/validate_records.py --project "GAME_PROJECT" --layout --production --closeout --markdown` and address results. For local changes or existing/custom layouts, check equivalent records without imposing new-project milestones. Structural validity is not acceptance.
 
-定量建模、概率/供需与候选比较可直接调用 `game-numerical-design`；沿用同一功能规格、参数主源与本流程，不新增数值专属阶段。小改动按实际依赖完成，系统/战斗规则由对应专业维护。
+Use game-numerical-design directly for models, probability/supply-demand, and candidate comparisons, retaining the same specs/sources/workflow. No separate numerical stage is needed; systems/combat disciplines retain rule ownership.

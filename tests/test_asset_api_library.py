@@ -58,17 +58,73 @@ class AssetAPITests(unittest.TestCase):
             client = tripo.Client({})
         with patch.object(http_io, 'json_request', return_value={'code': 0, 'data': {'task_id': 'task-1'}}) as call:
             self.assertEqual(client.submit({'parameters': {'prompt': 'crate'}, 'inputs': []}), 'task-1')
-            self.assertEqual(call.call_args.args[1]['type'], 'text_to_model')
+            self.assertEqual(call.call_args.args[0], 'https://openapi.tripo3d.ai/v3/generation/text-to-model')
+            self.assertNotIn('type', call.call_args.args[1])
             self.assertEqual(call.call_args.args[2]['Authorization'], 'Bearer fixture')
         image = self.root / 'input.png'; image.write_bytes(b'fixture')
-        with patch.object(client, 'call', side_effect=[{'image_token': 'upload-token'}, {'task_id': 'task-2'}]) as call:
+        with patch.object(client, 'call', side_effect=[{'file_token': 'upload-token'}, {'task_id': 'task-2'}]) as call:
             client.submit({'parameters': {}, 'inputs': [{'snapshot': str(image)}]})
-            self.assertEqual(call.call_args.args[1]['file'], {'type': 'png', 'file_token': 'upload-token'})
+            self.assertEqual(call.call_args.args[1]['input'], 'upload-token')
+            self.assertEqual(call.call_args.args[0], '/generation/image-to-model')
         with patch.object(client, 'call', return_value={'task_id': 'task-2', 'status': 'success', 'output': {'model': 'https://example.com/model.glb'}}):
             self.assertTrue(client.query('task-2')['done'])
             with self.assertRaises(ValueError): client.query('wrong-id')
         with patch.object(http_io, 'json_request', return_value={'code': 2000, 'data': {}}):
             with self.assertRaises(ValueError): client.query('task-2')
+
+    def test_tripo_v3_multipart_and_canonical_task_result(self):
+        with patch.object(api_common, 'credential', return_value='fixture'):
+            client = tripo.Client({})
+        with patch.object(http_io, 'json_bytes', return_value={'code':0,'data':{'file_token':'file-1'}}) as upload:
+            self.assertEqual(client.upload_image(b'png bytes','png'),'file-1')
+        url, body, headers = upload.call_args.args
+        self.assertEqual(url,'https://openapi.tripo3d.ai/v3/files')
+        self.assertIn(b'name="file"; filename="input.png"',body)
+        self.assertIn(b'Content-Type: image/png',body)
+        self.assertEqual(headers['Authorization'],'Bearer fixture')
+        response={'code':0,'data':{'task_id':'v2-existing-id','status':'success','credits_consumed':0,
+                  'output':{'model_url':'https://example.com/a.glb','model':'https://example.com/a.glb',
+                            'rendered_image_url':'https://example.com/preview.png','consumed_credit':99}}}
+        with patch.object(http_io,'json_request',return_value=response) as query:
+            result=client.query('v2-existing-id')
+        self.assertEqual(query.call_args.args[0],'https://openapi.tripo3d.ai/v3/tasks/v2-existing-id')
+        self.assertIsNone(query.call_args.args[1])
+        self.assertEqual(result['files'],[{'label':'model_url','url':'https://example.com/a.glb'}])
+        self.assertEqual(result['credit_consumed'],0)
+
+    def test_tripo_bad_upload_and_invalid_inputs_never_submit(self):
+        with patch.object(api_common,'credential',return_value='fixture'):
+            client=tripo.Client({})
+        image=self.root/'input.png'; image.write_bytes(b'fixture')
+        request={'parameters':{},'inputs':[{'snapshot':str(image)}]}
+        for value in ({'image_token':'old-token'},{'file_token':''},{'file_token':{}},{}):
+            with patch.object(client,'call',return_value=value) as call:
+                with self.assertRaises(ValueError): client.submit(request)
+                self.assertEqual(call.call_count,1)
+                self.assertEqual(call.call_args.args[0],'/files')
+        webp=self.root/'input.webp'; webp.write_bytes(b'fixture')
+        invalid=[{'parameters':{},'inputs':[{'snapshot':str(webp)}]},
+                 {'parameters':{'prompt':'crate','text_seed':1},'inputs':[]},
+                 {'parameters':{'prompt':'crate','model':'unverified'},'inputs':[]},
+                 {'parameters':{'prompt':'crate','texture_quality':'fast'},'inputs':[]},
+                 {'parameters':{'prompt':'crate','generate_parts':True},'inputs':[]}]
+        for request in invalid:
+            with patch.object(client,'call') as call:
+                with self.assertRaises(ValueError): client.submit(request)
+                call.assert_not_called()
+
+    def test_tripo_rejects_malformed_success_and_accepts_pending_states(self):
+        with patch.object(api_common,'credential',return_value='fixture'):
+            client=tripo.Client({})
+        for output in ({}, {'rendered_image_url':'https://example.com/a.png'},
+                       {'model_url':{}}, {'model_url':''}, ['unexpected']):
+            with patch.object(client,'call',return_value={'task_id':'id','status':'success','output':output}):
+                with self.assertRaises(ValueError): client.query('id')
+        for status in ('queued','running','failed','cancelled'):
+            with patch.object(client,'call',return_value={'task_id':'id','status':status,'output':None}):
+                result=client.query('id')
+                self.assertFalse(result['done'])
+                self.assertEqual(result['pending'],status in ('queued','running'))
 
     def test_hunyuan_auth_body_and_status(self):
         env = {'TENCENTCLOUD_SECRET_ID': 'fixture-id', 'TENCENTCLOUD_SECRET_KEY': 'fixture-secret', 'HUNYUAN3D_API_KEY': 'fixture-key'}

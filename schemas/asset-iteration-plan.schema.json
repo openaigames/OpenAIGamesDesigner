@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-iteration-plan",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "report": {
+      "type": "string",
+      "minLength": 1
+    },
+    "previous": {
+      "type": "string",
+      "minLength": 1
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "regenerate",
+        "postprocess",
+        "collect_evidence",
+        "accept",
+        "stop"
+      ]
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "max_rounds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_stalled_rounds": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "max_rounds",
+        "max_stalled_rounds"
+      ],
+      "additionalProperties": false
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "issue": {
+            "type": "string",
+            "minLength": 1
+          },
+          "recheck": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "issue",
+          "recheck"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 100
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "prompt",
+              "reference",
+              "parameter",
+              "route"
+            ]
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "maxItems": 100
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": [
+              "string",
+              "object"
+            ]
+          }
+        },
+        "required": [
+          "kind",
+          "issues",
+          "reason",
+          "expected",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 64
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "maxItems": 100
+          },
+          "operation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "issues",
+          "operation",
+          "expected"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 64
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "reviewer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        },
+        "brief_accounted_for": {
+          "type": "boolean"
+        },
+        "requirements_preserved": {
+          "type": "boolean"
+        },
+        "no_unrequested_features": {
+          "type": "boolean"
+        },
+        "reference_roles_checked": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "reviewer",
+        "notes",
+        "brief_accounted_for",
+        "requirements_preserved",
+        "no_unrequested_features",
+        "reference_roles_checked"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "report",
+    "action",
+    "policy",
+    "targets",
+    "changes",
+    "tasks",
+    "review"
+  ],
+  "additionalProperties": false
+}

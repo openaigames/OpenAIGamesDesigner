@@ -1,0 +1,11 @@
+{
+  "blender": "4.5.9 LTS",
+  "triangles": 13524,
+  "materials": [
+    "Stone",
+    "Trim"
+  ],
+  "source": "Original engineering calibration portal, not final art",
+  "license": "Toolkit LICENSE",
+  "glb_sha256": "9a3ef86368ed22a0d7c34d482b277e0dfd56c10e7bae150c5d2952fac4ace677"
+}

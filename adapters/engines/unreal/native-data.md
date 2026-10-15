@@ -1,8 +1,10 @@
-# 原生参数与曲线读写
+# Native Parameter and Curve Access
 
-使用现有 `engine_workflow execute` 和会话检查点。原生 DataAsset/CurveFloat 继续作为编辑主源；请求与结果 JSON 是交换和证据，不要求把游戏改成 JSON 驱动。
+[English](native-data.md) | [简体中文](native-data.zh-CN.md)
 
-`inspect` 请求可加 `native_reads`，每项给出 id、path 和需要读取的 properties。CurveFloat 使用 `curve_times` 取得指定时间的原生求值，不宣称这些样本等于完整曲线键或实际运行值。
+Uses `engine_workflow execute` and session checkpoints. Native DataAsset/CurveFloat assets remain the editable source of truth. Request/result JSON carries interchange data and evidence; games need not become JSON-driven.
+
+Add `native_reads` to an `inspect` request. Each entry specifies id, path, and properties to read. For CurveFloat, `curve_times` evaluates the native curve at specified times. These samples are neither the complete curve keys nor observed runtime values.
 
 ```json
 {"engine":"unreal","mode":"inspect","native_reads":[
@@ -11,7 +13,7 @@
 ]}
 ```
 
-已授权修改使用 edit 的 `native_patch`，expected 取刚读回的原值，values 只包含当前任务需修改字段：
+For authorized changes, use edit's `native_patch`. Set expected to the values just read, and include only fields needed for the task in values:
 
 ```json
 {"engine":"unreal","mode":"edit","operations":[
@@ -20,10 +22,10 @@
 ]}
 ```
 
-工具在写前做精确基线比较；保存前读回并按原生浮点精度核对当前任务字段。复杂数据和曲线键通过项目自己的 UFunction 导出/导入：读取项使用 `read_method`；写入项同时给出 `read_method`、`write_method`。只读方法返回完整 JSON 对象字符串，写方法接受当前任务变化的 JSON 字符串并返回 bool，项目负责字段范围、曲线键、插值和事务。不得把任意未知方法当安全导入器。
+The tool compares the baseline exactly before writing, then reads back task fields before saving with native floating-point precision. Export/import complex data and curve keys through project UFunctions: reads use `read_method`; writes specify both `read_method` and `write_method`. Read methods return a complete JSON object string. Write methods accept a JSON string of task changes and return bool. The project controls field scope, curve keys, interpolation, and transactions. Unknown methods must not be assumed to be safe importers.
 
-expected 必须等于整个项目导出快照；values 是其中被授权改变的字段子集，写后导出需包含对应结果。失败不自动重放：查看会话副作用和检查点，必要时用原有恢复入口。导出器不能偷偷修复、保存或创建资源。
+expected must equal the entire project export snapshot. values is the authorized subset of fields, and the subsequent export must contain the intended results. Failures are not replayed automatically: inspect side effects and checkpoints, then use the existing recovery entry point if needed. Exporters must not secretly repair, save, or create assets.
 
-保存执行记录为 `native_asset_saved`。随后必须启动**另一次 inspect 会话**，从磁盘重新加载并核对；再让真实游戏使用方运行，使用共享观察记录最终生效值和覆盖条件。单次 UObject 读回不叫磁盘重载，作者值正确也不证明运行实例正确或手感达标。
+A save is recorded as `native_asset_saved`. Then start **a separate inspect session** to reload from disk and verify. Run the actual game consumer and use shared observations to record effective values and override conditions. Reading the same UObject is not a disk reload; correct authored values do not establish correct runtime instances or satisfactory game feel.
 
-引擎版本/插件差异可能使某些属性不可反射；此时显示具体读取失败，改用项目已验证的只读接口，不强行替换原生资源格式。
+Engine/plugin differences can make properties unavailable through reflection. Report the specific read failure and use a verified project read-only interface rather than forcing a change of native asset format.

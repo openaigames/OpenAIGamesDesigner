@@ -8,17 +8,26 @@ import json
 import fnmatch
 import os
 import re
-from urllib.parse import unquote
+from urllib.parse import quote, unquote
 from check_installation import bundle_id, MANIFEST
+
+
+PUBLIC_DOCUMENTS = tuple(
+    stem + suffix
+    for stem in ('README', 'INSTALLATION', 'runtime-guide', 'project/README')
+    for suffix in ('.md', '.zh-CN.md'))
+
+SOURCE_URL = 'https://github.com/openaigames/OpenAIGamesDesigner'
 
 
 LOCAL_NAMES = {'.git', '.hg', '.svn', '__pycache__', '.godot', 'runtime',
                '.venv', 'node_modules', '.openaigame', '.asset-browser',
                '.local-review', 'credentials', 'secrets', 'work', 'outputs',
-               'action-test-output'}
+               'action-test-output', 'binaries', 'intermediate', 'saved', 'deriveddatacache', 'tests',
+               '.pytest_cache', '.mypy_cache', '.ruff_cache', 'htmlcov'}
 LOCAL_PATTERNS = ('*.pyc', '*.pyo', '.env', '.env.*', 'credentials*.json',
                   'secrets*.json', '*.pem', '*.key', '*.p12', '*.pfx',
-                  '*.log', '*.pid', '*.ready.json', 'ready.json')
+                  '*.log', '*.pid', '*.ready.json', 'ready.json', '.coverage')
 
 
 def release_ignore(directory, names):
@@ -30,15 +39,22 @@ def release_ignore(directory, names):
             (Path(directory).as_posix().endswith('/tools/workbench/web') and name == 'demo')]
 
 
-def relocate_links(text, source, destination, mapping):
+def relocate_links(text, source, destination, mapping, source_root=None):
     """Keep local Markdown links valid after shared runtime files move."""
     def replace(match):
         target = match.group(2)
         if re.match(r'^[a-zA-Z][\w+.-]*:', target) or target.startswith('#'):
             return match.group(0)
         path, separator, fragment = target.partition('#')
-        packaged = mapping.get((source.parent / unquote(path)).resolve())
+        resolved = (source.parent / unquote(path)).resolve()
+        packaged = mapping.get(resolved)
         if packaged is None:
+            if source_root and resolved.is_relative_to(source_root):
+                relative = resolved.relative_to(source_root)
+                if 'tests' in relative.parts and resolved.exists():
+                    kind = 'tree' if resolved.is_dir() else 'blob'
+                    url = SOURCE_URL + '/' + kind + '/main/' + quote(relative.as_posix(), safe='/')
+                    return match.group(1) + url + (separator + fragment if separator else '') + ')'
             return match.group(0)
         relative = Path(os.path.relpath(packaged, destination.parent)).as_posix()
         return match.group(1) + relative + (separator + fragment if separator else '') + ')'
@@ -63,7 +79,7 @@ def package(destination):
     runtime = destination / "game-preproduction/runtime"
     for folder in ("templates", "workflows", "adapters", "schemas"):
         shutil.copytree(source / folder, runtime / folder, ignore=ignore)
-    for name in ("LICENSE", "THIRD_PARTY_NOTICES.md"):
+    for name in ("LICENSE", "THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES.zh-CN.md"):
         shutil.copy2(source / name, runtime / name)
     shutil.copytree(source / "licenses", runtime / "licenses", ignore=ignore)
     (runtime / "tools").mkdir()
@@ -73,18 +89,52 @@ def package(destination):
     shutil.copy2(source / 'tools/numeric_models.py',runtime / 'tools/numeric_models.py')
     shutil.copy2(source / 'tools/audio_workflow.py',runtime / 'tools/audio_workflow.py')
     shutil.copy2(source / 'tools/asset_versions.py',runtime / 'tools/asset_versions.py')
+    shutil.copy2(source / 'tools/asset_prepare.py',runtime / 'tools/asset_prepare.py')
+    shutil.copy2(source / 'tools/asset_quality.py',runtime / 'tools/asset_quality.py')
+    shutil.copy2(source / 'tools/asset_iterate.py',runtime / 'tools/asset_iterate.py')
     shutil.copytree(source / 'tools/workbench', runtime / 'tools/workbench', ignore=ignore)
     shutil.copy2(source / 'tools/environment_workflow.py', runtime / 'tools/environment_workflow.py')
+    shutil.copy2(source / 'tools/runtime_components.py', runtime / 'tools/runtime_components.py')
+    shutil.copy2(source / 'tools/runtime_migration.py', runtime / 'tools/runtime_migration.py')
+    shutil.copy2(source / 'tools/engineering_example.py', runtime / 'tools/engineering_example.py')
+    shutil.copy2(source / 'tools/procedural_assets.py', runtime / 'tools/procedural_assets.py')
+    shutil.copy2(source / 'tools/static_assets.py', runtime / 'tools/static_assets.py')
+    shutil.copy2(source / 'tools/static_scene.py', runtime / 'tools/static_scene.py')
+    shutil.copy2(source / 'tools/scene_replacement.py', runtime / 'tools/scene_replacement.py')
+    shutil.copy2(source / 'tools/scene_handoff.py', runtime / 'tools/scene_handoff.py')
+    shutil.copy2(source / 'tools/scene_reception.py', runtime / 'tools/scene_reception.py')
+    shutil.copy2(source / 'tools/runtime_validation.py', runtime / 'tools/runtime_validation.py')
+    shutil.copy2(source / 'tools/bundle_upgrade.py', runtime / 'tools/bundle_upgrade.py')
+    shutil.copy2(source / 'tools/motion_workflow.py', runtime / 'tools/motion_workflow.py')
+    shutil.copy2(source / 'tools/motion_profile.py', runtime / 'tools/motion_profile.py')
+    shutil.copy2(source / 'tools/motion_native.py', runtime / 'tools/motion_native.py')
+    shutil.copy2(source / 'tools/motion_playback.py', runtime / 'tools/motion_playback.py')
+    shutil.copy2(source / 'tools/motion_turns.py', runtime / 'tools/motion_turns.py')
+    shutil.copy2(source / 'tools/motion_handoff.py', runtime / 'tools/motion_handoff.py')
+    shutil.copy2(source / 'tools/motion_root.py', runtime / 'tools/motion_root.py')
+    shutil.copy2(source / 'tools/motion_constraints.py', runtime / 'tools/motion_constraints.py')
     shutil.copytree(source / 'tools/environment', runtime / 'tools/environment', ignore=ignore)
     shutil.copy2(source / "tools/README.md", runtime / "tools/README.md")
-    (runtime / "tests").mkdir()
-    shutil.copy2(source / "tests/README.md", runtime / "tests/README.md")
-    shutil.copytree(source / 'tests/fixtures',runtime / 'tests/fixtures',ignore=ignore)
+    shutil.copy2(source / "tools/README.zh-CN.md", runtime / "tools/README.zh-CN.md")
+    # Maintenance tests and their fixtures stay in the source repository.
+    # Editable game examples are distributed through templates and skill assets.
+    # Copy public guides explicitly; project plans and review receipts stay local.
+    # The root README comes from skills/README.md; the runtime gets its own entry.
+    for relative in PUBLIC_DOCUMENTS:
+        target = runtime / 'docs' / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source / 'docs' / relative, target)
+    shutil.copy2(source / 'docs/runtime-guide.md', runtime / 'README.md')
+    shutil.copy2(source / 'docs/runtime-guide.zh-CN.md', runtime / 'README.zh-CN.md')
     mapping = {}
     for target in destination.rglob('*'):
         if not target.is_file():
             continue
-        if target.is_relative_to(runtime):
+        if target == runtime / 'README.md':
+            original = source / 'docs/runtime-guide.md'
+        elif target == runtime / 'README.zh-CN.md':
+            original = source / 'docs/runtime-guide.zh-CN.md'
+        elif target.is_relative_to(runtime):
             original = source / target.relative_to(runtime)
         elif target == destination / 'LICENSE':
             original = source / 'LICENSE'
@@ -92,10 +142,12 @@ def package(destination):
             original = source / 'skills' / target.relative_to(destination)
         if original.is_file():
             mapping[original.resolve()] = target
+    mapping[(source / 'docs/runtime-guide.md').resolve()] = runtime / 'README.md'
+    mapping[(source / 'docs/runtime-guide.zh-CN.md').resolve()] = runtime / 'README.zh-CN.md'
     for original, target in mapping.items():
         if target.suffix == '.md':
             content = original.read_text(encoding='utf-8-sig')
-            rewritten = relocate_links(content, original, target, mapping)
+            rewritten = relocate_links(content, original, target, mapping, source)
             if rewritten != content:
                 target.write_text(rewritten, encoding='utf-8')
     files = {p.relative_to(destination).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()

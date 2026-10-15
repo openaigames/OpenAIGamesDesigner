@@ -43,6 +43,9 @@ def safe_path(root, relative, metadata=False):
         # Generated/acquired files already have a narrow allowlist in the shared registry.
         if relative.startswith(('.openaigame/asset-library/', '.openaigame/asset-jobs/')):
             return art_registry.asset_path(root, relative)
+        if relative.startswith('.openaigame/asset-versions/'):
+            from . import asset_versions
+            return asset_versions.file_path(root, relative)
         raise ReviewError('不能读取隐藏配置或凭据文件')
     current = Path(root).resolve()
     for part in parts:
@@ -147,9 +150,15 @@ def assess(root, row, cache=None):
     checks = {}
     for gate, label in GATES.items():
         check = copy.deepcopy(row['checks'].get(gate, {'status': 'not_run'}))
-        if check['status'] in ('pass', 'na'):
+        if check['status'] in ('pass', 'na') or check.get('quality'):
             changed = check.get('versionKey') != version_key(row) or bool(stale)
             changed |= any(current(item['path']) != item['sha256'] for item in check.get('evidence', []))
+            if check.get('quality'):
+                try:
+                    from adapters.assets import quality
+                    quality.inspect(root, check['quality']['path'], check['quality']['sha256'])
+                except (OSError, ValueError, KeyError, TypeError):
+                    changed = True
             if changed:
                 check['status'] = 'stale'
         checks[gate] = check
@@ -261,8 +270,16 @@ def apply(root, data, request):
         if gate == 'source' and status == 'pass' and not row['license']:
             raise ReviewError('请先填写许可与费用依据')
         row['stage'] = 'testing'
+        quality_link = None
+        if request.get('quality_report'):
+            if gate != 'external':
+                raise ReviewError('质量报告仅用于源资产外部检查，不能代替引擎或游戏验收')
+            from adapters.assets import quality
+            quality_link = quality.bind_review(root, row, request['quality_report'], status)
         row['checks'][gate] = {'status': status, 'method': method, 'reviewer': reviewer, 'conclusion': conclusion,
                                'evidence': evidence, 'versionKey': version_key(row), 'at': now()}
+        if quality_link:
+            row['checks'][gate]['quality'] = quality_link
         row.setdefault('checkHistory', []).append({'gate': gate, **copy.deepcopy(row['checks'][gate])})
         event(row, GATES[gate] + '：' + status)
     elif action == 'qualify':

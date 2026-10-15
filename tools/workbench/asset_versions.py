@@ -309,7 +309,7 @@ def complete_job(root,job):
     sets=job.get('output_sets')
     if sets is None:
         files=list(outputs)
-        if job['provider'] in ('hunyuan3d','tripo','blender'):
+        if job['provider'] in ('hunyuan3d','tripo','blender','procedural'):
             # A model's downloaded archive/texture may arrive first. Keep all companions,
             # but use a directly previewable mesh as the default version primary.
             priority={ext:i for i,ext in enumerate(('.glb','.gltf','.fbx','.blend','.obj'))}
@@ -335,6 +335,10 @@ def complete_job(root,job):
               'kind':kind,'files':[{'path':p,'sha256':outputs[p]['sha256']} for p in files],
               'provenance':{'job':job['job_id'],'variant':i,'tool':job.get('execution_source',job['provider']),
                             'parameters':parameters,'inputs':job['request']['inputs']}}
+        if job['request'].get('preparation'):
+            spec['provenance']['preparation']=job['request']['preparation']
+        if job['request'].get('iteration'):
+            spec['provenance']['iteration']=job['request']['iteration']
         if context:spec.update(context)
         if gid:spec['group']=gid
         result=mutate(root,spec);gid=result['group'];results.append(result)

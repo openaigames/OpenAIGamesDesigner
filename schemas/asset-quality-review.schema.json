@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-quality-review",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "reviewer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "unknown",
+              "na"
+            ]
+          },
+          "score": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "expected": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observed": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+            },
+            "minItems": 0,
+            "maxItems": 128
+          },
+          "regions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "evidence": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+                },
+                "x": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "y": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "width": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "height": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "evidence",
+                "x",
+                "y",
+                "width",
+                "height"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0,
+            "maxItems": 32
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "score",
+          "confidence",
+          "expected",
+          "observed",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 100
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "explained",
+              "confirmed",
+              "unknown"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+            },
+            "minItems": 0,
+            "maxItems": 128
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "reason",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 512
+    }
+  },
+  "required": [
+    "schema_version",
+    "reviewer",
+    "criteria",
+    "findings"
+  ],
+  "additionalProperties": false
+}

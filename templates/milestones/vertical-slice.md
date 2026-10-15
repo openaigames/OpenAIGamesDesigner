@@ -1,34 +1,36 @@
 # {{id}} — {{title}}
 
-- 类型：制作验证 / 垂直切片
-- 状态：draft（draft / ready / active / review / accepted / rework / stopped）
-- 所属项目阶段：待核实。
+[English](vertical-slice.md) | [简体中文](vertical-slice.zh-CN.md)
 
-## 代表性体验与制作问题
+- Type: production validation / vertical slice.
+- State: draft (draft / ready / active / review / accepted / rework / stopped).
+- Project stage: to verify.
 
-说明要展示的完整体验段落、已选机制、品质目标和要验证的制作可行性。不默认添加完整游戏的全部系统。
+## Representative Experience and Production Questions
 
-## 范围与输入基线
+Describe the complete experience segment, chosen mechanics, quality targets, and feasibility questions without automatically adding every system of a full game.
 
-关联已验证机制、设计版本、实际原生工程、目标平台和约束。选择代表性关卡/角色/界面/声音等适用内容，标明允许占位和必须达到目标品质的部分。
+## Scope and Baseline
 
-## 任务与资产集成
+Link validated mechanics, design revision, native project, platform, and constraints. Select representative levels/characters/UI/audio as needed; distinguish permitted placeholders from required target quality.
 
-引用玩法、资产、动画/VFX/声音、UI、关卡和性能任务中实际需要的项。源资产与引擎资源建立关联；默认在原工程演进。
+## Tasks and Asset Integration
 
-## 验收依据
+Link only needed gameplay, asset, animation/VFX/audio, UI, level, and performance tasks. Connect sources to native resources and evolve the same project.
 
-| 维度 | 本项目具体目标 | 操作与环境 | 证据位置/结果 |
+## Acceptance Criteria
+
+| Dimension | Project target | Operation/environment | Evidence/result |
 | --- | --- | --- | --- |
-| 代表性体验 | 待确定 | 实际试玩 | 未执行 |
-| 视听与交互品质 | 待确定 | 目标呈现环境 | 未执行 |
-| 技术可行性 | 待确定 | 目标硬件/负载/采样方法 | 未执行 |
-| 制作可行性 | 待确定 | 实际制作时间/返工/复用观察 | 未执行 |
+| Representative experience | To define | Actual playtest | Not run |
+| Audiovisual/interaction quality | To define | Target presentation | Not run |
+| Technical feasibility | To define | Target hardware/load/sampling | Not run |
+| Production feasibility | To define | Actual time/rework/reuse observations | Not run |
 
-## 实际交付与限制
+## Delivery and Limits
 
-尚未执行。分别记录原生工程、引擎内运行版本、独立导出包、来源/许可及已知问题。未导出不可称为独立可玩包。
+Not executed. Record native project, editor runtime, standalone exports, provenance/licenses, and issues separately. Without export, do not claim a standalone build.
 
-## 评审与回返
+## Review and Rework
 
-尚未评审。品质问题进入修改；机制问题回到相关原型；范围问题修订里程碑。切片可以是最终交付目标，不强制进入完整制作。
+Not reviewed. Quality issues need revisions; mechanics return to relevant prototypes; scope changes revise the milestone. A slice can be the final endpoint without full production.

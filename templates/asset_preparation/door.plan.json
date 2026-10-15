@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "provider": "tripo",
+  "parameters": {
+    "type": "text_to_model"
+  },
+  "references": [],
+  "routes": [
+    {
+      "requirement": "parts",
+      "via": "prompt"
+    },
+    {
+      "requirement": "finish",
+      "via": "prompt"
+    },
+    {
+      "requirement": "opening",
+      "via": "postprocess",
+      "reason": "Set dimensions and collision in the project.",
+      "check": "Measure clear opening and test passage in Godot and Unreal."
+    },
+    {
+      "requirement": "pivot",
+      "via": "postprocess",
+      "reason": "Separate the door leaf and place its origin on the hinge axis.",
+      "check": "Open and close the door in the target scene; check frame clearance."
+    }
+  ],
+  "review": {
+    "reviewer": "Set the actual reviewer",
+    "notes": "Review the actual request before marking these checks complete.",
+    "brief_accounted_for": false,
+    "requirements_preserved": false,
+    "no_unrequested_features": false,
+    "reference_roles_checked": false
+  }
+}

@@ -23,6 +23,8 @@ description: 技术美术：检查和加工骨架、蒙皮、重定向、单位�
 
 异源骨架、左右镜像、握柄或步幅问题，按需使用 [角色集成方法](references/character-animation-integration.md)。静态拼合和减面使用现有资产任务的 Blender 配方（源码 `adapters/processing/README.md`；安装包在相邻 `game-preproduction/runtime/adapters/processing/README.md`），不把处理报告当作美术通过。
 
+已蒙皮角色的批量重定向或受限动作修复，可使用 [可执行重定向与修复](../../adapters/processing/MOTION.zh-CN.md)。先检查真实骨架与显式映射，核对根/骨盆位移策略，再读取 Blender 与 Godot/UE 5.8 的实测对照；服装适配、自动绑骨及任意穿模修复不属于该工具。
+
 ## 制作迭代与版本交接
 
 交付物多次修改或使用旧方案时，按 [资产版本与迭代记录](../game-art-direction/references/asset-versions.md) 保留实际文件、修改底稿、参考用途和当前选用。不同专业交付物分别建组，配套文件组成同一版；选回旧版不删除新版本，也不自动覆盖工程、重新绑定或认定验收通过。

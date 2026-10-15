@@ -7,6 +7,7 @@ from copy import deepcopy
 
 CHECKED_AT = '2026-10-09'
 TRIPO = 'v3.1-20260211'
+TRIPO_TEXTURE = 'v3.5-20260815'
 HUNYUAN = '3.1'
 SEEDREAM = 'doubao-seedream-5-0-pro-260628'
 SEEDANCE = 'doubao-seedance-2-5-260628'
@@ -25,7 +26,7 @@ def selection(provider, parameters):
             'seedance': ('model', SEEDANCE)}.get(provider)
 
 
-def prepare(provider, request, settings=None):
+def prepare(provider, request, settings=None, *, new_job=False):
     """Pin a missing model without mutating callers or explicit version choices."""
     prepared = deepcopy(request)
     if provider == 'hunyuan3d' and settings is not None and settings.get('mode') != 'api':
@@ -35,4 +36,10 @@ def prepare(provider, request, settings=None):
     if selected:
         field, model = selected
         parameters.setdefault(field, model)
+    # Only newly queued flagship jobs acquire the new texture default. Historical
+    # requests and already-issued approvals retain their original texture choice.
+    if (new_job and provider == 'tripo' and selected
+            and parameters.get('model_version') == TRIPO
+            and (parameters.get('texture', True) or parameters.get('pbr', True))):
+        parameters.setdefault('texture_version', TRIPO_TEXTURE)
     return prepared

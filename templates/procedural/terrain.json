@@ -1,0 +1,8 @@
+{
+  "schema_version":1, "kind":"terrain", "seed":27,
+  "width":24, "depth":24, "cells":32, "amplitude":2, "profile":"basin",
+  "road":{"width":3,"height":0},
+  "clearances":[{"center":[0,0,4],"size":[6,1,6]}],
+  "scatter":{"count":12,"size":[1,1.5,1],"gap":0.6,"max_slope":0.5},
+  "triangle_budget":10000
+}

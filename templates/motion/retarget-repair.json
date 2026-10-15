@@ -1,0 +1,22 @@
+{
+  "schema": "oagd.motion/1",
+  "source": {"file": "source.blend", "armature": "SourceRig", "sha256": "REPLACE_WITH_INSPECT_SHA256"},
+  "target": {"file": "target.blend", "armature": "TargetRig", "sha256": "REPLACE_WITH_INSPECT_SHA256"},
+  "mapping": {
+    "root": "Root", "hips": "Hips", "spine": "Spine", "head": "Head",
+    "thigh_L": "LeftUpLeg", "shin_L": "LeftLeg", "foot_L": "LeftFoot",
+    "thigh_R": "RightUpLeg", "shin_R": "RightLeg", "foot_R": "RightFoot"
+  },
+  "alignment_xyzw": [0, 0, 0, 1],
+  "root_motion": {"bone": "root", "owner": "animation", "translation": "scaled", "scale": 1, "translation_bones": ["hips"]},
+  "tolerances": {"contact_m": 0.002},
+  "clips": [{
+    "id": "walk", "action": "Walk", "start_frame": 1, "end_frame": 31, "fps": 30,
+    "repairs": {
+      "rotation_spikes": {"bones": ["head"], "threshold_deg": 50, "neighbor_deg": 10},
+      "loop": {"bones": ["head"], "blend_s": 0.2},
+      "contacts": [{"chain": ["thigh_L", "shin_L", "foot_L"], "start_s": 0.25, "end_s": 0.75, "blend_s": 0.2,
+                    "anchor": "first_sample", "pole": [0, -1, 0], "max_correction_m": 0.08, "max_joint_rotation_deg": 45}]
+    }
+  }]
+}

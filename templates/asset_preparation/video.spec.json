@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "asset_id": "video",
+  "kind": "video",
+  "brief": "A slow camera move past an abandoned warehouse doorway.",
+  "requirements": [
+    {
+      "id": "camera",
+      "text": "Move forward smoothly at walking speed.",
+      "category": "identity",
+      "priority": "must"
+    },
+    {
+      "id": "lighting",
+      "text": "Keep overcast daylight and muted industrial colours.",
+      "category": "appearance",
+      "priority": "must"
+    },
+    {
+      "id": "exclusions",
+      "text": "Do not introduce characters, captions or sudden cuts.",
+      "category": "identity",
+      "priority": "must"
+    }
+  ],
+  "references": []
+}

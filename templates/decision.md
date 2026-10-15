@@ -1,30 +1,32 @@
 # {{id}} — {{title}}
 
-- 类型：重要决定
-- 状态：待决定（按实际记录为待决定、暂定、已决定、已替代或撤回）。
-- 日期、决定来源/参与者、适用范围与版本：待填写。
+[English](decision.md) | [简体中文](decision.zh-CN.md)
 
-重要取舍需要跨轮追踪时使用；小修改可留在现有任务或管理记录，不额外建立文件。模型建议不等于用户决定。
+- Type: significant decision.
+- State: pending; use pending, provisional, decided, superseded, or withdrawn as appropriate.
+- Date, decision source/participants, scope, and revision: to fill.
 
-## 问题与依据
+Use for significant choices requiring continued tracking. Small changes can stay in tasks/management. Agent recommendations are not user decisions.
 
-记录需要解决的冲突、已有规则/约束、证据及未知，以及为什么现在需要取舍。
+## Question and Evidence
 
-## 候选与影响
+Describe the conflict, rules/constraints, evidence, unknowns, and why a decision is needed now.
 
-| 方案 | 支持的目标 | 代价、依赖与风险 | 依据/未知 |
+## Options and Impact
+
+| Option | Supported goals | Costs, dependencies, risks | Evidence/unknowns |
 | --- | --- | --- | --- |
 
-仅记录实际考虑过的候选，不为凑表虚构讨论过程。
+Include only options actually considered; do not invent discussion to fill the table.
 
-## 当前决定
+## Decision
 
-尚未决定。实际发生后记录选择、理由、授权或明确答复的来源；暂定内容说明复核条件。授权内的常规实施不因此新增审批。
+Not decided. Record the choice, reasoning, and authorization/explicit response when it occurs. State review conditions for provisional choices. Routine authorized implementation does not acquire an extra approval gate.
 
-## 落实与接续
+## Implementation and Follow-Up
 
-关联受影响的设计、资产、接口、任务和验证；记录实施状态、旧证据适用性及需要重访此决定的条件。已决定不表示已实现。
+Link affected designs, assets, interfaces, tasks, and checks. Record implementation state, old-evidence applicability, and revisit conditions. Decided does not mean implemented.
 
-## 替代与历史
+## Supersession and History
 
-后续修改保留原决定及原因，链接新的决定或变更记录；不要把旧候选改写成从未发生的批准。
+Preserve prior decisions/reasons and link replacements. Never rewrite candidates as approvals that did not occur.

@@ -17,6 +17,20 @@ def validate(request):
         if len(inputs)!=1 or not isinstance(inputs[0],dict) or inputs[0].get('view','front')!='front':
             raise ValueError('Image to Multiview requires exactly one front image')
         return
+    if any(k in p for k in ('model', 'input', 'inputs', 'file', 'files', 'text_seed', 'style', 'render_image')):
+        raise ValueError('Use model_version and project image inputs; unsupported legacy parameters cannot be sent to Tripo V3')
+    if mode != 'text_to_model' and any(k in p for k in ('negative_prompt', 'image_seed')):
+        raise ValueError('Negative prompts and image_seed require text-to-model')
+    if mode == 'text_to_model' and any(k in p for k in ('texture_alignment', 'orientation', 'enable_image_autofix')):
+        raise ValueError('Image-specific parameters cannot be sent to text-to-model')
+    if mode == 'multiview_to_model' and 'enable_image_autofix' in p:
+        raise ValueError('enable_image_autofix requires single-image generation')
+    if p.get('texture_quality') == 'fast' or 'delight' in p:
+        if p.get('texture_version') != 'v3.5-20260815':
+            raise ValueError('fast texture quality and delight require texture_version=v3.5-20260815')
+    if p.get('generate_parts') and (p.get('texture', True) or p.get('pbr', True)
+                                   or p.get('quad') or p.get('smart_low_poly')):
+        raise ValueError('Generate parts requires texture=false, pbr=false, and no quad or smart_low_poly')
     if mode=='text_to_model':
         if inputs or not isinstance(p.get('prompt'),str) or not p['prompt'].strip():
             raise ValueError('Tripo text generation requires a prompt and no images')
@@ -43,6 +57,8 @@ def read_images(request):
     result={}
     for item in request.get('inputs',[]):
         data,ext=api_common.image_input({'inputs':[item]},20*1024**2)
+        if ext not in ('png','jpeg'):
+            raise ValueError('Tripo file upload supports PNG/JPEG; export a reference in that format first')
         result[item.get('view','front')]=(data,ext)
     return result
 def summary(request):
@@ -51,6 +67,6 @@ def summary(request):
     images=[{'view':x.get('view','front'),'path':x.get('path',x.get('snapshot')),'sha256':x.get('sha256')} for x in request.get('inputs',[])]
     return {'mode':{'text_to_model':'text','image_to_model':'image','multiview_to_model':'multiview','generate_multiview_image':'image_to_multiview'}[mode],
             'prompt_sent':mode=='text_to_model','images':images,
-            'wire_view_order':list(VIEWS) if mode=='multiview_to_model' else ['front'],
+            'wire_view_order':[v for v in VIEWS if v in [x['view'] for x in images]] if mode=='multiview_to_model' else ['front'],
             'omitted_views':[v for v in VIEWS if v not in [x['view'] for x in images]] if mode=='multiview_to_model' else []}
 

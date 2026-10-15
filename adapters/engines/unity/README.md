@@ -1,34 +1,38 @@
 # Unity
 
-[命令适配器](cli.py) 接手含 `Assets/` 和 `ProjectSettings/ProjectVersion.txt` 的实际工程。选定编辑器版本后配置 `editor_executable`；工程声明版本与本机编辑器实际版本分别核实。
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-新工程创建、场景/组件编辑、资源与动画配置、独立运行包自动操作见 [制作接口](production.md)。
+This page covers project configuration and execution. For collecting and comparing animation events, see [action timing](../action_timing/README.md).
 
-## 环境配置
+The [command adapter](cli.py) works with real projects containing `Assets/` and `ProjectSettings/ProjectVersion.txt`. Set `editor_executable` after selecting an editor. Verify the project's declared version and the installed editor's actual version separately.
 
-| 组件 | 在哪里操作 | 完成检查 |
+For project creation, scene and component editing, asset and animation setup, and automated standalone playback, see the [production interface](production.md).
+
+## Environment Setup
+
+| Component | Where to configure it | Verification |
 | --- | --- | --- |
-| 项目对应 Unity Editor | Unity Hub 的 Installs 管理目标版本 | 工程导入完成、脚本编译无错误 |
-| 目标平台构建模块 | Unity Hub 中对应编辑器的模块管理入口 | 编辑器能选择目标平台并实际生成构建；额外 SDK 按目标平台要求配置 |
-| 工程包依赖 | Unity 的 Package Manager，沿用工程的 Packages 配置 | 所需包恢复成功，进入 Play 验证 |
-| MCP 编辑器包（按需） | 按所选提供方说明在 Package Manager 安装匹配版本 | MCP 包加载成功并能识别目标编辑器实例 |
-| MCP 服务与 Agent 连接（按需） | 提供方的 Python / uv 环境及 [Agent 端配置](../../environment-setup.md#mcp-三端配置) | 实际工具可用，并完成测试对象保存重开 |
+| Matching Unity Editor | Installs in Unity Hub | Project import completes and scripts compile without errors |
+| Target platform build modules | Module management for the editor in Unity Hub | Select the target platform and produce a build; install any platform-specific SDKs |
+| Project package dependencies | Unity Package Manager, using the project's Packages configuration | Restore dependencies and verify in Play Mode |
+| MCP editor package, if needed | Package Manager, following the provider's instructions | Package loads and identifies the intended editor instance |
+| MCP service and agent connection, if needed | Provider's Python / uv environment and [agent configuration](../../environment-setup.md#mcp-setup-across-three-layers) | Tools are available; save and reopen a test object |
 
-安装说明：[Unity Hub](https://docs.unity.com/en-us/hub)、[MCP 候选提供方](https://github.com/CoplayDev/unity-mcp)。MCP 包、服务和项目依赖分别安装，不随本工具包分发；菜单名称以实际 Hub / Editor 版本为准。
+Installation references: [Unity Hub](https://docs.unity.com/en-us/hub), [candidate MCP provider](https://github.com/CoplayDev/unity-mcp). Install MCP packages, services, and project dependencies separately; they are not distributed with this toolkit. Menu names depend on the installed Hub and Editor.
 
-## 命令能力
+## Commands
 
-| 动作 | 默认能力 | 项目需补充 |
+| Action | Default behavior | Project requirements |
 | --- | --- | --- |
-| doctor | 文件和声明版本检查 | 编辑器实际版本 / 渲染管线 / 包依赖验证 |
-| prepare | batchmode 导入并退出 | 项目特殊导入与包恢复要求 |
-| play | 打开编辑器 | 进入 Play、实际操作与退出观察 |
-| smoke | 辅助脚本限时 Play Mode | 实际场景、明确安装辅助脚本 |
-| test | Unity Test Framework | 测试平台和实际用例，读取原始 XML |
-| build / export | BuildPipeline.BuildPlayer | 辅助脚本、场景列表、目标平台和模块 |
+| doctor | Checks files and declared version | Verify actual editor version, render pipeline, and packages |
+| prepare | Imports in batchmode and exits | Project-specific import and package restoration |
+| play | Opens the editor | Enter Play Mode, interact, and observe shutdown |
+| smoke | Timed Play Mode through helper scripts | An actual scene and explicit helper installation |
+| test | Unity Test Framework | Test platform and real cases; inspect raw XML |
+| build / export | BuildPipeline.BuildPlayer | Helpers, scene list, target platform, and modules |
 
-初始化使用 `game_workflow.py init --engine unity`，其余参数见 [工具说明](../../../tools/README.md)。命令参数、`executeMethod` 等项目包装和报告格式见 [适配器协议](../../README.md)。默认辅助脚本、安装步骤和各动作配置见 [执行配置](execution.md)；已有工程方法可以继续用 `commands` 覆盖。
+Initialize with `game_workflow.py init --engine unity`; see [tools](../../../tools/README.md) for other arguments. Command arguments, project wrappers such as `executeMethod`, and report formats follow the [adapter contract](../../README.md). See [execution configuration](execution.md) for helpers, installation, and action settings. Existing project methods can override `commands`.
 
-编辑器操作遵循 [MCP 接入](../mcp.md)。候选 [CoplayDev/unity-mcp](https://github.com/CoplayDev/unity-mcp) 提供编辑器包与服务，需固定兼容版本并发现实际启用的工具组。多编辑器场景先确认目标会话；包已安装不代表已连接。首先验证读取 → 修改测试对象 → 保存重开，再按需求验证资产导入、Play 和测试报告。工具返回成功不代替 Console、场景持久化和游戏行为检查。
+Editor operations follow [MCP integration](../mcp.md). The candidate [CoplayDev/unity-mcp](https://github.com/CoplayDev/unity-mcp) provides an editor package and service. Pin compatible versions and discover the tool groups actually enabled. With multiple editors, identify the target session first; installation alone does not establish a connection. Verify read → modify a test object → save and reopen, then asset import, Play Mode, and test reports as needed. A successful tool response does not replace Console, persistence, or gameplay checks.
 
-采用现有工程架构与资产方案，不根据“Unity 已安装”推定用户已选 Unity；服务缺失时可沿用项目脚本，不自动安装其他引擎。
+Use the existing project architecture and asset approach. An installed Unity editor does not imply that the user selected Unity. If a service is unavailable, use project scripts; do not install another engine automatically.

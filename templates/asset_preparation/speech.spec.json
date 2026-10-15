@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "asset_id": "speech",
+  "kind": "speech",
+  "brief": "The gate is open. Move through.",
+  "requirements": [],
+  "references": []
+}

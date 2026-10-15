@@ -1,8 +1,10 @@
-# 第三方许可全文
+# Third-Party License Texts
 
-以下文件保留上游许可原文。源码引用和许可来源版本见 [机器可读清单](third-party-sources.json)。Rust 声明按 MikkTSpace 上游 Cargo.lock 补充，覆盖其构建依赖；不把许可来源版本当作对每个内嵌二进制版本的判定。
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-| 覆盖范围 | 许可全文 | 许可标识 |
+These files preserve the original upstream license texts. Source references and license-source versions are listed in the [machine-readable inventory](third-party-sources.json). Rust notices cover build dependencies from the upstream MikkTSpace Cargo.lock; license-source versions do not identify every embedded binary's version.
+
+| Coverage | Full license text | Identifier |
 | --- | --- | --- |
 | three | [third-party/three-LICENSE](third-party/three-LICENSE) | MIT |
 | chevrotain | [third-party/chevrotain-LICENSE.txt](third-party/chevrotain-LICENSE.txt) | Apache-2.0 |

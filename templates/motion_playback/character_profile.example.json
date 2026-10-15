@@ -1,0 +1,18 @@
+{
+  "description": "Merge these optional fields into a playback binding; replace every value using the actual processed skeleton. Legacy dst_* keys are observation roles, not required native bone names.",
+  "observation_bones": {
+    "dst_root": "motion_root",
+    "dst_spine": "torso_joint_3",
+    "dst_head": "Skeleton_neck_joint_2",
+    "dst_upperarm_L": "Skeleton_arm_joint_L__4_",
+    "dst_forearm_L": "Skeleton_arm_joint_L__3_",
+    "dst_hand_L": "Skeleton_arm_joint_L__2_",
+    "dst_upperarm_R": "Skeleton_arm_joint_R",
+    "dst_forearm_R": "Skeleton_arm_joint_R__2_",
+    "dst_hand_R": "Skeleton_arm_joint_R__3_",
+    "dst_foot_L": "leg_joint_L_3",
+    "dst_foot_R": "leg_joint_R_3"
+  },
+  "movement_speeds_mps": {"walk": 0.681051, "run": 1.698885},
+  "scope": "Illustrative CesiumMan binding; speeds must be measured for the actual clip, character and playback rate. This is not a universal retarget profile or runtime foot IK."
+}

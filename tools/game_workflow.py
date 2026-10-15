@@ -90,7 +90,12 @@ def load_config(root):
 
 
 def render(template, values):
-    text = (TOOLKIT / "templates" / template).read_text(encoding="utf-8")
+    # Keep the existing project-document language and scaffold substitutions.
+    # Repository language navigation is not part of a generated game document.
+    path = TOOLKIT / "templates" / template
+    localized = path.with_name(path.stem + '.zh-CN.md')
+    text = (localized if localized.is_file() else path).read_text(encoding="utf-8")
+    text = re.sub(r'^\[English\]\([^\n]+\) \| \[简体中文\]\([^\n]+\)\n\n', '', text, flags=re.M)
     for key, value in values.items():
         text = text.replace("{{" + key + "}}", str(value))
     return text

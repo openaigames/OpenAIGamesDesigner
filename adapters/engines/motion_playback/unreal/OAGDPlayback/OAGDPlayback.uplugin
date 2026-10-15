@@ -1,0 +1,1 @@
+{"FileVersion":3,"Version":5,"VersionName":"0.5.0","FriendlyName":"OAGD Optional Motion Playback","Category":"Animation","CanContainContent":false,"Modules":[{"Name":"OAGDPlayback","Type":"Runtime","LoadingPhase":"PreDefault"},{"Name":"OAGDPlaybackEditor","Type":"UncookedOnly","LoadingPhase":"PreDefault"}]}

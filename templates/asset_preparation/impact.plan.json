@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "provider": "elevenlabs",
+  "parameters": {
+    "kind": "sound_effect",
+    "duration_seconds": 1.5
+  },
+  "references": [],
+  "routes": [
+    {
+      "requirement": "event",
+      "via": "prompt"
+    },
+    {
+      "requirement": "isolation",
+      "via": "prompt"
+    },
+    {
+      "requirement": "timing",
+      "via": "postprocess",
+      "reason": "Align the waveform onset to the landing event.",
+      "check": "Listen to synchronized playback in the game scene."
+    }
+  ],
+  "review": {
+    "reviewer": "Set the actual reviewer",
+    "notes": "Review the actual request before marking these checks complete.",
+    "brief_accounted_for": false,
+    "requirements_preserved": false,
+    "no_unrequested_features": false,
+    "reference_roles_checked": false
+  }
+}

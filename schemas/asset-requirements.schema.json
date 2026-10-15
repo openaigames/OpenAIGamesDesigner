@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-requirements",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "asset_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+    },
+    "kind": {
+      "enum": [
+        "model",
+        "image",
+        "video",
+        "sound_effect",
+        "music",
+        "speech"
+      ]
+    },
+    "brief": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "enum": [
+              "identity",
+              "appearance",
+              "technical"
+            ]
+          },
+          "priority": {
+            "enum": [
+              "must",
+              "preference"
+            ]
+          },
+          "attribute": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": [
+              "string",
+              "number",
+              "boolean"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "category",
+          "priority"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "enum": [
+              "shape",
+              "material",
+              "style",
+              "composition",
+              "motion",
+              "other"
+            ]
+          },
+          "view": {
+            "enum": [
+              "front",
+              "left",
+              "back",
+              "right",
+              "top",
+              "bottom",
+              "left_front",
+              "right_front"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "path",
+          "role"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "asset_id",
+    "kind",
+    "brief",
+    "requirements",
+    "references"
+  ],
+  "additionalProperties": false
+}

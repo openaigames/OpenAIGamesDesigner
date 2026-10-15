@@ -1,21 +1,23 @@
-# 内容制作与整体体验
+# Content Production and the Complete Experience
 
-适用阶段 4，可直接接手有效工程，也可承接制作验证。主责是制作管理与相关专业制作负责人；技术负责原生实现和集成，验证负责范围覆盖与实际证据。
+[English](content-production.md) | [简体中文](content-production.zh-CN.md)
 
-输入是约定内容范围、有效玩法、适用品质样例/规格、制作方法、源资产与工程版本。缺失部分定向补验证，不机械重跑全项目；新内容超出原样例能力时明确风险并补新的代表验证。
+Use this workflow for Content Production, whether taking over an existing project or continuing after Production Validation. Production and specialist leads coordinate content, engineering handles integration, and validation defines coverage and records results.
 
-## 生产和组装
+Inputs are agreed scope, working gameplay, applicable quality samples/specs, methods, sources, and project revisions. Fill targeted gaps rather than repeating all validation. Content exceeding sample coverage needs explicit risk assessment and representative checks.
 
-在现有任务/内容清单为角色、场景、规则、任务、界面、声音等实际需要的对象关联负责人、依赖、规格、源文件和使用方。只纳入本次范围，不把示例中的背包、成长、联网等当作所有游戏必备。
+## Production and Assembly
 
-按照依赖生产、导入和配置内容，保持同一原生工程持续演进。共享资产实例、参数与事件映射引用同一主源。批量操作前用决定性样本验证工具/规格，随后检查新增内容而不自动沿用样例通过结论。
+Use existing tasks/content inventories to link responsible people, dependencies, specs, sources, and consumers for required characters, environments, rules, quests, UI, and audio. Include only the agreed scope. Inventory, progression, and networking are examples of possible systems, not requirements for every game.
 
-集成时从玩家入口到目标、失败/结束及重试检查完整路径，按项目需要覆盖菜单、输入焦点、保存/加载和恢复。单场景可玩、直接调用接口、传送到终点分别记录，不能代替正常流程。动态表现检查连续性、叠加、中断与清理，声音需要实际听。
+Produce/import/configure in dependency order within one evolving native project. Shared instances, parameters, and event mappings reference one source. Validate decisive samples before batch work, then check new content instead of inheriting sample passes.
 
-## 反馈、修复和出口
+Check the full player path from entry to goals, failure/end, and retry, including menus, focus, saves/loading, and recovery when relevant. A playable scene, direct API calls, and teleported endpoints are separate evidence, not normal-flow substitutes. Check dynamic continuity, stacking, interruption, cleanup, and actually listen to audio.
 
-问题关联对象、实际版本和时间/位置证据。依据原因回到规则、资产、关卡或技术修正，只重验受影响范围。外部试玩必须有真实参与者；自动输入和 Agent 自测不能冒充第一次玩家体验，也不自动授权联系外部人员。
+## Feedback, Fixes, and Exit
 
-发布准备核对内容范围、技术完整性、目标品质、性能、已知问题和交付条件。关键未完成项不能被其他测试数量抵消；完整制作任务不能以占位内容改名完成。
+Link issues to objects, revisions, and time/position evidence. Fix rules/assets/levels/technology by cause and retest affected scope. External playtests require real participants; automation/agent checks are not first-time-player experience and do not authorize contacting others.
 
-交付当前原生工程、实际内容、配置/资产主源与完成矩阵。任务到阶段 4 就交付该范围；包含阶段 5 则继续 [交付流程](delivery.md)，核对接收环境和版本。模板按需使用 [内容制作里程碑](../templates/milestones/content-production.md)。
+Release preparation checks content coverage, technical integrity, quality, performance, issues, and delivery conditions. Numerous passing checks do not compensate for missing critical work. Placeholder content must still meet the agreed delivery requirements.
+
+Deliver the native project, actual content, authoritative configurations/assets, and completion matrix. Stop at stage 4 if that is the endpoint; otherwise continue [delivery](delivery.md). Use the [content milestone](../templates/milestones/content-production.md) as needed.

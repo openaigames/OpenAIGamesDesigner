@@ -1,4 +1,6 @@
-# Unreal 执行配置
+# Unreal Execution Configuration
+
+[English](execution.md) | [简体中文](execution.zh-CN.md)
 
 ```json
 {
@@ -15,13 +17,12 @@
 }
 ```
 
-prepare 临时启用引擎的 PythonScriptPlugin 来执行只读检查脚本，不写入 `.uproject` 插件设置，不保存 Actor。实际工程路径和版本写入 `unreal-result.json`。smoke 使用 `-game -NullRHI`，必须有指定 World 启动与引擎初始化日志；它不验证画面、动画质量或手感。
+prepare temporarily enables the engine's PythonScriptPlugin to run a read-only inspection script. It does not change `.uproject` plugin settings or save Actors. Actual project paths and versions are recorded in `unreal-result.json`. smoke uses `-game -NullRHI` and requires logs showing the specified World starting and engine initialization. It does not validate rendering, animation quality, or game feel.
 
-test 只运行明确的 Automation 过滤范围，保存 `automation/index.json` 并归一化；未执行、执行中、失败或零测试不能当作通过。编译调用匹配引擎的 UnrealBuildTool.dll，导出调用 AutomationTool.dll 的 BuildCookRun；需要匹配的 .NET、编译工具链、SDK、平台支持和可打包的工程。build_target 为实际 Target 名，纯内容工程不要凭空填写 Editor Target。
+test runs only the specified Automation filter, saves `automation/index.json`, and normalizes it. Not-run, in-progress, failed, or zero-test results cannot pass. Compilation invokes the matching engine's UnrealBuildTool.dll; export invokes AutomationTool.dll BuildCookRun. Matching .NET, toolchain, SDK, platform support, and a packageable project are required. build_target must name a real Target; do not invent an Editor Target for a content-only project.
 
-Automation 报告与整个编辑器进程分开判定：报告通过但启动日志有错误时，仍保留整轮失败及原始报告，排查错误来源后再验收，不自动忽略错误行。
+Automation reports and the overall editor process are evaluated separately. If tests pass but startup logs contain errors, retain the failed run and raw report, then investigate before acceptance. Error lines are not automatically ignored.
 
-默认导出是游戏客户端路线；服务器、分布式构建、特殊签名/商店发布使用工程自己的命令覆盖。默认 test / smoke 的 NullRHI 不适合 GPU 测试，需要这类测试时覆盖命令并保留实际报告。项目功能框架由工程自行配置，不是通用启动或构建的强制依赖。
+Default export targets a game client. Use project command overrides for servers, distributed builds, special signing, or store publication. Default NullRHI test / smoke commands are unsuitable for GPU tests; override them and retain real reports when needed. The project chooses its gameplay framework; none is required by generic startup or build operations.
 
-
-通用命令、状态与证据约定见 [执行总览](../execution.md)。
+For shared commands, states, and evidence conventions, see the [execution overview](../execution.md).

@@ -1,17 +1,19 @@
-# 五阶段定义
+# Five Development Stages
 
-本文件维护开发阶段语义；[stages.json](stages.json) 提供工具读取的阶段名称与最低检查维度。阶段针对当前任务对象和内容范围，不按项目目录数量或文件存在判断。
+[English](development-stages.md) | [简体中文](development-stages.zh-CN.md)
 
-| 阶段 | 实际工作 | 出口依据 |
+Use these stages to define the scope and completion criteria for a task. [stages.json](stages.json) contains their machine-readable names and minimum checks. A stage describes the work on the relevant features or content; it is not determined by the number of files created.
+
+| Stage | Work | Exit evidence |
 | --- | --- | --- |
-| 1 立项 | 接收创意/参考/已有资料，形成目标、范围、约束、专业设计与实验 | 在约定深度上足以交接的方向、规则、接口和验证计划；完整策划可以在这里结束，不声称玩法已实证 |
-| 2 玩法验证 | 准备实际环境，制作核心机制，调参、替换资产并试玩 | 机制可操作，实际观察支持保留、调整或放弃；编译成功不等于机制成立 |
-| 3 制作验证 | 实际制作代表品质样例，联调专业产物，验证规格、方法、成本和性能 | 当前任务样例与品质目标对应，制作可行性和限制有依据；垂直切片是其中一种完整体验交付，不是所有样例的默认名称 |
-| 4 内容制作 | 按有效方法生产、组装约定内容，完整体验、试玩、修复和发布准备 | 范围内内容完整、组合可用、品质和体验有实际依据；局部样例不自动证明新增内容 |
-| 5 最终交付 | 核对原生工程、构建、源/依赖和说明，在约定接收环境验证并交付 | 接收方可获得和使用约定版本；公开发布或对外发送须在已有授权范围 |
+| 1 Project Definition | Interpret ideas/references/existing work; define goals, scope, constraints, design, experiments | Direction, rules, interfaces, and validation plans at agreed handoff depth. Planning can end here without claiming proven gameplay |
+| 2 Gameplay Validation | Prepare environment, implement core mechanics, tune, replace assets, playtest | Operable mechanics and observations supporting retention/change/rejection. Compilation alone is insufficient |
+| 3 Production Validation | Build representative quality samples and integrate outputs to test specs, methods, cost, performance | Evidence for target quality/feasibility/limits. A vertical slice is one complete-experience form, not every sample |
+| 4 Content Production | Produce/assemble agreed content, evaluate full experience, fix, prepare release | Complete usable content with quality/experience evidence. Samples do not automatically validate new content |
+| 5 Final Delivery | Verify native project, builds, sources/dependencies, instructions, receiving environment | Recipient can obtain/use the agreed revision. Publication/external sending stays within authorization |
 
-从任意阶段开始，执行任意连续区间，包括所有单阶段。任务终点与输入类型独立：创意、已有工程、素材或参考作品均不自动限定区间；用户不必学习阶段编号才能委托。
+Start at any stage and complete one stage or a sequence of consecutive stages. Ideas, projects, assets, and references do not automatically determine endpoints. Users need not know stage numbers.
 
-技术检查记录事实，专业评审解释设计/品质，用户决定记录需要由用户决定的范围与验收。既有授权继续有效，不增加逐项审批。验证任务可以得出否定结论并交付研究结果，但否定不等于目标品质达成或具备进入下一阶段的条件。
+Technical checks record facts; professional reviews interpret quality; user decisions record matters requiring their choice. Existing authorization remains valid without requesting the same approval again. Negative research conclusions can be valid deliverables without establishing target quality or readiness for the next stage.
 
-接手检查必要前置，已有有效成果复用；缺口定向补齐，失败回到原因所在处，保留无关工作与证据。变化超出既定目标/授权时明确影响再澄清，不能静默降级。执行规则见 [阶段区间执行](stage-execution.md)。
+Reuse valid prior work, fill only necessary gaps, and return failures to their causes while preserving unrelated evidence. Clarify changes beyond agreed goals/authority rather than silently reducing scope. See [stage execution](stage-execution.md).

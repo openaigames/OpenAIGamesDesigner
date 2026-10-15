@@ -1,35 +1,37 @@
 # {{id}} — {{title}}
 
-- 状态：draft（已有同 ID JSON 任务时引用其状态，不另维护一份完成值）。
-- 起止阶段、对象与交付范围：按实际任务填写；独立小修只记录必要范围。
-- 所属里程碑：待关联；独立小改动可无里程碑。
-- 负责方向：按需指定。
+[English](task.md) | [简体中文](task.zh-CN.md)
 
-## 需求与输入
+- State: draft; if a same-ID JSON task exists, reference its state rather than maintaining a second value.
+- Stage range, objects, and delivery scope: fill for the actual task; small fixes need only relevant scope.
+- Milestone: link as needed; independent small changes may have none.
+- Responsible discipline: assign as needed.
 
-实际请求、相关规则/接口/资产规格及版本；明确用户决定与候选。已有项目沿用文件，不重做立项。
+## Request and Inputs
 
-## 目标产物、依赖与边界
+Record the actual request, rules/interfaces/asset specs, and revisions. Distinguish decisions from candidates. Reuse existing project records.
 
-指定工程中要改动的功能/场景/资产、兼容约束、前置条件和不做内容。代码、配置、源资产各自保持唯一来源。涉及数据或大范围修改时先确定可恢复基线。
+## Outputs, Dependencies, and Boundaries
 
-## 变更联动（涉及多个方向时）
+Identify features/scenes/assets to change, compatibility, prerequisites, and exclusions. Code/configuration/sources each retain one authority. Establish recovery baselines for data or broad changes.
 
-关联当前任务变更入口或以本任务作为入口；其他任务引用同一编号/链接。只列实际受影响项，单方向小任务可省略。
+## Cross-Discipline Changes
 
-| 负责方向/文件或对象 | 变化与影响原因 | 动作/关联任务 | 设计状态 | 实现状态 | 验证状态与证据 | 待决与下一步 |
+Link the shared change record or use this task as the entry. Other tasks reference the same ID/link. List only affected items; omit for small single-discipline work.
+
+| Discipline/file/object | Change and impact | Action/task | Design state | Implementation state | Validation and evidence | Pending decision/next step |
 | --- | --- | --- | --- | --- | --- | --- |
 
-设计已修订不代表工程已实现，识别影响不代表已修改。未知路径写待定位；有真实文件后才添加链接。
+Revised design does not mean implemented code; identified impact does not mean completed edits. Mark unknown paths pending and add links only after files exist.
 
-## 完成检查
+## Completion Checks
 
-按实际风险列操作、预期现象和回归范围；不要只写“已生成代码”。体验或视觉要求需要对应证据。
+List operations, expected observations, and regression scope according to risk, not just code generated. Experience/visual requirements need corresponding evidence.
 
-## 执行记录
+## Execution Records
 
-未执行。填写实际改动路径、run-id、日志、测试结果与未覆盖部分。一个命令通过不自动把任务设为 done。
+Not executed. Record changed paths, run IDs, logs, results, and uncovered scope. One passing command does not automatically complete the task.
 
-## 结果与接续
+## Results and Continuation
 
-尚未判断。更新受影响专业文档、风险和管理入口；说明对照实际规则/资产/实现/证据核对了哪些记录、已补内容及剩余缺口。只列当前任务涉及部分，结构校验通过不替代内容核对。完成结论对应上述完成条件，未完成项给出下一动作或恢复条件；重试新增 run，旧结果保留但标明适用版本。
+Not assessed. Update affected professional/risk/management records. State what was compared against actual rules/assets/code/evidence, what was added, and remaining gaps. Structure checks do not replace content review. Conclusions follow completion criteria; unfinished items need next actions/recovery conditions. Retries create new runs; old results retain applicable revisions.

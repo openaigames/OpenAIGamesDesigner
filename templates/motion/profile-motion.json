@@ -1,0 +1,27 @@
+{
+  "schema": "oagd.motion/1",
+  "profile": {
+    "file": "character-profile.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "revision": 1
+  },
+  "clips": [
+    {
+      "id": "walk",
+      "action": "walk",
+      "start_frame": 1,
+      "end_frame": 31,
+      "fps": 30
+    },
+    {
+      "id": "action",
+      "action": "action",
+      "start_frame": 1,
+      "end_frame": 37,
+      "fps": 30
+    }
+  ],
+  "tolerances": {
+    "contact_m": 0.002
+  }
+}

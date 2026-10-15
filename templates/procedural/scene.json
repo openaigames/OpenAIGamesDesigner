@@ -1,0 +1,382 @@
+{
+  "schema_version": 1,
+  "kind": "scene",
+  "agent": {
+    "radius_m": 0.35,
+    "height_m": 1.8,
+    "clearance_m": 0.15,
+    "headroom_m": 0.1,
+    "max_slope_degrees": 35,
+    "max_step_m": 0.25
+  },
+  "rooms": [
+    {
+      "id": "curve_a",
+      "position": [
+        -8,
+        0,
+        0
+      ],
+      "size": [
+        6,
+        3,
+        6
+      ],
+      "ports": [
+        {
+          "id": "curve_a_door",
+          "side": "east",
+          "width": 2.4,
+          "height": 2.5
+        }
+      ]
+    },
+    {
+      "id": "curve_b",
+      "position": [
+        8,
+        0,
+        -5
+      ],
+      "size": [
+        6,
+        3,
+        6
+      ],
+      "ports": [
+        {
+          "id": "curve_b_door",
+          "side": "west",
+          "width": 2.4,
+          "height": 2.5
+        }
+      ]
+    },
+    {
+      "id": "ramp_a",
+      "position": [
+        -8,
+        0,
+        14
+      ],
+      "size": [
+        6,
+        3,
+        6
+      ],
+      "ports": [
+        {
+          "id": "ramp_a_door",
+          "side": "east",
+          "width": 2.4,
+          "height": 2.5
+        }
+      ]
+    },
+    {
+      "id": "ramp_b",
+      "position": [
+        8,
+        3,
+        14
+      ],
+      "size": [
+        6,
+        3,
+        6
+      ],
+      "ports": [
+        {
+          "id": "ramp_b_door",
+          "side": "west",
+          "width": 2.4,
+          "height": 2.5
+        }
+      ]
+    },
+    {
+      "id": "narrow_a",
+      "position": [
+        -8,
+        0,
+        -14
+      ],
+      "size": [
+        6,
+        3,
+        6
+      ],
+      "ports": [
+        {
+          "id": "narrow_a_door",
+          "side": "east",
+          "width": 0.55,
+          "height": 2.5
+        }
+      ]
+    },
+    {
+      "id": "narrow_b",
+      "position": [
+        8,
+        0,
+        -14
+      ],
+      "size": [
+        6,
+        3,
+        6
+      ],
+      "ports": [
+        {
+          "id": "narrow_b_door",
+          "side": "west",
+          "width": 0.55,
+          "height": 2.5
+        }
+      ]
+    },
+    {
+      "id": "low_a",
+      "position": [
+        -8,
+        0,
+        28
+      ],
+      "size": [
+        6,
+        3,
+        6
+      ],
+      "ports": [
+        {
+          "id": "low_a_door",
+          "side": "east",
+          "width": 2.4,
+          "height": 1.3
+        }
+      ]
+    },
+    {
+      "id": "low_b",
+      "position": [
+        8,
+        0,
+        28
+      ],
+      "size": [
+        6,
+        3,
+        6
+      ],
+      "ports": [
+        {
+          "id": "low_b_door",
+          "side": "west",
+          "width": 2.4,
+          "height": 1.3
+        }
+      ]
+    },
+    {
+      "id": "broken_a",
+      "position": [
+        -8,
+        0,
+        -28
+      ],
+      "size": [
+        6,
+        3,
+        6
+      ],
+      "ports": [
+        {
+          "id": "broken_a_door",
+          "side": "east",
+          "width": 2.4,
+          "height": 2.5
+        }
+      ]
+    },
+    {
+      "id": "broken_b",
+      "position": [
+        8,
+        0,
+        -28
+      ],
+      "size": [
+        6,
+        3,
+        6
+      ],
+      "ports": [
+        {
+          "id": "broken_b_door",
+          "side": "west",
+          "width": 2.4,
+          "height": 2.5
+        }
+      ]
+    },
+    {
+      "id": "steep_a",
+      "position": [
+        -8,
+        0,
+        42
+      ],
+      "size": [
+        6,
+        3,
+        6
+      ],
+      "ports": [
+        {
+          "id": "steep_a_door",
+          "side": "east",
+          "width": 2.4,
+          "height": 2.5
+        }
+      ]
+    },
+    {
+      "id": "steep_b",
+      "position": [
+        8,
+        9,
+        42
+      ],
+      "size": [
+        6,
+        3,
+        6
+      ],
+      "ports": [
+        {
+          "id": "steep_b_door",
+          "side": "west",
+          "width": 2.4,
+          "height": 2.5
+        }
+      ]
+    },
+    {
+      "id": "island",
+      "position": [
+        24,
+        0,
+        0
+      ],
+      "size": [
+        6,
+        3,
+        6
+      ]
+    }
+  ],
+  "paths": [
+    {
+      "id": "curve",
+      "from": "curve_a_door",
+      "to": "curve_b_door",
+      "width": 2.4,
+      "segments": 32,
+      "controls": [
+        [
+          -1,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          -5
+        ]
+      ]
+    },
+    {
+      "id": "ramp",
+      "from": "ramp_a_door",
+      "to": "ramp_b_door",
+      "width": 2.4,
+      "segments": 32
+    },
+    {
+      "id": "narrow",
+      "from": "narrow_a_door",
+      "to": "narrow_b_door",
+      "width": 2.4,
+      "segments": 32
+    },
+    {
+      "id": "low",
+      "from": "low_a_door",
+      "to": "low_b_door",
+      "width": 2.4,
+      "segments": 32
+    },
+    {
+      "id": "broken",
+      "from": "broken_a_door",
+      "to": "broken_b_door",
+      "width": 2.4,
+      "segments": 32,
+      "gap_segments": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ]
+    },
+    {
+      "id": "steep",
+      "from": "steep_a_door",
+      "to": "steep_b_door",
+      "width": 2.4,
+      "segments": 32
+    }
+  ],
+  "queries": [
+    {
+      "id": "curve",
+      "from_room": "curve_a",
+      "to_room": "curve_b"
+    },
+    {
+      "id": "ramp",
+      "from_room": "ramp_a",
+      "to_room": "ramp_b"
+    },
+    {
+      "id": "narrow",
+      "from_room": "narrow_a",
+      "to_room": "narrow_b"
+    },
+    {
+      "id": "low",
+      "from_room": "low_a",
+      "to_room": "low_b"
+    },
+    {
+      "id": "broken",
+      "from_room": "broken_a",
+      "to_room": "broken_b"
+    },
+    {
+      "id": "steep",
+      "from_room": "steep_a",
+      "to_room": "steep_b"
+    },
+    {
+      "id": "island",
+      "from_room": "curve_a",
+      "to_room": "island"
+    }
+  ]
+}

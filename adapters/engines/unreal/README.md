@@ -1,56 +1,74 @@
 # Unreal Engine
 
-[命令适配器](cli.py) 负责工程识别、运行、测试、编译与导出；[制作接口](production.md) 负责工程创建及原生 Python 场景、资源、动画配置和 PIE 操作。根据目标工程选择兼容的编辑器版本。Agent 运行环境已有适合的 MCP 时，可按 [MCP 接入](../mcp.md) 使用编辑器工具。
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-## 环境配置
+## Choose an Integration Path
 
-以下以 Windows 为例。已有工程沿用其引擎和依赖，不自动升级。
+This page covers project commands, environment setup, and editor integration. Use the independent modules below for reusable in-game features. They do not automatically replace the project's main scene, character, or rules.
 
-| 组件 | 适用任务 | 配置位置 | 检查方式 |
+| Task | Guide |
+| --- | --- |
+| Input, state, feedback, interaction, navigation, and basic scenes | [Core runtime components](../runtime_components/README.md) |
+| Importing and sampling processed character motion | [Motion](../motion/README.md) |
+| Animation playback, root motion, and foot/hand constraints | [Playback](../motion_playback/README.md) |
+| Multi-node static assets, graybox replacement, and project handoff | [Static scenes](../static_scene/README.md) |
+| Upgrading and rolling back installed components | [Installation and migration](../../../docs/INSTALLATION.md) |
+
+Runtime components, animation playback, and static scene modules target UE 5.8. Source plugins require a matching C++ build environment. Execution interfaces for existing projects use the project's own engine configuration.
+
+## Project Execution
+
+The [command adapter](cli.py) handles project identification, running, testing, compilation, and export. The [production interface](production.md) handles project creation, native Python scene/asset/animation setup, and PIE operations. Choose an editor compatible with the target project. If suitable MCP tools are available in the agent environment, follow [MCP integration](../mcp.md).
+
+## Environment Setup
+
+The following uses Windows as an example. Existing projects retain their engine and dependencies; no automatic upgrade occurs.
+
+| Component | Used for | Configuration | Verification |
 | --- | --- | --- | --- |
-| Unreal Editor | 打开、制作与运行工程 | Epic Games Launcher 的 Unreal Engine → Library，或已有源码构建 | 用匹配编辑器打开 `.uproject`，核对实际版本 |
-| C++ 工具链与 Windows SDK | C++ 工程、源码插件或目标平台编译 | Visual Studio Installer → Modify → Game development with C++，按目标 UE 兼容要求选择组件 | 构建工程实际的 Editor 或游戏目标；VS Code 不提供编译器 |
-| PythonScriptPlugin / EditorScriptingUtilities | 使用本工具包的 Python 制作接口 | 工程插件配置；具体启用方式见 [制作接口](production.md) | 脚本能加载工程、执行请求并生成原生结果 |
-| 第三方 MCP 及所需引擎插件（可选） | 通过 Agent 直接操作编辑器 | 按提供方说明配置插件、服务及 [Agent 连接](../../environment-setup.md#mcp-三端配置) | 当前任务发现工具，核对目标工程后执行只读查询 |
+| Unreal Editor | Opening, editing, and running projects | Unreal Engine → Library in Epic Games Launcher, or an existing source build | Open `.uproject` with the matching editor and check the actual version |
+| C++ toolchain and Windows SDK | C++ projects, source plugins, or platform compilation | Visual Studio Installer → Modify → Game development with C++, selecting components compatible with the target UE | Build the actual Editor or game target; VS Code does not supply a compiler |
+| PythonScriptPlugin / EditorScriptingUtilities | Toolkit Python production interface | Project plugin configuration; see [production](production.md) | Script loads the project, executes the request, and produces native results |
+| Third-party MCP and required engine plugins, optional | Agent-driven editor operations | Provider instructions for plugins, services, and [agent connection](../../environment-setup.md#mcp-setup-across-three-layers) | Discover tools, verify the target project, then make a read-only query |
 
-纯内容工程是否需要 C++ 工具链取决于使用的插件与构建目标。查询 Visual Studio 安装时可使用 `vswhere -all -products '*' -format json`，以包含独立 Build Tools；最终兼容性依据实际构建日志和目标 UE 的要求核实。
+A content-only project's need for C++ tools depends on its plugins and build targets. Use `vswhere -all -products '*' -format json` to include standalone Build Tools when locating Visual Studio installations. Verify compatibility against actual build logs and the target UE requirements.
 
-来源：[Epic 的 Visual Studio 环境配置](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine)。
+Reference: [Epic's Visual Studio setup guide](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine).
 
-## 工程和命令
+## Projects and Commands
 
-在工具包根运行，替换为实际路径；已有工程原位接入：
+Run from the toolkit root, substituting actual paths. Existing projects can be integrated in place:
 
 ```sh
 python tools/game_workflow.py init --project "MyGame" --engine unreal --engine-root game --editor "D:/UE/Engine/Binaries/Win64/UnrealEditor.exe" --project-file MyGame.uproject
 python tools/game_workflow.py run --project "MyGame" --action doctor
 ```
 
-doctor 检查编辑器文件与工程声明；prepare 加载工程检查，smoke 运行指定地图，test 执行指定 Automation 测试，build 使用 UBT，export 使用 UAT。地图、测试过滤条件、目标和依赖见 [执行配置](execution.md)。
+doctor checks editor files and project declarations. prepare loads the project for inspection; smoke runs a specified map; test runs selected Automation tests; build uses UBT; export uses UAT. See [execution configuration](execution.md) for maps, test filters, targets, and dependencies.
 
-## 制作与保存
+## Editing and Persistence
 
-| 任务 | 入口 |
+| Task | Entry point |
 | --- | --- |
-| 创建内容工程、加载验证 | [创建与启动](production.md#创建与启动) |
-| 场景、Blueprint 组件、Actor、资源导入和动画绑定 | [制作请求与支持范围](production.md) |
-| PIE 自动操作、帧序列和时间采样 | [自动操作与采样](production.md) |
-| 会话状态、检查点与中断恢复 | [会话管理](../sessions.md) |
-| 实际事件、参数、附件与空间读回 | [共享运行观察](../observations.md) |
-| 原生 DataAsset / CurveFloat 的读回与保护性写入 | [原生参数接口](native-data.md) |
-| 静态网格、材质/贴图与实例审计，派生 LOD / Nanite 配置 | [网格资源接口](mesh-resources.md) |
-| 角色使用方、关联动画、派生预览与骨骼采样 | [原生动画接口](native-animation.md) |
+| Create and verify a content project | [Creation and startup](production.md#creation-and-startup) |
+| Scenes, Blueprint components, Actors, imports, and animation bindings | [Production requests and scope](production.md) |
+| Automated PIE actions, frame sequences, and timing samples | [Playback and sampling](production.md) |
+| Session state, checkpoints, and recovery | [Session management](../sessions.md) |
+| Runtime events, parameters, attachments, and spatial readback | [Shared runtime observations](../observations.md) |
+| Native DataAsset / CurveFloat readback and guarded writes | [Native parameters](native-data.md) |
+| Static mesh, material/texture, and instance audits; derived LOD / Nanite settings | [Mesh resources](mesh-resources.md) |
+| Character consumers, associated animation, derived previews, and bone sampling | [Native animation](native-animation.md) |
 
-Python 制作接口、Agent 运行环境 MCP 和游戏运行逻辑是不同能力。具体操作以接口定义为准；场景保存、引擎运行、游戏行为和性能应分别检查。
+Python production, MCP tools in the agent environment, and game runtime logic provide different capabilities. Follow each interface's defined scope. Check scene persistence, engine execution, gameplay behavior, and performance separately.
 
-## MCP 接入验证
+## Verifying MCP Integration
 
-根据所选提供方的版本说明配置插件、服务和 Agent 连接，候选入口见 [MCP 提供方](../mcp.md#候选提供方)。本工具包不内置或自动安装第三方 MCP。
+Configure plugins, services, and the agent connection for the provider's supported versions; see [candidate providers](../mcp.md#candidate-providers). This toolkit neither bundles nor automatically installs third-party MCP servers.
 
-1. 在独立测试工程核对插件编译、加载和服务启动，固定使用的版本与依赖。
-2. 发现真实工具清单，核对编辑器工程路径、实例和当前场景；端口监听不等于工程身份正确。
-3. 先只读列出对象；验证写入时使用唯一命名的测试对象，修改后重新读取。
-4. 保存并重开工程，复查持久化；清理测试对象后再次保存和检查。缺少相应工具时使用实际可用的编辑器方法，不虚构接口。
-5. 在测试项目保存调用、日志和检查结果，再将已确认适用的能力用于目标工程。中断后先检查现场，避免重复操作。
+1. In a separate test project, verify plugin compilation, loading, and service startup. Pin the versions and dependencies used.
+2. Discover actual tools and verify the editor project path, instance, and current scene. A listening port does not establish project identity.
+3. Start with a read-only object listing. For write checks, use a uniquely named test object, modify it, and read it back.
+4. Save and reopen the project to check persistence. Remove the test object, save, and check again. If a tool is unavailable, use an actual editor method rather than inventing an interface.
+5. Retain calls, logs, and results in the test project before applying verified capabilities to the target. Inspect the current state after interruption to avoid duplicate operations.
 
-第三方提供方的兼容性与工具范围以目标版本的实际结果为准。没有 MCP 时仍可使用工程命令、源码和本工具包的原生制作接口。
+Provider compatibility and tool coverage depend on actual results with the target versions. Project commands, source code, and the toolkit's native production interface remain available without MCP.

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "report": "evidence/base-assessment/quality.json",
+  "action": "regenerate",
+  "policy": {
+    "max_rounds": 3,
+    "max_stalled_rounds": 2
+  },
+  "targets": [
+    {
+      "issue": "criterion:opening",
+      "recheck": "criterion:opening"
+    }
+  ],
+  "changes": [
+    {
+      "kind": "prompt",
+      "issues": [
+        "criterion:opening"
+      ],
+      "reason": "The reviewed leaf covers the required doorway opening.",
+      "expected": "An open leaf exposes the doorway while both jambs and the lintel remain intact.",
+      "value": "Show the hinged leaf open to the side, leaving a clear opening. Retain both frame jambs, lintel, and handle."
+    }
+  ],
+  "tasks": [],
+  "review": {
+    "reviewer": "REPLACE_WITH_REVIEWER",
+    "notes": "Replace example observations with inspected evidence.",
+    "brief_accounted_for": false,
+    "requirements_preserved": false,
+    "no_unrequested_features": false,
+    "reference_roles_checked": false
+  }
+}

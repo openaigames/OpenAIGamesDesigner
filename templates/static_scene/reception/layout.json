@@ -1,0 +1,375 @@
+{
+  "mapping": {
+    "schema": "oagd.scene-replacement/1",
+    "id": "ReceptionScene",
+    "replacements": [
+      {
+        "id": "DoorA",
+        "targets": [
+          "GrayDoorA"
+        ],
+        "asset": "door",
+        "position": [
+          -2.0,
+          0,
+          0.0
+        ],
+        "yaw_degrees": 0,
+        "scale": 1,
+        "collision": {
+          "policy": "boxes",
+          "boxes": [
+            {
+              "node": 1,
+              "center": [
+                0,
+                1.1,
+                0
+              ],
+              "size": [
+                0.12,
+                2.2,
+                0.18
+              ]
+            },
+            {
+              "node": 2,
+              "center": [
+                0,
+                1.1,
+                0
+              ],
+              "size": [
+                0.12,
+                2.2,
+                0.18
+              ]
+            },
+            {
+              "node": 3,
+              "center": [
+                0,
+                0,
+                0
+              ],
+              "size": [
+                1.32,
+                0.12,
+                0.18
+              ]
+            },
+            {
+              "node": 5,
+              "center": [
+                0.55,
+                1.025,
+                0
+              ],
+              "size": [
+                1.1,
+                2.05,
+                0.08
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "DoorB",
+        "targets": [
+          "GrayDoorB"
+        ],
+        "asset": "door",
+        "position": [
+          6.0,
+          0,
+          6.5
+        ],
+        "yaw_degrees": 90,
+        "scale": 1.25,
+        "collision": {
+          "policy": "boxes",
+          "boxes": [
+            {
+              "node": 1,
+              "center": [
+                0,
+                1.1,
+                0
+              ],
+              "size": [
+                0.12,
+                2.2,
+                0.18
+              ]
+            },
+            {
+              "node": 2,
+              "center": [
+                0,
+                1.1,
+                0
+              ],
+              "size": [
+                0.12,
+                2.2,
+                0.18
+              ]
+            },
+            {
+              "node": 3,
+              "center": [
+                0,
+                0,
+                0
+              ],
+              "size": [
+                1.32,
+                0.12,
+                0.18
+              ]
+            },
+            {
+              "node": 5,
+              "center": [
+                0.55,
+                1.025,
+                0
+              ],
+              "size": [
+                1.1,
+                2.05,
+                0.08
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "RetainedBox",
+        "targets": [
+          "GrayRetainedBox"
+        ],
+        "asset": "box",
+        "position": [
+          -3,
+          0,
+          0
+        ],
+        "yaw_degrees": 0,
+        "scale": 1,
+        "collision": {
+          "policy": "retain_graybox"
+        }
+      },
+      {
+        "id": "MeshBox",
+        "targets": [
+          "GrayMeshBox"
+        ],
+        "asset": "box",
+        "position": [
+          4,
+          0,
+          -3
+        ],
+        "yaw_degrees": 0,
+        "scale": 1,
+        "collision": {
+          "policy": "source_mesh",
+          "nodes": [
+            0
+          ]
+        }
+      },
+      {
+        "id": "BuildingA",
+        "targets": [
+          "GrayBuildingA"
+        ],
+        "asset": "clockhill",
+        "position": [
+          12,
+          0,
+          0
+        ],
+        "yaw_degrees": 0,
+        "scale": 1,
+        "collision": {
+          "policy": "source_mesh",
+          "nodes": [
+            1,
+            3,
+            25
+          ]
+        }
+      },
+      {
+        "id": "BuildingB",
+        "targets": [
+          "GrayBuildingB"
+        ],
+        "asset": "clockhill",
+        "position": [
+          38,
+          0,
+          0
+        ],
+        "yaw_degrees": 0,
+        "scale": 1,
+        "collision": {
+          "policy": "source_mesh",
+          "nodes": [
+            1,
+            3,
+            25
+          ]
+        }
+      }
+    ]
+  },
+  "grayboxes": [
+    {
+      "id": "GrayDoorA",
+      "center": [
+        0.5732018934753635,
+        1.15,
+        -0.1773121239968037
+      ],
+      "size": [
+        1.4,
+        2.3,
+        0.3
+      ],
+      "yaw": 17.188733853924695,
+      "managed": true
+    },
+    {
+      "id": "GrayDoorB",
+      "center": [
+        5.778359845003996,
+        1.4375,
+        3.2834976331557955
+      ],
+      "size": [
+        1.75,
+        2.875,
+        0.375
+      ],
+      "yaw": 107.1887338539247,
+      "managed": true
+    },
+    {
+      "id": "GrayRetainedBox",
+      "center": [
+        -3,
+        1,
+        0
+      ],
+      "size": [
+        1.4,
+        2,
+        1
+      ],
+      "yaw": 0,
+      "managed": true
+    },
+    {
+      "id": "GrayMeshBox",
+      "center": [
+        4,
+        1,
+        -3
+      ],
+      "size": [
+        1.4,
+        2,
+        1
+      ],
+      "yaw": 0,
+      "managed": true
+    },
+    {
+      "id": "GrayBuildingA",
+      "center": [
+        -12,
+        4.8,
+        10
+      ],
+      "size": [
+        13,
+        9.6,
+        12
+      ],
+      "yaw": 0,
+      "managed": true
+    },
+    {
+      "id": "GrayBuildingB",
+      "center": [
+        14,
+        4.8,
+        10
+      ],
+      "size": [
+        13,
+        9.6,
+        12
+      ],
+      "yaw": 0,
+      "managed": true
+    },
+    {
+      "id": "Floor",
+      "center": [
+        0,
+        -0.2,
+        0
+      ],
+      "size": [
+        70,
+        0.4,
+        50
+      ],
+      "yaw": 0,
+      "managed": false
+    },
+    {
+      "id": "Unrelated",
+      "center": [
+        10,
+        0.5,
+        -4
+      ],
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "yaw": 0,
+      "managed": false
+    }
+  ],
+  "doors": [
+    {
+      "id": "DoorA",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "yaw": 0.3,
+      "scale": 1
+    },
+    {
+      "id": "DoorB",
+      "origin": [
+        6,
+        0,
+        4
+      ],
+      "yaw": 1.8707963267948966,
+      "scale": 1.25
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "provider": "tripo",
+  "parameters": {
+    "type": "text_to_model"
+  },
+  "references": [],
+  "routes": [
+    {
+      "requirement": "shape",
+      "via": "prompt"
+    },
+    {
+      "requirement": "paint",
+      "via": "prompt"
+    },
+    {
+      "requirement": "markings",
+      "via": "prompt"
+    }
+  ],
+  "review": {
+    "reviewer": "Set the actual reviewer",
+    "notes": "Review the actual request before marking these checks complete.",
+    "brief_accounted_for": false,
+    "requirements_preserved": false,
+    "no_unrequested_features": false,
+    "reference_roles_checked": false
+  }
+}

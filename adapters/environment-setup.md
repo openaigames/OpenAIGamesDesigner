@@ -1,105 +1,108 @@
-# 按功能配置开发环境
+# Configure the Environment by Task
 
-先选当前任务要用的功能，只配置对应环境。已有工程沿用其版本和工具；安装 Skills 不会自动安装游戏引擎、MCP 服务、生成模型或资产。
+[English](environment-setup.md) | [简体中文](environment-setup.zh-CN.md)
 
-本工具包的项目文件、Python 工具与引擎配置可供不同 Agent 使用。Agent 需要能够读取项目文件并执行命令；Skill 的发现方式和 MCP 连接方式以所用 Agent 的要求为准。
+Select the functions your task needs and configure only their prerequisites. Existing projects retain their engines and tools. Installing skills does not install engines, MCP servers, generation models, or assets.
 
-## Agent 接入步骤
+The project files, Python tools, and engine configuration can be used by different agents. The host needs file access and command execution. Follow that host's requirements for skill discovery and MCP connections.
 
-1. 将工具包和游戏项目的实际路径提供给 Agent，让它阅读 README，并按任务读取相关 Skill。
-2. 如果 Agent 支持 Skill 安装，按其要求选择安装位置，保留完整 Skill 目录和共享运行资源；不支持自动发现时，可明确指定要读取的 SKILL.md。
-3. 在工具包根目录运行 `python tools/game_workflow.py --help`，再按下表配置当前任务需要的引擎和服务。
+## Connect an Agent
 
-下方 Codex 路径表是具体配置示例，不作为其他 Agent 的默认安装位置。
+1. Give the agent the actual toolkit and game paths. Ask it to read the README and the skills relevant to the task.
+2. If the host supports skill installation, retain complete skill directories and shared runtime resources in its supported location. Otherwise, explicitly identify the SKILL.md files to read.
+3. Run `python tools/game_workflow.py --help` from the toolkit root, then configure the engines and services needed below.
 
-## Codex 路径速查
+The Codex paths below are a specific example, not defaults for every agent.
 
-`~` 表示当前用户主目录。Windows 默认对应 `C:/Users/<用户名>/`；表中 `<游戏项目>` 指要制作的游戏文件夹，不是本工具包源码目录。
+## Codex Path Reference
 
-| 内容 | Codex 使用的位置 | 如何操作 |
+`~` is the user's home directory, normally `C:/Users/<username>/` on Windows. `<GAME_PROJECT>` is the game directory, not this repository.
+
+| Item | Codex location | Setup |
 | --- | --- | --- |
-| 个人 Skills | `~/.agents/skills/<skill-name>/` | 将打包生成的 16 个完整 Skill 目录放入这里，供本机多个项目使用 |
-| 项目级 Skills（可选） | `<游戏项目>/.agents/skills/<skill-name>/` | 只为当前项目安装时使用；与个人安装通常二选一，避免维护不一致的副本 |
-| 已安装工具包根 | 所选安装位置下的 `game-preproduction/runtime/` | 在此目录调用 `tools/game_workflow.py` 等工具；不能只复制 SKILL.md |
-| Codex 的 Skill 展示信息 | 各 Skill 的 `agents/openai.yaml` | 随技能包保留；这里不是 MCP 配置或游戏设计记录 |
-| Codex 用户配置与 MCP | 默认 `~/.codex/config.toml` | 合并到已有配置，保留其他设置；若设置了 `CODEX_HOME`，核对其实际配置目录 |
-| Codex 项目级配置与 MCP（可选） | `<游戏项目>/.codex/config.toml` | 仅作用于受信任项目；按需要选择配置范围，避免重复注册服务 |
-| 游戏工作目录 | `<游戏项目>/` | 在 Codex 中以此目录开始任务；项目管理和五个专业入口保存在这里 |
-| 游戏原生工程 | 新作默认 `<游戏项目>/game/` | UE 的 .uproject、Godot 的 project.godot 或网页 package.json 位于实际工程目录；已有工程原位接入 |
-| 引擎和执行命令配置 | `<游戏项目>/.openaigame/project.json` | 本工具包使用，记录真实引擎位置、程序路径与项目命令；不会注册 MCP |
-| 资产工具配置 | `<游戏项目>/.openaigame/asset-providers.json` | 登记实际生成或处理工具；不会安装模型或引擎插件 |
+| Asset evidence and multiview quality review | Python + Pillow; Blender for GLB capture | Install Pillow in the executing Python and supply the Blender path | Collect → inspect original evidence → record judgments; [quality workflow](assets/quality-review.md) |
+| Personal skills | `~/.agents/skills/<skill-name>/` | Copy all sixteen complete packaged skill directories here for use across projects |
+| Project skills, optional | `<GAME_PROJECT>/.agents/skills/<skill-name>/` | Use for one project; normally choose personal or project installation to avoid divergent copies |
+| Installed toolkit root | `game-preproduction/runtime/` inside the chosen skill root | Run tools such as tools/game_workflow.py here; do not copy only SKILL.md |
+| Skill display metadata | Each skill's `agents/openai.yaml` | Keep it with the skill; it is not MCP configuration or game design data |
+| User configuration and MCP | Normally `~/.codex/config.toml` | Merge with existing settings; resolve the actual directory if CODEX_HOME is set |
+| Project configuration and MCP, optional | `<GAME_PROJECT>/.codex/config.toml` | Applies to trusted projects; choose the intended scope and avoid duplicate registrations |
+| Game working directory | `<GAME_PROJECT>/` | Start the Codex task here; project management and five specialist entry documents live here |
+| Native game project | `<GAME_PROJECT>/game/` for a new project | The actual directory contains .uproject, project.godot, or package.json; connect existing projects in place |
+| Engine and command configuration | `<GAME_PROJECT>/.openaigame/project.json` | Toolkit engine paths, executables, and commands; this does not register MCP |
+| Asset-tool configuration | `<GAME_PROJECT>/.openaigame/asset-providers.json` | Records real generation or processing tools; it does not install models or engine plugins |
 
-安装后在 Codex 新开任务，确认 16 个 Skill 可被发现；可明确输入“使用 game-preproduction，检查这个游戏项目的当前阶段”验证读取，再测试自然语言自动触发。文件存在、Skill 被读取、CLI 可运行和引擎已连接是不同检查项。
+After installation, start a new Codex task and check that all sixteen skills are discoverable. Explicitly request `game-preproduction` to inspect the game's stage, then check natural-language activation. File presence, skill loading, CLI execution, and engine connectivity are separate checks.
 
-路径依据：[Codex Skills 官方说明](https://learn.chatgpt.com/docs/build-skills)、[Codex MCP 官方说明](https://learn.chatgpt.com/docs/extend/mcp)。其他 Agent 的安装目录和 MCP 配置格式请参照对应产品说明。
+References: [Codex skills](https://learn.chatgpt.com/docs/build-skills), [Codex MCP](https://learn.chatgpt.com/docs/extend/mcp). Use the relevant product documentation for other agents' installation directories and connection formats.
 
-## 需要准备什么
+## Prerequisites
 
-| 想使用的功能 | 必需环境 | 在哪里安装或配置 | 如何确认可用 |
+| Task | Required environment | Where to configure | Check |
 | --- | --- | --- | --- |
-| 讨论立项、GDD、美术和技术方案，维护项目文件 | 能读写项目的 Agent 与当前任务需要的 Skills | Agent 的 Skill 安装目录；在游戏项目目录开始任务 | 新任务能读取 Skill，并把已知与待定保存到项目文件；不需要先安装引擎 |
-| 初始化文档、记录任务、检查文件和运行记录 | Python 3.10+ 与完整运行资源 | 本机 Python；源码 `tools/` 或已安装的 `game-preproduction/runtime/tools/` | 在对应工具包根执行 `python tools/game_workflow.py --help` |
-| Three.js 网页 3D / Phaser 网页 2D | 兼容项目 Vite 的 Node.js、npm 或 pnpm、浏览器 | 本机安装 Node；游戏工程安装依赖；项目配置记录 Node 与包管理器路径 | 依赖安装 → 构建 → HTTP 打开导出版本 → 实际操作；见 [网页说明](engines/web.md) |
-| Godot 原型与试玩 | 项目所需 Godot 4 可执行文件 | 本机安装 / 解压引擎；在项目配置登记路径 | 查询版本、导入并运行真实场景；见 [Godot 配置](engines/godot/README.md#环境配置) |
-| Godot 独立包 | 匹配引擎的导出模板、目标平台所需工具 | Godot 的 Editor → Manage Export Templates；导出窗口添加平台预设 | 导出后单独启动包；仅编辑器能运行还不够 |
-| Unity 工程制作 | 匹配的 Unity Editor、项目包依赖；按目标安装平台模块 | Unity Hub 管理编辑器和模块；Unity Package Manager 管理工程包 | 工程正常导入、编译、进入 Play；见 [Unity 配置](engines/unity/README.md#环境配置) |
-| Unreal 工程制作 | 匹配的 UE；C++ 工程 / 源码插件另需匹配工具链和 SDK | Epic Games Launcher 或既有引擎安装；Windows 编译组件在 Visual Studio Installer 中配置 | 工程可打开；涉及 C++ 时实际构建通过；见 [UE 配置](engines/unreal/README.md#环境配置) |
-| AI 通过 MCP 操作编辑器 | 对应 MCP 服务及其依赖；提供方要求的引擎插件 | 引擎侧安装插件（若需要）＋本机服务环境＋Agent 连接配置 | 工具可发现、目标工程正确、读写与保存重开通过；见 [MCP 三端配置](#mcp-三端配置) |
-| UE 动作/动画接入 | 当前任务选定或授权选材的资源/模块，目标版本兼容 | 工程 Content 导入动画，第三方代码按提供方安装到项目；检查骨架、控制接口和依赖 | 动画预览、工程中播放、规则时序、取消/恢复与试玩分别验证；不限定某个动作包 |
-| Tripo / Hunyuan3D API 生成 | Python、网络、服务账户与凭据 | Tripo/混元 API Key 可在[本机设置页](assets/local-settings.md)保存；TC3 使用环境变量，项目可覆盖默认配置 | doctor 检查存在，再生成一个小任务；见 [API 配置](assets/generation-api.md) |
-| 通过主机代理访问资产 API 或下载 | curl；Windows 自动代理使用系统 WinHTTP | 当前 Windows 自带 curl；其他系统在 PATH 提供 curl；使用系统代理或代理环境变量 | 先用官方只读接口验证连接与认证；见 [跟随主机代理](assets/local-settings.md#跟随主机代理) |
-| 免费与付费资产检索与获取 | Python、网络；部分来源需要浏览器登录 | [素材目录](assets/asset-sources.md)；无需本地生成模型 | 实际搜索 → 获取文件 → verify → 导入检查 |
-| 其他图像、3D、音频生成 | 用户选定的实际生成工具 / 服务及包装脚本 | 工具自己的环境；游戏项目 `.openaigame/asset-providers.json` | 先完成一次小任务，检查真实文件和日志；见 [资产接入](assets/README.md) |
-| 动画制作与武器校准 | `game-animation-pipeline`；按所选路径配置 Blender、UE 与 C++ 工具链 | 已有 UE 资源直接检查；需外部修改时配置源工具并按技能执行回传 | 独立动作测试与实际游戏验证分别记录；随包适配器的骨架/事件约束见该技能说明 |
-| Blender 模型处理 | Blender 与适用的输入格式 / 依赖文件 | 本机安装 Blender；资产提供方配置填写其可执行路径 | 转换后重新打开检查模型、材质和动画；见 [资产处理说明](assets/README.md) |
-| 数值 CSV 往返 | Python、真实 JSON 主源与字段绑定 | 游戏项目中的数值绑定文件；CSV 可用表格软件编辑 | 导出 → 修改 → 比较 → 应用 → 引擎重载确认 |
-| 读取数值 Excel 表 | 上述环境，另加运行工具所用 Python 的 `openpyxl` | 在同一 Python 环境执行 `python -m pip install openpyxl` | 读取指定数值页并检查差异；见 [数值往返](../tools/README.md#数值表往返) |
+| Discuss concept, GDD, art, or architecture and maintain files | Agent with project file access and relevant skills | Host skill directory; start in the game project | Read skills and save known facts and open questions; an engine is not required yet |
+| Initialize documents, record tasks, and check runs | Python 3.10+ and the complete runtime | Local Python and source tools/ or installed runtime/tools/ | Run python tools/game_workflow.py --help |
+| Three.js 3D / Phaser 2D | Node compatible with the project's Vite, npm/pnpm, browser | Install Node and project dependencies; configure executable paths | Install → build → serve exported output over HTTP → interact; [web guide](engines/web.md) |
+| Godot prototype and playtest | The project's Godot 4 executable | Install/extract locally and configure the path | Query version, import, run a real scene; [Godot setup](engines/godot/README.md#environment-setup) |
+| Godot standalone build | Matching export templates and platform tools | Editor → Manage Export Templates and export presets | Launch the exported package independently |
+| Unity authoring | Matching editor, project packages, target modules | Unity Hub and Package Manager | Import, compile, enter Play; [Unity setup](engines/unity/README.md#environment-setup) |
+| Unreal authoring | Matching UE; C++ projects/plugins also need toolchain and SDK | Launcher or existing install; Visual Studio Installer on Windows | Open the project and build C++ when required; [UE setup](engines/unreal/README.md#environment-setup) |
+| Editor control through MCP | Provider server/dependencies and any required plugin | Engine plugin + local server + agent connection | Discover tools, verify project identity, read/write, save/reopen; [three-part setup](#mcp-setup-across-three-layers) |
+| UE animation integration | Selected or authorized assets/modules compatible with the engine | Import into Content; install third-party code per provider | Check skeleton, controls, dependencies, preview, playback, timing, cancellation, and playtesting separately |
+| Tripo / Hunyuan3D generation | Python, network, account, credentials | Save API keys in [local settings](assets/local-settings.md); TC3 uses environment variables | Doctor checks presence; then generate a small job; [API setup](assets/generation-api.md) |
+| Proxy access for asset APIs/downloads | curl; Windows auto proxy uses WinHTTP | System proxy or proxy environment variables; curl on PATH outside Windows | Check connection/authentication with an official read-only endpoint; [host proxy](assets/local-settings.md#host-proxy-settings) |
+| Find and acquire free/paid assets | Python, network; some sites need browser login | [Asset directory](assets/asset-sources.md) | Search → acquire → verify → import; no local generation model needed |
+| Other image, 3D, or audio generation | Selected real service/tool and wrapper | Tool environment and asset-providers.json | Run a small job and inspect real files/logs; [asset integration](assets/README.md) |
+| Animation and weapon alignment | game-animation-pipeline; Blender, UE, and C++ tools as needed | Inspect existing UE assets directly; configure source tools for external edits | Validate standalone actions and the actual game separately; follow the skill's rig/event contracts |
+| Blender model processing | Blender and supported input/dependency files | Configure its executable in asset providers | Reopen outputs and inspect models, materials, animation; [asset processing](assets/README.md) |
+| CSV parameter round trip | Python, authoritative JSON, field bindings | Project binding file and a spreadsheet editor | Export → edit → compare → apply → reload in engine |
+| Read Excel parameters | Above plus openpyxl in the executing Python | python -m pip install openpyxl | Read the selected sheet and inspect differences; [numerical exchange](../tools/README.md#numerical-table-round-trip) |
 
-表格制作、概念图生成等 Agent 能力取决于所用 Agent 提供的工具；本项目不自动包含这些服务。GPU、显存、模型权重和服务凭据按实际选定的生成工具要求配置，没有所有用户通用的模型环境清单。
+Spreadsheet authoring, concept-image generation, and similar capabilities depend on tools provided by the host. Configure GPUs, VRAM, model weights, and credentials for the actual selected tools; there is no universal model environment required by this project.
 
-## MCP 三端配置
+## MCP Setup Across Three Layers
 
-| 层级 | 用户会在哪操作 | 配置内容 | 验证依据 |
+| Layer | Configuration location | Setup | Verification |
 | --- | --- | --- | --- |
-| 引擎端 | 目标工程的插件目录 / 插件面板 / 包管理器，按提供方说明 | 安装兼容插件并启用；有源码插件时先编译，必要时重启编辑器 | 插件成功加载，工程没有新增编译错误 |
-| 本机服务端 | 提供方的独立目录、Python 虚拟环境或 Node 环境 | 安装并固定服务版本及依赖，设置启动命令 | 服务成功启动并能连接目标编辑器；日志无连接错误 |
-| Agent 端 | 所用 Agent 的 MCP 连接设置；具体配置位置和格式按该 Agent 的要求选择 | 服务命令 / URL、工作目录及必要环境变量 | 当前任务发现真实工具，调用只读查询并核对工程身份 |
+| Engine | Project plugin directory, plugin panel, or package manager | Install and enable a compatible plugin; compile source plugins and restart when required | Plugin loads without introducing compilation errors |
+| Local server | Provider directory, Python environment, or Node environment | Install pinned dependencies and configure the startup command | Server starts and connects to the intended editor without connection errors |
+| Agent | Host MCP connection settings | Actual command/URL, working directory, and required environment variables | Discover tools, make a read-only query, and verify project identity |
 
-并非每套 MCP 都需要引擎插件。引擎插件、独立服务与启动参数由所选提供方决定。使用提供方实际要求，不把 UE 的步骤套到所有引擎上。
+Not every MCP provider requires an engine plugin. Follow the chosen provider's actual requirements rather than applying UE-specific steps to every engine.
 
-以 Codex 为例，配置可位于用户级 `~/.codex/config.toml` 或受信任项目的 `.codex/config.toml`；也可使用 `codex mcp add`。服务的命令和参数必须来自实际安装路径，不能把其他客户端的 `mcpServers` JSON 直接当作 Codex TOML。配置后重新连接，并检查当前会话是否看到了工具。操作方式见 [官方 MCP 文档](https://learn.chatgpt.com/docs/extend/mcp)。
+For Codex, use user `~/.codex/config.toml`, trusted-project `.codex/config.toml`, or `codex mcp add`. Commands and arguments must refer to actual installations. Another client's `mcpServers` JSON is not Codex TOML. Reconnect and confirm tools are visible in the session. See [official MCP documentation](https://learn.chatgpt.com/docs/extend/mcp).
 
-提供方示例见 [候选清单](engines/mcp.md#候选提供方)。这些是可评估的外部项目，不随本工具包安装；实际兼容性需在目标版本上验证。MCP 不是制作游戏的必选项，项目脚本和命令路线仍可使用。
+See [candidate providers](engines/mcp.md#candidate-providers). These external projects are not installed by this toolkit; validate compatibility with your engine. MCP is optional, and project scripts and commands remain usable.
 
-## 配置应该存在哪里
+## Where Configuration Belongs
 
-| 内容 | 保存位置 | 谁维护 |
+| Information | Location | Maintainer |
 | --- | --- | --- |
-| 引擎、Node 等程序 | 本机软件安装位置 | 用户或 Agent 执行环境安装 |
-| 项目使用哪个引擎、工程在哪里、构建 / 测试怎么执行 | 游戏项目 `.openaigame/project.json` | 初始化工具或 Agent；已有配置先读取再更新 |
-| 资产生成 / 转换命令 | 游戏项目 `.openaigame/asset-providers.json` | 按实际工具配置；包装脚本需要真实存在 |
-| MCP 服务连接 | Agent 的 MCP 配置 | 用户或 Agent 配置；不是写进 `project.json` 就会连通 |
-| 采用的版本、配置依据、当前缺口 | `Technical Design.md`；必要时拆出 `design/technical/engine-connection.md` | Agent 根据实际检查更新 |
-| 安装 / 编译 / 工具调用和复查证据 | 游戏项目 `runs/` 与验证报告 | 执行者记录，项目管理链接摘要 |
+| Engine, Node, and other programs | Local software installations | User or agent execution environment |
+| Engine choice, native project, build/test commands | Game .openaigame/project.json | Initialization tool or agent; read existing settings before editing |
+| Asset generation/conversion commands | Game .openaigame/asset-providers.json | Configure real installed tools and wrappers |
+| MCP connections | Agent MCP configuration | User or agent; project.json alone does not connect MCP |
+| Chosen versions, rationale, gaps | Technical Design.md, optionally design/technical/engine-connection.md | Agent updates from actual checks |
+| Installation/build/call evidence | Game runs/ and validation reports | Executor records results; project management links summaries |
 
-机器上的绝对路径由每位使用者按实际情况填写；不要直接采用示例路径作为安装位置。密钥不写入会归档的命令参数和文档，使用工具自身凭据管理或环境变量名引用。
+Fill in your own absolute paths. Example paths are placeholders. Keep credentials out of archived command arguments and documents; use credential storage or environment-variable references.
 
-## 用户与 Agent 分别做什么
+## User and Agent Responsibilities
 
-用户提供当前任务目标、明确的引擎选择，以及已有工程的位置（若有）；使用账号授权的资源时由用户完成对应登录。Agent 先检查已有环境，列出缺项及其影响，完成授权范围内的下载、配置和测试。管理员弹窗、账户登录、软件许可确认等需要用户交互的步骤，会说明具体操作位置。
+The user provides the task, engine choice, and existing project location where applicable, and completes account logins for authorized resources. The agent checks the environment, explains missing prerequisites and their impact, and performs authorized downloads, configuration, and tests. Steps requiring interaction, such as administrator prompts, account login, or license acceptance, should identify the exact screen and action.
 
-可以直接说：
+For example:
 
 ```text
-这次使用 Unreal，先检查制作环境和 MCP 接入条件。
-已有工程是 D:/Games/MyGame/MyGame.uproject。
-列出已经可用的部分、缺少的组件，以及分别在哪里配置。
+Use Unreal for this task and check the authoring environment and MCP prerequisites.
+The existing project is D:/Games/MyGame/MyGame.uproject.
+List what is available, what is missing, and where each item is configured.
 ```
 
-检查结果分为“未安装 / 未配置 / 已配置未验证 / 已验证 / 验证失败”，每项带下一步。当前 `doctor` 只覆盖对应适配器的检查范围，不会自动完成上述全部检查或安装；尤其 Unity / UE 的文件检查不证明 MCP、编译、打包已经可用。
+Report each item as not installed, not configured, configured but unverified, verified, or failed, with a next step. Doctor covers only its adapter's checks; it does not install or validate the entire environment. Unity/UE file checks do not prove MCP, compilation, or packaging works.
 
-环境配置通常在第一次接入时完成；引擎升级、插件更新、换机器或目标平台变化后，复查受影响的部分。
+Configure once when connecting a project, then revisit affected parts after engine/plugin updates, a machine change, or a target-platform change.
 
-### ElevenLabs 音频
+### ElevenLabs Audio
 
-使用音效、配乐或台词云生成时配置本机 ElevenLabs API Key，并为执行工具的 Python 准备 FFmpeg（PATH、`OAGD_FFMPEG` 或 `imageio-ffmpeg`）。`asset_workflow.py --project <项目> doctor --provider elevenlabs` 检查存在性，不提交生成；生成前在现有任务页核对请求与费用。参见 [音频接入](assets/elevenlabs-audio.md)。
+For cloud sound effects, music, or dialogue, configure a local ElevenLabs API key and FFmpeg for the executing Python environment through PATH, OAGD_FFMPEG, or imageio-ffmpeg. `asset_workflow.py --project PROJECT doctor --provider elevenlabs` checks presence without generating anything. Review the request and cost in the job page before execution. See [audio integration](assets/elevenlabs-audio.md).

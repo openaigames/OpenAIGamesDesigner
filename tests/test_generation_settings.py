@@ -52,6 +52,11 @@ class GenerationSettingsTests(unittest.TestCase):
         self.assertNotEqual(a['submit_url'], b['submit_url'])
         self.assertFalse(a['prompt_with_images'])
 
+    def test_all_tripo_modes_report_the_actual_v3_endpoints(self):
+        for row in caps.catalog('tripo'):
+            self.assertEqual(row['submit_url'], 'https://openapi.tripo3d.ai/v3' + caps.TRIPO_ENDPOINTS[row['mode']])
+            self.assertEqual(row['query_url'], 'https://openapi.tripo3d.ai/v3/tasks/{task_id}')
+
     def test_prompt_policy_matches_allowed_joint_input(self):
         request = {'parameters': {'Model': '3.0', 'GenerateType': 'Sketch', 'Prompt': 'sleeves'},
                    'inputs': [{'path': 'front.png', 'view': 'front'}]}
@@ -128,6 +133,7 @@ class GenerationSettingsTests(unittest.TestCase):
 
     def test_generated_document_matches_installed_modes(self):
         self.assertEqual((ROOT / 'adapters/assets/generation-capabilities.md').read_text('utf8'), caps.markdown())
+        self.assertEqual((ROOT / 'adapters/assets/generation-capabilities.zh-CN.md').read_text('utf8'), caps.markdown('zh-CN'))
 
     def check_worker_failure(self, report, expected):
         with test_directory() as tmp:

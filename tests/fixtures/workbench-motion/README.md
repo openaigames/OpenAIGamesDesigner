@@ -1,12 +1,14 @@
-# 动作看板联调夹具
+# Workbench Motion Fixture
 
-`generate.py` 在 Blender 内运行，输出到新目录：
+[English](README.md) | [简体中文](README.zh-CN.md)
+
+Run generate.py inside Blender, targeting a new directory:
 
 ```sh
 blender --background --factory-startup --disable-autoexec --python-exit-code 1 --python tests/fixtures/workbench-motion/generate.py -- /absolute/new-fixture
 python tools/project_workbench.py --project /absolute/new-fixture --view assets
 ```
 
-形状、骨架及动作均为脚本原创，专门检查直接 glTF、同名片段、纯动作 FBX 配角色、角色绑定与关联预览。`mapped-native.uasset` 是明确标注的接口占位文件，不可导入 UE；这项验证只覆盖浏览器映射，不证明 Unreal 原生导出或动作品质。
+Original shapes, rigs, and clips test direct glTF, duplicate clip names, animation-only FBX with characters, bindings, and linked previews. mapped-native.uasset is an explicit interface placeholder and cannot import into UE. This checks browser mapping, not native export or motion quality.
 
-检查保存、角色/动画/预览角色切换、未保存取消、刷新、导航、导出与双窗口冲突；从原始历史核对实际动作路径及上下文。改源或绑定后，原判断应失效且仍保留备注。不能把测试形状当作推荐游戏资产。
+Check save, character/clip/preview-character switches, discard, refresh, navigation, export, and two-window conflicts. Verify actual paths/context against history. Changed sources/bindings invalidate conclusions while retaining notes. Fixture shapes are not recommended game assets.

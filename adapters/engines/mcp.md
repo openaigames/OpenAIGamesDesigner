@@ -1,47 +1,49 @@
-# Agent 运行环境 MCP 与命令适配器
+# MCP Tools and Command Adapters
 
-## 选择执行路径
+[English](mcp.md) | [简体中文](mcp.zh-CN.md)
 
-1. 沿用已确认的引擎、工程和当前任务任务；发现 Agent 运行环境实际暴露的服务、工具与资源。配置文件里写了服务器，不证明连接成功。
-2. 从实际工具描述读取参数和能力；优先用只读调用确认工程绝对路径、引擎版本、编辑器实例和当前场景。服务未提供工程身份时，先从启动配置、进程和编辑器核实；无法消除歧义则不写入。
-3. 按任务选择路径：已验证的 MCP 工具用于编辑器操作，原生命令用于构建/测试/打包。已有项目脚本优先；MCP 缺少某能力时明确缺口，按已有授权使用可验证的替代方式，不更换引擎或擅自简化需求。
-4. 写入前建立可恢复版本，记录目标对象及预期结果。修改后检查真实返回值，保存并重新读取对象或重开验证；编译完成、持久化成功、运行正确分别判断。
-5. 将结果链接回任务、Technical Design 和验证报告；依据实际影响更新 GDD / Art Direction，管理入口汇总。
+## Choose an Execution Path
 
-MCP 超时或连接断开后，先读取现场和日志，确认操作是否已经生效，再决定重试。创建对象等操作不能盲目重复；保存失败不标完成。自动恢复只在能识别目标、判断结果并保持用户修改时实施。
+1. Keep the agreed engine, project, and task. Discover services, tools, and resources actually exposed to the agent. A server entry in configuration does not prove connectivity.
+2. Read actual tool descriptions and parameters. Prefer read-only calls to verify absolute project path, engine version, editor instance, and current scene. If identity is unavailable, inspect launch configuration, processes, and editor state. Do not write while ambiguity remains.
+3. Use verified MCP tools for editor operations and native commands for builds/tests/packages. Prefer existing project scripts. For missing capabilities, describe the gap and use an authorized, verifiable alternative without changing engines or silently reducing requirements.
+4. Establish a recoverable revision before writing and record target objects/expected results. Inspect actual returns, save, and reread/reopen. Compilation, persistence, and runtime correctness are separate checks.
+5. Link results to the task, Technical Design, and validation report. Update GDD/Art Direction according to actual impact and summarize through project management.
 
-## 提供方与能力记录
+After timeout/disconnection, inspect state/logs before retrying: operations may already have completed. Do not blindly recreate objects or mark failed saves complete. Automatic recovery requires identifiable targets/results and preservation of user edits.
 
-在游戏项目 `Technical Design.md` 中维护连接摘要，较长内容拆到 `design/technical/engine-connection.md`。版本或工具清单变化后重新检查本次涉及的能力，不因某个工具成功就标记整套提供方可用。
+## Provider and Capability Records
 
-| 记录项 | 填写内容 |
+Keep a connection summary in game-project Technical Design.md; move longer material to design/technical/engine-connection.md. Recheck affected capabilities when versions/tool lists change. One successful tool does not validate an entire provider.
+
+| Record | Contents |
 | --- | --- |
-| 工程身份 | 工程绝对路径、引擎版本、实例 / 会话标识、核实方式 |
-| 提供方 | 上游地址、已安装版本或 commit、插件版本、Agent 运行环境服务名 |
-| 环境 | 启动方式、工作目录、连接范围与依赖；密钥仅记录环境变量名 |
-| 当前状态 | 候选 / 已安装 / 已连接 / 具体能力已验证；连接时间与证据 |
-| 恢复基线 | 版本提交或实际备份位置；未保存修改的处理 |
+| Project identity | Absolute path, engine version, instance/session ID, verification method |
+| Provider | Upstream URL, installed version/commit, plugin version, service name |
+| Environment | Launch method, working directory, connection scope/dependencies; record secret environment-variable names only |
+| Status | Candidate / installed / connected / specific capability verified; connection time and evidence |
+| Recovery baseline | Commit or actual backup location; treatment of unsaved changes |
 
-| 当前任务所需能力 | 实际工具名或命令 | 输入与目标 | 验证证据 | 结论 / 替代路径 |
+| Required capability | Actual tool/command | Input/target | Evidence | Result/alternative |
 | --- | --- | --- | --- | --- |
-| 读取工程、修改对象、保存重开、编译、试玩等按需填写 | 从当前 Agent 运行环境发现 | 真实对象路径 | 原始输出及复查 | 未验证 / 通过 / 失败 / 不支持 |
+| Reading, editing, save/reopen, compilation, playtesting as needed | Discover in the active environment | Real object path | Raw output and recheck | Unverified / passed / failed / unsupported |
 
-这些表是填写约定，不能预填通过。编写了接入说明只代表有方法；只有真实调用和复查才能证明接通。
+These are recording conventions, not prefilled passes. Instructions describe a method; real calls and rechecks establish connectivity.
 
-## 保存运行证据
+## Retain Execution Evidence
 
-CLI 操作继续由现有工具写 `runs/<run-id>/manifest.json`。Agent 运行环境直接调用 MCP 时，在 `runs/<时间与任务>-mcp/` 保存去除凭据的原始调用输出、日志和必要截图，在 `tests/` 使用 [验证报告模板](../../templates/validation-report.md) 的项目副本关联这些文件、任务和工程版本。
+CLI operations continue to write `runs/<run-id>/manifest.json`. For direct MCP calls, retain credential-free raw outputs, logs, and necessary screenshots in `runs/<time-and-task>-mcp/`. Link them, the task, and project revision from a project copy of the [validation template](../../templates/validation-report.md) under tests/.
 
-MCP 证据目录不伪造 CLI manifest；现有 `validate_records.py` 不审核任意 MCP 输出或证明调用真实性。报告必须明确谁执行、实际使用的工具、修改前后对象、保存/重开结果、失败与未执行项。无法导出原始输出时记录 Agent 运行环境调用标识及可查位置，并说明证据限制。试玩感受与自动断言分开。
+Do not fabricate CLI manifests for MCP. validate_records.py neither audits arbitrary MCP outputs nor proves their authenticity. Reports identify executor, tools, before/after objects, save/reopen results, failures, and unperformed checks. If raw export is unavailable, record retrievable call IDs/locations and limitations. Separate playtest impressions from automated assertions.
 
-## 候选提供方
+## Candidate Providers
 
-以下是外部提供方入口，不随工具包自动安装，也不构成兼容认证。选用时固定实际版本并读取上游最新安装说明。
+External entry points below are not bundled, automatically installed, or compatibility certifications. Pin actual versions and consult upstream installation instructions when selecting them.
 
-| 引擎 | 候选 | 已知适用范围与待验证项 |
+| Engine | Candidate | Scope and checks |
 | --- | --- | --- |
-| Unreal | [chongdashu/unreal-mcp](https://github.com/chongdashu/unreal-mcp) | 上游为实验项目，Python MCP 服务连接工程 C++ 插件；Actor / Blueprint 工具。需编译插件、验证本机 UE 版本、工程身份和持久化；具体编辑操作以所选版本的实际工具清单为准 |
-| Unity | [CoplayDev/unity-mcp](https://github.com/CoplayDev/unity-mcp) | 编辑器包与 MCP 服务，按实际启用工具组使用；需验证项目会话、版本和保存 / Play / 测试能力 |
-| Godot | [Coding-Solo/godot-mcp](https://github.com/Coding-Solo/godot-mcp) | 编辑器启动、工程运行、调试和场景相关工具；按实际工具清单验证，保留 Godot CLI |
+| Unreal | [chongdashu/unreal-mcp](https://github.com/chongdashu/unreal-mcp) | Experimental Python service connected to a C++ project plugin, with Actor/Blueprint tools. Compile and verify target UE, identity, persistence, and actual tool list |
+| Unity | [CoplayDev/unity-mcp](https://github.com/CoplayDev/unity-mcp) | Editor package/service; verify enabled groups, sessions, versions, save/Play/test capabilities |
+| Godot | [Coding-Solo/godot-mcp](https://github.com/Coding-Solo/godot-mcp) | Editor launch, project execution, debugging, scene tools; verify actual tools and retain Godot CLI |
 
-Three.js / Phaser 使用代码、构建工具与 Agent 的浏览器工具；浏览器连接成功不表示游戏测试通过，无需为统一名称额外安装引擎 MCP。
+Three.js/Phaser use code, build tools, and agent browser tools. Browser connectivity does not establish game correctness, and no extra engine MCP is required for naming consistency.

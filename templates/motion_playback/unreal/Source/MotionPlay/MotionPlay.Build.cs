@@ -1,0 +1,2 @@
+using UnrealBuildTool;
+public class MotionPlay:ModuleRules {public MotionPlay(ReadOnlyTargetRules Target):base(Target){PCHUsage=PCHUsageMode.UseExplicitOrSharedPCHs;PublicDependencyModuleNames.AddRange(new[]{"Core","CoreUObject","Engine","InputCore","OAGDCore","OAGDPlayback"});PrivateDependencyModuleNames.Add("Json");}}

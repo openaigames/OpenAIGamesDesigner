@@ -1,61 +1,67 @@
-# OpenAIGamesDesigner 架构
+# Project Workflows and Documentation Ownership
 
-项目文档遵循“首次六入口、后续专业原位修订、依赖联动、管理汇总”。专业入口链接详细规格，各规则与配置保持唯一负责位置；一次跨方向修改通过同一变更记录关联美术、技术、验证及真实任务，分别记录设计、实现和验证成熟度。概览只在定位、核心体验、目标玩家或支柱变化时更新，管理每轮摘要结果和下一步。联动由 Agent 读取依据后执行，当前没有后台文档监听或自动依赖传播服务。
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-这是可由 Agent 使用的本地游戏开发工具包。真实项目保留可编辑设计文件、原生引擎工程和实际证据；不需要数据库、常驻服务或看板。十六个职业 Skill 分别负责制作管理、定位、系统、数值、战斗、关卡、美术指导、角色、场景、动画、特效、音频、UI/UX、技术美术、工程和验证。专业方法按需组合，不用游戏类型限制用户创作。
+Use six main documents to organize a new project. Keep specialist decisions in their relevant documents, link detailed specifications, and summarize progress in Project Management. Each rule or configuration has one authoritative source. A shared change record connects design, art, engineering, tasks, and validation, showing what has been designed, implemented, and tested. Update the concept when the game's direction, core experience, audience, or pillars change. The agent maintains these links as it works; changes are not synchronized automatically.
 
-## 工具包的职责
+This local game-development toolkit supports editable design files, native projects, and actual evidence without requiring a database, persistent server, or dashboard. Sixteen skills cover production, concept, systems, numerical design, combat, levels, art direction, characters, environments, animation, VFX, audio, UI/UX, technical art, engineering, and validation. Combine methods as needed without restricting game genres.
 
-| 层 | 维护内容 | 不代表什么 |
+## Toolkit Responsibilities
+
+| Layer | Maintains | Limits |
 | --- | --- | --- |
-| skills | 专业判断、澄清与交接方法 | 文档不等于已实现的游戏 |
-| workflows | 五阶段定义与区间执行、内容制作，以及既有接入/原型/切片/变更/资产/交付六条复用流程 | 不为每个引擎或玩法复制流程 |
-| templates | 通用管理、三类里程碑、任务、规格、验证与决定骨架 | 不要求已有项目迁移或填满 |
-| tools | 文档生成、引擎运行、资产任务、数值交换、记录检查、技能打包 | 不自动批准任务或阶段 |
-| adapters | 引擎命令、本地生成包装命令、Blender 处理 | 不内置全部引擎编辑器能力或生成模型 |
-| schemas | 项目、运行、引擎会话、资产任务及产物的结构化约定，见 [schemas](../schemas/) | 不是独立的任务管理数据库 |
-| tests | 工具、协议、文件保护与模拟适配器检查 | 不代替真实引擎联调或游戏验收 |
+| skills | Professional judgment, clarification, handoff methods | Documents are not implemented games |
+| workflows | Five stages/ranges, content production, and reusable intake/prototype/slice/change/asset/delivery flows | No duplicated workflow per engine/genre |
+| templates | Management, milestones, tasks, specs, configuration, editable native examples | Existing projects need not migrate/fill every template |
+| tools | Documents, engine execution, asset jobs, numerical exchange, record checks, packaging | No automatic task/stage approval |
+| adapters | Commands, optional runtime/motion/scenes, generation services, Blender | Not every editor capability or generation model |
+| schemas | Project/run/session/job/artifact contracts; see [schemas](../schemas/README.md) | Not a separate task database |
+| tests | Tools, protocols, file protection, native cases/evidence | Not substitutes for real integration or acceptance |
 
-`adapters/engines/` 包含 Godot、Unity、Unreal、Three.js 和 Phaser 的独立入口；后两者共用 `web_common.py` 的网页执行逻辑。`adapters/assets/` 包含 Tripo / Hunyuan3D / ElevenLabs API、本地 Hunyuan3D、图像和音频包装；`adapters/processing/` 包含 Blender。公共协议辅助文件也保存在所属目录。
+adapters/engines has Godot, Unity, Unreal, Three.js, and Phaser entries; web engines share web_common.py. adapters/assets covers cloud APIs and local generation wrappers; adapters/processing covers Blender and procedural/motion processing. Shared helpers stay with their domains.
 
-## 实际游戏项目
+## Game Project Layout
 
-```text
+```
 MyGame/
-├── Project Management.md           阶段、目标、入口、阻塞与下一个动作
-├── Game Concept.md                 按需形成的专业正文
+├── Project Management.md           Goals, stages, entry points, blockers, next action
+├── Game Concept.md                 Professional documents developed as needed
 ├── Game Design Document.md
 ├── Art Direction.md
 ├── Technical Design.md
 ├── Risk & Assumption List.md
-├── production/                     里程碑、任务、决定、资产请求
-├── design/                         详细功能、资产规格及按需数值附件
-├── tests/                          项目测试和验证报告
-├── game/                           一个持续编辑的原生工程
-├── assets-source/                  原始资产及来源资料
+├── production/                     Milestones, tasks, decisions, asset requests
+├── design/                         Detailed features, asset specs, numerical attachments
+├── tests/                          Project tests and reports
+├── game/                           One continuously edited native project
+├── assets-source/                  Original assets and provenance
 ├── .openaigame/
-│   ├── project.json                引擎位置和执行配置
-│   ├── asset-providers.json        项目选定的本地工具命令
-│   ├── asset-jobs/<id>/            输入快照、任务状态、日志、产物
-│   └── numeric-imports/<id>/       数值更新记录与原文件备份（按需）
-├── runs/<id>/                      引擎执行记录、输入快照与日志
-└── builds/<id>/                    导出结果
+│   ├── project.json                Engine location and execution settings
+│   ├── asset-providers.json        Selected provider configuration
+│   ├── asset-jobs/<id>/            Snapshots, state, logs, artifacts
+│   └── numeric-imports/<id>/       Numerical changes and source backups, as needed
+├── runs/<id>/                      Execution records, input snapshots, logs
+└── builds/<id>/                    Exports
 ```
 
-这是新游戏的默认组织约定；用户明确指定的位置与已有结构优先，不自动迁移。先用 scaffold 或按相同约定建立根目录六个非空入口及索引；正文按已知、待定和补充条件逐步完善，其他目录按工作产生。入口存在不代表设计已完成。Agent 运行环境 outputs 可容纳整个游戏根，但不能用引擎内 Docs 和 Agent 运行环境 work/logs 替代项目管理和运行结构。已有工程根可配置为 `.`；新工程默认在 `game/`。Markdown 管理需求、判断和阶段；JSON 记录阶段任务、命令、文件与证据；同 ID Markdown 保留专业说明，不重复维护结构化状态。管理入口链接任务、里程碑和实际证据。
+Use this layout for new projects unless another location or structure has been chosen. Existing projects keep their established layout. Start each main document with known facts, open questions, and the conditions for completing the work, then add directories as needed. Keep durable project records with the game rather than relying on temporary agent logs. An existing engine root can be configured as `.`; a new one defaults to `game/`. Markdown captures decisions and explanations, while JSON records structured tasks, commands, files, and evidence. A Markdown document can share a task ID to add detail without duplicating its status.
 
-主要玩法实施前需要当前规则、技术入口、任务与原型目标。新作位置检查用 `validate_records.py --layout --markdown`，实施交接增加 `--production`；已有/自定义结构省略布局检查，保留等价记录。检查不会判断专业内容或用户是否认可。
+Before major gameplay implementation, retain current rules, technical entry, task, and prototype goals. New layouts use validate_records.py --layout --markdown and --production for handoff. Existing/custom layouts omit layout checks but retain equivalent evidence. Validators cannot determine professional quality or user acceptance.
 
-一次变更连接：需求/决定 → 功能或资产规格 → 具体任务 → 原生工程改动 → 命令记录 → 实际检查/试玩报告 → 更新当前阶段与下一步。命令成功只能证明本次命令达到其技术条件，玩法、视觉和用户认可需要各自证据。
+A change connects request/decision → feature/asset spec → task → native edits → execution record → observation/playtest → stage/next step. Commands prove their own technical conditions, not gameplay, visual quality, or user approval.
 
-资产任务 `succeeded` 表示本地命令结束且输出文件已登记；`registered` 表示登记了外部制作的文件。两者都保持 `quality_validation: not_checked`。输入快照、哈希与重试关联用于追溯，不能替代 Git/LFS 或工程备份。
+For asset jobs, `succeeded` means the generation or processing step completed and its outputs were registered. `registered` identifies externally produced files. Both retain `quality_validation: not_checked` until reviewed. Snapshots, hashes, and retry links provide traceability; keep separate version control and backups.
 
-数值表雏形和用户/AI 调参嵌入现有专业与流程。GDD/功能规格维护规则并链接编辑主源，数值策划维护模型与推导依据，技术维护字段映射、覆盖与导入方式，验证检查真实生效，管理汇总结果。数值工具支持绑定 JSON 的文件往返，原生资源沿用项目导入器；`configuration_written` 不代表引擎运行或平衡验证完成。数值交换不是后台自动同步，也不是一套新的端到端调度程序。
+Numerical work stays in the same workflow: GDD/specs own rules and link the editable source, numerical design owns models, engineering owns mappings/overrides/import, validation checks effective values, and management summarizes. JSON exchange supports file round trips; native resources use project importers. configuration_written is not runtime/balance validation. Exchange is neither background sync nor a separate end-to-end scheduler.
 
-## 分发与边界
+## Distribution and Scope
 
-源码是维护来源，`dist/` 是构建产物，个人 Skill 目录是安装副本，游戏目录是工作结果。打包时公共运行资源放入 `game-preproduction/runtime/`，包含 workflows、templates、tools、adapters、schemas 和可移植使用文档；十六个 Skill 的专业参考各自随包分发。默认打包只包含 skills 和规定的 runtime 资源。个人开发记录、旧工具与历史分发包保存在仓库外，不参与当前流程。
+Source is the maintained repository; dist contains builds; personal skill directories are installed copies; game directories contain work results. Bundles place workflows/templates/tools/adapters/schemas and portable guides in game-preproduction/runtime, alongside the sixteen skills' references. The packager includes the runtime resources and public guides needed for installation.
 
-Unity/Unreal 分别提供工程识别、原生运行检查、测试报告解析和构建导出入口，具体依赖见 [执行配置](../adapters/engines/execution.md)；工程创建、场景/组件、资源导入、角色动画和自动操作由各引擎制作驱动实现，共享检查点与 [会话恢复](../adapters/engines/sessions.md)。具体对象和操作以各引擎 production 说明为准，项目功能按实际工程代码、可用 MCP 或项目工具实现。图像、音频和本地 Hunyuan3D 使用可配置包装命令；Tripo / Hunyuan3D 提供模型云 API，ElevenLabs 提供音效、配乐与台词 API；均共用资产任务记录。具体模式、凭据和恢复见 [资产接入](../adapters/assets/README.md)。工具包不附带生成模型权重。
+Unity/Unreal provide identification, native execution, test parsing, and builds; see [execution](../adapters/engines/execution.md). Production drivers create/edit/import/play with shared [checkpoints/recovery](../adapters/engines/sessions.md). Exact operations follow engine guides; implement project features through real code, available MCP, or project tools. Local wrappers and cloud generation share asset jobs; see [asset integration](../adapters/assets/README.md). Model weights are not bundled.
 
-使用见 [入门](../tools/README.md)，实际验收顺序见 [分项验证计划](../tests/README.md)。
+Start with [tools](../tools/README.md); see [validation guidance](../tests/README.md).
+
+## Module Guides
+
+Workflows organize work; choose tools by task. [Documentation](../docs/README.md) indexes modules, [templates](../templates/README.md) indexes documents/project recipes, and [installation](../docs/INSTALLATION.md) explains source, shared runtime, and game copies.

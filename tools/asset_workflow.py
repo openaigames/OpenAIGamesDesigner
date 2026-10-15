@@ -12,13 +12,14 @@ import uuid
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from adapters.assets import hunyuan3d, image_provider, audio_provider, tripo, api_common, elevenlabs, audio_timing, ark, seedream, seedance
 from adapters.assets import credential_store, model_defaults
-from adapters.assets import generation_approval, model_prompt_policy
-from adapters.processing import blender
+from adapters.assets import generation_approval, model_prompt_policy, input_preparation
+from adapters.processing import blender, procedural
 from game_workflow import atomic_json, identifier, now, sha, stop_process
 from validate_records import contained, contract
 from workbench import asset_versions, asset_handoff
 
 PROVIDERS = {"hunyuan3d": hunyuan3d, "tripo": tripo, "image": image_provider, "audio": audio_provider, "blender": blender, "elevenlabs": elevenlabs, "seedream": seedream, "seedance": seedance}
+PROVIDERS['procedural'] = procedural
 TERMINAL = {"succeeded", "registered", "failed", "blocked", "cancelled", "interrupted"}
 
 def location(root, job_id):
@@ -39,11 +40,12 @@ def new_job(root, provider, request, settings, retry_of=None):
         raise ValueError("Request must contain object parameters and an input path list")
     if not isinstance(request.get('inputs', []), list): raise ValueError('inputs must be an array')
     # Freeze the chosen default in the job and its approval fingerprint.
-    request = model_defaults.prepare(provider, request, settings)
+    request = model_defaults.prepare(provider, request, settings, new_job=retry_of is None)
     art_context = asset_handoff.request_context(request.get('art_record'))
     model_prompt_policy.require(provider, request, settings, root)
     context=asset_versions.lineage(root,request['lineage']) if request.get('lineage') else None
-    if context and provider in ('image','seedream','seedance'):
+    # Prepared references are explicit and frozen; lineage alone must not add uploads.
+    if context and provider in ('image','seedream','seedance') and not request.get('preparation'):
         refs=([{'group':context['group'],'version':context['parent']}] if context['parent'] else [])+context['references']
         inputs=list(request.get('inputs',[]))
         for ref in refs:
@@ -67,6 +69,7 @@ def new_job(root, provider, request, settings, retry_of=None):
         if provider not in ('tripo', 'hunyuan3d', 'elevenlabs', 'seedream', 'seedance'):
             raise ValueError('API mode is available for tripo, hunyuan3d, elevenlabs, seedream and seedance')
         api_common.validate_request(provider, request, settings)
+    input_preparation.verify_request(root, provider, request, settings, fresh=retry_of is None)
     paths = request.get("inputs", [])
     if not isinstance(paths, list): raise ValueError("inputs must be an array")
     sources = []
@@ -108,6 +111,8 @@ def new_job(root, provider, request, settings, retry_of=None):
     if context:job['request']['lineage']=context
     if 'brief' in request:job['request']['brief']=request['brief']
     if art_context:job['request']['art_record']=art_context
+    if 'preparation' in request:job['request']['preparation']=request['preparation']
+    if 'iteration' in request:job['request']['iteration']=request['iteration']
     atomic_json(folder / "job.json", job)
     return job
 
@@ -161,6 +166,7 @@ def execute_job(root, job_id, timeout, resume=False, remote_id=None):
             raise ValueError("Only queued jobs can run; resume an API task or retry explicitly")
         if not resume:
             model_prompt_policy.require(job['provider'], job['request'], job['settings'], root)
+            input_preparation.verify_request(root, job['provider'], job['request'], job['settings'])
         if is_api and not resume:
             generation_approval.require(generation_approval.for_job(root, job))
         attempt = path.parent / ('attempt-' + str(len(job['attempts']) + 1))
@@ -290,13 +296,17 @@ def main(argv=None):
             config_path = contained(root, ".openaigame/asset-providers.json")
             config = json.loads(config_path.read_text(encoding="utf-8-sig")) if config_path.exists() else {}
             if not isinstance(config, dict): raise ValueError("Provider configuration must be an object")
-            settings = config[args.provider] if args.provider in config else credential_store.default_settings(args.provider)
+            request = (json.loads(contained(root, args.request).read_text(encoding="utf-8-sig"))
+                       if args.action == 'submit' else None)
+            settings = (input_preparation.effective_settings(root, args.provider)
+                        if request and request.get('preparation') else
+                        config[args.provider] if args.provider in config else
+                        {} if args.provider == 'procedural' else credential_store.default_settings(args.provider))
             if not isinstance(settings, dict): raise ValueError("Provider is not configured")
             if args.action == 'doctor':
                 result = api_common.doctor(args.provider, settings)
                 result['configuration_source'] = 'project' if args.provider in config else 'local_default'
             else:
-                request = json.loads(contained(root, args.request).read_text(encoding="utf-8-sig"))
                 result = new_job(root, args.provider, request, settings)
         elif args.action == "list":
             result = [{"job_id": p.parent.name, "status": read_job(root, p.parent.name)[1]["status"]}

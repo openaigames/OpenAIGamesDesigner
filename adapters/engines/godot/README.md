@@ -1,21 +1,39 @@
-# Godot 执行路线
+# Godot Execution
 
-[命令实现](cli.py) 保留原有 Godot CLI。编辑器自动化按 [MCP 接入](../mcp.md) 发现并验证 Agent 运行环境工具；候选 [Coding-Solo/godot-mcp](https://github.com/Coding-Solo/godot-mcp) 的具体能力以实际工具清单为准。先确认 project.godot 所在路径，再验证场景读写、保存与重新打开；CLI smoke 不能替代这些检查。没有 MCP 时命令路线仍可使用。
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-需要 Godot 4 的真实可执行文件。工具保留已有 Godot CLI，不会因为新增适配器迁移游戏工程。示例在工具包根执行，`MyGame` 使用实际游戏项目路径。
+## Choose an Integration Route
 
-## 环境配置
+This page covers project commands, setup, and editor integration. Reusable in-game functions are separate modules; they do not replace the project's main scene, character, or rules automatically.
 
-| 组件 | 在哪里操作 | 完成检查 |
+| Task | Guide |
+| --- | --- |
+| Input, state, feedback, interaction, navigation, basic scenes | [Core components](../runtime_components/README.md) |
+| Import and sample processed character animation | [Motion](../motion/README.md) |
+| Playback, root motion, foot/hand constraints | [Playback](../motion_playback/README.md) |
+| Multi-node static assets, graybox replacement, and scene handoff | [Static scenes](../static_scene/README.md) |
+| Component updates and rollback | [Installation and migration](../../../docs/INSTALLATION.md) |
+
+These modules use native Godot resources. Exporting requires official export templates matching the engine.
+
+## Project Execution
+
+The [command adapter](cli.py) uses Godot's CLI. Discover and verify editor tools through [MCP integration](../mcp.md). [Coding-Solo/godot-mcp](https://github.com/Coding-Solo/godot-mcp) is a candidate whose actual tool list must be checked. Confirm the project.godot path, then test scene read/write and save/reopen. CLI smoke does not replace those checks. Commands work without MCP.
+
+A real Godot 4 executable is required. The adapter does not migrate existing projects. Run examples from the toolkit root and replace MyGame with the actual game path.
+
+## Environment Setup
+
+| Component | Configure | Check |
 | --- | --- | --- |
-| 项目对应的 Godot 4 | 本机安装 / 解压引擎，项目配置 `godot_executable` 或设置 `GODOT_BIN` | 查询 `--version`，导入项目并运行场景 |
-| 导出模板（打包时） | Godot 的 Editor → Manage Export Templates | 安装与引擎匹配的模板 |
-| 平台预设和 SDK（打包时） | Godot 导出窗口添加预设；外部 SDK 按目标平台要求安装 | 实际导出，并独立打开产物 |
-| MCP（按需） | 候选服务的 Node/npm 环境、Godot 路径及 [Agent 端配置](../../environment-setup.md#mcp-三端配置) | 当前任务能发现工具，确认工程后验证场景读写和保存 |
+| Project's Godot 4 | Install/extract locally; set godot_executable or GODOT_BIN | Query --version, import, and run a scene |
+| Export templates | Editor → Manage Export Templates | Match the engine version |
+| Platform preset and SDK | Export dialog and platform-specific SDK installation | Export and launch the output independently |
+| MCP, optional | Provider Node/npm environment, Godot path, [agent configuration](../../environment-setup.md#mcp-setup-across-three-layers) | Discover tools, confirm project, read/write and save |
 
-本候选不要求照搬 UE 的 C++ 插件步骤。具体要求见 [Godot MCP](https://github.com/Coding-Solo/godot-mcp)；导出菜单和模板见 [Godot 官方说明](https://docs.godotengine.org/en/stable/tutorials/export/exporting_projects.html)。Godot .NET 工程另按项目配置 .NET 环境，内置最小样例使用 GDScript。
+Follow the [Godot MCP requirements](https://github.com/Coding-Solo/godot-mcp), not UE's C++ plugin procedure. See [Godot export documentation](https://docs.godotengine.org/en/stable/tutorials/export/exporting_projects.html) for templates. .NET projects need their own .NET environment; the minimal example uses GDScript.
 
-## 执行示例
+## Command Examples
 
 ```sh
 python tools/game_workflow.py init --project "MyGame" --engine-root game --godot "C:/Tools/Godot/Godot.exe" --create-engine
@@ -25,26 +43,26 @@ python tools/game_workflow.py run --project "MyGame" --action smoke --frames 60
 python tools/game_workflow.py run --project "MyGame" --action play --timeout 600
 ```
 
-`--create-engine` 创建最小 Node2D 工程，不生成完整玩法；已有工程省略它。doctor 实际调用 `--version`，prepare 做导入，smoke 做有限帧无画面启动；play 打开交互窗口并等待关闭。关闭窗口前 CLI 会保持运行，超过 timeout 会停止进程。
+`--create-engine` creates a minimal Node2D project, not complete gameplay; omit it for existing projects. Doctor queries --version, prepare imports, smoke runs a bounded headless session, and play opens an interactive window and waits for it to close. Timeout stops the process.
 
-代码 Agent 根据已确认的范围修改脚本、场景和配置，再运行针对实际规则的测试：
+After editing scripts, scenes, and configuration within the agreed scope, run tests for actual game rules:
 
 ```sh
 python tools/game_workflow.py run --project "MyGame" --action test --script tests/test_game.gd --timeout 120
 ```
 
-测试脚本必须真的执行断言，并在通过时输出 `OAGD_TEST_PASS count=N`（N > 0）。单有该标记不是独立验收依据，需检查脚本的测试含义；退出码或日志错误会影响结果。`tests/fixtures/godot-2d/` 是自制联调样例，源码和个人 Skill 的共享 runtime 均包含它；使用时复制到独立测试项目。它不属于用户游戏设计，完整维护测试代码仍只在源码仓库。
+The script must execute assertions and print `OAGD_TEST_PASS count=N` with N > 0 when successful. Inspect what the tests mean; a marker alone is not acceptance evidence, and exit/log errors affect the result. The source repository includes an original integration fixture under `tests/fixtures/godot-2d/`; copy it to an independent test project. Maintenance fixtures are excluded from installation bundles; editable game examples are provided under `templates/runtime_examples/`.
 
-导出需要项目已配置的预设和匹配版本 export templates：
+Export requires an existing preset and matching templates:
 
 ```sh
 python tools/game_workflow.py run --project "MyGame" --action export --preset "Windows Desktop" --timeout 600
 ```
 
-build / export 均按已有预设导出并记录关联文件哈希。默认文件名为 game.exe、模式为 debug；其他平台及 release 可在 `godot` 配置段指定，见 [执行配置](execution.md)。真实独立包需要在目标环境打开、检查资源和日志，不能从模拟测试推断成功。
+Build/export use the preset and record output hashes. Defaults are game.exe and debug; configure other targets or release in the godot section, as shown in [execution configuration](execution.md). Launch standalone builds on the target environment and inspect resources/logs; simulated tests cannot prove that they work.
 
-每次 run 保存输入快照、命令、版本、日志和状态。运行中发现工程文件变化会提示复核；工程哈希不是备份。命令通过不证明手感、视觉、性能或里程碑通过。
+Each run records input snapshots, command, versions, logs, and state. Changes during execution require review; hashes are not backups. Command success does not certify controls, visuals, performance, or milestones.
 
-实际事件、参数、空间与媒体采集见 [共享运行观察](../observations.md#godot-2d)，可复用的观察夹具见 runtime 或源码的 `tests/fixtures/godot-observation/`。
+See [runtime observations](../observations.md#godot-2d) for events, parameters, space, and media. The observation fixture is available in the source repository under `tests/fixtures/godot-observation/`.
 
-参数依据：[Godot 官方命令行说明](https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html)。
+Reference: [Godot command line](https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html).

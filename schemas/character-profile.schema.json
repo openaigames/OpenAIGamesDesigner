@@ -1,0 +1,813 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openaigame.local/schemas/character-profile.schema.json",
+  "title": "Project-owned humanoid character profile",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "oagd.character-profile/1"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "armature": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "file",
+        "sha256",
+        "armature"
+      ],
+      "additionalProperties": false
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "armature": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "file",
+        "sha256",
+        "armature"
+      ],
+      "additionalProperties": false
+    },
+    "roles": {
+      "type": "object",
+      "properties": {
+        "root": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "hips": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "spine": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "head": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "thigh_L": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "shin_L": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "foot_L": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "upperarm_L": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "forearm_L": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "hand_L": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "thigh_R": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "shin_R": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "foot_R": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "upperarm_R": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "forearm_R": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "hand_R": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "source",
+            "target"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "root",
+        "hips",
+        "spine",
+        "head",
+        "thigh_L",
+        "shin_L",
+        "foot_L",
+        "upperarm_L",
+        "forearm_L",
+        "hand_L",
+        "thigh_R",
+        "shin_R",
+        "foot_R",
+        "upperarm_R",
+        "forearm_R",
+        "hand_R"
+      ],
+      "additionalProperties": false
+    },
+    "coordinates": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "object",
+          "properties": {
+            "up": {
+              "const": "+Z"
+            },
+            "forward": {
+              "enum": [
+                "+X",
+                "-X",
+                "+Y",
+                "-Y"
+              ]
+            },
+            "unit": {
+              "const": "metre"
+            }
+          },
+          "required": [
+            "up",
+            "forward",
+            "unit"
+          ],
+          "additionalProperties": false
+        },
+        "target": {
+          "type": "object",
+          "properties": {
+            "up": {
+              "const": "+Z"
+            },
+            "forward": {
+              "enum": [
+                "+X",
+                "-X",
+                "+Y",
+                "-Y"
+              ]
+            },
+            "unit": {
+              "const": "metre"
+            }
+          },
+          "required": [
+            "up",
+            "forward",
+            "unit"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "source",
+        "target"
+      ],
+      "additionalProperties": false
+    },
+    "reference_pose": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "object",
+          "properties": {
+            "local_rotations_xyzw": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -1,
+                  "maximum": 1
+                },
+                "minItems": 4,
+                "maxItems": 4
+              }
+            },
+            "basis": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "local_rotations_xyzw",
+            "basis"
+          ],
+          "additionalProperties": false
+        },
+        "target": {
+          "type": "object",
+          "properties": {
+            "local_rotations_xyzw": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -1,
+                  "maximum": 1
+                },
+                "minItems": 4,
+                "maxItems": 4
+              }
+            },
+            "basis": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "local_rotations_xyzw",
+            "basis"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "source",
+        "target"
+      ],
+      "additionalProperties": false
+    },
+    "unmapped_bones": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "object",
+          "additionalProperties": {
+            "const": "ignore"
+          }
+        },
+        "target": {
+          "type": "object",
+          "additionalProperties": {
+            "const": "inherit_rest"
+          }
+        }
+      },
+      "required": [
+        "source",
+        "target"
+      ],
+      "additionalProperties": false
+    },
+    "root_motion": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "enum": [
+            "animation",
+            "controller"
+          ]
+        },
+        "translation": {
+          "enum": [
+            "scaled",
+            "in_place"
+          ]
+        },
+        "scale": {
+          "type": "number",
+          "minimum": 0.001,
+          "maximum": 1000
+        },
+        "translation_roles": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "hips",
+              "spine",
+              "head",
+              "thigh_L",
+              "shin_L",
+              "foot_L",
+              "upperarm_L",
+              "forearm_L",
+              "hand_L",
+              "thigh_R",
+              "shin_R",
+              "foot_R",
+              "upperarm_R",
+              "forearm_R",
+              "hand_R"
+            ]
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "owner",
+        "translation",
+        "scale",
+        "translation_roles"
+      ],
+      "additionalProperties": false
+    },
+    "repair_budget": {
+      "type": "object",
+      "properties": {
+        "max_position_m": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "max_rotation_deg": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 180
+        },
+        "max_edited_fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "max_position_m",
+        "max_rotation_deg",
+        "max_edited_fraction"
+      ],
+      "additionalProperties": false
+    },
+    "clip_policies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "repairs": {
+            "type": "object",
+            "properties": {
+              "rotation_spikes": {
+                "type": "object",
+                "properties": {
+                  "bone_roles": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "root",
+                        "hips",
+                        "spine",
+                        "head",
+                        "thigh_L",
+                        "shin_L",
+                        "foot_L",
+                        "upperarm_L",
+                        "forearm_L",
+                        "hand_L",
+                        "thigh_R",
+                        "shin_R",
+                        "foot_R",
+                        "upperarm_R",
+                        "forearm_R",
+                        "hand_R"
+                      ]
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  },
+                  "threshold_deg": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 180
+                  },
+                  "neighbor_deg": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "bone_roles",
+                  "threshold_deg",
+                  "neighbor_deg"
+                ],
+                "additionalProperties": false
+              },
+              "loop": {
+                "type": "object",
+                "properties": {
+                  "bone_roles": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "root",
+                        "hips",
+                        "spine",
+                        "head",
+                        "thigh_L",
+                        "shin_L",
+                        "foot_L",
+                        "upperarm_L",
+                        "forearm_L",
+                        "hand_L",
+                        "thigh_R",
+                        "shin_R",
+                        "foot_R",
+                        "upperarm_R",
+                        "forearm_R",
+                        "hand_R"
+                      ]
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  },
+                  "blend_s": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "required": [
+                  "bone_roles",
+                  "blend_s"
+                ],
+                "additionalProperties": false
+              },
+              "contacts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "chain_roles": {
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "root",
+                          "hips",
+                          "spine",
+                          "head",
+                          "thigh_L",
+                          "shin_L",
+                          "foot_L",
+                          "upperarm_L",
+                          "forearm_L",
+                          "hand_L",
+                          "thigh_R",
+                          "shin_R",
+                          "foot_R",
+                          "upperarm_R",
+                          "forearm_R",
+                          "hand_R"
+                        ]
+                      },
+                      "minItems": 3,
+                      "maxItems": 3,
+                      "uniqueItems": true
+                    },
+                    "start_s": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "end_s": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "blend_s": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "anchor": {
+                      "const": "first_sample"
+                    },
+                    "pole": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 3,
+                      "maxItems": 3
+                    },
+                    "max_correction_m": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 10
+                    },
+                    "max_joint_rotation_deg": {
+                      "type": "number",
+                      "minimum": 1,
+                      "maximum": 180
+                    },
+                    "controller_velocity_mps": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 3,
+                      "maxItems": 3
+                    }
+                  },
+                  "required": [
+                    "chain_roles",
+                    "start_s",
+                    "end_s",
+                    "blend_s",
+                    "anchor",
+                    "pole",
+                    "max_correction_m"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "translation_offsets_m": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            }
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema",
+    "id",
+    "revision",
+    "source",
+    "target",
+    "roles",
+    "coordinates",
+    "reference_pose",
+    "unmapped_bones",
+    "root_motion",
+    "repair_budget",
+    "clip_policies"
+  ],
+  "additionalProperties": false
+}

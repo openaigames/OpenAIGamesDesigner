@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "asset_id": "crate",
+  "kind": "model",
+  "brief": "A red wooden supply crate for a grounded FPS warehouse.",
+  "requirements": [
+    {
+      "id": "shape",
+      "text": "Keep a rectangular crate with reinforced corners.",
+      "category": "identity",
+      "priority": "must"
+    },
+    {
+      "id": "paint",
+      "text": "Use worn red paint over visible wood grain.",
+      "category": "appearance",
+      "priority": "must"
+    },
+    {
+      "id": "markings",
+      "text": "Do not add logos or readable text.",
+      "category": "appearance",
+      "priority": "must"
+    }
+  ],
+  "references": []
+}

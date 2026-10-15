@@ -1,16 +1,18 @@
-# Seedream 图像与 Seedance 视频
+# Seedream Images and Seedance Video
 
-两个提供器通过火山方舟官方 API 生成文件，接入同一套本机密钥、项目任务、逐次授权、结果下载与资产登记流程。无需额外安装 SDK；网络沿用工具包的主机代理设置。
+[English](ark-generation.md) | [简体中文](ark-generation.zh-CN.md)
 
-## 配置与账户
+Both providers use official Volcengine Ark APIs with shared local credentials, project jobs, per-job authorization, downloads, and asset registration. No extra SDK is required; networking uses host proxy settings.
 
-在看板“资产生成模型配置”的 Seedream 或 Seedance 卡片保存一次火山方舟 API Key，两张卡片共用 `ARK_API_KEY`。更新或移除任一卡片都会影响另一张；环境变量优先于本机加密存储。配置状态不代表模型权限或余额已验证。
+## Configuration and Accounts
 
-- [方舟 API Key 管理](https://ark.volcengine.com/region:cn-beijing/apiKey)
-- [火山引擎账户充值](https://console.volcengine.com/finance/fund/recharge)
-- [模型价格](https://docs.volcengine.com/docs/ark/model-pricing?lang=zh)
+Save a Volcengine Ark API key on either Seedream/Seedance service card. Both share ARK_API_KEY; updates/removal affect both. Environment values override encrypted local storage. Configured status does not verify model access or balance.
 
-密钥管理网页不是模型调用 URL。适配器使用 `https://ark.cn-beijing.volces.com/api/v3`，不会把凭据发送到任意自定义地址。已有项目可以显式配置命名环境变量：
+- [Ark key management](https://ark.volcengine.com/region:cn-beijing/apiKey)
+- [Account funding](https://console.volcengine.com/finance/fund/recharge)
+- [Model pricing (Chinese)](https://docs.volcengine.com/docs/ark/model-pricing?lang=zh)
+
+Key-management pages are not API URLs. Adapters use https://ark.cn-beijing.volces.com/api/v3 and do not send credentials to arbitrary custom endpoints. Projects can explicitly name environment variables:
 
 ```json
 {
@@ -19,37 +21,37 @@
 }
 ```
 
-以上内容保存在项目 `.openaigame/asset-providers.json`；不要填入真实密钥。项目配置优先于本机默认，因此显式指定不同环境变量时，实际使用的账户可能不同于卡片共用密钥。
+Save this in .openaigame/asset-providers.json without actual secrets. Project configuration wins, so custom variables may select a different account from the shared card key.
 
-## 支持范围
+## Supported Inputs and Outputs
 
-| 提供器 | 当前输入与输出 | 主要参数 |
+| Provider | Input/output | Parameters |
 | --- | --- | --- |
-| Seedream | 文生单图；一张本地参考图改绘；下载 PNG / JPEG / WebP 并按真实文件头命名 | Model ID、尺寸档位、水印、提示词 |
-| Seedance | 文生视频；一张本地首帧图生视频；异步查询并下载 MP4 | Model ID、整数秒时长、分辨率、比例、是否有声、水印、提示词 |
+| Seedream | Text-to-single-image or editing with one local reference image; PNG/JPEG/WebP named from actual headers | Model ID, size tier, watermark, prompt |
+| Seedance | Text-to-video or one local first frame; asynchronous query/download to MP4 | Model ID, integer duration, resolution, ratio, audio, watermark, prompt |
 
-默认 Model ID 为 `doubao-seedream-5-0-pro-260628`、`doubao-seedance-2-5-260628`，使用前需在账户开通。支持的模型族：Seedream 4.0 / 4.5 / 5.0 Pro / Flash / Lite，Seedance 2.0 / Fast / Mini / 2.5。当前填写 Model ID，不接受未注明能力的 Endpoint ID。参数按模型族检查：Seedream 5.0 Pro / Flash 为 1K、1.5K、2K；4.5 为 2K、4K；5.0 Lite 为 2K、3K、4K；4.0 为 1K、2K、4K。Seedance 2.5 为 4–30 秒，2.0 系列为 4–15 秒；Fast / Mini 使用 480p 或 720p，其余支持至 1080p。
+Configured defaults are doubao-seedream-5-0-pro-260628 and doubao-seedance-2-5-260628; enable them in the account first. Supported families: Seedream 4.0/4.5/5.0 Pro/Flash/Lite and Seedance 2.0/Fast/Mini/2.5. Use Model IDs, not Endpoint IDs with undeclared capabilities. Size checks: Seedream 5.0 Pro/Flash 1K/1.5K/2K; 4.5 2K/4K; 5.0 Lite 2K/3K/4K; 4.0 1K/2K/4K. Seedance 2.5 accepts 4–30 seconds, 2.0 families 4–15. Fast/Mini use 480p/720p; others support up to 1080p.
 
-输入图限项目内一张 PNG / JPEG / WebP，最大 10 MiB；保存任务时复制快照并记录 SHA-256，提交前重新校验。Seedance 2.5 首帧任务要求 `ratio: adaptive`，界面选图后自动切换。参考图更细的分辨率、内容限制由官方接口判断。当前没有多参考图、视频编辑、图层拆分、组图和自动重提交。视频是渲染成片，不能替代角色骨骼动画。
+Inputs allow one project-local PNG/JPEG/WebP up to 10 MiB, snapshotted/hashed on save and rechecked before submission. Seedance 2.5 first-frame jobs require ratio: adaptive; image selection adjusts the UI. Official APIs apply finer image/content constraints. Multiple references, video editing, layers, image sets, and automatic resubmission are unsupported. Rendered video is not skeletal animation.
 
-## 看板与命令行
+## Workbench and CLI
 
-看板“生成任务 → 新建任务”可选择两个服务，填写上述参数及可选参考图。保存仅建立待确认任务；用户核对提示词、输入快照及费用后授权，Agent 再执行。支持的默认尺寸与时长写入任务记录，避免隐藏的参数影响请求。文件生成后可在资产库打开，也可通过 `asset_library.py from-job` 登记来源。
+Choose the service in generation jobs, enter parameters/reference, and save a pending job. Users review prompts, snapshots, and fees before authorization; agents then execute. Effective size/duration defaults are recorded. Open outputs in the library or register provenance with asset_library.py from-job.
 
-Seedream 请求示例：
+Seedream request:
 
 ```json
 {
-  "parameters": {"prompt": "游戏用的风格化石门概念图，正面构图", "model": "doubao-seedream-5-0-pro-260628", "size": "2K", "watermark": true},
+  "parameters": {"prompt": "Front-view concept art of a stylized stone gate for a game", "model": "doubao-seedream-5-0-pro-260628", "size": "2K", "watermark": true},
   "inputs": []
 }
 ```
 
-Seedance 请求示例：
+Seedance request:
 
 ```json
 {
-  "parameters": {"prompt": "镜头缓慢推进，城堡庭院的旗帜随风摆动", "model": "doubao-seedance-2-5-260628", "duration": 5, "resolution": "720p", "ratio": "16:9", "generate_audio": true, "watermark": true},
+  "parameters": {"prompt": "The camera slowly pushes into a castle courtyard as flags move in the wind", "model": "doubao-seedance-2-5-260628", "duration": 5, "resolution": "720p", "ratio": "16:9", "generate_audio": true, "watermark": true},
   "inputs": []
 }
 ```
@@ -57,18 +59,18 @@ Seedance 请求示例：
 ```sh
 python tools/asset_workflow.py --project "MyGame" doctor --provider seedream
 python tools/asset_workflow.py --project "MyGame" submit --provider seedream --request production/image-request.json
-python tools/settings_server.py --project "MyGame" --approve-job A实际编号
-# 用户在页面授权后：
-python tools/asset_workflow.py --project "MyGame" run --job A实际编号 --timeout 600
+python tools/settings_server.py --project "MyGame" --approve-job JOB_ID
+# After the user authorizes the job in the page:
+python tools/asset_workflow.py --project "MyGame" run --job JOB_ID --timeout 600
 ```
 
-视频换成 `--provider seedance` 和相应请求文件；运行超时可按任务需要设置，例如 1800 秒。`doctor` 仅检查配置，不访问生成 API、不消耗额度。单次授权绑定项目、提供器、参数、输入哈希和实际密钥；替换共用密钥后旧授权失效。
+For video, use provider seedance and its request file. Choose an appropriate timeout, such as 1800 seconds. doctor is local and consumes no generation quota. Authorization binds project/provider/parameters/input hashes/actual key; changing the shared key invalidates old authorization.
 
-## 中断、下载与验收
+## Recovery, Download, and Acceptance
 
-- Seedance 在提交后立即保存任务 ID。停止本地进程不等于取消云端生成；任务失败、中断或下载失败后用 `resume --job A实际编号` 查询并下载原任务，不再 POST 新任务。仅在用户明确要求重新生成时准备新任务并重新授权。
-- Seedream 是同步生成接口，没有可恢复的云任务 ID。响应丢失或下载失败时检查本地 `remote.json` 和平台记录；不要把请求 ID 当任务 ID，也不要自动重发。明确重新生成时使用 `retry --new-generation` 并重新授权。已落盘文件可检查后单独登记。
-- 下载使用受限 HTTPS 通道，不携带 API Key；临时签名 URL 不进入日志或任务 JSON。输出写入任务的 `attempt-N/output`，记录路径、大小、哈希和来源。
-- 文件头及容器检查只确认基本格式。模型返回的尺寸／时长、真实播放、画面质量与游戏导入分别验收；部分 1080p 视频采用 HEVC，浏览器能否播放取决于实际解码环境。
+- Seedance persists its ID immediately after submission. Stopping locally does not cancel cloud generation. Use resume --job JOB_ID after failure/interruption/download failure to query/download the same job, not POST another. Explicit regeneration requires a new job/authorization.
+- Seedream is synchronous with no resumable cloud job ID. After response/download loss, inspect local remote.json and provider records. Request IDs are not job IDs; do not automatically retry. Explicit regeneration uses retry --new-generation and renewed authorization. Inspect/register saved files separately.
+- Downloads use restricted HTTPS without API keys. Temporary signed URLs stay out of logs/job JSON. Outputs go to attempt-N/output with paths, sizes, hashes, and provenance.
+- Headers/container checks establish basic format only. Verify actual dimensions/duration, playback, visual quality, and game import separately. Some 1080p outputs use HEVC; browser playback depends on available decoders.
 
-接口依据核对于 2026-09-30：[图像生成](https://docs.volcengine.com/docs/ark/image-generation-api?lang=zh)、[创建视频任务](https://docs.volcengine.com/docs/ark/create-video-generation-task-api?lang=zh)、[查询视频任务](https://docs.volcengine.com/docs/ark/get-video-generation-task-api?lang=zh)、[Base URL 与鉴权](https://docs.volcengine.com/docs/ark/base-url-and-authentication?lang=en)。具体开通权限、地区、计费和新版本能力以账户与官方文档为准。
+References: [image generation (Chinese)](https://docs.volcengine.com/docs/ark/image-generation-api?lang=zh), [create video (Chinese)](https://docs.volcengine.com/docs/ark/create-video-generation-task-api?lang=zh), [query video (Chinese)](https://docs.volcengine.com/docs/ark/get-video-generation-task-api?lang=zh), [authentication](https://docs.volcengine.com/docs/ark/base-url-and-authentication?lang=en). Verify account permissions, regions, billing, and new capabilities against official documentation.

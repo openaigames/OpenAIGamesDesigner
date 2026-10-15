@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "provider": "elevenlabs",
+  "parameters": {
+    "kind": "speech",
+    "voice_id": "replace_with_an_accessible_voice"
+  },
+  "references": [],
+  "routes": [],
+  "review": {
+    "reviewer": "Set the actual reviewer",
+    "notes": "Review the actual request before marking these checks complete.",
+    "brief_accounted_for": false,
+    "requirements_preserved": false,
+    "no_unrequested_features": false,
+    "reference_roles_checked": false
+  }
+}

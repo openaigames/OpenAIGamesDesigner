@@ -1,29 +1,34 @@
-# 最新旗舰模型默认策略
+# Generation Model Defaults
 
-新生成任务采用工具包中明确配置的质量优先模型。默认值的来源记录日期为 2026-10-09，具体 ID 由 `model_defaults.py` 统一维护；它们不会随服务端默认值自动变化。
+[English](model-defaults.md) | [简体中文](model-defaults.zh-CN.md)
 
-| 服务 / 产品 | 当前默认模型 | 官方依据 |
+New jobs use explicitly configured quality-oriented models. model_defaults.py maintains IDs centrally; provider-side defaults do not change them automatically.
+
+| Service | Configured default | Official reference |
 | --- | --- | --- |
-| ElevenLabs 语音 | `eleven_v4` | [质量优先模型指南](https://elevenlabs.io/docs/eleven-api/choosing-the-right-model)、[单人语音 API 示例](https://elevenlabs.io/docs/eleven-api/guides/cookbooks/text-to-speech) |
-| ElevenLabs 配乐 | `music_v2_5` | [音乐产品](https://elevenlabs.io/docs/eleven-creative/products/music)、[Compose API](https://elevenlabs.io/docs/api-reference/music/compose) |
-| ElevenLabs 音效 | `eleven_text_to_sound_v2` | [官方模型列表](https://elevenlabs.io/docs/overview/models) |
-| Tripo 3D | H3.1 / `v3.1-20260211` | [文生模型](https://docs.tripo3d.ai/model-generation/text-to-model-v3-0-v3-1.html)、[图生模型](https://docs.tripo3d.ai/model-generation/image-to-model-v3-0-v3-1.html)、[多视图模型](https://docs.tripo3d.ai/model-generation/multiview-to-model-v3-0-v3-1.html) |
-| 腾讯混元 3D | `3.1` | [专业版 API](https://cloud.tencent.com/document/api/1804/123447)、[模式兼容性](https://intl.cloud.tencent.com/zh/document/product/1284/75540) |
-| Seedream 图像 | 5.0 Pro / `doubao-seedream-5-0-pro-260628` | [方舟模型列表](https://docs.volcengine.com/docs/ark/model-list?lang=zh)、[发布记录](https://docs.volcengine.com/docs/ark/model-release-announcement?lang=zh) |
-| Seedance 视频 | 2.5 / `doubao-seedance-2-5-260628` | [方舟模型列表](https://docs.volcengine.com/docs/ark/model-list?lang=zh)、[发布记录](https://docs.volcengine.com/docs/ark/model-release-announcement?lang=zh) |
+| ElevenLabs speech | eleven_v4 | [Model selection](https://elevenlabs.io/docs/eleven-api/choosing-the-right-model), [speech API](https://elevenlabs.io/docs/eleven-api/guides/cookbooks/text-to-speech) |
+| ElevenLabs music | music_v2_5 | [Music](https://elevenlabs.io/docs/eleven-creative/products/music), [Compose](https://elevenlabs.io/docs/api-reference/music/compose) |
+| ElevenLabs effects | eleven_text_to_sound_v2 | [Models](https://elevenlabs.io/docs/overview/models) |
+| Tripo 3D geometry | H3.1 / v3.1-20260211 | [Flagship model](https://developers.tripo3d.ai/en/models/v3-1), [text](https://developers.tripo3d.ai/en/docs/generation-text-to-model/standard), [image](https://developers.tripo3d.ai/en/docs/generation-image-to-model/standard), [multiview](https://developers.tripo3d.ai/en/docs/generation-multiview-to-model/standard) |
+| Tripo textures for new H3.1 jobs | v3.5-20260815 | [Independent texture model selection](https://developers.tripo3d.ai/en/docs/generation-text-to-model/standard) |
+| Tencent Hunyuan 3D | 3.1 | [Professional API](https://cloud.tencent.com/document/api/1804/123447), [mode compatibility (Chinese)](https://intl.cloud.tencent.com/zh/document/product/1284/75540) |
+| Seedream images | 5.0 Pro / doubao-seedream-5-0-pro-260628 | [Ark models (Chinese)](https://docs.volcengine.com/docs/ark/model-list?lang=zh), [announcements (Chinese)](https://docs.volcengine.com/docs/ark/model-release-announcement?lang=zh) |
+| Seedance video | 2.5 / doubao-seedance-2-5-260628 | [Ark models (Chinese)](https://docs.volcengine.com/docs/ark/model-list?lang=zh), [announcements (Chinese)](https://docs.volcengine.com/docs/ark/model-release-announcement?lang=zh) |
 
-## 选择与更新
+## Selection and Updates
 
-准备新一批生成前，对照官方模型清单和对应 API 核实本表是否仍是最新旗舰；版本已更新时同时修订代码默认值、参数校验、界面默认值、示例和请求测试，并记录核验日期与来源。不要仅按发布时间或版本号排序：Flash、Turbo、Lite、极速与质量旗舰是不同定位。用户明确要求速度、成本、兼容模式或旧版复现时，保留该选择。
+Before a new generation batch, verify models against official lists/APIs. When updating defaults, update validation, UI defaults, examples, and request tests together, preserving verification evidence in maintenance records. Do not rank solely by date/version: Flash/Turbo/Lite and quality-focused models serve different purposes. Honor explicit speed, cost, compatibility, or reproduction choices.
 
-复制历史制作请求时，保留有意选择的声音、内容与其他参数；不要把旧脚本中的型号当成用户当前任务的明确版本要求。新任务未指定版本时，`asset_workflow.new_job` 在建立队列及授权摘要之前填入本表的实际 ID，任务建立后不随默认值更新而漂移。显式版本不会被强行覆盖。
+When copying historical requests, retain deliberate voice/content/parameter choices, but do not assume an old script's model is a new user requirement. For unspecified models, asset_workflow.new_job resolves the actual ID before queuing/authorization. Queued jobs do not drift with later defaults; explicit IDs are not forcibly replaced.
 
-旧任务、旧结果和已生成资产不批量改写。授权摘要包含实际解析出的模型，旧队列若未固定型号，默认值改变后原授权不能用于另一型号。恢复已有云任务继续查询原任务，不创建替代生成。账户未开通旗舰或接口不兼容时报告具体问题，不自动降级、换服务或重复收费生成。
+Do not batch-rewrite old jobs/results/assets. Authorization digests include resolved models. If an old queue omitted a model, changed defaults invalidate authorization for a different model. Resume queries the original cloud job, not a replacement generation. Unavailable access/compatibility is reported without automatic downgrades, service changes, or repeat charges.
 
-混元 Sketch / LowPoly 仍需明确选择兼容的 3.0；默认 3.1 不会静默退回 3.0。Tripo 单图生成多视图图片接口不提供模型版本参数，不添加虚构型号。
+Hunyuan Sketch/LowPoly require explicit compatible 3.0; default 3.1 never silently falls back. Tripo image-to-multiview accepts no model-version parameter, so none is invented.
 
-## 无可选模型的入口
+Tripo uses the V3 API with separate geometry and texture model IDs. Only newly created H3.1 jobs with textures receive the texture default; explicit texture selections, historical queues, and retries keep their existing settings. Geometry-only jobs omit the texture model. Quality levels such as detailed geometry or 8K textures remain explicit parameters, since they can affect cost and generation time.
 
-内置生图的模型由 Agent 提供的工具控制，当前调用参数没有模型选择项；使用 Agent 运行环境实际提供的能力，不把它标成某个未经确认的旗舰。通用 image / audio / 本地 Hunyuan 命令包装器由用户配置外部工具，本工具包没有可验证的通用型号，不能给任意命令强塞模型参数。Blender 是本地制作工具；Poly Haven、Kenney、Mixamo、Freesound 等是资源或制作服务，不属于生成模型默认值。
+## Interfaces without Model Selection
 
-这些默认值是固定配置，不会在后台自动更新。账户权限和最终生成效果需在实际获授权的任务中验证；离线测试不等于真实服务生成成功。
+Built-in image generation uses the tool available in the agent host. This toolkit does not expose model selection for that tool. Generic image/audio/local Hunyuan wrappers run user-configured tools with no universal model contract; do not inject model parameters. Blender is a local authoring tool. Poly Haven, Kenney, Mixamo, Freesound, and similar sources are asset/production services, not generation defaults.
+
+These are fixed settings without background updates. Actual authorized jobs verify account access and outputs; offline tests do not establish service-generation success.

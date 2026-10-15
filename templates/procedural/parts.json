@@ -1,0 +1,11 @@
+{
+  "schema_version": 1, "kind": "parts", "minimum_thickness": 0.02, "triangle_budget": 2000,
+  "parts": [
+    {"id":"floor","size":[20,0.4,20],"position":[0,-0.2,0],"color":[0.20,0.28,0.34,1]},
+    {"id":"wall","size":[6,2,0.3],"position":[0,1,-6],"color":[0.45,0.53,0.6,1]},
+    {"id":"ramp","shape":"ramp","size":[3,1,4],"position":[-5,0.5,-1],"color":[0.52,0.42,0.22,1]},
+    {"id":"platform","size":[3,1,2],"position":[-5,0.5,-4]},
+    {"id":"post","shape":"cylinder","size":[0.5,2,0.5],"position":[3,1,-4],"mirror":"x"},
+    {"id":"cap","parent":"post","attach":"+y","size":[0.8,0.2,0.8],"mirror":"x"}
+  ]
+}

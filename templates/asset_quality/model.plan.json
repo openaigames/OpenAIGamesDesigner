@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "asset_id": "warehouse_door",
+  "kind": "model",
+  "use": "Warehouse doorway source asset",
+  "environment": "Blender material preview before engine import",
+  "files": [
+    "assets/door.glb"
+  ],
+  "capture": "evidence/door-capture/capture.json",
+  "views": [],
+  "required_views": [
+    {
+      "set": "model",
+      "directions": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "height_consistency",
+      "metric": "height",
+      "priority": "must",
+      "a": "model_front",
+      "b": "model_back",
+      "tolerance": 0.03
+    }
+  ],
+  "model_checks": [
+    {
+      "id": "triangle_budget",
+      "metric": "triangles",
+      "priority": "must",
+      "minimum": 1,
+      "maximum": 20000
+    }
+  ],
+  "criteria": [
+    {
+      "id": "structure",
+      "dimension": "structure",
+      "priority": "must",
+      "description": "Required frame, leaf, hinge side and handle are present and correctly placed across the views."
+    },
+    {
+      "id": "material",
+      "dimension": "style",
+      "priority": "must",
+      "description": "Materials follow the approved direction without unintended seams or logos."
+    }
+  ]
+}

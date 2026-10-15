@@ -1,0 +1,9 @@
+config_version=5
+[application]
+config/name="E07.3 Scene Reception"
+run/main_scene="res://main.tscn"
+[display]
+window/size/viewport_width=1152
+window/size/viewport_height=720
+[rendering]
+renderer/rendering_method="gl_compatibility"

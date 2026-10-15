@@ -1,58 +1,60 @@
-# 原生动作预览开发接口
+# Native Action Preview API
 
-本页描述 `action-preview/1` 协议，供开发者接入自定义客户端。共享看板没有原生动作预览页面。正式配置、预览草案和历史记录分别保存；画面必须来自引擎实际渲染。
+[English](PREVIEW.md) | [简体中文](PREVIEW.zh-CN.md)
 
-随包提供 Godot 4 的 `godot/action_preview_bridge.gd` 和可选的 `godot/action_preview_consumer.gd`。UE、Unity 与网页项目需自行实现并验证对应桥接，或使用应用配置、重跑和录像检查。
+The action-preview/1 protocol connects custom clients. The shared workbench has no native action-preview page. Live configuration, drafts, and history remain separate; frames must come from actual engine rendering.
 
-## 接入流程
+Godot 4 includes godot/action_preview_bridge.gd and optional godot/action_preview_consumer.gd. UE, Unity, and web projects implement/validate their own bridges or use apply/rerun/video checks.
 
-1. 建立独立测试场景，引用项目角色、武器、动画驱动、音频与挂点，隔离正式对局、AI 与伤害提交。
-2. 启动场景后，客户端通过 `GET /api/action-preview-status?id=<动作ID>` 查询连接，通过 `POST /api/action-preview-command` 发送草案和控制请求。请求使用看板会话、同源与 CSRF 校验。
-3. 等待引擎确认运行编号和配置摘要，再显示对应画面与事件。“已发送”不代表引擎已应用。暂停、速度与机位控制作用于测试场景，不改写正式配置。
-4. 通过 `POST /api/action-preview-record` 保存一次实际运行记录。回传图片不自动合成录像；需要回放时由引擎录制并关联文件。
-5. 正式应用使用 [配置接口](EDITING.md)，之后重新运行，检查移动、连续输入、打断与状态恢复。
+## Integration Workflow
 
-声音由本机 Godot 进程输出，使用方同步处理音频暂停与变速。回传画面约 8 fps，不承诺低延迟音画同步；最终品质须实际观看和监听。
+1. Create a separate test scene using project characters, weapons, animation drivers, audio, and attachments, isolated from live matches, AI, and damage commits.
+2. Start it, then query `GET /api/action-preview-status?id=<action-id>` and send drafts/controls through `POST /api/action-preview-command`, with workbench session, same-origin, and CSRF checks.
+3. Wait for engine-confirmed run ID/configuration digest before showing associated frames/events. Sent does not mean applied. Pause/rate/view controls affect the test scene, not live configuration.
+4. POST /api/action-preview-record saves an actual run. Returned images are not automatically assembled into video; engines must record/link playback files.
+5. Apply formally through [configuration APIs](EDITING.md), then rerun movement, repeated input, interruption, and state restoration checks.
 
-## 登记
+Audio comes from the local Godot process; consumers handle pause/rate consistently. Frames return at roughly 8 fps without a low-latency audiovisual-sync guarantee. Final quality requires watching and listening.
 
-在已有 `.openaigame/action-editor.json` 动作条目中增加：
+## Registration
+
+Add to an action entry in `.openaigame/action-editor.json`:
 
 ```json
 "preview": {"protocol":"action-preview/1", "consumer":"player_lab"}
 ```
 
-保留 `file`、`engine`、`editable` 等已有字段。`consumer` 是测试场景的稳定 ID，须与桥接组件一致。登记文件没有可执行命令、可执行文件路径或任意脚本入口；看板不负责启动引擎。启动方式由项目现有工具提供。
+Retain file, engine, editable, and other existing fields. consumer is a stable test-scene ID matching the bridge. Registration contains no executable commands/paths or arbitrary script entry points. Existing project tools launch the engine.
 
-把桥接组件加入测试场景前设置 `project_root`（包含 `.openaigame` 的项目根）、`consumer_id`、`action_ids`、`views`、`host`，可指定回传用的 `viewport`。不要把桥接组件挂进正式发布场景。
+Before adding the bridge, set project_root (containing .openaigame), consumer_id, action_ids, views, host, and optional capture viewport. Do not include the bridge in release scenes.
 
-## 使用方接口
+## Consumer Interface
 
-| 方法 | 责任 |
+| Method | Responsibility |
 | --- | --- |
-| `preview_load(sequence) -> Dictionary` | 取消上次动作，实际读取和绑定草案，返回 `{ok:true, sequence:实际读取的配置}`；失败返回 `{ok:false,error:说明}` |
-| `preview_advance(delta)` | 推进一次动作时间，驱动实际 AnimationPlayer/AnimationTree、声音和测试规则 |
-| `preview_state() -> Dictionary` | 返回实际 `elapsed_s`、`duration_s`、`complete`；可附动画名、位置、音频播放状态、IK 或武器测量结果 |
-| `preview_cancel()` | 取消动作，停止声音，解除测试窗口和临时状态 |
-| `preview_transport(paused, speed)` | 把暂停、变速传给音频等独立时钟；桥接组件只控制动作推进时间 |
-| `preview_view(id) -> bool` | 使用场景提供的真实机位；仅成功时确认 |
+| preview_load(sequence) -> Dictionary | Cancel previous action, actually load/bind draft; return {ok:true, sequence:loaded configuration} or {ok:false,error:reason} |
+| preview_advance(delta) | Advance action time once and drive real animation, audio, and test rules |
+| preview_state() -> Dictionary | Return actual elapsed_s, duration_s, complete; optionally animation, position, audio state, IK, or weapon measurements |
+| preview_cancel() | Cancel action, stop audio, release windows/temporary state |
+| preview_transport(paused, speed) | Update independent clocks such as audio; bridge controls only action advancement |
+| preview_view(id) -> bool | Select a real scene camera and acknowledge only success |
 
-在真实播放、声音和规则触发位置调用 `bridge.record_event(track, name)`。确认配置已读取不等于姿态、IK 或混合已通过；桥接组件负责运输和记录，使用方负责实际表现。
+Call bridge.record_event(track, name) where playback, audio, and rules actually trigger. Loading confirmation does not validate poses, IK, or blending. The bridge transports/records; the consumer implements behavior.
 
-可选示例使用方支持每个轨道对应一个 AnimationPlayer，动画绑定为 `轨道ID:动画名`；`animation_players`、`rest_animations`、`audio_streams`、`cameras` 由项目显式设置。同轨重叠片段会拒绝，避免假装支持混合。复杂 AnimationTree、根运动、双手 IK 和玩法事件应接入项目自己的使用方。骨架动作、手指握姿、蒙皮和模型编辑仍在源工具或引擎完成。
+The optional consumer supports one AnimationPlayer per track, with bindings track-id:animation-name. Projects explicitly set animation_players, rest_animations, audio_streams, and cameras. Same-track overlaps are rejected because blending is not implemented there. Use project consumers for complex AnimationTrees, root motion, two-hand IK, and gameplay. Edit skeletal motion, fingers, skinning, and models in source tools/engines.
 
-## 会话与结果
+## Sessions and Results
 
-所有交换文件位于项目 `.openaigame/action-preview/<consumer>/`：
+Exchange files live in `.openaigame/action-preview/<consumer>/`:
 
-- `ready.json`：引擎实例身份、支持动作、机位和控制能力；超过 4 秒没有更新视为离线。
-- `request.json`：带实例、客户端身份、动作、操作、唯一请求与运行编号的最新命令。
-- `client.json`：客户端心跳；客户端断开或超过 7 秒没有心跳时，使用方取消预览。
-- `status.json`：引擎实际确认的运行编号、配置 SHA-256、执行状态、事件、姿态读回和帧编号。
-- `runs/<run>/sequence.json`：该次草案快照；`capture.json` 是原生事件与配置快照；两个 PNG 文件交替保存实时画面。
+- ready.json identifies the engine instance, supported actions/views/controls; stale after 4 seconds.
+- request.json holds the latest instance/client/action/operation command with unique request/run IDs.
+- client.json is a heartbeat; disconnect or 7 seconds without heartbeat cancels preview.
+- status.json contains engine-confirmed run/configuration SHA-256, state, events, pose readback, and frame number.
+- `runs/<run>/sequence.json` freezes the draft; capture.json stores native events/configuration. Two PNGs alternate for live frames.
 
-实例重新启动后旧命令不能生效；旧帧、旧运行和其他动作不能确认当前草案。一个使用方同时由一个客户端控制，其他客户端会得到明确提示。正式配置被别处修改时必须重新载入，旧草案不会直接覆盖新版本。
+Restarted instances reject old commands. Old frames/runs and other actions cannot confirm a new draft. One client controls a consumer at a time; others receive explicit feedback. External live-configuration changes require reload; stale drafts cannot overwrite them directly.
 
-历史事件使用单调实时时钟，包括暂停和测试变速的影响；暂停、机位与速度等操作另存于 `preview_controls`。不同交互条件不会被自动当作同条件比较。配置快照证明运行版本，不能代替资产来源、视觉与听感验收。
+Historical events use monotonic real time, including pause/rate effects. Controls are stored separately in preview_controls. Different conditions are not automatically comparable. Snapshots identify configuration versions, not provenance or visual/audio acceptance.
 
-接口服务需在更新后重新启动以加载代码。该协议不改变资产库页面或模型预览控件。
+Restart API services after code updates. This protocol does not alter asset-library pages or model-preview controls.

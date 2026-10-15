@@ -1,15 +1,17 @@
-# 接入新作或已有游戏
+# Start or Take Over a Game Project
 
-首次立项建立的管理、概览、策划、美术、技术、风险验证六个入口是持续记录。后续新增或修改从相关专业原位进入 feature-change 流程，专业总入口链接细化规格，不重复生成六份文件；已有游戏优先保留等价入口。
+[English](project-intake.md) | [简体中文](project-intake.zh-CN.md)
 
-新作目录明确且允许保存时，在游戏项目根先建立六个非空专业/管理入口；已知填写，未知标状态、待定与补充条件（可用 `game_workflow.py scaffold`），不等主要实现完成。专业总入口留在根，原生工程新建到 `game/`；设计、制作、源资产、运行和构建分别进入 `design/`、`production/`、`assets-source/`、`runs/`、`builds/`，按需建立。完整约定见工具包 `workflows/README.md`。已有布局或用户明确指定结构优先。
+Use the six main documents for management, concept, game design, art, engineering, and risks as ongoing project records. For later changes, follow [feature change](feature-change.md) and update the affected documents in place. Link detailed specifications from these entry points, and retain equivalent documents in existing projects.
 
-从用户目标和现有文件识别阶段；仅关键未知阻塞当前工作时澄清。新作从体验方向开始，已有项目先读真实工程与相关设计，不重新立项。先沿用 Project Management.md 或同等入口；专业内容按需展开。
+When creating a new project, establish its location and save the six main documents before major implementation. Record known facts, open questions, and completion criteria; `game_workflow.py scaffold` can create the initial files. The native project defaults to `game/`; add `design/`, `production/`, `assets-source/`, `runs/`, and `builds/` as needed. See the [project layout](README.md#game-project-layout), and keep any structure already chosen for the project.
 
-项目级阶段可为立项、机制试验、制作验证、内容制作、交付维护；单个功能有独立成熟度。根据实际证据判断阶段，不按文件数量推进。
+Choose the starting stage from the goal and available project files. Resolve the unknowns that affect the next step. For a new game, establish the intended player experience; for an existing game, inspect its design and implementation. Reuse `Project Management.md` or its equivalent and expand the relevant specialist documents as work proceeds.
 
-识别真实工程位置、引擎/工具版本、依赖、现有可运行基线和可恢复版本。新作在引擎相关制作前明确具体引擎或用户的选型委托，再初始化工程；交付形式、多个候选组成的选项和已安装工具都不等于具体引擎已选定。回答仍有多个候选时细问这一项，技术入口记录待选状态、依据及独立环境事实，管理入口链接受影响任务；等待期间继续引擎无关的设计与记录。已有目标工程和此前明确决定直接沿用，不重复提问，不因接入而迁移或重建。管理入口记录真实位置，专业文件按当前任务任务建立或更新。
+The overall project stage can differ from the maturity of a particular feature. Advance when the required work and evidence are complete.
 
-按实际引擎读取技术 Skill 的对应参考，并核实当前适配器或项目已有工具能力。环境检查、命令参数和资产操作由该层负责，不将某个引擎的命令作为所有项目的前置步骤。依据需求进入原型、切片或功能修改流程；只完成文件接入时不要宣称工程已运行。
+Identify real project paths, engines/tools, dependencies, runnable baseline, and recovery revision. Before engine-specific work on a new game, obtain a concrete engine choice or authorization to select an engine. Delivery form, multiple candidates, and installed tools are not selections. Resolve remaining ambiguity while continuing engine-independent design/records; record pending choice and actual environment separately. Reuse existing target projects/prior decisions without asking again or rebuilding/migrating merely for intake.
 
-接入已有 MCP 时区分已安装、已连接和具体能力已验证，在技术入口记录目标工程身份、提供方版本、实际可用操作与验证证据；共享约定见 [引擎接入](../adapters/engines/mcp.md)。引擎专用安装和操作方法留在对应适配器目录，后续阶段沿用同一工程与记录。
+Read the engine-specific technical references and verify adapter/project-tool capabilities. That layer owns environment, commands, and asset operations; no one engine command is a universal prerequisite. Continue to prototype/slice/change as needed. File intake alone does not establish runtime success.
+
+For MCP, distinguish installed, connected, and specifically verified capabilities. Record target identity, provider versions, actual operations, and evidence in Technical Design. See [engine integration](../adapters/engines/mcp.md). Keep engine-specific instructions in adapters and continue using the same project/records.

@@ -1,35 +1,37 @@
 # {{id}} — {{title}}
 
-- 类型：验证报告
-- 执行状态：未执行。
-- 关联功能/资产/任务/里程碑与待回答问题：待填写。
+[English](validation-report.md) | [简体中文](validation-report.zh-CN.md)
 
-适用于功能、资源、体验、视听、性能和制作验证中的实际检查。只记录真实执行，不以计划填充结果。
+- Type: validation report.
+- Execution: not run.
+- Feature/asset/task/milestone and question: to fill.
 
-## 依据与环境
+For actual functional, asset, experience, audiovisual, performance, or production checks. Record execution, not plans presented as results.
 
-记录设计/参数版本、工程或构建、相关资产、起始状态、设备与操作方式。实际涉及试玩时记录参与者经验与提示干预；性能或联网检查补相应负载、采样或网络条件。
+## Basis and Environment
 
-## 计划与完成依据
+Record design/parameter revisions, project/build, assets, initial state, device, and input method. Playtests identify participant experience and assistance. Performance/network checks add load, sampling, and network conditions.
 
-| 问题/风险 | 情境与操作 | 预期行为或观察口径 | 所需环境/参与条件 |
+## Plan and Criteria
+
+| Question/risk | Scenario/operation | Expected behavior/observation | Environment/participants |
 | --- | --- | --- | --- |
 
-标准未定时明确待定。功能正确、体验假设、视听品质和阶段验收分别判断。
+Mark undefined criteria pending. Separate function, experience hypotheses, audiovisual quality, and stage acceptance.
 
-## 实际记录
+## Actual Records
 
-| 检查项 | 实际操作、观察与干预 | 日志/画面/数据等证据 | 结果 | 限制或未覆盖 |
+| Check | Actual operation, observation, assistance | Logs/images/data | Result | Limits/uncovered scope |
 | --- | --- | --- | --- | --- |
 
-尚未执行。执行后填写通过、失败、受阻或证据不足等真实结果；自动操作、模型操作和真人观察分别标明。引用 run-id 不代表所有体验已检查。测试数量只作摘要，应能追溯检查项、预期、实际结果与适用版本；预设截图或模拟输入说明生成条件。
+Not executed. Fill passed/failed/blocked/insufficient-evidence outcomes after execution. Distinguish automation, agent operation, and human observation. Run IDs do not imply all experience was checked. Counts summarize traceable checks, expectations, results, and revisions. Explain staged captures/simulated input.
 
-## 解释、问题与接续
+## Interpretation, Issues, and Follow-Up
 
-区分事实和原因假设，说明这些结果支持哪项判断及不支持什么。问题关联修改任务，重大取舍引用 decision；用户接受风险不改写失败结果。
+Separate facts from causal hypotheses and state supported/unsupported conclusions. Link repair tasks/significant decisions. Accepted risks do not rewrite failed results.
 
-实施收尾涉及文档交接时，对照相关规则、资产、工程与报告记录内容缺口及处理结果，可直接写在关联任务中；不只检查文档非空或链接存在。文档修订不算游戏复测，未执行项保留其影响和下一项检查。
+For document handoff, compare rules/assets/code/reports and record content gaps/resolutions in the report or task. Nonempty files/valid links are insufficient. Documentation edits are not game retests; retain impact and next checks for unperformed work.
 
-## 复测与适用性
+## Retests and Applicability
 
-保留原始结果，复测追加版本、差异、证据及结论。发生设计/代码/资产变化时注明旧证据仍适用、部分适用或需复测，不直接覆盖旧失败。
+Preserve originals and append retest revisions/differences/evidence/conclusions. After design/code/asset changes, mark old evidence applicable, partially applicable, or needing retest; do not overwrite failures.

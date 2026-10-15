@@ -10,6 +10,8 @@ from . import credential_store, api_common, model_defaults
 
 
 def identity(project, job_id, provider, settings, request):
+    from . import input_preparation
+    input_preparation.verify_request(project, provider, request, settings)
     # Bind the actual credential, without persisting or exposing its value/hash separately.
     fields = api_common.credential_fields(provider, settings)
     keys = [api_common.credential(settings, field, default) for field, default in fields]
@@ -19,6 +21,8 @@ def identity(project, job_id, provider, settings, request):
              'credentials': keys}
     if 'brief' in request:value['brief']=request['brief']
     if request.get('lineage'):value['lineage']=request['lineage']
+    if request.get('preparation'):value['preparation']=request['preparation']
+    if request.get('iteration'):value['iteration']=request['iteration']
     return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True).encode('utf-8')).hexdigest()
 
 

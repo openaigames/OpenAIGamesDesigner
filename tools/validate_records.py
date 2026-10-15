@@ -5,10 +5,13 @@ import hashlib
 import json
 import os
 import re
+import sys
 from pathlib import Path
 from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 SCHEMAS = ROOT / "schemas"
 KINDS = ("project", "run", "asset-job", "artifact", "engine-session", "asset-library", "task", "evidence", "observation", "observation-record", "project-links")
 PROJECT_ENTRIES = ("Project Management.md", "Game Concept.md", "Game Design Document.md",
@@ -138,6 +141,9 @@ def check_record(kind, value, project, record_path):
             for relation in ("task", "milestone"):
                 if value.get(relation): check_file(project, value[relation])
         if kind == "asset-job":
+            if value['request'].get('preparation'):
+                from adapters.assets import input_preparation
+                input_preparation.verify_request(project, value['provider'], value['request'], value['settings'])
             for item in value["request"]["inputs"]:
                 check_file(project, item["snapshot"], item["sha256"])
             if value["status"] in ("succeeded", "registered") and not value["artifacts"]:

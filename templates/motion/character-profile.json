@@ -1,0 +1,185 @@
+{
+  "schema": "oagd.character-profile/1",
+  "id": "project_character",
+  "revision": 1,
+  "source": {
+    "file": "source.blend",
+    "armature": "SourceRig",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "target": {
+    "file": "target.blend",
+    "armature": "TargetRig",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "roles": {
+    "root": {
+      "source": "src_root",
+      "target": "dst_root"
+    },
+    "hips": {
+      "source": "src_hips",
+      "target": "dst_hips"
+    },
+    "spine": {
+      "source": "src_spine",
+      "target": "dst_spine"
+    },
+    "head": {
+      "source": "src_head",
+      "target": "dst_head"
+    },
+    "upperarm_L": {
+      "source": "src_upperarm_L",
+      "target": "dst_upperarm_L"
+    },
+    "forearm_L": {
+      "source": "src_forearm_L",
+      "target": "dst_forearm_L"
+    },
+    "hand_L": {
+      "source": "src_hand_L",
+      "target": "dst_hand_L"
+    },
+    "upperarm_R": {
+      "source": "src_upperarm_R",
+      "target": "dst_upperarm_R"
+    },
+    "forearm_R": {
+      "source": "src_forearm_R",
+      "target": "dst_forearm_R"
+    },
+    "hand_R": {
+      "source": "src_hand_R",
+      "target": "dst_hand_R"
+    },
+    "thigh_L": {
+      "source": "src_thigh_L",
+      "target": "dst_thigh_L"
+    },
+    "shin_L": {
+      "source": "src_shin_L",
+      "target": "dst_shin_L"
+    },
+    "foot_L": {
+      "source": "src_foot_L",
+      "target": "dst_foot_L"
+    },
+    "thigh_R": {
+      "source": "src_thigh_R",
+      "target": "dst_thigh_R"
+    },
+    "shin_R": {
+      "source": "src_shin_R",
+      "target": "dst_shin_R"
+    },
+    "foot_R": {
+      "source": "src_foot_R",
+      "target": "dst_foot_R"
+    }
+  },
+  "coordinates": {
+    "source": {
+      "up": "+Z",
+      "forward": "-Y",
+      "unit": "metre"
+    },
+    "target": {
+      "up": "+Z",
+      "forward": "-Y",
+      "unit": "metre"
+    }
+  },
+  "reference_pose": {
+    "source": {
+      "local_rotations_xyzw": {},
+      "basis": "EXAMPLE ONLY: inspect the actual bind/rest pose and enter reviewed calibration rotations here"
+    },
+    "target": {
+      "local_rotations_xyzw": {},
+      "basis": "EXAMPLE ONLY: inspect the actual bind/rest pose and enter reviewed calibration rotations here"
+    }
+  },
+  "unmapped_bones": {
+    "source": {},
+    "target": {}
+  },
+  "root_motion": {
+    "owner": "controller",
+    "translation": "in_place",
+    "scale": 1.0,
+    "translation_roles": [
+      "hips"
+    ]
+  },
+  "repair_budget": {
+    "max_position_m": 0.7,
+    "max_rotation_deg": 150,
+    "max_edited_fraction": 0.95
+  },
+  "clip_policies": {
+    "walk": {
+      "repairs": {
+        "contacts": [
+          {
+            "chain_roles": [
+              "thigh_L",
+              "shin_L",
+              "foot_L"
+            ],
+            "start_s": 0.1,
+            "end_s": 0.4,
+            "blend_s": 0.06666666666666667,
+            "anchor": "first_sample",
+            "pole": [
+              0,
+              -1,
+              0
+            ],
+            "max_correction_m": 0.035,
+            "max_joint_rotation_deg": 12,
+            "controller_velocity_mps": [
+              0,
+              -1,
+              0
+            ]
+          },
+          {
+            "chain_roles": [
+              "thigh_R",
+              "shin_R",
+              "foot_R"
+            ],
+            "start_s": 0.6,
+            "end_s": 0.9,
+            "blend_s": 0.06666666666666667,
+            "anchor": "first_sample",
+            "pole": [
+              0,
+              -1,
+              0
+            ],
+            "max_correction_m": 0.035,
+            "max_joint_rotation_deg": 12,
+            "controller_velocity_mps": [
+              0,
+              -1,
+              0
+            ]
+          }
+        ]
+      }
+    },
+    "action": {
+      "repairs": {
+        "rotation_spikes": {
+          "bone_roles": [
+            "forearm_R"
+          ],
+          "threshold_deg": 50,
+          "neighbor_deg": 10
+        }
+      }
+    }
+  }
+}

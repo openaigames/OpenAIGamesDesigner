@@ -1,0 +1,102 @@
+#include "ExampleGame.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Engine/StaticMeshActor.h"
+#include "Camera/CameraActor.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Engine/GameViewportClient.h"
+#include "Engine/World.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Misc/EngineVersion.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
+#include "Misc/Paths.h"
+#include "Misc/FileHelper.h"
+#include "Serialization/JsonSerializer.h"
+#include "Widgets/SBoxPanel.h"
+#include "Widgets/Input/SButton.h"
+#include "Widgets/Text/STextBlock.h"
+#include "UnrealClient.h"
+#include "Modules/ModuleManager.h"
+#include "NavigationSystem.h"
+#include "NavMesh/NavMeshBoundsVolume.h"
+#if WITH_EDITOR
+#include "Builders/CubeBuilder.h"
+#include "ActorFactories/ActorFactory.h"
+#endif
+#include <limits>
+IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultGameModuleImpl,OAGDExamples,"OAGDExamples");
+void UExampleMapTools::CreateNavigationBounds(UObject* Context){
+#if WITH_EDITOR
+ UWorld* World=Cast<UWorld>(Context);if(!World&&Context)World=Context->GetWorld();if(!World)return;
+ auto* Volume=World->SpawnActor<ANavMeshBoundsVolume>(FVector(300,0,100),FRotator::ZeroRotator);
+ auto* Builder=NewObject<UCubeBuilder>();Builder->X=3000;Builder->Y=1800;Builder->Z=600;UActorFactory::CreateBrushForVolumeActor(Volume,Builder);
+ if(auto* N=FNavigationSystem::GetCurrent<UNavigationSystemV1>(World))N->OnNavigationBoundsUpdated(Volume);
+#endif
+}
+AExamplePawn::AExamplePawn(){Body=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Body"));Body->SetupAttachment(RootComponent);static ConstructorHelpers::FObjectFinder<UStaticMesh> Cube(TEXT("/Engine/BasicShapes/Cube.Cube"));Body->SetStaticMesh(Cube.Object);Body->SetRelativeScale3D(FVector(.6,.6,1.6));Body->SetCollisionEnabled(ECollisionEnabled::NoCollision);Body->SetCanEverAffectNavigation(false);GetCapsuleComponent()->SetCanEverAffectNavigation(false);GetCharacterMovement()->bRunPhysicsWithNoController=true;GetCharacterMovement()->MaxWalkSpeed=300;PrimaryActorTick.bCanEverTick=true;}
+void AExamplePawn::Tint(FLinearColor Color){if(auto* M=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Navigation/Tint.Tint"))){auto* D=UMaterialInstanceDynamic::Create(M,this);D->SetVectorParameterValue(TEXT("Tint"),Color);Body->SetMaterial(0,D);}}
+void AExamplePawn::Tick(float D){Super::Tick(D);if(!IsNpc)if(auto* PC=Cast<AExampleController>(Controller))MoveWorld(FVector2D(PC->Router->Strength(TEXT("right"))-PC->Router->Strength(TEXT("left")),PC->Router->Strength(TEXT("back"))-PC->Router->Strength(TEXT("forward"))));}
+AExampleGame::AExampleGame(){DefaultPawnClass=AExamplePawn::StaticClass();PlayerControllerClass=AExampleController::StaticClass();}
+AExampleController::AExampleController(){Router=CreateDefaultSubobject<UOAGDInputComponent>(TEXT("Input"));Nav=CreateDefaultSubobject<UOAGDNavigationComponent>(TEXT("Navigation"));PrimaryActorTick.bCanEverTick=true;PrimaryActorTick.bTickEvenWhenPaused=true;bShouldPerformFullTickWhenPaused=true;bAutoManageActiveCameraTarget=false;}
+AExamplePawn* AExampleController::MakeNpc(){FActorSpawnParameters P;P.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;auto* A=GetWorld()->SpawnActor<AExamplePawn>(FVector(-500,-300,92),FRotator::ZeroRotator,P);A->IsNpc=true;A->GetCharacterMovement()->MaxWalkSpeed=Speed;A->Tint(FLinearColor(.05,.7,1));return A;}
+void AExampleController::BeginPlay(){Super::BeginPlay();StartedAt=PhaseStart=FPlatformTime::Seconds();Testing=FParse::Param(FCommandLine::Get(),TEXT("OAGDSelfTest"));Automatic=!Testing;Report=FPaths::ProjectSavedDir()/TEXT("navigation.json");FParse::Value(FCommandLine::Get(),TEXT("NavigationReport="),Report);
+ FString Text,Error;FFileHelper::LoadFileToString(Text,*(FPaths::ProjectContentDir()/TEXT("OAGDData/input-profile.json")));if(!Router->Configure(Text,Error)){Check(false,TEXT("input profile valid"));Finish();return;}
+ FFileHelper::LoadFileToString(Text,*(FPaths::ProjectContentDir()/TEXT("OAGDData/navigation-profile.json")));TSharedPtr<FJsonObject> P;bool Valid=FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Text),P)&&P.IsValid();double Schema=0;
+ if(Valid)Valid=P->TryGetNumberField(TEXT("schema"),Schema)&&Schema==1;
+ auto Number=[&](const TCHAR* K,float& Out,float Scale=1){double V=0;if(!Valid||!P->TryGetNumberField(K,V)||!FMath::IsFinite(V)||V<=0){Valid=false;return;}Out=V*Scale;};
+ Number(TEXT("speed_mps"),Speed,100);Number(TEXT("arrival_m"),Radius,100);Number(TEXT("blocked_seconds"),BlockedSeconds);Number(TEXT("deadline_seconds"),Deadline);Number(TEXT("repath_seconds"),RepathSeconds);Number(TEXT("detection_m"),Detection,100);Number(TEXT("loss_seconds"),LossSeconds);Number(TEXT("search_seconds"),SearchSeconds);
+ const TArray<TSharedPtr<FJsonValue>>* Points=nullptr;if(Valid)Valid=P->TryGetArrayField(TEXT("patrol_points"),Points)&&Points->Num()>0&&Points->Num()<=64;
+ if(Valid)for(const auto& V:*Points){const TArray<TSharedPtr<FJsonValue>>* A=nullptr;if(!V->TryGetArray(A)||A->Num()!=3){Valid=false;break;}double X,Y,Z;if(!(*A)[0]->TryGetNumber(X)||!(*A)[1]->TryGetNumber(Y)||!(*A)[2]->TryGetNumber(Z)||!FMath::IsFinite(X)||!FMath::IsFinite(Y)||!FMath::IsFinite(Z)){Valid=false;break;}PatrolPoints.Add(FVector(X,Z,Y)*100);}
+ if(!Valid||!Nav->Configure(Speed,Radius,BlockedSeconds,Deadline,RepathSeconds)){Check(false,TEXT("navigation profile valid"));Finish();return;}
+ Target=Cast<AExamplePawn>(GetPawn());if(!Target){Check(false,TEXT("target pawn spawned"));Finish();return;}Target->ResetMotor(FVector(-700,500,92));Target->Tint(FLinearColor(1,.75,.1));Target->Detectable=!Testing;
+ Npc=MakeNpc();Router->ActionChanged.AddDynamic(this,&AExampleController::OnAction);Router->PauseChanged.AddDynamic(this,&AExampleController::OnPause);Nav->Lifecycle.AddDynamic(this,&AExampleController::OnLifecycle);
+ auto* Camera=GetWorld()->SpawnActor<ACameraActor>(FVector(1000,1500,1600),FRotator::ZeroRotator);Camera->SetActorRotation((FVector(200,0,0)-Camera->GetActorLocation()).Rotation());Camera->GetCameraComponent()->SetFieldOfView(60);SetViewTarget(Camera);BuildUI();bShowMouseCursor=true;SetInputMode(FInputModeGameAndUI());
+}
+void AExampleController::BuildUI(){auto Column=SNew(SVerticalBox);Column->AddSlot().AutoHeight().Padding(18)[SNew(STextBlock).Font(FCoreStyle::GetDefaultFontStyle("Bold",18)).Text_Lambda([this]{FVector A=IsValid(Npc)?Npc->GetActorLocation():FVector::ZeroVector;return FText::FromString(FString::Printf(TEXT("Navigation | UE 5.8 | Blue NPC: %s | Navigation: %s %s\nWASD moves yellow target | Space starts patrol | Esc pauses\nNPC (%.1f, %.1f) | path points %d | %s"),*Behavior,*Nav->State,*Nav->Reason,A.X/100,A.Y/100,Nav->Path.Num(),Router->IsPaused()?TEXT("PAUSED"):TEXT("Ground navigation + real collision")));})];auto Row=SNew(SHorizontalBox);const TCHAR* Titles[]={TEXT("Start patrol"),TEXT("Toggle blocker"),TEXT("Reset NPC"),TEXT("Pause / resume"),TEXT("Quit")};for(int I=0;I<5;++I)Row->AddSlot().AutoWidth().Padding(5)[SNew(SButton).ContentPadding(FMargin(12,8)).OnClicked_Lambda([this,I]{Choose(I);return FReply::Handled();})[SNew(STextBlock).Text(FText::FromString(Titles[I]))]];Column->AddSlot().AutoHeight().Padding(12)[Row];UI=Column;GetWorld()->GetGameViewport()->AddViewportWidgetContent(UI.ToSharedRef(),10);}
+void AExampleController::Choose(int32 I){if(I==4){FPlatformMisc::RequestExit(false);return;}if(I==3)Router->SetPause(TEXT("menu"),!Router->IsPaused());if(I==1)ToggleBlocker();if(I==2){ResetNpc();ChangeBehavior(TEXT("stopped"));ChangeBehavior(TEXT("patrol"));Automatic=true;}if(I==0){Nav->Clear();ChangeBehavior(TEXT("stopped"));ChangeBehavior(TEXT("patrol"));Automatic=true;}}
+AActor* AExampleController::Box(FVector Pos,FVector Size){auto* A=GetWorld()->SpawnActor<AStaticMeshActor>(Pos,FRotator::ZeroRotator);auto* C=A->GetStaticMeshComponent();C->SetMobility(EComponentMobility::Movable);C->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Cube.Cube")));C->SetCollisionProfileName(TEXT("BlockAll"));C->SetCanEverAffectNavigation(false);A->SetActorScale3D(Size/100);return A;}
+void AExampleController::ToggleBlocker(){if(IsValid(Blocker)){Blocker->Destroy();Blocker=nullptr;}else if(IsValid(Npc))Blocker=Box(Npc->GetActorLocation()+FVector(100,0,0),FVector(25,400,300));}
+void AExampleController::ResetNpc(){Nav->Clear();Nav->Configure(Speed,Radius,BlockedSeconds,Deadline,RepathSeconds);if(IsValid(Npc))Npc->ResetMotor(FVector(-500,-300,92));Frozen=false;}
+bool AExampleController::InputKey(const FInputKeyEventArgs& A){return Router&&Router->HandleInput(A)?true:Super::InputKey(A);}
+void AExampleController::OnAction(FName Name,float Value){if(Value<.5)return;if(Name==TEXT("pause"))Choose(3);if(Name==TEXT("act"))Choose(0);}
+void AExampleController::OnPause(bool Value){Nav->SetSuspended(Value);if(IsValid(Npc)){Npc->ConsumeMovementInputVector();Npc->GetCharacterMovement()->StopMovementImmediately();}SetPause(Value);}
+void AExampleController::ChangeBehavior(const FString& Value){if(Behavior==Value)return;Nav->Cancel(TEXT("behavior_changed"));Behavior=Value;BehaviorClock=0;Transitions.Add(Value);}
+bool AExampleController::VisibleTarget()const{if(!IsValid(Target)||Target->IsActorBeingDestroyed()||!Target->Detectable||FVector::Dist(Npc->GetActorLocation(),Target->GetActorLocation())>Detection)return false;FHitResult Hit;FVector Diff=Target->GetActorLocation()-Npc->GetActorLocation();return !UOAGDQuery::VisibleHit(Npc,Npc->GetActorLocation(),Diff,Diff.Size(),Npc,Hit)||Hit.GetActor()==Target;}
+void AExampleController::BehaviorMove(FVector Goal,AActor* Follow){Nav->Configure(Speed,Follow?100:Radius,BlockedSeconds,Deadline,RepathSeconds);if(!Nav->Request(FString::Printf(TEXT("npc-%d"),++Serial),Npc,Goal,Follow,FVector(0,0,-90),FVector(0,0,-90)))ChangeBehavior(TEXT("blocked"));}
+void AExampleController::BehaviorTick(float D){if(Nav->Suspended||Behavior==TEXT("blocked")||!IsValid(Npc))return;if(Behavior==TEXT("stopped"))return;bool Seen=VisibleTarget();if(Seen&&Behavior!=TEXT("chase"))ChangeBehavior(TEXT("chase"));
+ if(Behavior==TEXT("chase")){BehaviorClock=Seen?0:BehaviorClock+D;if(!IsValid(Target)||Target->IsActorBeingDestroyed())ChangeBehavior(TEXT("return"));else if(BehaviorClock>=LossSeconds)ChangeBehavior(TEXT("search"));else if(!Nav->Busy()){if(Nav->State==TEXT("failed"))ChangeBehavior(TEXT("blocked"));else if(FVector::Dist2D(Npc->GetActorLocation(),Target->GetActorLocation())>115)BehaviorMove(Target->GetActorLocation()-FVector(0,0,90),Target);}}
+ else if(Behavior==TEXT("search")){BehaviorClock+=D;if(BehaviorClock>=SearchSeconds)ChangeBehavior(TEXT("return"));}
+ else if(!Nav->Busy()){if(Nav->State==TEXT("failed")){ChangeBehavior(TEXT("blocked"));return;}if(Behavior==TEXT("return")){if(FVector::Dist2D(Npc->GetActorLocation(),Home)<=40)ChangeBehavior(TEXT("patrol"));else BehaviorMove(Home,nullptr);}else if(Behavior==TEXT("patrol")){if(FVector::Dist2D(Npc->GetActorLocation(),PatrolPoints[PatrolIndex])<=40)PatrolIndex=(PatrolIndex+1)%PatrolPoints.Num();BehaviorMove(PatrolPoints[PatrolIndex],nullptr);}}
+}
+void AExampleController::Tick(float D){Super::Tick(D);if(!Router->IsPaused()){if(!Testing&&Behavior==TEXT("stopped")&&Nav->ReadyMap()&&FPlatformTime::Seconds()-StartedAt>2)ChangeBehavior(TEXT("patrol"));if(Automatic)BehaviorTick(D);Nav->Step(D);if(IsValid(Npc)&&!Npc->IsActorBeingDestroyed()){if(Nav->DesiredVelocity.IsNearlyZero()||Frozen){Npc->ConsumeMovementInputVector();Npc->GetCharacterMovement()->StopMovementImmediately();}else Npc->AddMovementInput(Nav->DesiredVelocity/Speed,1,true);MaxDetour=FMath::Max(MaxDetour,FMath::Abs((float)Npc->GetActorLocation().Y));}}
+ if(Testing&&!Finished){if(FPlatformTime::Seconds()-StartedAt>140){Check(false,TEXT("native case exceeded 140 seconds"));Finish();return;}TestStep();}}
+void AExampleController::EndPlay(const EEndPlayReason::Type R){Nav->Clear();if(UI.IsValid()&&GetWorld()->GetGameViewport())GetWorld()->GetGameViewport()->RemoveViewportWidgetContent(UI.ToSharedRef());Super::EndPlay(R);}
+void AExampleController::OnLifecycle(const FString& Request,const FString& State,const FString& Reason){auto E=MakeShared<FJsonObject>();E->SetStringField(TEXT("request"),Request);E->SetStringField(TEXT("state"),State);E->SetStringField(TEXT("reason"),Reason);Events.Add(MakeShared<FJsonValueObject>(E));if(State==TEXT("started")&&CallbackMode){CallbackMode=false;CallbackRejected=!Nav->Request(TEXT("nested"),Npc,FVector(500,-300,0));Nav->Clear();}}
+void AExampleController::Check(bool Ok,const FString& Name){Checks.Add(Name);if(!Ok)Failures.Add(Name);}
+void AExampleController::StartCase(const FString& Id,FVector Goal,AActor* Follow){Check(Nav->Request(Id,Npc,Goal,Follow,FVector(0,0,-90),FVector(0,0,-90)),TEXT("accepted: ")+Id);}
+void AExampleController::Press(FKey Key,bool Down){FInputKeyEventArgs A(nullptr,FInputDeviceId::CreateFromInternalId(0),Key,Down?IE_Pressed:IE_Released,FPlatformTime::Cycles64());InputKey(A);}
+void AExampleController::Finish(){Finished=true;auto R=MakeShared<FJsonObject>();R->SetStringField(TEXT("engine"),FEngineVersion::Current().ToString());R->SetStringField(TEXT("input"),TEXT("Native software events; no human or device claim"));R->SetNumberField(TEXT("max_detour_m"),MaxDetour/100);R->SetArrayField(TEXT("events"),Events);TArray<TSharedPtr<FJsonValue>> C,F,T;for(auto S:Checks)C.Add(MakeShared<FJsonValueString>(S));for(auto S:Failures)F.Add(MakeShared<FJsonValueString>(S));for(auto S:Transitions)T.Add(MakeShared<FJsonValueString>(S));R->SetArrayField(TEXT("checks"),C);R->SetArrayField(TEXT("failures"),F);R->SetArrayField(TEXT("behavior_transitions"),T);FString Text;FJsonSerializer::Serialize(R,TJsonWriterFactory<>::Create(&Text));FFileHelper::SaveStringToFile(Text,*Report,FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);FPlatformMisc::RequestExitWithStatus(false,Failures.Num()?1:0);}
+void AExampleController::TestStep(){double Time=FPlatformTime::Seconds()-PhaseStart;if(Time<.1)return;
+ if(Phase==0){if(Time<3)return;bool InvalidRejected=!Nav->Configure(std::numeric_limits<float>::quiet_NaN(),35,1,20);if(!Nav->Request(TEXT("detour"),Npc,FVector(500,-300,0),nullptr,FVector(0,0,-90))){if(Time<30)return;Check(false,TEXT("native navigation becomes queryable: ")+Nav->LastError);Finish();return;}Check(Nav->ReadyMap(),TEXT("native geometry bake synchronized"));Check(InvalidRejected,TEXT("invalid configuration rejected"));Check(true,TEXT("accepted: detour"));Check(Nav->Path.Num()>=4,TEXT("native path bends around wall"));Check(!Nav->Request(TEXT("busy"),Npc,FVector(500,-300,0)),TEXT("concurrent request rejected"));Next();}
+ else if(Phase==1&&Time>1){FScreenshotRequest::RequestScreenshot(Report+TEXT("-route.png"),true,false);Next();}
+ else if(Phase==2&&(!Nav->Busy()||Time>21)){Check(Nav->State==TEXT("arrived")&&FVector::Dist2D(Npc->GetActorLocation(),FVector(500,-300,0))<65,TEXT("collision motor reaches checked destination"));Check(MaxDetour>420,TEXT("actual trajectory detours around static wall"));Check(Nav->DesiredVelocity.IsNearlyZero(),TEXT("arrival releases steering"));Check(!Nav->Request(TEXT("detour"),Npc,FVector(500,-300,0)),TEXT("completed request ID cannot restart"));Check(!Nav->Request(TEXT("outside"),Npc,FVector(10000,0,0)),TEXT("outside navigation rejected"));FNavLocation Isolated;auto* Navigation=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());Check(Navigation&&Navigation->ProjectPointToNavigation(FVector(1400,0,0),Isolated,FVector(50,50,60)),TEXT("isolated platform has native navigation surface"));Check(!Nav->Request(TEXT("island"),Npc,FVector(1400,0,0),nullptr,FVector(0,0,-90))&&Nav->LastError==TEXT("unreachable"),TEXT("disconnected island cannot succeed via partial path"));ResetNpc();StartCase(TEXT("cancel"));Nav->Cancel();Nav->Cancel();Check(Nav->State==TEXT("cancelled")&&Nav->DesiredVelocity.IsNearlyZero(),TEXT("cancel is idempotent and stops steering"));StartCase(TEXT("pause"));Press(EKeys::Escape,true);Next();}
+ else if(Phase==3){Check(Router->IsPaused()&&!Nav->Busy(),TEXT("native pause input cancels movement"));Check(!Nav->Request(TEXT("paused"),Npc,FVector(500,-300,0)),TEXT("paused navigator rejects requests"));Press(EKeys::Escape,false);Router->SetPause(TEXT("menu"),false);Check(!Nav->Busy(),TEXT("resume does not revive cancelled movement"));ResetNpc();StartCase(TEXT("blocker"),FVector(-100,-300,0));Blocker=Box(FVector(-350,-300,100),FVector(25,400,300));Next();}
+ else if(Phase==4&&(!Nav->Busy()||Time>5)){Check(Nav->State==TEXT("failed")&&Nav->Reason==TEXT("blocked")&&Npc->GetActorLocation().X<-350,TEXT("dynamic collision blocks motor and fails bounded request"));Blocker->Destroy();Blocker=nullptr;ResetNpc();Nav->Configure(300,35,10,.2);StartCase(TEXT("deadline"));Next();}
+ else if(Phase==5&&(!Nav->Busy()||Time>1)){Check(Nav->Reason==TEXT("timeout"),TEXT("request deadline is bounded"));ResetNpc();Nav->Configure(300,100,1,20);Target->ResetMotor(FVector(-200,-300,92));StartCase(TEXT("moving-target"),FVector::ZeroVector,Target);Target->ResetMotor(FVector(-200,100,92));Next();}
+ else if(Phase==6&&Time>.6){Check(FVector::Dist(Nav->Goal,Target->GetActorLocation()-FVector(0,0,90))<10&&Nav->Path.Num()>0,TEXT("moving target updates native path"));Next();}
+ else if(Phase==7&&(!Nav->Busy()||Time>6)){Check(Nav->State==TEXT("arrived"),TEXT("moving target can be reached"));ResetNpc();Target->ResetMotor(FVector(-200,-300,92));StartCase(TEXT("target-unreachable"),FVector::ZeroVector,Target);Target->ResetMotor(FVector(1400,0,92));Phase=15;Next();}
+ else if(Phase==8){Check(Nav->Reason==TEXT("target_lost")&&!Nav->Busy(),TEXT("destroyed target fails without stale steering"));Target=MakeNpc();Target->IsNpc=true;Target->Detectable=false;Target->ResetMotor(FVector(-700,500,92));Target->Tint(FLinearColor(1,.75,.1));ResetNpc();CallbackMode=true;StartCase(TEXT("callback-clear"));Check(CallbackRejected&&!Nav->Busy(),TEXT("callback cannot reenter and may clear"));StartCase(TEXT("clear"));Nav->Clear();Check(Nav->State==TEXT("idle")&&Nav->Path.IsEmpty()&&Nav->DesiredVelocity.IsNearlyZero(),TEXT("scene cleanup clears request and path"));StartCase(TEXT("destroy-mover"));Npc->Destroy();Next();}
+ else if(Phase==9){Check(Nav->Reason==TEXT("mover_lost"),TEXT("destroyed mover fails safely"));Npc=MakeNpc();ResetNpc();ChangeBehavior(TEXT("patrol"));Automatic=true;Next();}
+ else if(Phase==10&&Time>.3){Check(Behavior==TEXT("patrol")&&Nav->Busy(),TEXT("project patrol issues native move"));Target->ResetMotor(Npc->GetActorLocation()+FVector(-100,100,0));Target->Detectable=true;Next();}
+ else if(Phase==11&&Time>.2){Check(Behavior==TEXT("chase"),TEXT("visible nearby target switches to chase"));Target->Detectable=false;Next();}
+ else if(Phase==12&&Time>.75){Check(Behavior==TEXT("search"),TEXT("lost target enters bounded search"));Next();}
+ else if(Phase==13&&Time>.6){Check(Transitions.Contains(TEXT("return")),TEXT("search expires into return"));Next();}
+ else if(Phase==14&&Time>4){Check(Behavior==TEXT("patrol")&&Transitions.Contains(TEXT("return")),TEXT("NPC returns home and resumes patrol"));FScreenshotRequest::RequestScreenshot(Report+TEXT("-patrol.png"),true,false);Phase=16;Frozen=true;Next();}
+ else if(Phase==17&&Time>1.5){Check(Behavior==TEXT("blocked")&&!Nav->Busy(),TEXT("behavior stops on failed movement without endless retry"));ResetNpc();ChangeBehavior(TEXT("patrol"));Next();}
+ else if(Phase==18&&Time>.2){Check(Behavior==TEXT("patrol")&&Nav->Busy(),TEXT("explicit retry starts patrol after blocked state"));ChangeBehavior(TEXT("stopped"));Automatic=false;Nav->Clear();TMap<FString,TArray<FString>> Per;for(auto E:Events)Per.FindOrAdd(E->AsObject()->GetStringField(TEXT("request"))).Add(E->AsObject()->GetStringField(TEXT("state")));bool Paired=true;for(auto Pair:Per){auto S=Pair.Value;Paired=Paired&&S.Num()==2&&S[0]==TEXT("started")&&(S[1]==TEXT("arrived")||S[1]==TEXT("failed")||S[1]==TEXT("cancelled"));}Check(Paired,TEXT("every accepted request has exactly one terminal event"));Next();}
+ else if(Phase==16&&(!Nav->Busy()||Time>2)){Check(Nav->State==TEXT("failed")&&Nav->Reason==TEXT("unreachable"),TEXT("moving target crossing to disconnected surface fails"));ResetNpc();Target->ResetMotor(FVector(-200,-300,92));StartCase(TEXT("target-lost"),FVector::ZeroVector,Target);Target->Destroy();Phase=7;Next();}
+ else if(Phase==19)Finish();
+}

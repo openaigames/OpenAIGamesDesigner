@@ -1,9 +1,12 @@
 """Print the generation modes implemented by this installation."""
 import sys
+import argparse
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from adapters.assets.generation_capabilities import markdown
 
 if __name__ == '__main__':
     sys.stdout.reconfigure(encoding='utf-8')
-    print(markdown(), end='')
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--language', choices=('en', 'zh-CN'), default='en')
+    print(markdown(parser.parse_args().language), end='')

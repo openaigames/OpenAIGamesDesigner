@@ -35,8 +35,11 @@ description: 游戏美术指导：将体验目标转成视觉方向、风格规�
 | 免费与付费素材、素材驱动设计、占位替换及跨类型选材 | [素材检索与获取](references/asset-sourcing.md) |
 | 已有资产新增、修改、替换与交接 | [资产变更](references/asset-change.md) |
 | 具体生产规格、数量、格式与验收条件 | [资产规格](references/asset-production-specs.md) |
+| 资产要求转生成输入、提示词整理、参考职责和提交预览 | [生成输入准备](references/input-preparation.md) |
 | 动画、VFX 与声音制作 | [动态视听制作](references/animation-vfx-audio-production.md) |
 | 生成或处理后的素材检查 | [素材质检](references/generated-asset-review.md) |
+| GLB 四面证据、多视图测量、质量评分与资产评审接入 | [证据采集与质量工具](references/quality-evidence.md) |
+| 根据评审修正输入、复查退步、决定继续或停止 | [结果驱动迭代](references/result-iteration.md) |
 | 环境、灰盒转美术与路线线索 | [环境可读性](../game-environment-art/references/environment-readability.md) |
 | 移动交互动画、UI 动效与状态表现 | [动作与界面交接](references/animation-and-ui-feedback.md) |
 | 战斗动画、命中反馈与技能表现 | [战斗表现交接](references/combat-presentation.md) |

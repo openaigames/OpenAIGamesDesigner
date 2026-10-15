@@ -30,7 +30,8 @@
         "blender",
         "elevenlabs",
         "seedream",
-        "seedance"
+        "seedance",
+        "procedural"
       ]
     },
     "status": {
@@ -58,6 +59,24 @@
         "inputs"
       ],
       "properties": {
+        "preparation": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "additionalProperties": false
+        },
         "parameters": {
           "type": "object"
         },
@@ -151,6 +170,24 @@
         },
         "art_record": {
           "type": "object"
+        },
+        "iteration": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "additionalProperties": false
         }
       }
     },

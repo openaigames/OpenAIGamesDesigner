@@ -1,19 +1,23 @@
-# Phaser · 网页 2D
+# Phaser · Web 2D
 
-## 环境配置
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-| 组件 | 在哪里操作 | 完成检查 |
+This page covers project setup and execution. See [action timing](../action_timing/README.md) for event capture and comparison.
+
+## Environment Setup
+
+| Component | Configure | Check |
 | --- | --- | --- |
-| Node.js 与 npm / pnpm | 本机安装兼容项目 Vite 的 Node；配置 `node_executable`、`package_manager_cli` | 版本可查询，项目依赖安装完成 |
-| Phaser / Vite 依赖 | 游戏工程含 package.json 的目录，按锁文件安装 | 构建产物存在，浏览器实际加载成功 |
-| 浏览器 | HTTP 打开开发服务或导出目录服务地址 | 检查场景、输入、音频和重开 |
+| Node.js and npm / pnpm | Install Node compatible with the project's Vite; set node_executable and package_manager_cli | Query versions and install project dependencies |
+| Framework and Vite dependencies | Install from the game's package.json directory using its lockfile | Build successfully and load the output in a browser |
+| Browser | Open the development server or serve the exported directory over HTTP | Verify loading, controls, audio, and restart behavior |
 
-Node 兼容性见 [Vite 官方说明](https://vite.dev/guide/)；已有项目沿用其依赖版本。无需先安装其他游戏引擎或专用 Phaser MCP。
+Check Node compatibility against [Vite documentation](https://vite.dev/guide/) and the project's existing dependencies. No other game engine or dedicated framework MCP is required. Configure browser tools through the agent host.
 
-[框架入口](__init__.py) 将已选定的 `engine=phaser` 接到共享网页执行逻辑。空工程初始化、安装、服务与导出见 [网页执行说明](../web.md)。
+The [framework entry](__init__.py) connects the selected `engine=phaser` to shared web execution. See [web execution](../web.md) for empty-project initialization, dependencies, the Vite server, and builds.
 
-按规格组织 Scene、Loader、Input 与需要的物理系统。资源加载完成、碰撞符合设计、场景切换和重开状态正确分别检查；不要将渲染启动当作玩法验收。
+Organize Phaser Scene, Loader, Input, and the required physics system according to the design. Verify resource loading, collisions, scene transitions, and restart state separately. Starting the renderer is not gameplay acceptance.
 
-用 Agent 运行环境实际浏览器工具测试导出版本的输入、画布缩放、音频、加载失败及重开；命令保存构建与测试报告。不要求单独安装 Phaser MCP；浏览器已连接也不等于已执行游戏测试。
+Use the host's real browser tools to test exported builds: input, canvas sizing, audio, load failures, console/resource errors, and restart behavior. Browser tools may be provided directly or through MCP. A connection alone does not mean gameplay has been tested. Command adapters preserve build and test reports.
 
-内置 `smoke` 可用 Playwright 对选定构建执行真实浏览器加载检查，保存错误、截图和资源哈希；配置见 [执行配置](../web.md#浏览器检查配置)。玩法行为测试仍需项目实际用例。
+Built-in smoke uses Playwright to load a selected build in a real browser, saving errors, screenshots, and resource hashes. See [browser check configuration](../web.md#browser-check-configuration). Gameplay behavior needs project-specific cases.

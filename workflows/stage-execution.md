@@ -1,27 +1,29 @@
-# 阶段区间执行
+# Executing a Stage Range
 
-主责是制作管理，专业任务由相应 Skill 完成，程序和验证对实际工程及证据负责。工具保存确定性状态，不代替专业判断或内容制作。
+[English](stage-execution.md) | [简体中文](stage-execution.zh-CN.md)
 
-## 接手和任务约定
+Production management coordinates the task, specialist skills carry out the work, and engineering and validation provide the implementation and evidence. Tools track task state; design and quality decisions remain with the people and agents doing the work.
 
-读取用户当前目标与有效决定，核对实际项目、输入和版本。形成起止阶段、对象/内容范围、交付要求、已有输入、品质/平台约束及授权。检查 `1 ≤ start ≤ end ≤ 5`，支持全部十五个连续区间；保持项目总体阶段和局部对象成熟度的区别。
+## Intake and Task Agreement
 
-只确认会实质改变工作的重要未知。现有工程沿用结构；规划任务不强制安装引擎。进入中段时检查必要条件，不编造前面阶段通过、不要求重做所有前置。可以复用已有成果，证据缺失时按风险做实际观察。
+Read the user's goal and valid decisions, then inspect real projects, inputs, and revisions. Define start/end stages, object/content scope, deliverables, inputs, quality/platform constraints, and authorization. Validate 1 ≤ start ≤ end ≤ 5, covering all fifteen continuous ranges. Distinguish overall project stage from local object maturity.
 
-## 实际推进
+Clarify only material unknowns. Preserve existing structure; planning does not require engine installation. Mid-stage entry checks prerequisites without inventing earlier passes or repeating all prior work. Reuse valid results and observe missing evidence according to risk.
 
-1. 按区间安排必要产物与依赖，指定职业主责和实际对象。为功能、资产、空间、参数和表现关联可编辑源文件及实际使用这些内容的工程对象。
-2. 专业 Skill 做设计、搜索/制作与调整；程序把规则/资产落实到项目，复用原型、切片、资产或变更流程。
-3. 使用现有运行/制作工具，登记真实 run/session、文件与观察，明确辅助条件。工具调度或命令成功不代表作品达标。
-4. 依据阶段出口核对技术、专业及必要用户决定。失败定向回到素材、绑定、动作、规则、空间或制作方法；修复后续接同一区间。
-5. 到约定终点核对全部范围并交付，后续阶段保持范围外。端到端委托不能在首个原型结束，单阶段委托不能自动扩展完整游戏。
+## Execution
 
-跨阶段返回是修正循环，不变更用户选定终点。若根本方向不成立，关联具体证据与新决定；不能为了交付而静默换风格、玩法、平台或质量等级。用户中途问进度/原因属于沟通，除非明确取消或替换目标，继续原任务。
+1. Arrange required outputs/dependencies, responsible disciplines, and actual objects. Link editable sources and consumers for features, assets, spaces, parameters, and presentation.
+2. Skills design, search/create, and adjust; engineering integrates using prototype/slice/asset/change workflows.
+3. Use existing execution/production tools and record real runs/sessions, files, observations, and assistance. Scheduling/command success is not quality acceptance.
+4. Evaluate technical/professional/user-decision exit requirements. Return failures to assets, bindings, motion, rules, space, or methods, then continue the same range.
+5. At the agreed endpoint, verify the full scope and deliver. End-to-end requests do not stop at the first prototype; single-stage requests do not expand into whole games.
 
-## 状态、证据与恢复
+Backtracking is a correction loop, not a changed endpoint. If direction fails, link evidence/new decisions rather than quietly changing style, gameplay, platform, or quality. Status/questions do not cancel the original task unless explicitly stated.
 
-通过 [game_workflow.py](../tools/game_workflow.py) 的 task 子命令创建/读取/更新区间任务；结构化字段与同 ID 的文字说明分工，旧记录沿用或显式迁移，不猜历史通过。最低记录为对象、目标、区间、交付和当前依据；小型专业任务无需强建完整档案。
+## State, Evidence, and Recovery
 
-实际计划步骤可依赖同阶段或前序步骤，完成需真实产物与证据。确定性工具检查依赖/版本和完整性，专业评审仍由观察者给出有依据的判断。任务关闭不意味着用户已认可每个艺术决定。
+Use [game_workflow.py](../tools/game_workflow.py) task commands to create/read/update ranges. Structured fields and same-ID prose have separate duties. Reuse or explicitly migrate old records without guessing passes. Minimum records identify objects, goals, range, delivery, and evidence; small tasks do not need a complete project archive.
 
-中断保存已完成、已运行和结果不确定的操作。恢复先核对工程版本、进程和原 session；不重放不确定结果，不关闭其他工程。任务历史与引擎检查点分工：前者保存状态和判断，后者保存实际文件/运行恢复依据。恢复文件后重验受影响项，不恢复过期品质结论。
+Plan steps may depend on same/earlier-stage steps and require real artifacts/evidence for completion. Deterministic checks cover dependencies/revisions/completeness; observers provide reasoned professional reviews. Task closure does not imply approval of every art decision.
+
+On interruption, record completed, executed, and uncertain operations. Recovery checks project revision, processes, and original session before action, without replaying unknown outcomes or closing other projects. Task history preserves decisions/state; checkpoints preserve file/recovery evidence. After restoring files, revalidate the affected work before reusing earlier quality conclusions.

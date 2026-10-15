@@ -49,7 +49,7 @@
 
 工具能力从共享包 `adapters/engines/README.md` 查询：运行、测试、构建与交付使用 `game_workflow.py`，工程创建和编辑使用 `engine_workflow.py` 的引擎专属制作接口。网页路线读取技术 Skill 的 `references/web-execution.md` 和工具包 `adapters/engines/web.md`。先保存六个入口和当前任务交接，再按目标选择适用动作；具体依赖、字段和验证限制只在实现旁维护。执行工具不是游戏生成器；代码 Agent 根据设计和任务修改真实工程，再调用工具记录证据。
 
-资产生成/处理使用工具包 `adapters/assets/README.md` 和 `tools/asset_workflow.py`；仅本地配置命令和 Blender 处理，不预设云服务。任务保存输入快照、日志和产物，生成成功、登记、导入和质量验收分开。`tools/validate_records.py --project <实际路径> --markdown` 检查 schema 定义的结构化记录及本地引用；它不核实专业结论。分项真实验证顺序见工具包 `tests/README.md`。
+资产生成/处理使用工具包 `adapters/assets/README.md` 和 `tools/asset_workflow.py`；仅本地配置命令和 Blender 处理，不预设云服务。任务保存输入快照、日志和产物，生成成功、登记、导入和质量验收分开。`tools/validate_records.py --project <实际路径> --markdown` 检查 schema 定义的结构化记录及本地引用；它不核实专业结论。分项真实验证顺序见源码仓库的[测试说明](../../../tests/README.zh-CN.md)；安装包保留面向游戏工程的运行验证工具。
 
 数值表雏形、用户调参或表格回传从 game-numerical-design 的 `references/numeric-authoring.md` 进入，工程写回使用 game-technical-design 的 `references/numeric-exchange.md`。工具包的 `tools/numeric_workflow.py` 提供绑定 JSON 的 CSV 导出、CSV/XLSX 纯数值读取、差异检查与可恢复写回，命令见 `tools/README.md`；原生引擎数据继续使用项目导入器。具体字段与表格在游戏项目保存，不放进 Skill 或通用执行 schema。该能力按需嵌入原型、切片或功能修改，不新增一条数值专属顶层 workflow。
 

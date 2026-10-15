@@ -91,10 +91,10 @@ def validate_request(provider, request, settings):
         return elevenlabs.validate_request(request)
     params = request.get('parameters', {})
     # Only generation parameters are persisted. Authentication belongs in the environment.
-    allowed = ({'type', 'prompt', 'model_version', 'negative_prompt', 'text_seed', 'model_seed',
+    allowed = ({'type', 'prompt', 'model_version', 'negative_prompt', 'model_seed',
                 'texture_seed', 'image_seed', 'face_limit', 'auto_size', 'quad', 'texture', 'pbr',
-                'texture_quality', 'texture_alignment', 'geometry_quality', 'export_uv', 'render_image',
-                'style', 'orientation', 'smart_low_poly', 'generate_parts', 'enable_image_autofix'}
+                'texture_quality', 'texture_version', 'delight', 'texture_alignment', 'geometry_quality', 'export_uv',
+                'compress', 'export_orientation', 'orientation', 'smart_low_poly', 'generate_parts', 'enable_image_autofix'}
                if provider == 'tripo' else
                {'Model', 'Prompt', 'EnablePBR', 'FaceCount', 'GenerateType', 'PolygonType', 'ResultFormat'})
     if set(params) - allowed:

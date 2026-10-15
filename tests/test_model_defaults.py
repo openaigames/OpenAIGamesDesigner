@@ -62,8 +62,42 @@ class ModelDefaultsTests(unittest.TestCase):
             with patch.object(client,'call',return_value={'task_id':'test-task'}) as call:
                 client.submit(request)
             body=call.call_args.args[1]
-            self.assertEqual(body['model_version'],version or 'v3.1-20260211')
-            self.assertEqual(body['type'],'text_to_model')
+            self.assertEqual(body['model'],version or 'v3.1-20260211')
+            self.assertNotIn('model_version',body)
+            self.assertNotIn('type',body)
+            self.assertEqual(call.call_args.args[0],'/generation/text-to-model')
+
+    def test_new_flagship_jobs_pin_texture_without_changing_existing_requests(self):
+        request={'parameters':{'prompt':'crate'},'inputs':[]}
+        old=defaults.prepare('tripo',request)
+        self.assertNotIn('texture_version',old['parameters'])
+        with tempfile.TemporaryDirectory() as folder:
+            job=workflow.new_job(Path(folder),'tripo',request,{'mode':'api'})
+            pinned=job['request']
+            self.assertEqual(pinned['parameters']['texture_version'],'v3.5-20260815')
+            retry=workflow.new_job(Path(folder),'tripo',old,{'mode':'api'},retry_of='original')
+            self.assertEqual(retry['request']['parameters'],old['parameters'])
+        with patch.object(api_common,'credential',return_value='fixture'):
+            client=tripo.Client({})
+            before=generation_approval.identity(ROOT,'Afixture','tripo',{'mode':'api'},pinned)
+            with patch.object(defaults,'TRIPO_TEXTURE','future-texture'):
+                self.assertEqual(defaults.prepare('tripo',pinned),pinned)
+                self.assertEqual(generation_approval.identity(ROOT,'Afixture','tripo',{'mode':'api'},pinned),before)
+            changed=copy.deepcopy(pinned)
+            changed['parameters']['texture_version']='v3.0-20250812'
+            self.assertNotEqual(generation_approval.identity(ROOT,'Afixture','tripo',{'mode':'api'},changed),before)
+        with patch.object(client,'call',return_value={'task_id':'texture-task'}) as call:
+            client.submit(pinned)
+        self.assertEqual(call.call_args.args[1]['texture_version'],'v3.5-20260815')
+
+    def test_explicit_texture_geometry_only_and_legacy_models_keep_their_choices(self):
+        for parameters in (
+                {'prompt':'crate','texture_version':'v3.0-20250812'},
+                {'prompt':'crate','texture':False,'pbr':False},
+                {'prompt':'crate','model_version':'v2.5-20250123'},
+                {'type':'generate_multiview_image'}):
+            prepared=defaults.prepare('tripo',{'parameters':parameters},new_job=True)['parameters']
+            self.assertEqual(prepared.get('texture_version'),parameters.get('texture_version'))
 
     def test_tripo_image_view_endpoint_gets_no_fictitious_model_parameter(self):
         request={'parameters':{'type':'generate_multiview_image'},'inputs':[{'path':'front.png','view':'front'}]}

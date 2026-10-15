@@ -21,14 +21,20 @@ class EnginePackageTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             source=Path(temp)/'source'
             source.mkdir()
-            for name in ('skills','templates','workflows','adapters','schemas','tools','tests','licenses'):
+            for name in ('skills','templates','workflows','adapters','schemas','tools','tests','licenses','docs'):
                 shutil.copytree(ROOT/name,source/name,ignore=shutil.ignore_patterns(
                     '__pycache__','*.pyc','runtime','dist','evidence','validation-v*.md'))
-            for name in ('LICENSE','THIRD_PARTY_NOTICES.md'):
+            for name in ('LICENSE','THIRD_PARTY_NOTICES.md','THIRD_PARTY_NOTICES.zh-CN.md'):
                 shutil.copy2(ROOT/name,source/name)
             with patch.object(package_skills,'__file__',str(source/'tools/package_skills.py')):
                 bundle=package_skills.package(Path(temp)/'public-bundle')
                 # Local review notes must never change the distributable output.
+                for relative in ('CURRENT.md', 'project/PLAN.md',
+                                 'project/RELEASE_BASELINE.md',
+                                 'project/release-baseline/private.json'):
+                    note = source / 'docs' / relative
+                    note.parent.mkdir(parents=True, exist_ok=True)
+                    note.write_text('private development record', encoding='utf-8')
                 (source/'VERSION').write_text('private-review-version',encoding='utf-8')
                 (source/'RELEASE_NOTES.md').write_text('private release notes',encoding='utf-8')
                 (source/'RELEASE-archive.md').write_text('private historical notes',encoding='utf-8')
@@ -38,11 +44,13 @@ class EnginePackageTests(unittest.TestCase):
                 # exist in a maintainer's checkout without being tracked.
                 for parent in ('skills/game-design', 'templates', 'workflows',
                                'adapters', 'schemas', 'licenses', 'tools/settings-ui',
-                               'tools/workbench', 'tests/fixtures'):
+                               'tools/workbench', 'tests/fixtures', 'docs'):
                     for name in ('.env', '.env.local', 'credentials.json', 'secrets.json',
                                  'account.pem', 'account.key', 'server.ready.json', 'server.log',
                                  '.openaigame/asset-jobs/local.json', '.asset-browser/review.json',
-                                 'work/receipt.txt', 'outputs/private.txt', '__pycache__/local.pyc'):
+                                 'work/receipt.txt', 'outputs/private.txt', '__pycache__/local.pyc',
+                                 '.coverage', '.pytest_cache/receipt.json', '.mypy_cache/local.json',
+                                 '.ruff_cache/local.json', 'htmlcov/index.html', 'scripts/tests/private_test.py'):
                         private = source/parent/name
                         private.parent.mkdir(parents=True, exist_ok=True)
                         private.write_text('synthetic private file', encoding='utf-8')
@@ -53,6 +61,10 @@ class EnginePackageTests(unittest.TestCase):
             public=json.loads((bundle/check_installation.MANIFEST).read_text(encoding='utf-8'))
             local=json.loads((local_bundle/check_installation.MANIFEST).read_text(encoding='utf-8'))
             self.assertEqual(public,local)
+            self.assertEqual(
+                {p.relative_to(bundle/'game-preproduction/runtime/docs').as_posix()
+                 for p in (bundle/'game-preproduction/runtime/docs').rglob('*') if p.is_file()},
+                set(package_skills.PUBLIC_DOCUMENTS))
             self.assertNotIn('toolkit_version',public)
             report=check_installation.check(bundle)
             self.assertEqual(report['missing'],[])
@@ -68,7 +80,29 @@ class EnginePackageTests(unittest.TestCase):
             result = check_installation.check(installed)
             self.assertEqual(result['missing'], [])
             self.assertEqual(result['changed'], [])
+            self.assertTrue((installed / 'README.md').is_file())
+            runtime = installed / 'game-preproduction/runtime'
+            self.assertFalse((runtime / 'tests').exists())
+            self.assertFalse(any(p.is_dir() and p.name == 'tests' for p in installed.rglob('*')))
+            self.assertTrue((runtime / 'templates/runtime_examples').is_dir())
+            self.assertTrue((runtime / 'templates/asset_iteration/prompt-plan.json').is_file())
+            self.assertTrue((runtime / 'tools/runtime_validation.py').is_file())
+            self.assertTrue((ROOT / 'tests/test_asset_iteration.py').is_file())
+            self.assertTrue((ROOT / 'skills/game-animation-pipeline/scripts/tests/test_pipeline.py').is_file())
+            self.assertTrue((runtime / 'README.md').is_file())
+            self.assertIn('docs/INSTALLATION.md', (runtime / 'README.md').read_text(encoding='utf-8'))
+            self.assertIn('game-preproduction/runtime/docs/INSTALLATION.md',
+                          (installed / 'README.md').read_text(encoding='utf-8'))
+            for entry in (installed, runtime):
+                self.assertIn('](README.zh-CN.md)', (entry / 'README.md').read_text(encoding='utf-8'))
+                self.assertIn('](README.md)', (entry / 'README.zh-CN.md').read_text(encoding='utf-8'))
+            self.assertIn('docs/INSTALLATION.zh-CN.md', (runtime / 'README.zh-CN.md').read_text(encoding='utf-8'))
+            for doc in runtime.rglob('*.zh-CN.md'):
+                self.assertTrue(doc.with_name(doc.name.replace('.zh-CN.md', '.md')).is_file(), str(doc))
             self.assertEqual(local_reference_errors(installed.rglob('*.md')), [])
+            guide = (runtime / 'docs/INSTALLATION.md').read_text(encoding='utf-8')
+            self.assertIn(package_skills.SOURCE_URL + '/blob/main/tests/README.md', guide)
+            self.assertNotIn('](../tests/README.md)', guide)
             # Reproduce the old incomplete instruction, so the omission stays visible.
             (installed / 'LICENSE').unlink()
             self.assertEqual(check_installation.check(installed)['missing'], ['LICENSE'])
