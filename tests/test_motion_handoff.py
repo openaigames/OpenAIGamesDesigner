@@ -65,8 +65,10 @@ class HandoffTests(unittest.TestCase):
         motion.write(nested/'report.json',{'dependencies':{str(deeper):motion.digest(deeper)}})
         doc=motion.read(self.revision/'report.json');doc['dependencies'][str(nested/'report.json')]=motion.digest(nested/'report.json');motion.write(self.revision/'report.json',doc)
         handoff.pack(self.revision,self.output)
-        manifest=motion.read(self.output/'handoff.json');self.assertIn(str(deeper),manifest['dependency_mapping'])
-        received=self.output/manifest['dependency_mapping'][str(deeper)];received.unlink()
+        # Handoff keys use canonical paths, including expanded Windows short names.
+        source_key=str(deeper.resolve())
+        manifest=motion.read(self.output/'handoff.json');self.assertIn(source_key,manifest['dependency_mapping'])
+        received=self.output/manifest['dependency_mapping'][source_key];received.unlink()
         self.assertFalse(handoff.check(self.output)['ok'])
 
 
